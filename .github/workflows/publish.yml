@@ -16,7 +16,7 @@ jobs:
               run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.PACKAGES_TOKEN }}" > ~/.npmrc
 
             - name: Install dependencies
-              run: npm install
+              run: npm ci
 
             - name: Publish package
               run: npm publish
