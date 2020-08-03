@@ -1,0 +1,21 @@
+name: CI
+
+on: [pull_request]
+
+jobs:
+    ci:
+        runs-on: ubuntu-latest
+        defaults:
+            run:
+                working-directory: zendesk-frontend
+        steps:
+            - uses: actions/checkout@v2
+
+            - name: Authenticate with GitHub package registry
+              run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.PACKAGES_TOKEN }}" > ~/.npmrc
+
+            - name: Install Dependencies
+              run: npm ci
+
+            - name: Run CI Check
+              run: npm run ci
