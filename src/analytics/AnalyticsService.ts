@@ -2,19 +2,20 @@ import Axios from 'axios'
 import { AnalyticsEvent } from './events'
 import { createId } from '../utils/uuidGenerator'
 
+const GOOGLE_ANALYTICS_URI = 'https://www.google-analytics.com/batch'
 const CLIENT_ID_STORAGE_KEY = 'AnalyticsClientId'
 
 export class AnalyticsService {
     private readonly clientId: string
 
-    constructor(private analyticsEndpoint: string, private trackingId: string) {
+    constructor(private trackingId: string) {
         this.clientId = this.getClientId()
     }
 
     trackEvents = async (events: AnalyticsEvent[]): Promise<void> => {
         const postData = events.reduce((previous, event) => previous + this.getEventData(event), '')
 
-        await Axios.post(this.analyticsEndpoint, postData)
+        await Axios.post(GOOGLE_ANALYTICS_URI, postData)
     }
 
     private getEventData = (event: AnalyticsEvent): string => {

@@ -2,7 +2,7 @@ import { AnalyticsService } from './AnalyticsService'
 import Axios from 'axios'
 jest.mock('axios')
 
-const DEFAULT_ENDPOINT = 'https://someurl.com'
+const ANALYTICS_ENDPOINT = 'https://www.google-analytics.com/batch'
 const DEFAULT_TRACKING_ID = 'SomeTrackingId'
 const DEFAULT_CLIENT_ID = 'SomeRandomClientId'
 
@@ -22,7 +22,7 @@ const EVENT_WITH_LABEL = {
 
 const setupAxiosMock = () => Axios as jest.Mocked<typeof Axios>
 
-const getTarget = () => new AnalyticsService(DEFAULT_ENDPOINT, DEFAULT_TRACKING_ID)
+const getTarget = () => new AnalyticsService(DEFAULT_TRACKING_ID)
 
 describe('AnalyticsService', () => {
     const axiosMock = setupAxiosMock()
@@ -37,6 +37,6 @@ describe('AnalyticsService', () => {
         await target.trackEvents([DEFAULT_EVENT, EVENT_WITH_LABEL])
 
         expect(axiosMock.post).toBeCalledTimes(1)
-        expect(axiosMock.post).toBeCalledWith(DEFAULT_ENDPOINT, expectedPostData)
+        expect(axiosMock.post).toBeCalledWith(ANALYTICS_ENDPOINT, expectedPostData)
     })
 })
