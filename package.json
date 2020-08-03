@@ -1,6 +1,6 @@
 {
     "name": "@doist/todoist-integrations-common-ts",
-    "version": "0.1.14",
+    "version": "0.1.15",
     "description": "A package for sharing common code between Todoist quickadd integrations.",
     "license": "MIT",
     "author": "Doist developers",
