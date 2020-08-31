@@ -1,11 +1,11 @@
-# todoist-integrations-common-ts
+# todoist-api-typescript
 
 A package for sharing common code between Javascript/Typescript based Todoist quickadd integrations.
 
 ## Installation
 
 ```
-npm install @doist/todoist-integrations-common-ts
+npm install @doist/todoist-api-typescript
 ```
 
 ## Publishing
