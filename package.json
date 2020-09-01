@@ -45,12 +45,6 @@
         "typescript": "^3.7.5"
     },
     "prettier": "@doist/prettier-config",
-    "jest": {
-        "preset": "ts-jest/presets/js-with-ts",
-        "transform": {
-            "^.+\\.tsx?$": "ts-jest"
-        }
-    },
     "husky": {
         "hooks": {
             "pre-commit": "npx lint-staged && npm run build"

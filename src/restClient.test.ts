@@ -52,10 +52,6 @@ describe('restClient', () => {
         axiosMock = setupAxiosMock()
     })
 
-    afterEach(() => {
-        jest.clearAllMocks()
-    })
-
     test('get sends expected configuration to axios', async () => {
         await get(DEFAULT_BASE_URI, DEFAULT_ENDPOINT, DEFAULT_AUTH_TOKEN)
 

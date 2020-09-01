@@ -6,7 +6,7 @@ const defaultHeaders = {
     'Content-Type': 'application/json',
 }
 
-const authorizationHeaderString = (apiKey: string) => `Bearer ${apiKey}`
+const getAuthHeader = (apiKey: string) => `Bearer ${apiKey}`
 
 const getTodoistRequestError = (error: Error): TodoistRequestError => {
     const requestError = new TodoistRequestError(error.message)
@@ -23,7 +23,7 @@ const getTodoistRequestError = (error: Error): TodoistRequestError => {
 const getRequestConfiguration = (apiToken: string) => ({
     headers: {
         ...defaultHeaders,
-        Authorization: authorizationHeaderString(apiToken),
+        Authorization: getAuthHeader(apiToken),
     },
 })
 
