@@ -1,4 +1,5 @@
 import Axios, { AxiosResponse, AxiosError } from 'axios'
+import applyCaseMiddleware from 'axios-case-converter'
 import urljoin from 'url-join'
 import { TodoistRequestError } from './types/errors'
 
@@ -34,7 +35,9 @@ export const post = async <T extends unknown>(
     apiToken: string,
 ): Promise<AxiosResponse<T>> => {
     try {
-        return await Axios.post<T>(
+        const axiosClient = applyCaseMiddleware(Axios.create())
+
+        return await axiosClient.post<T>(
             urljoin(baseUri, relativePath),
             payload,
             getRequestConfiguration(apiToken),
@@ -50,7 +53,12 @@ export const get = async <T extends unknown>(
     apiToken: string,
 ): Promise<AxiosResponse<T>> => {
     try {
-        return await Axios.get<T>(urljoin(baseUri, relativePath), getRequestConfiguration(apiToken))
+        const axiosClient = applyCaseMiddleware(Axios.create())
+
+        return await axiosClient.get<T>(
+            urljoin(baseUri, relativePath),
+            getRequestConfiguration(apiToken),
+        )
     } catch (error) {
         throw getTodoistRequestError(error)
     }

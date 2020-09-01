@@ -2,6 +2,8 @@ import Axios, { AxiosStatic, AxiosResponse, AxiosError } from 'axios'
 import { post, get } from './restClient'
 import { mock } from 'jest-mock-extended'
 import { TodoistRequestError } from './types/errors'
+import * as caseConverter from 'axios-case-converter'
+
 jest.mock('axios')
 
 const DEFAULT_BASE_URI = 'https://someapi.com/'
@@ -27,6 +29,8 @@ const setupAxiosMock = (response = DEFAULT_RESPONSE) => {
     const axiosMock = Axios as jest.Mocked<typeof Axios>
     axiosMock.get.mockResolvedValue(response)
     axiosMock.post.mockResolvedValue(response)
+
+    jest.spyOn(caseConverter, 'default').mockImplementation(() => axiosMock)
     return axiosMock
 }
 

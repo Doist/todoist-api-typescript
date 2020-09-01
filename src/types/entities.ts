@@ -15,17 +15,17 @@ export type OrderedEntity = TodoistEntity & {
 }
 
 export type EntityInHierarchy = OrderedEntity & {
-    parent_id?: number
+    parentId?: number
 }
 
 export type Task = EntityInHierarchy & {
     content: string
-    project_id: number
-    section_id: number
+    projectId: number
+    sectionId: number
     completed: boolean
-    label_ids: number[]
+    labelIds: number[]
     priority: number
-    comment_count: number
+    commentCount: number
     created: Date
     url: string
     due?: DueDate

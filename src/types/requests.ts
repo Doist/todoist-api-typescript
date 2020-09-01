@@ -1,14 +1,14 @@
 export type AddTaskArgs = {
     content: string
-    project_id?: number
-    section_id?: number
-    parent_id?: number
+    projectId?: number
+    sectionId?: number
+    parentId?: number
     order?: number
-    label_ids?: number[]
+    labelIds?: number[]
     priority?: number
-    due_string?: string
-    due_lang?: string
-    due_date?: string
-    due_datetime?: string
+    dueString?: string
+    dueLang?: string
+    dueDate?: string
+    dueDatetime?: string
     assignee?: number
 }
