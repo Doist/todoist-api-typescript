@@ -1,6 +1,6 @@
 # todoist-api-typescript
 
-A package for sharing common code between Javascript/Typescript based Todoist quickadd integrations.
+A typescript wrapper for the Todoist REST API.
 
 ## Installation
 
