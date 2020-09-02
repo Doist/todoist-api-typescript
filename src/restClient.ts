@@ -1,7 +1,13 @@
-import Axios, { AxiosResponse, AxiosError } from 'axios'
+import Axios, { AxiosResponse, AxiosError, AxiosInstance } from 'axios'
 import applyCaseMiddleware from 'axios-case-converter'
 import urljoin from 'url-join'
 import { TodoistRequestError } from './types/errors'
+
+let axiosClient: AxiosInstance
+
+const configureAxiosClient = () => {
+    axiosClient = applyCaseMiddleware(Axios.create())
+}
 
 const defaultHeaders = {
     'Content-Type': 'application/json',
@@ -35,7 +41,9 @@ export const post = async <T extends unknown>(
     apiToken: string,
 ): Promise<AxiosResponse<T>> => {
     try {
-        const axiosClient = applyCaseMiddleware(Axios.create())
+        if (!axiosClient) {
+            configureAxiosClient()
+        }
 
         return await axiosClient.post<T>(
             urljoin(baseUri, relativePath),
@@ -53,7 +61,9 @@ export const get = async <T extends unknown>(
     apiToken: string,
 ): Promise<AxiosResponse<T>> => {
     try {
-        const axiosClient = applyCaseMiddleware(Axios.create())
+        if (!axiosClient) {
+            configureAxiosClient()
+        }
 
         return await axiosClient.get<T>(
             urljoin(baseUri, relativePath),
