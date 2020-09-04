@@ -56,13 +56,18 @@ describe('restClient', () => {
         axiosMock = setupAxiosMock()
     })
 
-    test('get sends expected configuration to axios', async () => {
+    test('get creates axios client with expected configuration', async () => {
+        await get(DEFAULT_BASE_URI, DEFAULT_ENDPOINT, DEFAULT_AUTH_TOKEN)
+
+        expect(axiosMock.create).toBeCalledTimes(1)
+        expect(axiosMock.create).toBeCalledWith({ headers: DEFAULT_HEADERS })
+    })
+
+    test('get calls axios with expected endpoint', async () => {
         await get(DEFAULT_BASE_URI, DEFAULT_ENDPOINT, DEFAULT_AUTH_TOKEN)
 
         expect(axiosMock.get).toBeCalledTimes(1)
-        expect(axiosMock.get).toBeCalledWith(DEFAULT_BASE_URI + DEFAULT_ENDPOINT, {
-            headers: DEFAULT_HEADERS,
-        })
+        expect(axiosMock.get).toBeCalledWith(DEFAULT_BASE_URI + DEFAULT_ENDPOINT)
     })
 
     test('get returns response from axios', async () => {
@@ -88,17 +93,18 @@ describe('restClient', () => {
         }
     })
 
-    test('post sends expected configuration and payload to axios', async () => {
+    test('post creates axios client with expected configuration', async () => {
+        await post(DEFAULT_BASE_URI, DEFAULT_ENDPOINT, DEFAULT_PAYLOAD, DEFAULT_AUTH_TOKEN)
+
+        expect(axiosMock.create).toBeCalledTimes(1)
+        expect(axiosMock.create).toBeCalledWith({ headers: DEFAULT_HEADERS })
+    })
+
+    test('post sends expected endpoint and payload to axios', async () => {
         await post(DEFAULT_BASE_URI, DEFAULT_ENDPOINT, DEFAULT_PAYLOAD, DEFAULT_AUTH_TOKEN)
 
         expect(axiosMock.post).toBeCalledTimes(1)
-        expect(axiosMock.post).toBeCalledWith(
-            DEFAULT_BASE_URI + DEFAULT_ENDPOINT,
-            DEFAULT_PAYLOAD,
-            {
-                headers: DEFAULT_HEADERS,
-            },
-        )
+        expect(axiosMock.post).toBeCalledWith(DEFAULT_BASE_URI + DEFAULT_ENDPOINT, DEFAULT_PAYLOAD)
     })
 
     test('post returns response from axios', async () => {

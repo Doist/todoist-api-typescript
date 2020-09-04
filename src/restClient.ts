@@ -1,13 +1,7 @@
-import Axios, { AxiosResponse, AxiosError, AxiosInstance } from 'axios'
+import Axios, { AxiosResponse, AxiosError } from 'axios'
 import applyCaseMiddleware from 'axios-case-converter'
 import urljoin from 'url-join'
 import { TodoistRequestError } from './types/errors'
-
-let axiosClient: AxiosInstance
-
-const configureAxiosClient = () => {
-    axiosClient = applyCaseMiddleware(Axios.create())
-}
 
 const defaultHeaders = {
     'Content-Type': 'application/json',
@@ -34,6 +28,11 @@ const getRequestConfiguration = (apiToken: string) => ({
     },
 })
 
+const getAxiosClient = (apiToken: string) => {
+    const configuration = getRequestConfiguration(apiToken)
+    return applyCaseMiddleware(Axios.create(configuration))
+}
+
 export const post = async <T extends unknown>(
     baseUri: string,
     relativePath: string,
@@ -41,15 +40,9 @@ export const post = async <T extends unknown>(
     apiToken: string,
 ): Promise<AxiosResponse<T>> => {
     try {
-        if (!axiosClient) {
-            configureAxiosClient()
-        }
+        const axiosClient = getAxiosClient(apiToken)
 
-        return await axiosClient.post<T>(
-            urljoin(baseUri, relativePath),
-            payload,
-            getRequestConfiguration(apiToken),
-        )
+        return await axiosClient.post<T>(urljoin(baseUri, relativePath), payload)
     } catch (error) {
         throw getTodoistRequestError(error)
     }
@@ -61,14 +54,9 @@ export const get = async <T extends unknown>(
     apiToken: string,
 ): Promise<AxiosResponse<T>> => {
     try {
-        if (!axiosClient) {
-            configureAxiosClient()
-        }
+        const axiosClient = getAxiosClient(apiToken)
 
-        return await axiosClient.get<T>(
-            urljoin(baseUri, relativePath),
-            getRequestConfiguration(apiToken),
-        )
+        return await axiosClient.get<T>(urljoin(baseUri, relativePath))
     } catch (error) {
         throw getTodoistRequestError(error)
     }

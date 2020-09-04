@@ -1,6 +1,7 @@
 module.exports = {
-    preset: "ts-jest/presets/js-with-ts",
-    transform: { '^.+\\.tsx?$': 'ts-jest' },
+    preset: "ts-jest",
+    transform: { '^.+\\.ts': 'ts-jest' },
+    testMatch: ['**/*.test.ts'],
     clearMocks: true,
-    testEnvironment: 'jsdom'
+    testEnvironment: 'node'
 }
