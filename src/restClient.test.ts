@@ -2,6 +2,8 @@ import Axios, { AxiosStatic, AxiosResponse, AxiosError } from 'axios'
 import { post, get } from './restClient'
 import { mock } from 'jest-mock-extended'
 import { TodoistRequestError } from './types/errors'
+import * as caseConverter from 'axios-case-converter'
+
 jest.mock('axios')
 
 const DEFAULT_BASE_URI = 'https://someapi.com/'
@@ -27,6 +29,8 @@ const setupAxiosMock = (response = DEFAULT_RESPONSE) => {
     const axiosMock = Axios as jest.Mocked<typeof Axios>
     axiosMock.get.mockResolvedValue(response)
     axiosMock.post.mockResolvedValue(response)
+
+    jest.spyOn(caseConverter, 'default').mockImplementation(() => axiosMock)
     return axiosMock
 }
 
@@ -52,17 +56,18 @@ describe('restClient', () => {
         axiosMock = setupAxiosMock()
     })
 
-    afterEach(() => {
-        jest.clearAllMocks()
+    test('get creates axios client with expected configuration', async () => {
+        await get(DEFAULT_BASE_URI, DEFAULT_ENDPOINT, DEFAULT_AUTH_TOKEN)
+
+        expect(axiosMock.create).toBeCalledTimes(1)
+        expect(axiosMock.create).toBeCalledWith({ headers: DEFAULT_HEADERS })
     })
 
-    test('get sends expected configuration to axios', async () => {
+    test('get calls axios with expected endpoint', async () => {
         await get(DEFAULT_BASE_URI, DEFAULT_ENDPOINT, DEFAULT_AUTH_TOKEN)
 
         expect(axiosMock.get).toBeCalledTimes(1)
-        expect(axiosMock.get).toBeCalledWith(DEFAULT_BASE_URI + DEFAULT_ENDPOINT, {
-            headers: DEFAULT_HEADERS,
-        })
+        expect(axiosMock.get).toBeCalledWith(DEFAULT_BASE_URI + DEFAULT_ENDPOINT)
     })
 
     test('get returns response from axios', async () => {
@@ -88,17 +93,18 @@ describe('restClient', () => {
         }
     })
 
-    test('post sends expected configuration and payload to axios', async () => {
+    test('post creates axios client with expected configuration', async () => {
+        await post(DEFAULT_BASE_URI, DEFAULT_ENDPOINT, DEFAULT_PAYLOAD, DEFAULT_AUTH_TOKEN)
+
+        expect(axiosMock.create).toBeCalledTimes(1)
+        expect(axiosMock.create).toBeCalledWith({ headers: DEFAULT_HEADERS })
+    })
+
+    test('post sends expected endpoint and payload to axios', async () => {
         await post(DEFAULT_BASE_URI, DEFAULT_ENDPOINT, DEFAULT_PAYLOAD, DEFAULT_AUTH_TOKEN)
 
         expect(axiosMock.post).toBeCalledTimes(1)
-        expect(axiosMock.post).toBeCalledWith(
-            DEFAULT_BASE_URI + DEFAULT_ENDPOINT,
-            DEFAULT_PAYLOAD,
-            {
-                headers: DEFAULT_HEADERS,
-            },
-        )
+        expect(axiosMock.post).toBeCalledWith(DEFAULT_BASE_URI + DEFAULT_ENDPOINT, DEFAULT_PAYLOAD)
     })
 
     test('post returns response from axios', async () => {

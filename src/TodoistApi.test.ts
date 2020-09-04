@@ -29,10 +29,6 @@ const getTarget = () => {
 describe('restClient', () => {
     const restClientMock = setupRestClientMock()
 
-    afterEach(() => {
-        jest.clearAllMocks()
-    })
-
     test('addTask calls post on restClient with expected parameters', async () => {
         const api = getTarget()
         await api.addTask(DEFAULT_ADD_TASK_ARGS)

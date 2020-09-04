@@ -1,10 +1,9 @@
 {
-    "name": "@doist/todoist-integrations-common-ts",
-    "version": "0.1.15",
-    "description": "A package for sharing common code between Todoist quickadd integrations.",
-    "license": "MIT",
+    "name": "@doist/todoist-api-typescript",
+    "version": "1.0.2",
+    "description": "A typescript wrapper for the Todoist REST API.",
     "author": "Doist developers",
-    "repository": "git@github.com:doist/todoist-integrations-common-ts.git",
+    "repository": "git@github.com:doist/todoist-api-typescript.git",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "scripts": {
@@ -23,15 +22,14 @@
     },
     "dependencies": {
         "axios": "^0.19.2",
-        "url-join": "^4.0.1",
-        "uuid": "^8.2.0"
+        "axios-case-converter": "^0.6.0",
+        "url-join": "^4.0.1"
     },
     "devDependencies": {
         "@doist/prettier-config": "^3.0.5",
         "@types/axios": "^0.14.0",
         "@types/jest": "^26.0.4",
         "@types/url-join": "^4.0.0",
-        "@types/uuid": "^8.0.0",
         "@typescript-eslint/eslint-plugin": "^3.6.0",
         "@typescript-eslint/parser": "^3.6.0",
         "eslint": "^7.4.0",
@@ -48,12 +46,6 @@
         "typescript": "^3.7.5"
     },
     "prettier": "@doist/prettier-config",
-    "jest": {
-        "preset": "ts-jest/presets/js-with-ts",
-        "transform": {
-            "^.+\\.tsx?$": "ts-jest"
-        }
-    },
     "husky": {
         "hooks": {
             "pre-commit": "npx lint-staged && npm run build"

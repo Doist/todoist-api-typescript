@@ -1,4 +1,5 @@
 import Axios, { AxiosResponse, AxiosError } from 'axios'
+import applyCaseMiddleware from 'axios-case-converter'
 import urljoin from 'url-join'
 import { TodoistRequestError } from './types/errors'
 
@@ -6,7 +7,7 @@ const defaultHeaders = {
     'Content-Type': 'application/json',
 }
 
-const authorizationHeaderString = (apiKey: string) => `Bearer ${apiKey}`
+const getAuthHeader = (apiKey: string) => `Bearer ${apiKey}`
 
 const getTodoistRequestError = (error: Error): TodoistRequestError => {
     const requestError = new TodoistRequestError(error.message)
@@ -23,9 +24,14 @@ const getTodoistRequestError = (error: Error): TodoistRequestError => {
 const getRequestConfiguration = (apiToken: string) => ({
     headers: {
         ...defaultHeaders,
-        Authorization: authorizationHeaderString(apiToken),
+        Authorization: getAuthHeader(apiToken),
     },
 })
+
+const getAxiosClient = (apiToken: string) => {
+    const configuration = getRequestConfiguration(apiToken)
+    return applyCaseMiddleware(Axios.create(configuration))
+}
 
 export const post = async <T extends unknown>(
     baseUri: string,
@@ -34,11 +40,9 @@ export const post = async <T extends unknown>(
     apiToken: string,
 ): Promise<AxiosResponse<T>> => {
     try {
-        return await Axios.post<T>(
-            urljoin(baseUri, relativePath),
-            payload,
-            getRequestConfiguration(apiToken),
-        )
+        const axiosClient = getAxiosClient(apiToken)
+
+        return await axiosClient.post<T>(urljoin(baseUri, relativePath), payload)
     } catch (error) {
         throw getTodoistRequestError(error)
     }
@@ -50,7 +54,9 @@ export const get = async <T extends unknown>(
     apiToken: string,
 ): Promise<AxiosResponse<T>> => {
     try {
-        return await Axios.get<T>(urljoin(baseUri, relativePath), getRequestConfiguration(apiToken))
+        const axiosClient = getAxiosClient(apiToken)
+
+        return await axiosClient.get<T>(urljoin(baseUri, relativePath))
     } catch (error) {
         throw getTodoistRequestError(error)
     }
