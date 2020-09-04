@@ -2,8 +2,11 @@ import { Task } from './types/entities'
 import { post } from './restClient'
 import { AddTaskArgs } from './types/requests'
 
-const API_BASE_URI = 'https://api.todoist.com/rest/v1/'
-const ENDPOINT_TASKS = 'tasks'
+export const API_REST_BASE_URI = 'https://api.todoist.com/rest/v1/'
+export const API_SYNC_BASE_URI = 'https://api.todoist.com/sync/v8'
+
+export const ENDPOINT_REST_TASKS = 'tasks'
+export const ENDPOINT_SYNC_QUICK_ADD = 'quick/add'
 
 export class TodoistApi {
     authToken: string
@@ -13,7 +16,22 @@ export class TodoistApi {
     }
 
     async addTask(args: AddTaskArgs): Promise<Task> {
-        const response = await post<Task>(API_BASE_URI, ENDPOINT_TASKS, args, this.authToken)
+        const response = await post<Task>(
+            API_REST_BASE_URI,
+            ENDPOINT_REST_TASKS,
+            args,
+            this.authToken,
+        )
+        return response.data
+    }
+
+    async quickAddTask(text: string): Promise<Task> {
+        const response = await post<Task>(
+            API_SYNC_BASE_URI,
+            ENDPOINT_SYNC_QUICK_ADD,
+            { text },
+            this.authToken,
+        )
         return response.data
     }
 }
