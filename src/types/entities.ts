@@ -2,7 +2,7 @@ export type DueDate = {
     recurring: boolean
     string: string
     date: string
-    datetime?: Date
+    datetime?: string
     timezone?: string
 }
 
@@ -26,7 +26,24 @@ export type Task = EntityInHierarchy & {
     labelIds: number[]
     priority: number
     commentCount: number
-    created: Date
+    created: string
     url: string
     due?: DueDate
+    assignee?: number
+}
+
+export type QuickAddTaskResponse = {
+    id: number
+    projectId: number
+    content: string
+    priority: number
+    sectionId: number | null
+    parentId: number | null
+    childOrder: number // order
+    labels: number[] // labelIds
+    responsibleUid: number | null
+    checked: number // completed
+    dateAdded: string // created
+    syncId: number | null
+    due: DueDate | null
 }
