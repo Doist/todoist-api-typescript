@@ -2,13 +2,10 @@ import { QuickAddTaskResponse, Task } from '../types'
 
 const showTaskEndpoint = 'https://todoist.com/showTask'
 
-export const getTaskUrlFromQuickAddResponse = (responseData: QuickAddTaskResponse) => {
-    if (!responseData.syncId || responseData.syncId == 0) {
-        return `${showTaskEndpoint}?id=${responseData.id}`
-    }
-
-    return `${showTaskEndpoint}?id=${responseData.id}&sync_id=${responseData.syncId}`
-}
+const getTaskUrlFromQuickAddResponse = (responseData: QuickAddTaskResponse) =>
+    responseData.syncId
+        ? `${showTaskEndpoint}?id=${responseData.id}&sync_id=${responseData.syncId}`
+        : `${showTaskEndpoint}?id=${responseData.id}`
 
 export const getTaskFromQuickAddResponse = (responseData: QuickAddTaskResponse): Task => ({
     id: responseData.id,
