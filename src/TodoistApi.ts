@@ -45,7 +45,7 @@ export class TodoistApi {
         return response.data
     }
 
-    async getTasks(args: GetTasksArgs): Promise<Task[]> {
+    async getTasks(args?: GetTasksArgs): Promise<Task[]> {
         const response = await get<Task[]>(
             API_REST_BASE_URI,
             ENDPOINT_REST_TASKS,

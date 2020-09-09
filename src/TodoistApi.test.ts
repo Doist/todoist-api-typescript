@@ -93,7 +93,7 @@ describe('TodoistApi', () => {
     describe('getTask', () => {
         test('calls get request with expected url', async () => {
             const taskId = 12
-            const { getMock } = setupRestClientMock(DEFAULT_QUICK_ADD_RESPONSE)
+            const { getMock } = setupRestClientMock(DEFAULT_TASK)
             const api = getTarget()
             await api.getTask(taskId)
 
@@ -112,7 +112,7 @@ describe('TodoistApi', () => {
         }
 
         test('calls get on expected endpoint with args', async () => {
-            const { getMock } = setupRestClientMock(DEFAULT_QUICK_ADD_RESPONSE)
+            const { getMock } = setupRestClientMock(DEFAULT_TASK)
             const api = getTarget()
             await api.getTasks(DEFAULT_GET_TASKS_ARGS)
 
