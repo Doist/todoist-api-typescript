@@ -67,7 +67,18 @@ describe('restClient', () => {
         await get(DEFAULT_BASE_URI, DEFAULT_ENDPOINT, DEFAULT_AUTH_TOKEN)
 
         expect(axiosMock.get).toBeCalledTimes(1)
-        expect(axiosMock.get).toBeCalledWith(DEFAULT_BASE_URI + DEFAULT_ENDPOINT)
+        expect(axiosMock.get).toBeCalledWith(DEFAULT_BASE_URI + DEFAULT_ENDPOINT, {
+            params: undefined,
+        })
+    })
+
+    test('get passes params to axios', async () => {
+        await get(DEFAULT_BASE_URI, DEFAULT_ENDPOINT, DEFAULT_AUTH_TOKEN, DEFAULT_PAYLOAD)
+
+        expect(axiosMock.get).toBeCalledTimes(1)
+        expect(axiosMock.get).toBeCalledWith(DEFAULT_BASE_URI + DEFAULT_ENDPOINT, {
+            params: DEFAULT_PAYLOAD,
+        })
     })
 
     test('get returns response from axios', async () => {
@@ -94,14 +105,14 @@ describe('restClient', () => {
     })
 
     test('post creates axios client with expected configuration', async () => {
-        await post(DEFAULT_BASE_URI, DEFAULT_ENDPOINT, DEFAULT_PAYLOAD, DEFAULT_AUTH_TOKEN)
+        await post(DEFAULT_BASE_URI, DEFAULT_ENDPOINT, DEFAULT_AUTH_TOKEN, DEFAULT_PAYLOAD)
 
         expect(axiosMock.create).toBeCalledTimes(1)
         expect(axiosMock.create).toBeCalledWith({ headers: DEFAULT_HEADERS })
     })
 
     test('post sends expected endpoint and payload to axios', async () => {
-        await post(DEFAULT_BASE_URI, DEFAULT_ENDPOINT, DEFAULT_PAYLOAD, DEFAULT_AUTH_TOKEN)
+        await post(DEFAULT_BASE_URI, DEFAULT_ENDPOINT, DEFAULT_AUTH_TOKEN, DEFAULT_PAYLOAD)
 
         expect(axiosMock.post).toBeCalledTimes(1)
         expect(axiosMock.post).toBeCalledWith(DEFAULT_BASE_URI + DEFAULT_ENDPOINT, DEFAULT_PAYLOAD)
@@ -111,8 +122,8 @@ describe('restClient', () => {
         const result = await post(
             DEFAULT_BASE_URI,
             DEFAULT_ENDPOINT,
-            DEFAULT_PAYLOAD,
             DEFAULT_AUTH_TOKEN,
+            DEFAULT_PAYLOAD,
         )
 
         expect(axiosMock.post).toBeCalledTimes(1)
@@ -127,7 +138,7 @@ describe('restClient', () => {
         expect.assertions(3)
 
         try {
-            await post(DEFAULT_BASE_URI, DEFAULT_ENDPOINT, DEFAULT_PAYLOAD, DEFAULT_AUTH_TOKEN)
+            await post(DEFAULT_BASE_URI, DEFAULT_ENDPOINT, DEFAULT_AUTH_TOKEN, DEFAULT_PAYLOAD)
         } catch (e) {
             expect(e.message).toEqual(DEFAULT_ERROR_MESSAGE)
             expect(e.httpStatusCode).toEqual(statusCode)

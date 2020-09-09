@@ -1,11 +1,11 @@
 import { getTaskFromQuickAddResponse } from './taskConverters'
-import { DEFAULT_QUICK_ADD_RESPONSE, DEFAULT_TASK_RESPONSE } from '../testData/testDefaults'
+import { DEFAULT_QUICK_ADD_RESPONSE, DEFAULT_TASK } from '../testData/testDefaults'
 import theoretically from 'jest-theories'
 
 describe('getTaskFromQuickAddResponse', () => {
     test('maps sync data to expected task properties', async () => {
         const task = getTaskFromQuickAddResponse(DEFAULT_QUICK_ADD_RESPONSE)
-        expect(task).toEqual(DEFAULT_TASK_RESPONSE)
+        expect(task).toEqual(DEFAULT_TASK)
     })
 
     test('converts null sectionId to 0', async () => {

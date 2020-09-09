@@ -36,8 +36,8 @@ const getAxiosClient = (apiToken: string) => {
 export const post = async <T extends unknown>(
     baseUri: string,
     relativePath: string,
-    payload: unknown,
     apiToken: string,
+    payload: unknown,
 ): Promise<AxiosResponse<T>> => {
     try {
         const axiosClient = getAxiosClient(apiToken)
@@ -52,11 +52,12 @@ export const get = async <T extends unknown>(
     baseUri: string,
     relativePath: string,
     apiToken: string,
+    params?: unknown,
 ): Promise<AxiosResponse<T>> => {
     try {
         const axiosClient = getAxiosClient(apiToken)
 
-        return await axiosClient.get<T>(urljoin(baseUri, relativePath))
+        return await axiosClient.get<T>(urljoin(baseUri, relativePath), { params })
     } catch (error) {
         throw getTodoistRequestError(error)
     }
