@@ -1,11 +1,11 @@
-import { QuickAddTaskResponse, Task } from '../types'
+import { Project, QuickAddTaskResponse, Task } from '../types'
 
 const DEFAULT_TASK_ID = 1234
-const DEFAULT_TASK_SYNC_ID = 5678
 const DEFAULT_TASK_CONTENT = 'This is a task'
 const DEFAULT_TASK_PRIORITY = 1
-const DEFAULT_TASK_ORDER = 3
+const DEFAULT_ORDER = 3
 const DEFAULT_PROJECT_ID = 123
+const DEFAULT_PROJECT_NAME = 'This is a project'
 const DEFAULT_SECTION_ID = 456
 const DEFAULT_PARENT_ID = 5678
 const DEFAULT_ASSIGNEE = 1234
@@ -24,7 +24,7 @@ export const DEFAULT_QUICK_ADD_RESPONSE: QuickAddTaskResponse = {
     priority: DEFAULT_TASK_PRIORITY,
     sectionId: DEFAULT_SECTION_ID,
     parentId: DEFAULT_PARENT_ID,
-    childOrder: DEFAULT_TASK_ORDER,
+    childOrder: DEFAULT_ORDER,
     labels: DEFAULT_LABELS,
     responsibleUid: DEFAULT_ASSIGNEE,
     checked: 0,
@@ -33,14 +33,9 @@ export const DEFAULT_QUICK_ADD_RESPONSE: QuickAddTaskResponse = {
     due: DEFAULT_TASK_DUE,
 }
 
-export const QUICK_ADD_RESPONSE_WITH_SYNC_ID: QuickAddTaskResponse = {
-    ...DEFAULT_QUICK_ADD_RESPONSE,
-    syncId: DEFAULT_TASK_SYNC_ID,
-}
-
 export const DEFAULT_TASK: Task = {
     id: DEFAULT_TASK_ID,
-    order: DEFAULT_TASK_ORDER,
+    order: DEFAULT_ORDER,
     parentId: DEFAULT_PARENT_ID,
     content: DEFAULT_TASK_CONTENT,
     projectId: DEFAULT_PROJECT_ID,
@@ -53,4 +48,15 @@ export const DEFAULT_TASK: Task = {
     url: 'https://todoist.com/showTask?id=1234',
     due: DEFAULT_TASK_DUE,
     assignee: DEFAULT_ASSIGNEE,
+}
+
+export const DEFAULT_PROJECT: Project = {
+    id: DEFAULT_PROJECT_ID,
+    name: DEFAULT_PROJECT_NAME,
+    color: 30,
+    order: DEFAULT_ORDER,
+    parentId: DEFAULT_PROJECT_ID,
+    commentCount: 0,
+    favorite: false,
+    shared: false,
 }

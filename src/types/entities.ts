@@ -11,7 +11,7 @@ export type TodoistEntity = {
 }
 
 export type OrderedEntity = TodoistEntity & {
-    order: number
+    order?: number
 }
 
 export type EntityInHierarchy = OrderedEntity & {
@@ -46,4 +46,15 @@ export type QuickAddTaskResponse = {
     dateAdded: string // created
     syncId: number | null
     due: DueDate | null
+}
+
+export type Project = EntityInHierarchy & {
+    name: string
+    color: number
+    commentCount: number
+    shared: boolean
+    favorite: boolean
+    inboxProject?: boolean
+    teamInbox?: boolean
+    syncId?: number
 }

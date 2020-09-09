@@ -4,10 +4,11 @@ import { TodoistApi } from '.'
 import { mock } from 'jest-mock-extended'
 import { AxiosResponse } from 'axios'
 import { Task } from './types'
-import { DEFAULT_QUICK_ADD_RESPONSE, DEFAULT_TASK } from './testData/testDefaults'
+import { DEFAULT_PROJECT, DEFAULT_QUICK_ADD_RESPONSE, DEFAULT_TASK } from './testData/testDefaults'
 import {
     API_REST_BASE_URI,
     API_SYNC_BASE_URI,
+    ENDPOINT_REST_PROJECTS,
     ENDPOINT_REST_TASKS,
     ENDPOINT_SYNC_QUICK_ADD,
 } from './consts/endpoints'
@@ -112,7 +113,7 @@ describe('TodoistApi', () => {
         }
 
         test('calls get on expected endpoint with args', async () => {
-            const { getMock } = setupRestClientMock(DEFAULT_TASK)
+            const { getMock } = setupRestClientMock([DEFAULT_TASK])
             const api = getTarget()
             await api.getTasks(DEFAULT_GET_TASKS_ARGS)
 
@@ -122,6 +123,37 @@ describe('TodoistApi', () => {
                 ENDPOINT_REST_TASKS,
                 DEFAULT_AUTH_TOKEN,
                 DEFAULT_GET_TASKS_ARGS,
+            )
+        })
+    })
+
+    describe('getProject', () => {
+        test('calls get request with expected url', async () => {
+            const projectId = 12
+            const { getMock } = setupRestClientMock(DEFAULT_PROJECT)
+            const api = getTarget()
+            await api.getProject(projectId)
+
+            expect(getMock).toBeCalledTimes(1)
+            expect(getMock).toBeCalledWith(
+                API_REST_BASE_URI,
+                `${ENDPOINT_REST_PROJECTS}/${projectId}`,
+                DEFAULT_AUTH_TOKEN,
+            )
+        })
+    })
+
+    describe('getProjects', () => {
+        test('calls get on projects endpoint', async () => {
+            const { getMock } = setupRestClientMock([DEFAULT_PROJECT])
+            const api = getTarget()
+            await api.getProjects()
+
+            expect(getMock).toBeCalledTimes(1)
+            expect(getMock).toBeCalledWith(
+                API_REST_BASE_URI,
+                ENDPOINT_REST_PROJECTS,
+                DEFAULT_AUTH_TOKEN,
             )
         })
     })
