@@ -1,13 +1,13 @@
 import { Task, QuickAddTaskResponse } from './types/entities'
-import { post } from './restClient'
-import { AddTaskArgs } from './types/requests'
+import { AddTaskArgs, GetTasksArgs } from './types/requests'
+import { post, get } from './restClient'
 import { getTaskFromQuickAddResponse } from './converters/taskConverters'
-
-export const API_REST_BASE_URI = 'https://api.todoist.com/rest/v1/'
-export const API_SYNC_BASE_URI = 'https://api.todoist.com/sync/v8/'
-
-export const ENDPOINT_REST_TASKS = 'tasks'
-export const ENDPOINT_SYNC_QUICK_ADD = 'quick/add'
+import {
+    API_REST_BASE_URI,
+    API_SYNC_BASE_URI,
+    ENDPOINT_REST_TASKS,
+    ENDPOINT_SYNC_QUICK_ADD,
+} from './consts/endpoints'
 
 export class TodoistApi {
     authToken: string
@@ -20,8 +20,8 @@ export class TodoistApi {
         const response = await post<Task>(
             API_REST_BASE_URI,
             ENDPOINT_REST_TASKS,
-            args,
             this.authToken,
+            args,
         )
         return response.data
     }
@@ -30,9 +30,28 @@ export class TodoistApi {
         const response = await post<QuickAddTaskResponse>(
             API_SYNC_BASE_URI,
             ENDPOINT_SYNC_QUICK_ADD,
-            { text },
             this.authToken,
+            { text },
         )
         return getTaskFromQuickAddResponse(response.data)
+    }
+
+    async getTask(id: number): Promise<Task> {
+        const response = await get<Task>(
+            API_REST_BASE_URI,
+            `${ENDPOINT_REST_TASKS}/${id}`,
+            this.authToken,
+        )
+        return response.data
+    }
+
+    async getTasks(args: GetTasksArgs): Promise<Task[]> {
+        const response = await get<Task[]>(
+            API_REST_BASE_URI,
+            ENDPOINT_REST_TASKS,
+            this.authToken,
+            args,
+        )
+        return response.data
     }
 }

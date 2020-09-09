@@ -38,7 +38,7 @@ export const QUICK_ADD_RESPONSE_WITH_SYNC_ID: QuickAddTaskResponse = {
     syncId: DEFAULT_TASK_SYNC_ID,
 }
 
-export const DEFAULT_TASK_RESPONSE: Task = {
+export const DEFAULT_TASK: Task = {
     id: DEFAULT_TASK_ID,
     order: DEFAULT_TASK_ORDER,
     parentId: DEFAULT_PARENT_ID,

@@ -12,3 +12,11 @@ export type AddTaskArgs = {
     dueDatetime?: string
     assignee?: number
 }
+
+export type GetTasksArgs = {
+    projectId?: number
+    labelId?: number
+    filter?: string
+    lang?: string
+    ids?: number[]
+}
