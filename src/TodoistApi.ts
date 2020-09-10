@@ -125,6 +125,16 @@ export class TodoistApi {
         return response.data
     }
 
+    async getLabel(id: number): Promise<Label> {
+        const response = await request<Label>(
+            'GET',
+            API_REST_BASE_URI,
+            urljoin(ENDPOINT_REST_LABELS, String(id)),
+            this.authToken,
+        )
+        return response.data
+    }
+
     async getLabels(): Promise<Label[]> {
         const response = await request<Label[]>(
             'GET',

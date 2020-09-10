@@ -314,6 +314,33 @@ describe('TodoistApi', () => {
         })
     })
 
+    describe('getLabel', () => {
+        test('calls get request with expected url', async () => {
+            const labelId = 12
+            const requestMock = setupRestClientMock(DEFAULT_LABEL)
+            const api = getTarget()
+
+            await api.getLabel(labelId)
+
+            expect(requestMock).toBeCalledTimes(1)
+            expect(requestMock).toBeCalledWith(
+                'GET',
+                API_REST_BASE_URI,
+                `${ENDPOINT_REST_LABELS}/${labelId}`,
+                DEFAULT_AUTH_TOKEN,
+            )
+        })
+
+        test('returns result from rest client', async () => {
+            setupRestClientMock(DEFAULT_LABEL)
+            const api = getTarget()
+
+            const project = await api.getLabel(123)
+
+            expect(project).toEqual(DEFAULT_LABEL)
+        })
+    })
+
     describe('getLabels', () => {
         test('calls get on labels endpoint', async () => {
             const requestMock = setupRestClientMock([DEFAULT_LABEL])
