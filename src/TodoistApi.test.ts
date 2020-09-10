@@ -4,7 +4,12 @@ import { TodoistApi } from '.'
 import { mock } from 'jest-mock-extended'
 import { AxiosResponse } from 'axios'
 import { Task } from './types'
-import { DEFAULT_PROJECT, DEFAULT_QUICK_ADD_RESPONSE, DEFAULT_TASK } from './testData/testDefaults'
+import {
+    DEFAULT_LABEL,
+    DEFAULT_PROJECT,
+    DEFAULT_QUICK_ADD_RESPONSE,
+    DEFAULT_TASK,
+} from './testData/testDefaults'
 import {
     API_REST_BASE_URI,
     API_SYNC_BASE_URI,
@@ -13,6 +18,7 @@ import {
     ENDPOINT_REST_TASK_REOPEN,
     ENDPOINT_REST_TASKS,
     ENDPOINT_SYNC_QUICK_ADD,
+    ENDPOINT_REST_LABELS,
 } from './consts/endpoints'
 
 const DEFAULT_AUTH_TOKEN = 'AToken'
@@ -305,6 +311,33 @@ describe('TodoistApi', () => {
             const response = await api.getProjects()
 
             expect(response).toEqual(projects)
+        })
+    })
+
+    describe('getLabels', () => {
+        test('calls get on labels endpoint', async () => {
+            const requestMock = setupRestClientMock([DEFAULT_LABEL])
+            const api = getTarget()
+
+            await api.getLabels()
+
+            expect(requestMock).toBeCalledTimes(1)
+            expect(requestMock).toBeCalledWith(
+                'GET',
+                API_REST_BASE_URI,
+                ENDPOINT_REST_LABELS,
+                DEFAULT_AUTH_TOKEN,
+            )
+        })
+
+        test('returns result from rest client', async () => {
+            const labels = [DEFAULT_LABEL]
+            setupRestClientMock(labels)
+            const api = getTarget()
+
+            const response = await api.getLabels()
+
+            expect(response).toEqual(labels)
         })
     })
 })

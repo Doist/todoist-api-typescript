@@ -1,4 +1,4 @@
-import { Task, QuickAddTaskResponse, Project } from './types/entities'
+import { Task, QuickAddTaskResponse, Project, Label } from './types/entities'
 import { AddTaskArgs, GetTasksArgs, UpdateTaskArgs } from './types/requests'
 import { request, isSuccess } from './restClient'
 import { getTaskFromQuickAddResponse } from './converters/taskConverters'
@@ -11,6 +11,7 @@ import {
     ENDPOINT_SYNC_QUICK_ADD,
     ENDPOINT_REST_TASK_CLOSE,
     ENDPOINT_REST_TASK_REOPEN,
+    ENDPOINT_REST_LABELS,
 } from './consts/endpoints'
 
 export class TodoistApi {
@@ -119,6 +120,16 @@ export class TodoistApi {
             'GET',
             API_REST_BASE_URI,
             ENDPOINT_REST_PROJECTS,
+            this.authToken,
+        )
+        return response.data
+    }
+
+    async getLabels(): Promise<Label[]> {
+        const response = await request<Label[]>(
+            'GET',
+            API_REST_BASE_URI,
+            ENDPOINT_REST_LABELS,
             this.authToken,
         )
         return response.data
