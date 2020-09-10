@@ -2,6 +2,7 @@ import Axios, { AxiosResponse, AxiosError } from 'axios'
 import applyCaseMiddleware from 'axios-case-converter'
 import urljoin from 'url-join'
 import { TodoistRequestError } from './types/errors'
+import { HttpMethod } from './types/http'
 
 const defaultHeaders = {
     'Content-Type': 'application/json',
@@ -33,31 +34,27 @@ const getAxiosClient = (apiToken: string) => {
     return applyCaseMiddleware(Axios.create(configuration))
 }
 
-export const post = async <T extends unknown>(
+export const isSuccess = (response: AxiosResponse): boolean =>
+    response.status >= 200 && response.status < 300
+
+export const request = async <T extends unknown>(
+    httpMethod: HttpMethod,
     baseUri: string,
     relativePath: string,
     apiToken: string,
-    payload: unknown,
+    payload?: unknown,
 ): Promise<AxiosResponse<T>> => {
     try {
         const axiosClient = getAxiosClient(apiToken)
 
-        return await axiosClient.post<T>(urljoin(baseUri, relativePath), payload)
-    } catch (error) {
-        throw getTodoistRequestError(error)
-    }
-}
-
-export const get = async <T extends unknown>(
-    baseUri: string,
-    relativePath: string,
-    apiToken: string,
-    params?: unknown,
-): Promise<AxiosResponse<T>> => {
-    try {
-        const axiosClient = getAxiosClient(apiToken)
-
-        return await axiosClient.get<T>(urljoin(baseUri, relativePath), { params })
+        switch (httpMethod) {
+            case 'GET':
+                return await axiosClient.get<T>(urljoin(baseUri, relativePath), { params: payload })
+            case 'POST':
+                return await axiosClient.post<T>(urljoin(baseUri, relativePath), payload)
+            case 'DELETE':
+                return await axiosClient.delete<T>(urljoin(baseUri, relativePath))
+        }
     } catch (error) {
         throw getTodoistRequestError(error)
     }

@@ -20,3 +20,14 @@ export type GetTasksArgs = {
     lang?: string
     ids?: number[]
 }
+
+export type UpdateTaskArgs = {
+    content?: string
+    labelIds?: number[]
+    priority?: number
+    dueString?: string
+    dueLang?: string
+    dueDate?: string
+    dueDatetime?: string
+    assignee?: number
+}
