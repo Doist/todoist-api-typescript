@@ -1,5 +1,12 @@
-import { Task, QuickAddTaskResponse, Project, Label } from './types/entities'
-import { AddTaskArgs, GetTasksArgs, UpdateTaskArgs } from './types/requests'
+import {
+    Task,
+    QuickAddTaskResponse,
+    Project,
+    Label,
+    AddTaskArgs,
+    GetTasksArgs,
+    UpdateTaskArgs,
+} from './types'
 import { request, isSuccess } from './restClient'
 import { getTaskFromQuickAddResponse } from './utils/taskConverters'
 import urljoin from 'url-join'
@@ -13,11 +20,20 @@ import {
     ENDPOINT_REST_TASK_REOPEN,
     ENDPOINT_REST_LABELS,
 } from './consts/endpoints'
+import {
+    isLabel,
+    isLabelArray,
+    isProject,
+    isProjectArray,
+    isTask,
+    isTaskArray,
+    validate,
+} from './utils/validation'
 
 export class TodoistApi {
     authToken: string
 
-    constructor(authToken: string) {
+    constructor(authToken: string, isResponseValidationEnabled = false) {
         this.authToken = authToken
     }
 
@@ -28,6 +44,9 @@ export class TodoistApi {
             urljoin(ENDPOINT_REST_TASKS, String(id)),
             this.authToken,
         )
+
+        validate(response.data, isTask)
+
         return response.data
     }
 
@@ -39,6 +58,9 @@ export class TodoistApi {
             this.authToken,
             args,
         )
+
+        validate(response.data, isTaskArray)
+
         return response.data
     }
 
@@ -50,6 +72,9 @@ export class TodoistApi {
             this.authToken,
             args,
         )
+
+        validate(response.data, isTask)
+
         return response.data
     }
 
@@ -61,7 +86,11 @@ export class TodoistApi {
             this.authToken,
             { text },
         )
-        return getTaskFromQuickAddResponse(response.data)
+        const task = getTaskFromQuickAddResponse(response.data)
+
+        validate(task, isTask)
+
+        return task
     }
 
     async updateTask(id: number, args: UpdateTaskArgs): Promise<boolean> {
@@ -112,6 +141,9 @@ export class TodoistApi {
             urljoin(ENDPOINT_REST_PROJECTS, String(id)),
             this.authToken,
         )
+
+        validate(response.data, isProject)
+
         return response.data
     }
 
@@ -122,6 +154,9 @@ export class TodoistApi {
             ENDPOINT_REST_PROJECTS,
             this.authToken,
         )
+
+        validate(response.data, isProjectArray)
+
         return response.data
     }
 
@@ -132,6 +167,9 @@ export class TodoistApi {
             urljoin(ENDPOINT_REST_LABELS, String(id)),
             this.authToken,
         )
+
+        validate(response.data, isLabel)
+
         return response.data
     }
 
@@ -142,6 +180,9 @@ export class TodoistApi {
             ENDPOINT_REST_LABELS,
             this.authToken,
         )
+
+        validate(response.data, isLabelArray)
+
         return response.data
     }
 }
