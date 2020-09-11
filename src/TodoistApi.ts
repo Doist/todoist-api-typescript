@@ -33,7 +33,7 @@ import {
 export class TodoistApi {
     authToken: string
 
-    constructor(authToken: string, isResponseValidationEnabled = false) {
+    constructor(authToken: string) {
         this.authToken = authToken
     }
 

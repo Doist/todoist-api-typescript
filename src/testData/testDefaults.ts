@@ -17,6 +17,8 @@ const DEFAULT_TASK_DUE = {
     recurring: false,
     string: 'a date string',
     date: DEFAULT_DATE,
+    datetime: undefined,
+    timezone: undefined,
 }
 const DEFAULT_LABELS = [1, 2, 3]
 
@@ -61,7 +63,10 @@ export const DEFAULT_PROJECT: Project = {
     parentId: DEFAULT_PROJECT_ID,
     commentCount: 0,
     favorite: false,
+    inboxProject: undefined,
+    teamInbox: undefined,
     shared: false,
+    syncId: 0,
 }
 
 export const DEFAULT_LABEL: Label = {

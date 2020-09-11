@@ -60,7 +60,7 @@ export type Project = TodoistEntity &
         favorite: boolean
         inboxProject?: boolean
         teamInbox?: boolean
-        syncId?: number
+        syncId: number
     }
 
 export type Label = TodoistEntity &

@@ -1,22 +1,22 @@
 import { DueDate, Label, Project, ResponseValidationError, Task } from '../types'
 
 const isString = (value: unknown, isOptional = false): boolean =>
-    (isOptional && !value) || typeof value === 'string'
+    (isOptional && typeof value === 'undefined') || typeof value === 'string'
 
 const isNumber = (value: unknown, isOptional = false): boolean =>
-    (isOptional && !value) || typeof value === 'number'
+    (isOptional && typeof value === 'undefined') || typeof value === 'number'
 
 const isBoolean = (value: unknown, isOptional = false): boolean =>
-    (isOptional && !value) || typeof value === 'boolean'
+    (isOptional && typeof value === 'undefined') || typeof value === 'boolean'
 
 const isArray = (items: unknown, itemValidationFunc: (item: unknown) => boolean) =>
     Array.isArray(items) && items.every(itemValidationFunc)
 
-export const isDueDate = (value: unknown, isOptional = false): value is DueDate => {
+const isDueDate = (value: unknown, isOptional = false): value is DueDate => {
     const dueDate = value as DueDate
 
     return (
-        (isOptional && !dueDate) ||
+        (isOptional && typeof value === 'undefined') ||
         (dueDate &&
             isBoolean(dueDate.recurring) &&
             isString(dueDate.string) &&
