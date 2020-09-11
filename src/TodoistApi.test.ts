@@ -1,5 +1,5 @@
 import * as restClient from './restClient'
-import * as taskConverters from './converters/taskConverters'
+import * as taskConverters from './utils/taskConverters'
 import { TodoistApi } from '.'
 import { mock } from 'jest-mock-extended'
 import { AxiosResponse } from 'axios'

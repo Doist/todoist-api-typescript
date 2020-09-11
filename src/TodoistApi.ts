@@ -1,7 +1,7 @@
 import { Task, QuickAddTaskResponse, Project, Label } from './types/entities'
 import { AddTaskArgs, GetTasksArgs, UpdateTaskArgs } from './types/requests'
 import { request, isSuccess } from './restClient'
-import { getTaskFromQuickAddResponse } from './converters/taskConverters'
+import { getTaskFromQuickAddResponse } from './utils/taskConverters'
 import urljoin from 'url-join'
 import {
     API_REST_BASE_URI,
