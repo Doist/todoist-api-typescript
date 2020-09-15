@@ -1,8 +1,10 @@
 import { Task, QuickAddTaskResponse, Project, Label, User } from './types/entities'
 import {
+    AddLabelArgs,
     AddProjectArgs,
     AddTaskArgs,
     GetTasksArgs,
+    UpdateLabelArgs,
     UpdateProjectArgs,
     UpdateTaskArgs,
 } from './types/requests'
@@ -192,5 +194,37 @@ export class TodoistApi {
             this.authToken,
         )
         return response.data
+    }
+
+    async addLabel(args: AddLabelArgs): Promise<Label> {
+        const response = await request<Label>(
+            'POST',
+            API_REST_BASE_URI,
+            ENDPOINT_REST_LABELS,
+            this.authToken,
+            args,
+        )
+        return response.data
+    }
+
+    async updateLabel(id: number, args: UpdateLabelArgs): Promise<boolean> {
+        const response = await request(
+            'POST',
+            API_REST_BASE_URI,
+            urljoin(ENDPOINT_REST_LABELS, String(id)),
+            this.authToken,
+            args,
+        )
+        return isSuccess(response)
+    }
+
+    async deleteLabel(id: number): Promise<boolean> {
+        const response = await request(
+            'DELETE',
+            API_REST_BASE_URI,
+            urljoin(ENDPOINT_REST_LABELS, String(id)),
+            this.authToken,
+        )
+        return isSuccess(response)
     }
 }

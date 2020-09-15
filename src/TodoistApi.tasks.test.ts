@@ -20,9 +20,7 @@ const setupSyncTaskConverter = (returnedTask: Task) => {
     return jest.spyOn(taskConverters, 'getTaskFromQuickAddResponse').mockReturnValue(returnedTask)
 }
 
-const getTarget = () => {
-    return new TodoistApi(DEFAULT_AUTH_TOKEN)
-}
+const getTarget = () => new TodoistApi(DEFAULT_AUTH_TOKEN)
 
 describe('TodoistApi task endpoints', () => {
     describe('addTask', () => {
