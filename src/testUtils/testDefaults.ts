@@ -1,4 +1,4 @@
-import { Label, Project, QuickAddTaskResponse, Task, User } from '../types'
+import { Label, Project, QuickAddTaskResponse, Section, Task, User } from '../types'
 
 const DEFAULT_TASK_ID = 1234
 const DEFAULT_TASK_CONTENT = 'This is a task'
@@ -9,6 +9,7 @@ const DEFAULT_PROJECT_NAME = 'This is a project'
 const DEFAULT_LABEL_ID = 456
 const DEFAULT_LABEL_NAME = 'This is a label'
 const DEFAULT_SECTION_ID = 456
+const DEFAULT_SECTION_NAME = 'This is a section'
 const DEFAULT_PARENT_ID = 5678
 const DEFAULT_ASSIGNEE = 1234
 const DEFAULT_DATE = '2020-09-08T12:00:00Z'
@@ -67,6 +68,13 @@ export const DEFAULT_PROJECT: Project = {
     commentCount: 0,
     favorite: false,
     shared: false,
+}
+
+export const DEFAULT_SECTION: Section = {
+    id: DEFAULT_SECTION_ID,
+    name: DEFAULT_SECTION_NAME,
+    order: DEFAULT_ORDER,
+    projectId: DEFAULT_PROJECT_ID,
 }
 
 export const DEFAULT_LABEL: Label = {

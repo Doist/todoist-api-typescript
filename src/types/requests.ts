@@ -45,6 +45,16 @@ export type UpdateProjectArgs = {
     favorite?: boolean
 }
 
+export type AddSectionArgs = {
+    name: string
+    projectId: number
+    order?: number
+}
+
+export type UpdateSectionArgs = {
+    name: string
+}
+
 export type AddLabelArgs = {
     name: string
     order?: number

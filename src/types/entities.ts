@@ -51,9 +51,9 @@ export type QuickAddTaskResponse = {
 }
 
 export type Project = TodoistEntity &
+    Partial<OrderedEntity> &
     EntityInHierarchy & {
         name: string
-        order?: number
         color: number
         commentCount: number
         shared: boolean
@@ -61,6 +61,12 @@ export type Project = TodoistEntity &
         inboxProject?: boolean
         teamInbox?: boolean
         syncId?: number
+    }
+
+export type Section = TodoistEntity &
+    OrderedEntity & {
+        name: string
+        projectId: number
     }
 
 export type Label = TodoistEntity &
