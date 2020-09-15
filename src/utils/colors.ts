@@ -45,6 +45,6 @@ export const colors = [
 ]
 
 export const getColor = (colorId: number): Color => {
-    const color = colors.find((color) => color.id == colorId)
+    const color = colors.find((color) => color.id === colorId)
     return color ?? charcoal
 }
