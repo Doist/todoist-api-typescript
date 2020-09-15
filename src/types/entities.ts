@@ -74,3 +74,9 @@ export type User = TodoistEntity & {
     name: string
     email: string
 }
+
+export type Color = {
+    name: string
+    id: number
+    value: string
+}
