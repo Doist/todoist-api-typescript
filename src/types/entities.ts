@@ -69,3 +69,8 @@ export type Label = TodoistEntity &
         color: number
         favorite: boolean
     }
+
+export type User = TodoistEntity & {
+    name: string
+    email: string
+}

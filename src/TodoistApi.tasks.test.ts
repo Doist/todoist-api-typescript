@@ -1,32 +1,20 @@
-import * as restClient from './restClient'
 import * as taskConverters from './utils/taskConverters'
 import { TodoistApi } from '.'
-import { mock } from 'jest-mock-extended'
-import { AxiosResponse } from 'axios'
 import { Task } from './types'
 import {
-    DEFAULT_LABEL,
-    DEFAULT_PROJECT,
+    DEFAULT_AUTH_TOKEN,
     DEFAULT_QUICK_ADD_RESPONSE,
     DEFAULT_TASK,
-} from './testData/testDefaults'
+} from './testUtils/testDefaults'
 import {
     API_REST_BASE_URI,
     API_SYNC_BASE_URI,
     ENDPOINT_REST_TASK_CLOSE,
-    ENDPOINT_REST_PROJECTS,
     ENDPOINT_REST_TASK_REOPEN,
     ENDPOINT_REST_TASKS,
     ENDPOINT_SYNC_QUICK_ADD,
-    ENDPOINT_REST_LABELS,
 } from './consts/endpoints'
-
-const DEFAULT_AUTH_TOKEN = 'AToken'
-
-const setupRestClientMock = (responseData: unknown, status = 200) => {
-    const response = mock<AxiosResponse>({ status, data: responseData })
-    return jest.spyOn(restClient, 'request').mockResolvedValue(response)
-}
+import { setupRestClientMock } from './testUtils/mocks'
 
 const setupSyncTaskConverter = (returnedTask: Task) => {
     return jest.spyOn(taskConverters, 'getTaskFromQuickAddResponse').mockReturnValue(returnedTask)
@@ -36,7 +24,7 @@ const getTarget = () => {
     return new TodoistApi(DEFAULT_AUTH_TOKEN)
 }
 
-describe('TodoistApi', () => {
+describe('TodoistApi task endpoints', () => {
     describe('addTask', () => {
         const DEFAULT_ADD_TASK_ARGS = {
             content: 'This is a task',
@@ -257,114 +245,6 @@ describe('TodoistApi', () => {
             const response = await api.getTasks(DEFAULT_GET_TASKS_ARGS)
 
             expect(response).toEqual(tasks)
-        })
-    })
-
-    describe('getProject', () => {
-        test('calls get request with expected url', async () => {
-            const projectId = 12
-            const requestMock = setupRestClientMock(DEFAULT_PROJECT)
-            const api = getTarget()
-
-            await api.getProject(projectId)
-
-            expect(requestMock).toBeCalledTimes(1)
-            expect(requestMock).toBeCalledWith(
-                'GET',
-                API_REST_BASE_URI,
-                `${ENDPOINT_REST_PROJECTS}/${projectId}`,
-                DEFAULT_AUTH_TOKEN,
-            )
-        })
-
-        test('returns result from rest client', async () => {
-            setupRestClientMock(DEFAULT_PROJECT)
-            const api = getTarget()
-
-            const project = await api.getProject(123)
-
-            expect(project).toEqual(DEFAULT_PROJECT)
-        })
-    })
-
-    describe('getProjects', () => {
-        test('calls get on projects endpoint', async () => {
-            const requestMock = setupRestClientMock([DEFAULT_PROJECT])
-            const api = getTarget()
-
-            await api.getProjects()
-
-            expect(requestMock).toBeCalledTimes(1)
-            expect(requestMock).toBeCalledWith(
-                'GET',
-                API_REST_BASE_URI,
-                ENDPOINT_REST_PROJECTS,
-                DEFAULT_AUTH_TOKEN,
-            )
-        })
-
-        test('returns result from rest client', async () => {
-            const projects = [DEFAULT_PROJECT]
-            setupRestClientMock(projects)
-            const api = getTarget()
-
-            const response = await api.getProjects()
-
-            expect(response).toEqual(projects)
-        })
-    })
-
-    describe('getLabel', () => {
-        test('calls get request with expected url', async () => {
-            const labelId = 12
-            const requestMock = setupRestClientMock(DEFAULT_LABEL)
-            const api = getTarget()
-
-            await api.getLabel(labelId)
-
-            expect(requestMock).toBeCalledTimes(1)
-            expect(requestMock).toBeCalledWith(
-                'GET',
-                API_REST_BASE_URI,
-                `${ENDPOINT_REST_LABELS}/${labelId}`,
-                DEFAULT_AUTH_TOKEN,
-            )
-        })
-
-        test('returns result from rest client', async () => {
-            setupRestClientMock(DEFAULT_LABEL)
-            const api = getTarget()
-
-            const project = await api.getLabel(123)
-
-            expect(project).toEqual(DEFAULT_LABEL)
-        })
-    })
-
-    describe('getLabels', () => {
-        test('calls get on labels endpoint', async () => {
-            const requestMock = setupRestClientMock([DEFAULT_LABEL])
-            const api = getTarget()
-
-            await api.getLabels()
-
-            expect(requestMock).toBeCalledTimes(1)
-            expect(requestMock).toBeCalledWith(
-                'GET',
-                API_REST_BASE_URI,
-                ENDPOINT_REST_LABELS,
-                DEFAULT_AUTH_TOKEN,
-            )
-        })
-
-        test('returns result from rest client', async () => {
-            const labels = [DEFAULT_LABEL]
-            setupRestClientMock(labels)
-            const api = getTarget()
-
-            const response = await api.getLabels()
-
-            expect(response).toEqual(labels)
         })
     })
 })

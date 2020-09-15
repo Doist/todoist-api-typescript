@@ -1,5 +1,11 @@
-import { Task, QuickAddTaskResponse, Project, Label } from './types/entities'
-import { AddTaskArgs, GetTasksArgs, UpdateTaskArgs } from './types/requests'
+import { Task, QuickAddTaskResponse, Project, Label, User } from './types/entities'
+import {
+    AddProjectArgs,
+    AddTaskArgs,
+    GetTasksArgs,
+    UpdateProjectArgs,
+    UpdateTaskArgs,
+} from './types/requests'
 import { request, isSuccess } from './restClient'
 import { getTaskFromQuickAddResponse } from './utils/taskConverters'
 import urljoin from 'url-join'
@@ -12,6 +18,7 @@ import {
     ENDPOINT_REST_TASK_CLOSE,
     ENDPOINT_REST_TASK_REOPEN,
     ENDPOINT_REST_LABELS,
+    ENDPOINT_REST_PROJECT_COLLABORATORS,
 } from './consts/endpoints'
 
 export class TodoistApi {
@@ -120,6 +127,48 @@ export class TodoistApi {
             'GET',
             API_REST_BASE_URI,
             ENDPOINT_REST_PROJECTS,
+            this.authToken,
+        )
+        return response.data
+    }
+
+    async addProject(args: AddProjectArgs): Promise<Project> {
+        const response = await request<Project>(
+            'POST',
+            API_REST_BASE_URI,
+            ENDPOINT_REST_PROJECTS,
+            this.authToken,
+            args,
+        )
+        return response.data
+    }
+
+    async updateProject(id: number, args: UpdateProjectArgs): Promise<boolean> {
+        const response = await request(
+            'POST',
+            API_REST_BASE_URI,
+            urljoin(ENDPOINT_REST_PROJECTS, String(id)),
+            this.authToken,
+            args,
+        )
+        return isSuccess(response)
+    }
+
+    async deleteProject(id: number): Promise<boolean> {
+        const response = await request(
+            'DELETE',
+            API_REST_BASE_URI,
+            urljoin(ENDPOINT_REST_PROJECTS, String(id)),
+            this.authToken,
+        )
+        return isSuccess(response)
+    }
+
+    async getProjectCollaborators(projectId: number): Promise<User[]> {
+        const response = await request<User[]>(
+            'GET',
+            API_REST_BASE_URI,
+            urljoin(ENDPOINT_REST_PROJECTS, String(projectId), ENDPOINT_REST_PROJECT_COLLABORATORS),
             this.authToken,
         )
         return response.data

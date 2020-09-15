@@ -6,5 +6,6 @@ export const ENDPOINT_REST_PROJECTS = 'projects'
 export const ENDPOINT_REST_LABELS = 'labels'
 export const ENDPOINT_REST_TASK_CLOSE = 'close'
 export const ENDPOINT_REST_TASK_REOPEN = 'reopen'
+export const ENDPOINT_REST_PROJECT_COLLABORATORS = 'collaborators'
 
 export const ENDPOINT_SYNC_QUICK_ADD = 'quick/add'

@@ -1,4 +1,4 @@
-import { Label, Project, QuickAddTaskResponse, Task } from '../types'
+import { Label, Project, QuickAddTaskResponse, Task, User } from '../types'
 
 const DEFAULT_TASK_ID = 1234
 const DEFAULT_TASK_CONTENT = 'This is a task'
@@ -19,6 +19,11 @@ const DEFAULT_TASK_DUE = {
     date: DEFAULT_DATE,
 }
 const DEFAULT_LABELS = [1, 2, 3]
+const DEFAULT_USER_ID = 5
+const DEFAULT_USER_NAME = 'A User'
+const DEFAULT_USER_EMAIL = 'atestuser@doist.com'
+
+export const DEFAULT_AUTH_TOKEN = 'AToken'
 
 export const DEFAULT_QUICK_ADD_RESPONSE: QuickAddTaskResponse = {
     id: DEFAULT_TASK_ID,
@@ -70,4 +75,10 @@ export const DEFAULT_LABEL: Label = {
     color: DEFAULT_ENTITY_COLOR,
     order: DEFAULT_ORDER,
     favorite: false,
+}
+
+export const DEFAULT_USER: User = {
+    id: DEFAULT_USER_ID,
+    name: DEFAULT_USER_NAME,
+    email: DEFAULT_USER_EMAIL,
 }

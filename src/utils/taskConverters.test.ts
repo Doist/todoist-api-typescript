@@ -1,5 +1,5 @@
 import { getTaskFromQuickAddResponse } from './taskConverters'
-import { DEFAULT_QUICK_ADD_RESPONSE, DEFAULT_TASK } from '../testData/testDefaults'
+import { DEFAULT_QUICK_ADD_RESPONSE, DEFAULT_TASK } from '../testUtils/testDefaults'
 import theoretically from 'jest-theories'
 
 describe('getTaskFromQuickAddResponse', () => {
