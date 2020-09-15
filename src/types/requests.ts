@@ -31,3 +31,16 @@ export type UpdateTaskArgs = {
     dueDatetime?: string
     assignee?: number
 }
+
+export type AddProjectArgs = {
+    name: string
+    parentId?: number
+    color?: number
+    favorite?: boolean
+}
+
+export type UpdateProjectArgs = {
+    name?: string
+    color?: number
+    favorite?: boolean
+}
