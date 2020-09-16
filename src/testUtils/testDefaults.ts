@@ -1,4 +1,4 @@
-import { Label, Project, QuickAddTaskResponse, Section, Task, User } from '../types'
+import { Label, Project, QuickAddTaskResponse, Section, Task, User, Comment, Attachment } from '../types'
 
 const DEFAULT_TASK_ID = 1234
 const DEFAULT_TASK_CONTENT = 'This is a task'
@@ -23,6 +23,8 @@ const DEFAULT_LABELS = [1, 2, 3]
 const DEFAULT_USER_ID = 5
 const DEFAULT_USER_NAME = 'A User'
 const DEFAULT_USER_EMAIL = 'atestuser@doist.com'
+const DEFAULT_COMMENT_ID = 4
+const DEFAULT_COMMENT_CONTENT = 'A comment'
 
 export const DEFAULT_AUTH_TOKEN = 'AToken'
 
@@ -89,4 +91,18 @@ export const DEFAULT_USER: User = {
     id: DEFAULT_USER_ID,
     name: DEFAULT_USER_NAME,
     email: DEFAULT_USER_EMAIL,
+}
+
+export const DEFAULT_ATTACHMENT: Attachment = {
+    fileType: 'image/png',
+    fileUrl: 'https://someurl.com/image.jpg',
+    uploadState: 'completed',
+}
+
+export const DEFAULT_COMMENT: Comment = {
+    id: DEFAULT_COMMENT_ID,
+    content: DEFAULT_COMMENT_CONTENT,
+    projectId: DEFAULT_PROJECT_ID,
+    attachment: DEFAULT_ATTACHMENT,
+    posted: DEFAULT_DATE,
 }

@@ -68,3 +68,36 @@ export type UpdateLabelArgs = {
     color?: number
     favorite?: boolean
 }
+
+export type GetTaskCommentsArgs = {
+    taskId: number
+    projectId?: never
+}
+
+export type GetProjectCommentsArgs = {
+    projectId: number
+    taskId?: never
+}
+
+type AddCommentArgs = {
+    content: string
+    attachment?: {
+        fileName?: string
+        fileUrl: string
+        fileType?: string
+    }
+}
+
+export type AddTaskCommentArgs = AddCommentArgs & {
+    taskId: number
+    projectId?: never
+}
+
+export type AddProjectCommentArgs = AddCommentArgs & {
+    projectId: number
+    taskId?: never
+}
+
+export type UpdateCommentArgs = {
+    content: string
+}

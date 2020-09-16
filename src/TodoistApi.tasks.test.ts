@@ -58,7 +58,7 @@ describe('TodoistApi task endpoints', () => {
         test('calls post on restClient with expected parameters', async () => {
             const taskId = 123
             const updateArgs = { content: 'some new content' }
-            const requestMock = setupRestClientMock(true)
+            const requestMock = setupRestClientMock(undefined, 204)
             const api = getTarget()
 
             await api.updateTask(taskId, updateArgs)
@@ -73,8 +73,8 @@ describe('TodoistApi task endpoints', () => {
             )
         })
 
-        test('returns result from rest client', async () => {
-            setupRestClientMock(true)
+        test('returns success result from rest client', async () => {
+            setupRestClientMock(undefined, 204)
             const api = getTarget()
 
             const response = await api.updateTask(123, { content: 'some content' })
@@ -86,7 +86,7 @@ describe('TodoistApi task endpoints', () => {
     describe('closeTask', () => {
         test('calls post on close endpoint', async () => {
             const taskId = 123
-            const requestMock = setupRestClientMock(true)
+            const requestMock = setupRestClientMock(undefined, 204)
             const api = getTarget()
 
             await api.closeTask(taskId)
@@ -100,8 +100,8 @@ describe('TodoistApi task endpoints', () => {
             )
         })
 
-        test('returns result from rest client', async () => {
-            setupRestClientMock(true)
+        test('returns success result from rest client', async () => {
+            setupRestClientMock(undefined, 204)
             const api = getTarget()
 
             const response = await api.closeTask(123)
@@ -113,7 +113,7 @@ describe('TodoistApi task endpoints', () => {
     describe('reopenTask', () => {
         test('calls post on reopen endpoint', async () => {
             const taskId = 123
-            const requestMock = setupRestClientMock(true)
+            const requestMock = setupRestClientMock(undefined, 204)
             const api = getTarget()
 
             await api.reopenTask(taskId)
@@ -127,8 +127,8 @@ describe('TodoistApi task endpoints', () => {
             )
         })
 
-        test('returns result from rest client', async () => {
-            setupRestClientMock(true)
+        test('returns success result from rest client', async () => {
+            setupRestClientMock(undefined, 204)
             const api = getTarget()
 
             const response = await api.reopenTask(123)
@@ -140,7 +140,7 @@ describe('TodoistApi task endpoints', () => {
     describe('deleteTask', () => {
         test('calls delete on expected task', async () => {
             const taskId = 123
-            const requestMock = setupRestClientMock(true)
+            const requestMock = setupRestClientMock(undefined, 204)
             const api = getTarget()
 
             await api.deleteTask(taskId)
@@ -154,8 +154,8 @@ describe('TodoistApi task endpoints', () => {
             )
         })
 
-        test('returns result from rest client', async () => {
-            setupRestClientMock(true)
+        test('returns success result from rest client', async () => {
+            setupRestClientMock(undefined, 204)
             const api = getTarget()
 
             const response = await api.deleteTask(123)
