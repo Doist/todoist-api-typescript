@@ -1,11 +1,13 @@
-import { Task, QuickAddTaskResponse, Project, Label, User } from './types/entities'
+import { Task, QuickAddTaskResponse, Project, Label, User, Section } from './types/entities'
 import {
     AddLabelArgs,
     AddProjectArgs,
+    AddSectionArgs,
     AddTaskArgs,
     GetTasksArgs,
     UpdateLabelArgs,
     UpdateProjectArgs,
+    UpdateSectionArgs,
     UpdateTaskArgs,
 } from './types/requests'
 import { request, isSuccess } from './restClient'
@@ -21,6 +23,7 @@ import {
     ENDPOINT_REST_TASK_REOPEN,
     ENDPOINT_REST_LABELS,
     ENDPOINT_REST_PROJECT_COLLABORATORS,
+    ENDPOINT_REST_SECTIONS,
 } from './consts/endpoints'
 
 export class TodoistApi {
@@ -174,6 +177,59 @@ export class TodoistApi {
             this.authToken,
         )
         return response.data
+    }
+
+    async getSections(projectId?: number): Promise<Section[]> {
+        const response = await request<Section[]>(
+            'GET',
+            API_REST_BASE_URI,
+            ENDPOINT_REST_SECTIONS,
+            this.authToken,
+            projectId && { projectId },
+        )
+        return response.data
+    }
+
+    async getSection(id: number): Promise<Section> {
+        const response = await request<Section>(
+            'GET',
+            API_REST_BASE_URI,
+            urljoin(ENDPOINT_REST_SECTIONS, String(id)),
+            this.authToken,
+        )
+        return response.data
+    }
+
+    async addSection(args: AddSectionArgs): Promise<Section> {
+        const response = await request<Section>(
+            'POST',
+            API_REST_BASE_URI,
+            ENDPOINT_REST_SECTIONS,
+            this.authToken,
+            args,
+        )
+        return response.data
+    }
+
+    async updateSection(id: number, args: UpdateSectionArgs): Promise<boolean> {
+        const response = await request(
+            'POST',
+            API_REST_BASE_URI,
+            urljoin(ENDPOINT_REST_SECTIONS, String(id)),
+            this.authToken,
+            args,
+        )
+        return isSuccess(response)
+    }
+
+    async deleteSection(id: number): Promise<boolean> {
+        const response = await request(
+            'DELETE',
+            API_REST_BASE_URI,
+            urljoin(ENDPOINT_REST_SECTIONS, String(id)),
+            this.authToken,
+        )
+        return isSuccess(response)
     }
 
     async getLabel(id: number): Promise<Label> {
