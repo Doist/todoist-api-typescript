@@ -98,7 +98,7 @@ describe('TodoistApi section endpoints', () => {
         test('calls post on restClient with expected parameters', async () => {
             const sectionId = 123
             const updateArgs = { name: 'a new name' }
-            const requestMock = setupRestClientMock(true)
+            const requestMock = setupRestClientMock(undefined, 204)
             const api = getTarget()
 
             await api.updateSection(sectionId, updateArgs)
@@ -113,8 +113,8 @@ describe('TodoistApi section endpoints', () => {
             )
         })
 
-        test('returns result from rest client', async () => {
-            setupRestClientMock(true)
+        test('returns success result from rest client', async () => {
+            setupRestClientMock(undefined, 204)
             const api = getTarget()
 
             const response = await api.updateSection(123, { name: 'a new name' })
@@ -140,8 +140,8 @@ describe('TodoistApi section endpoints', () => {
             )
         })
 
-        test('returns result from rest client', async () => {
-            setupRestClientMock(true)
+        test('returns success result from rest client', async () => {
+            setupRestClientMock(undefined, 204)
             const api = getTarget()
 
             const response = await api.deleteSection(123)
