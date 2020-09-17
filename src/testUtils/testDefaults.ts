@@ -1,4 +1,13 @@
-import { Label, Project, QuickAddTaskResponse, Section, Task, User, Comment, Attachment } from '../types'
+import {
+    Label,
+    Project,
+    QuickAddTaskResponse,
+    Section,
+    Task,
+    User,
+    Comment,
+    Attachment,
+} from '../types'
 
 const DEFAULT_TASK_ID = 1234
 const DEFAULT_TASK_CONTENT = 'This is a task'
