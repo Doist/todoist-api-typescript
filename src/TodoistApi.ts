@@ -3,8 +3,13 @@ import {
     AddLabelArgs,
     AddProjectArgs,
     AddSectionArgs,
+    AddProjectCommentArgs,
     AddTaskArgs,
+    AddTaskCommentArgs,
+    GetProjectCommentsArgs,
+    GetTaskCommentsArgs,
     GetTasksArgs,
+    UpdateCommentArgs,
     UpdateLabelArgs,
     UpdateProjectArgs,
     UpdateSectionArgs,
@@ -24,6 +29,7 @@ import {
     ENDPOINT_REST_LABELS,
     ENDPOINT_REST_PROJECT_COLLABORATORS,
     ENDPOINT_REST_SECTIONS,
+    ENDPOINT_REST_COMMENTS,
 } from './consts/endpoints'
 
 export class TodoistApi {
@@ -279,6 +285,59 @@ export class TodoistApi {
             'DELETE',
             API_REST_BASE_URI,
             urljoin(ENDPOINT_REST_LABELS, String(id)),
+            this.authToken,
+        )
+        return isSuccess(response)
+    }
+
+    async getComments(args: GetTaskCommentsArgs | GetProjectCommentsArgs): Promise<Comment[]> {
+        const response = await request<Comment[]>(
+            'GET',
+            API_REST_BASE_URI,
+            ENDPOINT_REST_COMMENTS,
+            this.authToken,
+            args,
+        )
+        return response.data
+    }
+
+    async getComment(id: number): Promise<Comment> {
+        const response = await request<Comment>(
+            'GET',
+            API_REST_BASE_URI,
+            urljoin(ENDPOINT_REST_COMMENTS, String(id)),
+            this.authToken,
+        )
+        return response.data
+    }
+
+    async addComment(args: AddTaskCommentArgs | AddProjectCommentArgs): Promise<Comment> {
+        const response = await request<Comment>(
+            'POST',
+            API_REST_BASE_URI,
+            ENDPOINT_REST_COMMENTS,
+            this.authToken,
+            args,
+        )
+        return response.data
+    }
+
+    async updateComment(id: number, args: UpdateCommentArgs): Promise<boolean> {
+        const response = await request<boolean>(
+            'POST',
+            API_REST_BASE_URI,
+            urljoin(ENDPOINT_REST_COMMENTS, String(id)),
+            this.authToken,
+            args,
+        )
+        return isSuccess(response)
+    }
+
+    async deleteComment(id: number): Promise<boolean> {
+        const response = await request(
+            'DELETE',
+            API_REST_BASE_URI,
+            urljoin(ENDPOINT_REST_COMMENTS, String(id)),
             this.authToken,
         )
         return isSuccess(response)

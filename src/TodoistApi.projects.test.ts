@@ -99,7 +99,7 @@ describe('TodoistApi project endpoints', () => {
         test('calls post on restClient with expected parameters', async () => {
             const projectId = 123
             const updateArgs = { name: 'a new name' }
-            const requestMock = setupRestClientMock(true)
+            const requestMock = setupRestClientMock(undefined, 204)
             const api = getTarget()
 
             await api.updateProject(projectId, updateArgs)
@@ -114,20 +114,20 @@ describe('TodoistApi project endpoints', () => {
             )
         })
 
-        test('returns result from rest client', async () => {
-            setupRestClientMock(true)
+        test('returns success result from rest client', async () => {
+            setupRestClientMock(undefined, 204)
             const api = getTarget()
 
-            const response = await api.updateProject(123, { name: 'a name' })
+            const result = await api.updateProject(123, { name: 'a name' })
 
-            expect(response).toEqual(true)
+            expect(result).toEqual(true)
         })
     })
 
     describe('deleteProject', () => {
         test('calls delete on expected project', async () => {
             const projectId = 123
-            const requestMock = setupRestClientMock(true)
+            const requestMock = setupRestClientMock(undefined, 204)
             const api = getTarget()
 
             await api.deleteProject(projectId)
@@ -141,13 +141,13 @@ describe('TodoistApi project endpoints', () => {
             )
         })
 
-        test('returns result from rest client', async () => {
-            setupRestClientMock(true)
+        test('returns success result from rest client', async () => {
+            setupRestClientMock(undefined, 204)
             const api = getTarget()
 
-            const response = await api.deleteProject(123)
+            const result = await api.deleteProject(123)
 
-            expect(response).toEqual(true)
+            expect(result).toEqual(true)
         })
     })
 

@@ -76,6 +76,22 @@ export type Label = TodoistEntity &
         favorite: boolean
     }
 
+export type Comment = TodoistEntity & {
+    content: string
+    taskId?: number
+    projectId?: number
+    posted: string
+    attachment?: Attachment
+}
+
+export type Attachment = {
+    fileName?: string
+    fileSize?: number
+    fileType: string
+    fileUrl: string
+    uploadState: 'pending' | 'completed'
+}
+
 export type User = TodoistEntity & {
     name: string
     email: string

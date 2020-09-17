@@ -98,7 +98,7 @@ describe('TodoistApi label endpoints', () => {
 
         test('calls post on restClient with expected parameters', async () => {
             const labelId = 123
-            const requestMock = setupRestClientMock(true)
+            const requestMock = setupRestClientMock(undefined, 204)
             const api = getTarget()
 
             await api.updateLabel(labelId, DEFAULT_UPDATE_LABEL_ARGS)
@@ -113,20 +113,20 @@ describe('TodoistApi label endpoints', () => {
             )
         })
 
-        test('returns result from rest client', async () => {
-            setupRestClientMock(true)
+        test('returns success result from rest client', async () => {
+            setupRestClientMock(undefined, 204)
             const api = getTarget()
 
-            const response = await api.updateLabel(123, DEFAULT_UPDATE_LABEL_ARGS)
+            const result = await api.updateLabel(123, DEFAULT_UPDATE_LABEL_ARGS)
 
-            expect(response).toEqual(true)
+            expect(result).toEqual(true)
         })
     })
 
     describe('deleteLabel', () => {
         test('calls delete on expected label', async () => {
             const labelId = 123
-            const requestMock = setupRestClientMock(true)
+            const requestMock = setupRestClientMock(undefined, 204)
             const api = getTarget()
 
             await api.deleteLabel(labelId)
@@ -140,13 +140,13 @@ describe('TodoistApi label endpoints', () => {
             )
         })
 
-        test('returns result from rest client', async () => {
-            setupRestClientMock(true)
+        test('returns success result from rest client', async () => {
+            setupRestClientMock(undefined, 204)
             const api = getTarget()
 
-            const response = await api.deleteLabel(123)
+            const result = await api.deleteLabel(123)
 
-            expect(response).toEqual(true)
+            expect(result).toEqual(true)
         })
     })
 })
