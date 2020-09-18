@@ -12,10 +12,10 @@
         "format-check": "npx prettier --check \"./**/*.{ts,tsx,json,md,yml,babelrc,html}\"",
         "lint": "eslint ./src --ext ts,tsx --fix",
         "lint-check": "eslint ./src --ext ts,tsx",
-        "ts-compile-check": "npx tsc -p tsconfig.json",
+        "ts-compile-check": "npx ttsc -p tsconfig.json",
         "audit": "npm audit --audit-level=moderate",
         "test": "jest",
-        "build": "npx tsc -p tsconfig.json",
+        "build": "npx ttsc -p tsconfig.json",
         "ci": "npm-run-all clean format-check lint-check test build",
         "prepublishOnly": "npm run ci",
         "prepare": "npm run build"
@@ -23,6 +23,7 @@
     "dependencies": {
         "axios": "^0.19.2",
         "axios-case-converter": "^0.6.0",
+        "typescript-is": "^0.16.3",
         "url-join": "^4.0.1"
     },
     "devDependencies": {
@@ -44,7 +45,8 @@
         "rimraf": "^3.0.2",
         "ts-jest": "^26.1.1",
         "ts-node": "^9.0.0",
-        "typescript": "^3.7.5"
+        "ttypescript": "^1.5.12",
+        "typescript": "^3.9.7"
     },
     "prettier": "@doist/prettier-config",
     "husky": {
