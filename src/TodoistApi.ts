@@ -68,9 +68,7 @@ export class TodoistApi {
             this.authToken,
         )
 
-        validateTask(response.data)
-
-        return response.data
+        return validateTask(response.data)
     }
 
     async getTasks(args?: GetTasksArgs): Promise<Task[]> {
@@ -82,9 +80,7 @@ export class TodoistApi {
             args,
         )
 
-        validateTaskArray(response.data)
-
-        return response.data
+        return validateTaskArray(response.data)
     }
 
     async addTask(args: AddTaskArgs): Promise<Task> {
@@ -96,9 +92,7 @@ export class TodoistApi {
             args,
         )
 
-        validateTask(response.data)
-
-        return response.data
+        return validateTask(response.data)
     }
 
     async quickAddTask(text: string): Promise<Task> {
@@ -112,9 +106,7 @@ export class TodoistApi {
 
         const task = getTaskFromQuickAddResponse(response.data)
 
-        validateTask(task)
-
-        return task
+        return validateTask(task)
     }
 
     async updateTask(id: number, args: UpdateTaskArgs): Promise<boolean> {
@@ -166,9 +158,7 @@ export class TodoistApi {
             this.authToken,
         )
 
-        validateProject(response.data)
-
-        return response.data
+        return validateProject(response.data)
     }
 
     async getProjects(): Promise<Project[]> {
@@ -179,9 +169,7 @@ export class TodoistApi {
             this.authToken,
         )
 
-        validateProjectArray(response.data)
-
-        return response.data
+        return validateProjectArray(response.data)
     }
 
     async addProject(args: AddProjectArgs): Promise<Project> {
@@ -193,9 +181,7 @@ export class TodoistApi {
             args,
         )
 
-        validateProject(response.data)
-
-        return response.data
+        return validateProject(response.data)
     }
 
     async updateProject(id: number, args: UpdateProjectArgs): Promise<boolean> {
@@ -227,9 +213,7 @@ export class TodoistApi {
             this.authToken,
         )
 
-        validateUserArray(response.data)
-
-        return response.data
+        return validateUserArray(response.data)
     }
 
     async getSections(projectId?: number): Promise<Section[]> {
@@ -241,9 +225,7 @@ export class TodoistApi {
             projectId && { projectId },
         )
 
-        validateSectionArray(response.data)
-
-        return response.data
+        return validateSectionArray(response.data)
     }
 
     async getSection(id: number): Promise<Section> {
@@ -254,9 +236,7 @@ export class TodoistApi {
             this.authToken,
         )
 
-        validateSection(response.data)
-
-        return response.data
+        return validateSection(response.data)
     }
 
     async addSection(args: AddSectionArgs): Promise<Section> {
@@ -268,9 +248,7 @@ export class TodoistApi {
             args,
         )
 
-        validateSection(response.data)
-
-        return response.data
+        return validateSection(response.data)
     }
 
     async updateSection(id: number, args: UpdateSectionArgs): Promise<boolean> {
@@ -302,9 +280,7 @@ export class TodoistApi {
             this.authToken,
         )
 
-        validateLabel(response.data)
-
-        return response.data
+        return validateLabel(response.data)
     }
 
     async getLabels(): Promise<Label[]> {
@@ -315,9 +291,7 @@ export class TodoistApi {
             this.authToken,
         )
 
-        validateLabelArray(response.data)
-
-        return response.data
+        return validateLabelArray(response.data)
     }
 
     async addLabel(args: AddLabelArgs): Promise<Label> {
@@ -329,9 +303,7 @@ export class TodoistApi {
             args,
         )
 
-        validateLabel(response.data)
-
-        return response.data
+        return validateLabel(response.data)
     }
 
     async updateLabel(id: number, args: UpdateLabelArgs): Promise<boolean> {
@@ -364,9 +336,7 @@ export class TodoistApi {
             args,
         )
 
-        validateCommentArray(response.data)
-
-        return response.data
+        return validateCommentArray(response.data)
     }
 
     async getComment(id: number): Promise<Comment> {
@@ -377,9 +347,7 @@ export class TodoistApi {
             this.authToken,
         )
 
-        validateComment(response.data)
-
-        return response.data
+        return validateComment(response.data)
     }
 
     async addComment(args: AddTaskCommentArgs | AddProjectCommentArgs): Promise<Comment> {
@@ -391,9 +359,7 @@ export class TodoistApi {
             args,
         )
 
-        validateComment(response.data)
-
-        return response.data
+        return validateComment(response.data)
     }
 
     async updateComment(id: number, args: UpdateCommentArgs): Promise<boolean> {
