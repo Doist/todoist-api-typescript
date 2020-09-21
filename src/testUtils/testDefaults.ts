@@ -23,11 +23,6 @@ const DEFAULT_PARENT_ID = 5678
 const DEFAULT_ASSIGNEE = 1234
 const DEFAULT_DATE = '2020-09-08T12:00:00Z'
 const DEFAULT_ENTITY_COLOR = 30
-const DEFAULT_TASK_DUE = {
-    recurring: false,
-    string: 'a date string',
-    date: DEFAULT_DATE,
-}
 const DEFAULT_LABELS = [1, 2, 3]
 const DEFAULT_USER_ID = 5
 const DEFAULT_USER_NAME = 'A User'
@@ -36,6 +31,17 @@ const DEFAULT_COMMENT_ID = 4
 const DEFAULT_COMMENT_CONTENT = 'A comment'
 
 export const DEFAULT_AUTH_TOKEN = 'AToken'
+
+export const DEFAULT_DUE_DATE = {
+    recurring: false,
+    string: 'a date string',
+    date: DEFAULT_DATE,
+}
+
+export const INVALID_DUE_DATE = {
+    ...DEFAULT_DUE_DATE,
+    recurring: 'false',
+}
 
 export const DEFAULT_QUICK_ADD_RESPONSE: QuickAddTaskResponse = {
     id: DEFAULT_TASK_ID,
@@ -50,7 +56,7 @@ export const DEFAULT_QUICK_ADD_RESPONSE: QuickAddTaskResponse = {
     checked: 0,
     dateAdded: DEFAULT_DATE,
     syncId: null,
-    due: DEFAULT_TASK_DUE,
+    due: DEFAULT_DUE_DATE,
 }
 
 export const DEFAULT_TASK: Task = {
@@ -66,8 +72,13 @@ export const DEFAULT_TASK: Task = {
     commentCount: 0,
     created: DEFAULT_DATE,
     url: 'https://todoist.com/showTask?id=1234',
-    due: DEFAULT_TASK_DUE,
+    due: DEFAULT_DUE_DATE,
     assignee: DEFAULT_ASSIGNEE,
+}
+
+export const INVALID_TASK = {
+    ...DEFAULT_TASK,
+    due: INVALID_DUE_DATE,
 }
 
 export const DEFAULT_PROJECT: Project = {
@@ -81,11 +92,21 @@ export const DEFAULT_PROJECT: Project = {
     shared: false,
 }
 
+export const INVALID_PROJECT = {
+    ...DEFAULT_PROJECT,
+    name: 123,
+}
+
 export const DEFAULT_SECTION: Section = {
     id: DEFAULT_SECTION_ID,
     name: DEFAULT_SECTION_NAME,
     order: DEFAULT_ORDER,
     projectId: DEFAULT_PROJECT_ID,
+}
+
+export const INVALID_SECTION = {
+    ...DEFAULT_SECTION,
+    projectId: undefined,
 }
 
 export const DEFAULT_LABEL: Label = {
@@ -96,10 +117,20 @@ export const DEFAULT_LABEL: Label = {
     favorite: false,
 }
 
+export const INVALID_LABEL = {
+    ...DEFAULT_LABEL,
+    favorite: 'true',
+}
+
 export const DEFAULT_USER: User = {
     id: DEFAULT_USER_ID,
     name: DEFAULT_USER_NAME,
     email: DEFAULT_USER_EMAIL,
+}
+
+export const INVALID_USER = {
+    ...DEFAULT_USER,
+    email: undefined,
 }
 
 export const DEFAULT_ATTACHMENT: Attachment = {
@@ -108,10 +139,20 @@ export const DEFAULT_ATTACHMENT: Attachment = {
     uploadState: 'completed',
 }
 
+export const INVALID_ATTACHMENT = {
+    ...DEFAULT_ATTACHMENT,
+    uploadState: 'something random',
+}
+
 export const DEFAULT_COMMENT: Comment = {
     id: DEFAULT_COMMENT_ID,
     content: DEFAULT_COMMENT_CONTENT,
     projectId: DEFAULT_PROJECT_ID,
     attachment: DEFAULT_ATTACHMENT,
     posted: DEFAULT_DATE,
+}
+
+export const INVALID_COMMENT = {
+    ...DEFAULT_COMMENT,
+    attachment: INVALID_ATTACHMENT,
 }
