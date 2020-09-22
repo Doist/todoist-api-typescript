@@ -29,6 +29,12 @@ api.getProjects().then((projects) => {
 })
 ```
 
+## Build
+
+In order to validate API responses against our Typescript types, we use the [typescript-is](https://github.com/woutervh-/typescript-is) library to generate type guards from our types during the build using transformations.
+
+As a result, this package is compiled using the [ttypescript](https://github.com/cevek/ttypescript) compiler, which wraps the standard typescript compiler with added support for transformation plugins.
+
 ## Publishing
 
 This project uses [semantic versioning](https://semver.org/). A new version will be published to GitHub Package Registry when a new tag is pushed.
