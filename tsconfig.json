@@ -20,7 +20,8 @@
         "strictNullChecks": true,
         "strictPropertyInitialization": true,
         "alwaysStrict": true,
-        "baseUrl": "./src"
+        "baseUrl": "./src",
+        "plugins": [{ "transform": "typescript-is/lib/transform-inline/transformer" }]
     },
     "include": ["src"],
     "exclude": ["node_modules", "dist", "**/testData", "**/*.test.ts"]

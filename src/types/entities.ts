@@ -87,9 +87,9 @@ export type Comment = TodoistEntity & {
 export type Attachment = {
     fileName?: string
     fileSize?: number
-    fileType: string
-    fileUrl: string
-    uploadState: 'pending' | 'completed'
+    fileType?: string
+    fileUrl?: string
+    uploadState?: 'pending' | 'completed'
 }
 
 export type User = TodoistEntity & {
