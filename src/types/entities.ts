@@ -10,7 +10,7 @@ export type TodoistEntity = {
     id: number
 }
 
-export type OrderedEntity = {
+export type OrderedEntity = TodoistEntity & {
     order: number
 }
 
@@ -18,20 +18,19 @@ export type EntityInHierarchy = OrderedEntity & {
     parentId?: number
 }
 
-export type Task = TodoistEntity &
-    EntityInHierarchy & {
-        content: string
-        projectId: number
-        sectionId: number
-        completed: boolean
-        labelIds: number[]
-        priority: number
-        commentCount: number
-        created: string
-        url: string
-        due?: DueDate
-        assignee?: number
-    }
+export type Task = EntityInHierarchy & {
+    content: string
+    projectId: number
+    sectionId: number
+    completed: boolean
+    labelIds: number[]
+    priority: number
+    commentCount: number
+    created: string
+    url: string
+    due?: DueDate
+    assignee?: number
+}
 
 export type QuickAddTaskResponse = {
     id: number
@@ -61,18 +60,16 @@ export type Project = TodoistEntity &
         syncId?: number
     }
 
-export type Section = TodoistEntity &
-    OrderedEntity & {
-        name: string
-        projectId: number
-    }
+export type Section = OrderedEntity & {
+    name: string
+    projectId: number
+}
 
-export type Label = TodoistEntity &
-    OrderedEntity & {
-        name: string
-        color: number
-        favorite: boolean
-    }
+export type Label = OrderedEntity & {
+    name: string
+    color: number
+    favorite: boolean
+}
 
 export type Comment = TodoistEntity & {
     content: string
