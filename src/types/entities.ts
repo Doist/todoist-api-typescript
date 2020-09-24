@@ -14,12 +14,11 @@ export type OrderedEntity = {
     order: number
 }
 
-export type EntityInHierarchy = {
+export type EntityInHierarchy = OrderedEntity & {
     parentId?: number
 }
 
 export type Task = TodoistEntity &
-    OrderedEntity &
     EntityInHierarchy & {
         content: string
         projectId: number
@@ -51,8 +50,7 @@ export type QuickAddTaskResponse = {
 }
 
 export type Project = TodoistEntity &
-    Partial<OrderedEntity> &
-    EntityInHierarchy & {
+    Partial<EntityInHierarchy> & {
         name: string
         color: number
         commentCount: number
