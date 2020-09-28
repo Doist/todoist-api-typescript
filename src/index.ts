@@ -1,4 +1,5 @@
 export * from './TodoistApi'
 export * from './restClient'
+export * from './authentication'
 export * from './types'
 export * from './utils'
