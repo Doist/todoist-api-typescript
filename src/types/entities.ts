@@ -45,7 +45,13 @@ export type QuickAddTaskResponse = {
     checked: number // completed
     dateAdded: string // created
     syncId: number | null
-    due: DueDate | null
+    due: {
+        date: string
+        timezone: string | null
+        isRecurring: boolean
+        string: string
+        lang: string
+    } | null
 }
 
 export type Project = TodoistEntity &

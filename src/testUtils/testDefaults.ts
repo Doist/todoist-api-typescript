@@ -56,7 +56,13 @@ export const DEFAULT_QUICK_ADD_RESPONSE: QuickAddTaskResponse = {
     checked: 0,
     dateAdded: DEFAULT_DATE,
     syncId: null,
-    due: DEFAULT_DUE_DATE,
+    due: {
+        date: DEFAULT_DATE,
+        timezone: null,
+        string: 'a date string',
+        lang: 'en',
+        isRecurring: false,
+    },
 }
 
 export const DEFAULT_TASK: Task = {
