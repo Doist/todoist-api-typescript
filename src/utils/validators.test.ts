@@ -26,7 +26,7 @@ import {
     validateUser,
     validateUserArray,
 } from './validators'
-import { TypeGuardError } from 'typescript-is'
+import { ValidationError } from 'runtypes'
 
 describe('validators', () => {
     describe('validateTask', () => {
@@ -38,7 +38,7 @@ describe('validators', () => {
         test('validation throws error for an invalid task', async () => {
             expect(() => {
                 validateTask(INVALID_TASK)
-            }).toThrow(TypeGuardError)
+            }).toThrow(ValidationError)
         })
     })
 
@@ -56,7 +56,7 @@ describe('validators', () => {
         test('validation throws error for an invalid task array ', async () => {
             expect(() => {
                 validateTaskArray([INVALID_TASK])
-            }).toThrow(TypeGuardError)
+            }).toThrow(ValidationError)
         })
     })
 
@@ -69,7 +69,7 @@ describe('validators', () => {
         test('validation throws error for an invalid project', async () => {
             expect(() => {
                 validateProject(INVALID_PROJECT)
-            }).toThrow(TypeGuardError)
+            }).toThrow(ValidationError)
         })
     })
 
@@ -87,7 +87,7 @@ describe('validators', () => {
         test('validation throws error for an invalid project array ', async () => {
             expect(() => {
                 validateProjectArray([INVALID_PROJECT])
-            }).toThrow(TypeGuardError)
+            }).toThrow(ValidationError)
         })
     })
 
@@ -100,7 +100,7 @@ describe('validators', () => {
         test('validation throws error for an invalid section', async () => {
             expect(() => {
                 validateSection(INVALID_SECTION)
-            }).toThrow(TypeGuardError)
+            }).toThrow(ValidationError)
         })
     })
 
@@ -118,7 +118,7 @@ describe('validators', () => {
         test('validation throws error for an invalid section array ', async () => {
             expect(() => {
                 validateSectionArray([INVALID_SECTION])
-            }).toThrow(TypeGuardError)
+            }).toThrow(ValidationError)
         })
     })
 
@@ -131,7 +131,7 @@ describe('validators', () => {
         test('validation throws error for an invalid label', async () => {
             expect(() => {
                 validateLabel(INVALID_LABEL)
-            }).toThrow(TypeGuardError)
+            }).toThrow(ValidationError)
         })
     })
 
@@ -149,7 +149,7 @@ describe('validators', () => {
         test('validation throws error for an invalid label array ', async () => {
             expect(() => {
                 validateLabelArray([INVALID_LABEL])
-            }).toThrow(TypeGuardError)
+            }).toThrow(ValidationError)
         })
     })
 
@@ -162,7 +162,7 @@ describe('validators', () => {
         test('validation throws error for an invalid comment', async () => {
             expect(() => {
                 validateComment(INVALID_COMMENT)
-            }).toThrow(TypeGuardError)
+            }).toThrow(ValidationError)
         })
     })
 
@@ -180,7 +180,7 @@ describe('validators', () => {
         test('validation throws error for an invalid comment array ', async () => {
             expect(() => {
                 validateCommentArray([INVALID_COMMENT])
-            }).toThrow(TypeGuardError)
+            }).toThrow(ValidationError)
         })
     })
 
@@ -193,7 +193,7 @@ describe('validators', () => {
         test('validation throws error for an invalid user', async () => {
             expect(() => {
                 validateUser(INVALID_USER)
-            }).toThrow(TypeGuardError)
+            }).toThrow(ValidationError)
         })
     })
 
@@ -211,7 +211,7 @@ describe('validators', () => {
         test('validation throws error for an invalid user array ', async () => {
             expect(() => {
                 validateUserArray([INVALID_USER])
-            }).toThrow(TypeGuardError)
+            }).toThrow(ValidationError)
         })
     })
 })
