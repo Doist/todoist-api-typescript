@@ -1,6 +1,6 @@
 {
     "name": "@doist/todoist-api-typescript",
-    "version": "1.0.12",
+    "version": "1.0.14",
     "description": "A typescript wrapper for the Todoist REST API.",
     "author": "Doist developers",
     "repository": "git@github.com:doist/todoist-api-typescript.git",
@@ -24,13 +24,15 @@
         "axios": "^0.19.2",
         "axios-case-converter": "^0.6.0",
         "typescript-is": "^0.16.3",
-        "url-join": "^4.0.1"
+        "url-join": "^4.0.1",
+        "uuid": "^8.3.0"
     },
     "devDependencies": {
         "@doist/prettier-config": "^3.0.5",
         "@types/axios": "^0.14.0",
         "@types/jest": "^26.0.4",
         "@types/url-join": "^4.0.0",
+        "@types/uuid": "^8.3.0",
         "@typescript-eslint/eslint-plugin": "^3.6.0",
         "@typescript-eslint/parser": "^3.6.0",
         "eslint": "^7.4.0",

@@ -22,14 +22,14 @@ const getTodoistRequestError = (error: Error): TodoistRequestError => {
     return requestError
 }
 
-const getRequestConfiguration = (apiToken: string) => ({
-    headers: {
-        ...defaultHeaders,
-        Authorization: getAuthHeader(apiToken),
-    },
-})
+const getRequestConfiguration = (apiToken?: string) => {
+    const authHeader = apiToken ? { Authorization: getAuthHeader(apiToken) } : undefined
+    const headers = { ...defaultHeaders, ...authHeader }
 
-const getAxiosClient = (apiToken: string) => {
+    return { headers }
+}
+
+const getAxiosClient = (apiToken?: string) => {
     const configuration = getRequestConfiguration(apiToken)
     return applyCaseMiddleware(Axios.create(configuration))
 }
@@ -41,7 +41,7 @@ export const request = async <T extends unknown>(
     httpMethod: HttpMethod,
     baseUri: string,
     relativePath: string,
-    apiToken: string,
+    apiToken?: string,
     payload?: unknown,
 ): Promise<AxiosResponse<T>> => {
     try {

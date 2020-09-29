@@ -13,6 +13,10 @@ const DEFAULT_AUTH_TOKEN = 'AToken'
 
 const DEFAULT_HEADERS = {
     'Content-Type': 'application/json',
+}
+
+const AUTHORIZATION_HEADERS = {
+    ...DEFAULT_HEADERS,
     Authorization: `Bearer ${DEFAULT_AUTH_TOKEN}`,
 }
 
@@ -61,11 +65,18 @@ describe('restClient', () => {
         axiosMock = setupAxiosMock()
     })
 
-    test('request creates axios client with expected configuration', async () => {
-        await request('GET', DEFAULT_BASE_URI, DEFAULT_ENDPOINT, DEFAULT_AUTH_TOKEN)
+    test('request creates axios client with default headers', async () => {
+        await request('GET', DEFAULT_BASE_URI, DEFAULT_ENDPOINT)
 
         expect(axiosMock.create).toBeCalledTimes(1)
         expect(axiosMock.create).toBeCalledWith({ headers: DEFAULT_HEADERS })
+    })
+
+    test('request adds authorization header to config if token is passed', async () => {
+        await request('GET', DEFAULT_BASE_URI, DEFAULT_ENDPOINT, DEFAULT_AUTH_TOKEN)
+
+        expect(axiosMock.create).toBeCalledTimes(1)
+        expect(axiosMock.create).toBeCalledWith({ headers: AUTHORIZATION_HEADERS })
     })
 
     test('get calls axios with expected endpoint', async () => {
