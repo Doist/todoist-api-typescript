@@ -1,10 +1,4 @@
-export type DueDate = {
-    recurring: boolean
-    string: string
-    date: string
-    datetime?: string
-    timezone?: string
-}
+import { Boolean, Number, String, Array, Record, Static, Partial, Literal, Union } from 'runtypes'
 
 export type TodoistEntity = {
     id: number
@@ -18,18 +12,114 @@ export type EntityInHierarchy = OrderedEntity & {
     parentId?: number
 }
 
-export type Task = EntityInHierarchy & {
-    content: string
-    projectId: number
-    sectionId: number
-    completed: boolean
-    labelIds: number[]
-    priority: number
-    commentCount: number
-    created: string
-    url: string
-    due?: DueDate
-    assignee?: number
+export const DueDate = Record({
+    recurring: Boolean,
+    string: String,
+    date: String,
+}).And(
+    Partial({
+        datetime: String,
+        timezone: String,
+    }),
+)
+
+export type DueDate = Static<typeof DueDate>
+
+export const Task = Record({
+    id: Number,
+    order: Number,
+    content: String,
+    projectId: Number,
+    sectionId: Number,
+    completed: Boolean,
+    labelIds: Array(Number),
+    priority: Number,
+    commentCount: Number,
+    created: String,
+    url: String,
+}).And(
+    Partial({
+        parentId: Number,
+        due: DueDate,
+        assignee: Number,
+    }),
+)
+
+export type Task = Static<typeof Task>
+
+export const Project = Record({
+    id: Number,
+    name: String,
+    color: Number,
+    commentCount: Number,
+    shared: Boolean,
+    favorite: Boolean,
+}).And(
+    Partial({
+        parentId: Number,
+        order: Number,
+        inboxProject: Boolean,
+        teamInbox: Boolean,
+        syncId: Number,
+    }),
+)
+
+export type Project = Static<typeof Project>
+
+export const Section = Record({
+    id: Number,
+    order: Number,
+    name: String,
+    projectId: Number,
+})
+
+export type Section = Static<typeof Section>
+
+export const Label = Record({
+    id: Number,
+    order: Number,
+    name: String,
+    color: Number,
+    favorite: Boolean,
+})
+
+export type Label = Static<typeof Label>
+
+export const Attachment = Partial({
+    fileName: String,
+    fileSize: Number,
+    fileType: String,
+    fileUrl: String,
+    uploadState: Union(Literal('pending'), Literal('completed')),
+})
+
+export type Attachment = Static<typeof Attachment>
+
+export const Comment = Record({
+    id: Number,
+    content: String,
+    posted: String,
+}).And(
+    Partial({
+        taskId: Number,
+        projectId: Number,
+        attachment: Attachment,
+    }),
+)
+
+export type Comment = Static<typeof Comment>
+
+export const User = Record({
+    id: Number,
+    name: String,
+    email: String,
+})
+
+export type User = Static<typeof User>
+
+export type Color = TodoistEntity & {
+    name: string
+    value: string
 }
 
 export type QuickAddTaskResponse = {
@@ -52,54 +142,4 @@ export type QuickAddTaskResponse = {
         string: string
         lang: string
     } | null
-}
-
-export type Project = TodoistEntity &
-    Partial<EntityInHierarchy> & {
-        name: string
-        color: number
-        commentCount: number
-        shared: boolean
-        favorite: boolean
-        inboxProject?: boolean
-        teamInbox?: boolean
-        syncId?: number
-    }
-
-export type Section = OrderedEntity & {
-    name: string
-    projectId: number
-}
-
-export type Label = OrderedEntity & {
-    name: string
-    color: number
-    favorite: boolean
-}
-
-export type Comment = TodoistEntity & {
-    content: string
-    taskId?: number
-    projectId?: number
-    posted: string
-    attachment?: Attachment
-}
-
-export type Attachment = {
-    fileName?: string
-    fileSize?: number
-    fileType?: string
-    fileUrl?: string
-    uploadState?: 'pending' | 'completed'
-}
-
-export type User = TodoistEntity & {
-    name: string
-    email: string
-}
-
-export type Color = {
-    name: string
-    id: number
-    value: string
 }
