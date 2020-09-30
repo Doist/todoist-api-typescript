@@ -117,13 +117,10 @@ export const User = Record({
 
 export type User = Static<typeof User>
 
-export const Color = Record({
-    id: Number,
-    name: String,
-    value: String,
-})
-
-export type Color = Static<typeof Color>
+export type Color = TodoistEntity & {
+    name: string
+    value: string
+}
 
 export type QuickAddTaskResponse = {
     id: number
