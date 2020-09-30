@@ -35,7 +35,7 @@ describe('authentication', () => {
             },
         )
 
-        test('throws error if no permissions requested', async () => {
+        test('throws error if no permissions requested', () => {
             expect.assertions(1)
 
             try {

@@ -159,7 +159,7 @@ describe('restClient', () => {
         }
     })
 
-    test('TodoistRequestError reports isAuthenticationError for relevant status codes', async () => {
+    test('TodoistRequestError reports isAuthenticationError for relevant status codes', () => {
         const statusCode = 403
 
         const requestError = new TodoistRequestError('An Error', statusCode, undefined)

@@ -3,12 +3,12 @@ import { DEFAULT_QUICK_ADD_RESPONSE, DEFAULT_TASK } from '../testUtils/testDefau
 import theoretically from 'jest-theories'
 
 describe('getTaskFromQuickAddResponse', () => {
-    test('maps sync data to expected task properties', async () => {
+    test('maps sync data to expected task properties', () => {
         const task = getTaskFromQuickAddResponse(DEFAULT_QUICK_ADD_RESPONSE)
         expect(task).toEqual(DEFAULT_TASK)
     })
 
-    test('converts null sectionId to 0', async () => {
+    test('converts null sectionId to 0', () => {
         const quickAddResponse = {
             ...DEFAULT_QUICK_ADD_RESPONSE,
             sectionId: null,
@@ -17,7 +17,7 @@ describe('getTaskFromQuickAddResponse', () => {
         expect(task.sectionId).toEqual(0)
     })
 
-    test('converts null parentId to undefined', async () => {
+    test('converts null parentId to undefined', () => {
         const quickAddResponse = {
             ...DEFAULT_QUICK_ADD_RESPONSE,
             parentId: null,
@@ -26,7 +26,7 @@ describe('getTaskFromQuickAddResponse', () => {
         expect(task.parentId).toEqual(undefined)
     })
 
-    test('converts null assignee to undefined', async () => {
+    test('converts null assignee to undefined', () => {
         const quickAddResponse = {
             ...DEFAULT_QUICK_ADD_RESPONSE,
             responsibleUid: null,
@@ -43,7 +43,7 @@ describe('getTaskFromQuickAddResponse', () => {
     theoretically(
         'checked number value: {checked} converted to completed boolean value: {completed}',
         completedTheories,
-        async (theory) => {
+        (theory) => {
             const quickAddResponse = {
                 ...DEFAULT_QUICK_ADD_RESPONSE,
                 checked: theory.checked,
@@ -53,7 +53,7 @@ describe('getTaskFromQuickAddResponse', () => {
         },
     )
 
-    test('converts null due date to undefined', async () => {
+    test('converts null due date to undefined', () => {
         const quickAddResponse = {
             ...DEFAULT_QUICK_ADD_RESPONSE,
             due: null,
@@ -71,7 +71,7 @@ describe('getTaskFromQuickAddResponse', () => {
     theoretically(
         'returns expected url: {url} for id: {id} and syncId: {syncId}',
         taskUrlTheories,
-        async (theory) => {
+        (theory) => {
             const quickAddResponse = {
                 ...DEFAULT_QUICK_ADD_RESPONSE,
                 id: theory.id,
