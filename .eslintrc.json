@@ -15,5 +15,14 @@
     "env": {
         "browser": true,
         "jest": true
-    }
+    },
+    "overrides": [
+        {
+            "files": ["**/*.test.ts?(x)"],
+            "rules": {
+                // Ref.: https://github.com/typescript-eslint/typescript-eslint/issues/1776#issuecomment-601758481
+                "@typescript-eslint/unbound-method": "off"
+            }
+        }
+    ]
 }
