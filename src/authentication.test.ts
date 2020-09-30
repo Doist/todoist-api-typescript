@@ -1,6 +1,7 @@
 import { getAuthorizationUrl, getAuthToken, Permission } from './authentication'
 import theoretically from 'jest-theories'
 import { setupRestClientMock } from './testUtils/mocks'
+import { assertInstance } from './testUtils/asserts'
 
 describe('authentication', () => {
     describe('getAuthorizationUrl', () => {
@@ -41,6 +42,7 @@ describe('authentication', () => {
             try {
                 getAuthorizationUrl('SomeId', [], 'SomeState')
             } catch (e) {
+                assertInstance(e, Error)
                 expect(e.message).toEqual(
                     'At least one scope value should be passed for permissions.',
                 )

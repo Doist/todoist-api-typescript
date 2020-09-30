@@ -4,6 +4,7 @@ import { mock } from 'jest-mock-extended'
 import { TodoistRequestError } from './types/errors'
 import * as caseConverter from 'axios-case-converter'
 import theoretically from 'jest-theories'
+import { assertInstance } from './testUtils/asserts'
 
 jest.mock('axios')
 
@@ -153,6 +154,7 @@ describe('restClient', () => {
         try {
             await request('GET', DEFAULT_BASE_URI, DEFAULT_ENDPOINT, DEFAULT_AUTH_TOKEN)
         } catch (e) {
+            assertInstance(e, TodoistRequestError)
             expect(e.message).toEqual(DEFAULT_ERROR_MESSAGE)
             expect(e.httpStatusCode).toEqual(statusCode)
             expect(e.responseData).toEqual(responseData)
