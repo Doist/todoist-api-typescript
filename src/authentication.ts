@@ -25,7 +25,11 @@ export type AuthTokenRequestArgs = {
 
 export const getAuthStateParameter = (): string => uuid()
 
-export const getAuthorizationUrl = (clientId: string, permissions: Permission[], state: string) => {
+export const getAuthorizationUrl = (
+    clientId: string,
+    permissions: Permission[],
+    state: string,
+): string => {
     if (!permissions?.length) {
         throw new Error('At least one scope value should be passed for permissions.')
     }
