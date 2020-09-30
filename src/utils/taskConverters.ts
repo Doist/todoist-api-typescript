@@ -1,4 +1,4 @@
-import { DueDate, QuickAddTaskResponse, Task } from '../types'
+import { QuickAddTaskResponse, Task } from '../types'
 
 const showTaskEndpoint = 'https://todoist.com/showTask'
 
