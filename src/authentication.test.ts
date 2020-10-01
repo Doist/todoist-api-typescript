@@ -95,10 +95,10 @@ describe('authentication', () => {
             try {
                 await getAuthToken(defaultAuthRequest)
             } catch (e) {
-                const requestError = e as TodoistRequestError
-                expect(requestError.message).toEqual('Authentication token exchange failed.')
-                expect(requestError.httpStatusCode).toEqual(failureStatus)
-                expect(requestError.responseData).toBeUndefined()
+                assertInstance(e, TodoistRequestError)
+                expect(e.message).toEqual('Authentication token exchange failed.')
+                expect(e.httpStatusCode).toEqual(failureStatus)
+                expect(e.responseData).toBeUndefined()
             }
         })
 
@@ -115,9 +115,9 @@ describe('authentication', () => {
             try {
                 await getAuthToken(defaultAuthRequest)
             } catch (e) {
-                const requestError = e as TodoistRequestError
-                expect(requestError.message).toEqual('Authentication token exchange failed.')
-                expect(requestError.responseData).toEqual(missingTokenResponse)
+                assertInstance(e, TodoistRequestError)
+                expect(e.message).toEqual('Authentication token exchange failed.')
+                expect(e.responseData).toEqual(missingTokenResponse)
             }
         })
     })

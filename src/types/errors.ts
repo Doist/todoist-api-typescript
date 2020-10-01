@@ -10,6 +10,9 @@ export class TodoistRequestError extends Error {
         this.name = this.constructor.name
 
         Error.captureStackTrace(this, this.constructor)
+
+        // See: https://github.com/Microsoft/TypeScript/wiki/Breaking-Changes#extending-built-ins-like-error-array-and-map-may-no-longer-work
+        Object.setPrototypeOf(this, TodoistRequestError.prototype)
     }
 
     isAuthenticationError = (): boolean => {

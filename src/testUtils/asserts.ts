@@ -8,5 +8,5 @@ export function assertInstance<T extends new (...args: any) => any>(
         return
     }
 
-    throw new TypeError('Unexpected type')
+    throw new TypeError(`Unexpected type ${typeof value}`)
 }
