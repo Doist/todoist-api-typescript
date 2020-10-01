@@ -2,6 +2,7 @@ import { getAuthorizationUrl, getAuthToken, Permission } from './authentication'
 import theoretically from 'jest-theories'
 import { setupRestClientMock } from './testUtils/mocks'
 import { assertInstance } from './testUtils/asserts'
+import { TodoistRequestError } from './types'
 
 describe('authentication', () => {
     describe('getAuthorizationUrl', () => {
@@ -94,9 +95,10 @@ describe('authentication', () => {
             try {
                 await getAuthToken(defaultAuthRequest)
             } catch (e) {
+                assertInstance(e, TodoistRequestError)
                 expect(e.message).toEqual('Authentication token exchange failed.')
-                expect(e.response.status).toEqual(failureStatus)
-                expect(e.response.data).toBeUndefined()
+                expect(e.httpStatusCode).toEqual(failureStatus)
+                expect(e.responseData).toBeUndefined()
             }
         })
 
@@ -113,8 +115,9 @@ describe('authentication', () => {
             try {
                 await getAuthToken(defaultAuthRequest)
             } catch (e) {
+                assertInstance(e, TodoistRequestError)
                 expect(e.message).toEqual('Authentication token exchange failed.')
-                expect(e.response.data).toEqual(missingTokenResponse)
+                expect(e.responseData).toEqual(missingTokenResponse)
             }
         })
     })

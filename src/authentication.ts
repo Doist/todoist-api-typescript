@@ -1,5 +1,6 @@
 import { request } from './restClient'
 import { v4 as uuid } from 'uuid'
+import { TodoistRequestError } from './types'
 
 const authenticationBaseUri = 'https://todoist.com/oauth/'
 const authorizationEndpoint = 'authorize'
@@ -48,12 +49,11 @@ export const getAuthToken = async (args: AuthTokenRequestArgs): Promise<AuthToke
     )
 
     if (response.status !== 200 || !response.data?.accessToken) {
-        const error = {
-            message: 'Authentication token exchange failed.',
-            response,
-        }
-
-        throw error
+        throw new TodoistRequestError(
+            'Authentication token exchange failed.',
+            response.status,
+            response.data,
+        )
     }
 
     return response.data
