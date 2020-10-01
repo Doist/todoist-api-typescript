@@ -3,8 +3,8 @@ import { request, isSuccess } from './restClient'
 import { mock } from 'jest-mock-extended'
 import { TodoistRequestError } from './types/errors'
 import * as caseConverter from 'axios-case-converter'
-import theoretically from 'jest-theories'
 import { assertInstance } from './testUtils/asserts'
+import { getColor } from './utils'
 
 jest.mock('axios')
 
@@ -169,19 +169,15 @@ describe('restClient', () => {
     })
 
     const responseStatusTheories = [
-        { status: 100, isSuccess: false },
-        { status: 200, isSuccess: true },
-        { status: 299, isSuccess: true },
-        { status: 300, isSuccess: false },
-    ]
+        [100, false],
+        [200, true],
+        [299, true],
+        [300, false],
+    ] as const
 
-    theoretically(
-        'isSuccess returns {isSuccess} for status code {status}',
-        responseStatusTheories,
-        (theory) => {
-            const response = mock<AxiosResponse>({ status: theory.status })
-            const success = isSuccess(response)
-            expect(success).toEqual(theory.isSuccess)
-        },
-    )
+    test.each(responseStatusTheories)('status code %p returns isSuccess %p', (status, expected) => {
+        const response = mock<AxiosResponse>({ status })
+        const success = isSuccess(response)
+        expect(success).toEqual(expected)
+    })
 })

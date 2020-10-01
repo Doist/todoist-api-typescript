@@ -1,6 +1,5 @@
 import { getTaskFromQuickAddResponse } from './taskConverters'
 import { DEFAULT_QUICK_ADD_RESPONSE, DEFAULT_TASK } from '../testUtils/testDefaults'
-import theoretically from 'jest-theories'
 
 describe('getTaskFromQuickAddResponse', () => {
     test('maps sync data to expected task properties', () => {
@@ -36,20 +35,20 @@ describe('getTaskFromQuickAddResponse', () => {
     })
 
     const completedTheories = [
-        { checked: 0, completed: false },
-        { checked: 1, completed: true },
-    ]
+        [0, false],
+        [1, true],
+    ] as const
 
-    theoretically(
-        'checked number value: {checked} converted to completed boolean value: {completed}',
-        completedTheories,
-        (theory) => {
+    test.each(completedTheories)(
+        'checked number value: %p converted to completed boolean value: %p',
+        (checkedInt, completedBoolean) => {
             const quickAddResponse = {
                 ...DEFAULT_QUICK_ADD_RESPONSE,
-                checked: theory.checked,
+                checked: checkedInt,
             }
+
             const task = getTaskFromQuickAddResponse(quickAddResponse)
-            expect(task.completed).toEqual(theory.completed)
+            expect(task.completed).toEqual(completedBoolean)
         },
     )
 
@@ -63,22 +62,18 @@ describe('getTaskFromQuickAddResponse', () => {
     })
 
     const taskUrlTheories = [
-        { id: 1234, syncId: null, url: 'https://todoist.com/showTask?id=1234' },
-        { id: 1234, syncId: 0, url: 'https://todoist.com/showTask?id=1234' },
-        { id: 1234, syncId: 5678, url: 'https://todoist.com/showTask?id=1234&sync_id=5678' },
-    ]
+        [1234, null, 'https://todoist.com/showTask?id=1234'],
+        [1234, 0, 'https://todoist.com/showTask?id=1234'],
+        [1234, 5678, 'https://todoist.com/showTask?id=1234&sync_id=5678'],
+    ] as const
 
-    theoretically(
-        'returns expected url: {url} for id: {id} and syncId: {syncId}',
-        taskUrlTheories,
-        (theory) => {
-            const quickAddResponse = {
-                ...DEFAULT_QUICK_ADD_RESPONSE,
-                id: theory.id,
-                syncId: theory.syncId,
-            }
-            const task = getTaskFromQuickAddResponse(quickAddResponse)
-            expect(task.url).toEqual(theory.url)
-        },
-    )
+    test.each(taskUrlTheories)('with id %p and syncId %p returns url %p', (id, syncId, url) => {
+        const quickAddResponse = {
+            ...DEFAULT_QUICK_ADD_RESPONSE,
+            id,
+            syncId,
+        }
+        const task = getTaskFromQuickAddResponse(quickAddResponse)
+        expect(task.url).toEqual(url)
+    })
 })
