@@ -13,7 +13,7 @@ describe('errors', () => {
     theoretically(
         'TodoistRequestError reports isAuthenticationError = {isAuthenticationError} for status code {statusCode}',
         isAuthenticationErrorTheories,
-        async (theory) => {
+        (theory) => {
             const requestError = new TodoistRequestError('An Error', theory.statusCode, undefined)
             expect(requestError.isAuthenticationError()).toEqual(theory.isAuthenticationError)
         },

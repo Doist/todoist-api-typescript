@@ -1,17 +1,28 @@
 {
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
-        "sourceType": "module"
+        "sourceType": "module",
+        "project": ["tsconfig.json", "tsconfig.test.json"]
     },
     "plugins": ["@typescript-eslint"],
     "extends": [
         "eslint:recommended",
         "plugin:@typescript-eslint/eslint-recommended",
         "plugin:@typescript-eslint/recommended",
+        "plugin:@typescript-eslint/recommended-requiring-type-checking",
         "eslint-config-prettier"
     ],
     "env": {
         "browser": true,
         "jest": true
-    }
+    },
+    "overrides": [
+        {
+            "files": ["**/*.test.ts?(x)"],
+            "rules": {
+                // Ref.: https://github.com/typescript-eslint/typescript-eslint/issues/1776#issuecomment-601758481
+                "@typescript-eslint/unbound-method": "off"
+            }
+        }
+    ]
 }

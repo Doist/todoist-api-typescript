@@ -1,5 +1,6 @@
 import { request } from './restClient'
 import { v4 as uuid } from 'uuid'
+import { TodoistRequestError } from './types'
 
 const authenticationBaseUri = 'https://todoist.com/oauth/'
 const authorizationEndpoint = 'authorize'
@@ -25,7 +26,11 @@ export type AuthTokenRequestArgs = {
 
 export const getAuthStateParameter = (): string => uuid()
 
-export const getAuthorizationUrl = (clientId: string, permissions: Permission[], state: string) => {
+export const getAuthorizationUrl = (
+    clientId: string,
+    permissions: Permission[],
+    state: string,
+): string => {
     if (!permissions?.length) {
         throw new Error('At least one scope value should be passed for permissions.')
     }
@@ -44,12 +49,11 @@ export const getAuthToken = async (args: AuthTokenRequestArgs): Promise<AuthToke
     )
 
     if (response.status !== 200 || !response.data?.accessToken) {
-        const error = {
-            message: 'Authentication token exchange failed.',
-            response,
-        }
-
-        throw error
+        throw new TodoistRequestError(
+            'Authentication token exchange failed.',
+            response.status,
+            response.data,
+        )
     }
 
     return response.data
