@@ -1,16 +1,15 @@
 import { getColor, berryRed, charcoal, taupe } from './colors'
-import theoretically from 'jest-theories'
 
 describe('getColor', () => {
     const colorTheories = [
-        { colorId: 0, color: charcoal }, // out of range, defaulted
-        { colorId: 30, color: berryRed },
-        { colorId: 49, color: taupe },
-        { colorId: 999, color: charcoal }, // out of range, defaulted
-    ]
+        [0, charcoal], // out of range, defaulted
+        [30, berryRed],
+        [49, taupe],
+        [999, charcoal], // out of range, defaulted
+    ] as const
 
-    theoretically('returns {color} for color id {colorId}', colorTheories, (theory) => {
-        const color = getColor(theory.colorId)
-        expect(color).toEqual(theory.color)
+    test.each(colorTheories)('id %p returns color %p', (id, expected) => {
+        const color = getColor(id)
+        expect(color).toEqual(expected)
     })
 })

@@ -1,39 +1,30 @@
 import { getAuthorizationUrl, getAuthToken, Permission } from './authentication'
-import theoretically from 'jest-theories'
 import { setupRestClientMock } from './testUtils/mocks'
 import { assertInstance } from './testUtils/asserts'
 import { TodoistRequestError } from './types'
 
 describe('authentication', () => {
     describe('getAuthorizationUrl', () => {
-        const authUrlTheories: {
-            clientId: string
-            state: string
-            permissions: Permission[]
-            expected: string
-        }[] = [
-            {
-                clientId: 'SomeId',
-                state: 'SomeState',
-                permissions: ['data:read_write'],
-                expected:
-                    'https://todoist.com/oauth/authorize?client_id=SomeId&scope=data:read_write&state=SomeState',
-            },
-            {
-                clientId: 'SomeId',
-                state: 'SomeState',
-                permissions: ['data:read', 'project:delete'],
-                expected:
-                    'https://todoist.com/oauth/authorize?client_id=SomeId&scope=data:read,project:delete&state=SomeState',
-            },
-        ]
+        const authUrlTheories = [
+            [
+                'SomeId',
+                'SomeState',
+                ['data:read_write'] as Permission[],
+                'https://todoist.com/oauth/authorize?client_id=SomeId&scope=data:read_write&state=SomeState',
+            ],
+            [
+                'SomeId',
+                'SomeState',
+                ['data:read', 'project:delete'] as Permission[],
+                'https://todoist.com/oauth/authorize?client_id=SomeId&scope=data:read,project:delete&state=SomeState',
+            ],
+        ] as const
 
-        theoretically(
-            'returns url {expected] for clientId {clientId}, state {state} and permissions {permissions}',
-            authUrlTheories,
-            (theory) => {
-                const url = getAuthorizationUrl(theory.clientId, theory.permissions, theory.state)
-                expect(url).toEqual(theory.expected)
+        test.each(authUrlTheories)(
+            'Formatting %p with arguments %p returns %p',
+            (clientId, state, permissions, expected) => {
+                const url = getAuthorizationUrl(clientId, permissions, state)
+                expect(url).toEqual(expected)
             },
         )
 
