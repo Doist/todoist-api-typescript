@@ -154,10 +154,10 @@ describe('restClient', () => {
         try {
             await request('GET', DEFAULT_BASE_URI, DEFAULT_ENDPOINT, DEFAULT_AUTH_TOKEN)
         } catch (e) {
-            assertInstance(e, TodoistRequestError)
-            expect(e.message).toEqual(DEFAULT_ERROR_MESSAGE)
-            expect(e.httpStatusCode).toEqual(statusCode)
-            expect(e.responseData).toEqual(responseData)
+            const requestError = e as TodoistRequestError
+            expect(requestError.message).toEqual(DEFAULT_ERROR_MESSAGE)
+            expect(requestError.httpStatusCode).toEqual(statusCode)
+            expect(requestError.responseData).toEqual(responseData)
         }
     })
 
