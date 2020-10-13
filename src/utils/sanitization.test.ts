@@ -24,6 +24,7 @@ describe('getSanitizedContent', () => {
             'Some text with `inline code` and ```block code```',
             'Some text with inline code and block code',
         ],
+        ['Trailing asterisks are left in place*', 'Trailing asterisks are left in place*'],
     ]
 
     test.each(sanitizationTheories)('input text %p is sanitized to %p', (input, expected) => {
