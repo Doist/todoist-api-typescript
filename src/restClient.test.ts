@@ -4,7 +4,6 @@ import { mock } from 'jest-mock-extended'
 import { TodoistRequestError } from './types/errors'
 import * as caseConverter from 'axios-case-converter'
 import { assertInstance } from './testUtils/asserts'
-import { getColor } from './utils'
 
 jest.mock('axios')
 
