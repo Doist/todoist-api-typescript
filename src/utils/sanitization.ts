@@ -20,7 +20,7 @@ export type TaskWithSanitizedContent = Task & {
 }
 
 const removeStyleFormatting = (input: string): string => {
-    if (input.indexOf('!') === -1 && input.indexOf('*') === -1 && input.indexOf('_') === -1) {
+    if (!input.includes('!') && !input.includes('*') && !input.includes('_')) {
         return input
     }
 
@@ -55,7 +55,7 @@ const removeFakeSectionFormatting = (input: string): string => {
 }
 
 const removeMarkdownLinks = (input: string) => {
-    if (input.indexOf('[') === -1 || input.indexOf(']') === -1) {
+    if (!input.includes('[') || !input.includes(']')) {
         return input
     }
 
@@ -65,7 +65,7 @@ const removeMarkdownLinks = (input: string) => {
 }
 
 const removeTodoistLinks = (input: string) => {
-    if (input.indexOf('(') === -1 || input.indexOf(')') === -1) {
+    if (!input.includes('(') || !input.includes(')')) {
         return input
     }
 
@@ -75,15 +75,15 @@ const removeTodoistLinks = (input: string) => {
 }
 
 const removeAppLinks = (input: string) => {
-    if (input.indexOf('gmail') != -1) {
+    if (input.includes('gmail')) {
         input = input.replace(GMAIL_LINK, (match: string, id: string, text: string) => text)
     }
 
-    if (input.indexOf('outlook') != -1) {
+    if (input.includes('outlook')) {
         input = input.replace(OUTLOOK_LINK, (match: string, id: string, text: string) => text)
     }
 
-    if (input.indexOf('thunderbird') != -1) {
+    if (input.includes('thunderbird')) {
         input = input.replace(THUNDERBIRD_LINK, (match: string, text: string) => text)
     }
 
