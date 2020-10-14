@@ -28,6 +28,7 @@
         "uuid": "^8.3.1"
     },
     "devDependencies": {
+        "@doist/eslint-config": "^2.0.0",
         "@doist/prettier-config": "^3.0.5",
         "@types/axios": "^0.14.0",
         "@types/jest": "^26.0.14",
