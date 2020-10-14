@@ -4,17 +4,14 @@
         "sourceType": "module",
         "project": ["tsconfig.json", "tsconfig.test.json"]
     },
-    "plugins": ["@typescript-eslint"],
-    "extends": [
-        "eslint:recommended",
-        "plugin:@typescript-eslint/eslint-recommended",
-        "plugin:@typescript-eslint/recommended",
-        "plugin:@typescript-eslint/recommended-requiring-type-checking",
-        "eslint-config-prettier"
-    ],
+    "extends": ["@doist/eslint-config/recommended-requiring-type-checking"],
     "env": {
         "browser": true,
         "jest": true
+    },
+    "rules": {
+        // Legacy code.
+        "func-style": "off"
     },
     "overrides": [
         {
