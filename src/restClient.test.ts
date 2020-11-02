@@ -48,7 +48,7 @@ function setupAxiosMockWithError(statusCode: number, responseData: unknown) {
         response: { status: statusCode, data: responseData },
     })
 
-    function errorFunc() {
+    function errorFunc(): Promise<unknown> {
         throw axiosError
     }
 
