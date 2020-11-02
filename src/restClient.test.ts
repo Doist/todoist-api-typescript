@@ -30,7 +30,7 @@ const DEFAULT_RESPONSE = mock<AxiosResponse>({
 
 const DEFAULT_ERROR_MESSAGE = 'There was an error'
 
-const setupAxiosMock = (response = DEFAULT_RESPONSE) => {
+function setupAxiosMock(response = DEFAULT_RESPONSE) {
     const axiosMock = Axios as jest.Mocked<typeof Axios>
 
     axiosMock.get.mockResolvedValue(response)
@@ -41,14 +41,14 @@ const setupAxiosMock = (response = DEFAULT_RESPONSE) => {
     return axiosMock
 }
 
-const setupAxiosMockWithError = (statusCode: number, responseData: unknown) => {
+function setupAxiosMockWithError(statusCode: number, responseData: unknown) {
     const axiosMock = Axios as jest.Mocked<typeof Axios>
     const axiosError = mock<AxiosError>({
         message: DEFAULT_ERROR_MESSAGE,
         response: { status: statusCode, data: responseData },
     })
 
-    const errorFunc = () => {
+    function errorFunc() {
         throw axiosError
     }
 

@@ -16,11 +16,13 @@ import {
 } from './consts/endpoints'
 import { setupRestClientMock } from './testUtils/mocks'
 
-const setupSyncTaskConverter = (returnedTask: Task) => {
+function setupSyncTaskConverter(returnedTask: Task) {
     return jest.spyOn(taskConverters, 'getTaskFromQuickAddResponse').mockReturnValue(returnedTask)
 }
 
-const getTarget = () => new TodoistApi(DEFAULT_AUTH_TOKEN)
+function getTarget() {
+    return new TodoistApi(DEFAULT_AUTH_TOKEN)
+}
 
 describe('TodoistApi task endpoints', () => {
     describe('addTask', () => {
