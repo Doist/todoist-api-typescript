@@ -3,7 +3,9 @@ import { DEFAULT_AUTH_TOKEN, DEFAULT_COMMENT } from './testUtils/testDefaults'
 import { API_REST_BASE_URI, ENDPOINT_REST_COMMENTS } from './consts/endpoints'
 import { setupRestClientMock } from './testUtils/mocks'
 
-const getTarget = () => new TodoistApi(DEFAULT_AUTH_TOKEN)
+function getTarget() {
+    return new TodoistApi(DEFAULT_AUTH_TOKEN)
+}
 
 describe('TodoistApi comment endpoints', () => {
     describe('getComments', () => {
