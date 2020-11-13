@@ -19,12 +19,14 @@ export type TaskWithSanitizedContent = Task & {
     sanitizedContent: string
 }
 
-const removeStyleFormatting = (input: string): string => {
+function removeStyleFormatting(input: string): string {
     if (!input.includes('!') && !input.includes('*') && !input.includes('_')) {
         return input
     }
 
-    const removeMarkdown = (match: string, prefix: string, text: string) => `${prefix}${text}`
+    function removeMarkdown(match: string, prefix: string, text: string) {
+        return `${prefix}${text}`
+    }
 
     input = input.replace(BOLD_ITALIC_FORMAT, removeMarkdown)
     input = input.replace(BOLD_FORMAT, removeMarkdown)
@@ -33,8 +35,10 @@ const removeStyleFormatting = (input: string): string => {
     return input
 }
 
-const removeCodeFormatting = (input: string): string => {
-    const removeMarkdown = (match: string, text: string) => text
+function removeCodeFormatting(input: string): string {
+    function removeMarkdown(match: string, text: string) {
+        return text
+    }
 
     input = input.replace(CODE_BLOCK_FORMAT, removeMarkdown)
     input = input.replace(CODE_INLINE_FORMAT, removeMarkdown)
@@ -42,7 +46,7 @@ const removeCodeFormatting = (input: string): string => {
     return input
 }
 
-const removeFakeSectionFormatting = (input: string): string => {
+function removeFakeSectionFormatting(input: string): string {
     if (input.startsWith(FAKE_SECTION_PREFIX)) {
         input = input.slice(FAKE_SECTION_PREFIX.length)
     }
@@ -54,27 +58,31 @@ const removeFakeSectionFormatting = (input: string): string => {
     return input
 }
 
-const removeMarkdownLinks = (input: string) => {
+function removeMarkdownLinks(input: string) {
     if (!input.includes('[') || !input.includes(']')) {
         return input
     }
 
-    const removeMarkdown = (match: string, text: string) => text
+    function removeMarkdown(match: string, text: string) {
+        return text
+    }
 
     return input.replace(MARKDOWN_LINK, removeMarkdown)
 }
 
-const removeTodoistLinks = (input: string) => {
+function removeTodoistLinks(input: string) {
     if (!input.includes('(') || !input.includes(')')) {
         return input
     }
 
-    const removeMarkdown = (match: string, url: string, text: string) => text
+    function removeMarkdown(match: string, url: string, text: string) {
+        return text
+    }
 
     return input.replace(TODOIST_LINK, removeMarkdown)
 }
 
-const removeAppLinks = (input: string) => {
+function removeAppLinks(input: string) {
     if (input.includes('gmail')) {
         input = input.replace(GMAIL_LINK, (match: string, id: string, text: string) => text)
     }
@@ -90,7 +98,7 @@ const removeAppLinks = (input: string) => {
     return input
 }
 
-export const getSanitizedContent = (input: string): string => {
+export function getSanitizedContent(input: string): string {
     input = removeStyleFormatting(input)
     input = removeCodeFormatting(input)
     input = removeFakeSectionFormatting(input)
@@ -101,5 +109,6 @@ export const getSanitizedContent = (input: string): string => {
     return input
 }
 
-export const getSanitizedTasks = (tasks: Task[]): TaskWithSanitizedContent[] =>
-    tasks.map((task) => ({ ...task, sanitizedContent: getSanitizedContent(task.content) }))
+export function getSanitizedTasks(tasks: Task[]): TaskWithSanitizedContent[] {
+    return tasks.map((task) => ({ ...task, sanitizedContent: getSanitizedContent(task.content) }))
+}

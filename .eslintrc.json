@@ -9,10 +9,6 @@
         "browser": true,
         "jest": true
     },
-    "rules": {
-        // Legacy code.
-        "func-style": "off"
-    },
     "overrides": [
         {
             "files": ["**/*.test.ts?(x)"],
