@@ -28,7 +28,7 @@ export function getTaskFromQuickAddResponse(responseData: QuickAddTaskResponse):
         completed: !!responseData.checked,
         labelIds: responseData.labels,
         priority: responseData.priority,
-        commentCount: 0,
+        commentCount: 0, // Will always be 0 for a quick add
         created: responseData.dateAdded,
         url: getTaskUrlFromQuickAddResponse(responseData),
         ...(!!due && { due }),
