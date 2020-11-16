@@ -24,13 +24,15 @@ export type AuthTokenRequestArgs = {
     code: string
 }
 
-export const getAuthStateParameter = (): string => uuid()
+export function getAuthStateParameter(): string {
+    return uuid()
+}
 
-export const getAuthorizationUrl = (
+export function getAuthorizationUrl(
     clientId: string,
     permissions: Permission[],
     state: string,
-): string => {
+): string {
     if (!permissions?.length) {
         throw new Error('At least one scope value should be passed for permissions.')
     }
@@ -39,7 +41,7 @@ export const getAuthorizationUrl = (
     return `${authenticationBaseUri}${authorizationEndpoint}?client_id=${clientId}&scope=${scope}&state=${state}`
 }
 
-export const getAuthToken = async (args: AuthTokenRequestArgs): Promise<AuthTokenResponse> => {
+export async function getAuthToken(args: AuthTokenRequestArgs): Promise<AuthTokenResponse> {
     const response = await request<AuthTokenResponse>(
         'POST',
         authenticationBaseUri,

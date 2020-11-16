@@ -8,9 +8,11 @@ const defaultHeaders = {
     'Content-Type': 'application/json',
 }
 
-const getAuthHeader = (apiKey: string) => `Bearer ${apiKey}`
+function getAuthHeader(apiKey: string) {
+    return `Bearer ${apiKey}`
+}
 
-const getTodoistRequestError = (error: Error): TodoistRequestError => {
+function getTodoistRequestError(error: Error): TodoistRequestError {
     const requestError = new TodoistRequestError(error.message)
 
     const axiosError = error as AxiosError
@@ -22,28 +24,29 @@ const getTodoistRequestError = (error: Error): TodoistRequestError => {
     return requestError
 }
 
-const getRequestConfiguration = (apiToken?: string) => {
+function getRequestConfiguration(apiToken?: string) {
     const authHeader = apiToken ? { Authorization: getAuthHeader(apiToken) } : undefined
     const headers = { ...defaultHeaders, ...authHeader }
 
     return { headers }
 }
 
-const getAxiosClient = (apiToken?: string) => {
+function getAxiosClient(apiToken?: string) {
     const configuration = getRequestConfiguration(apiToken)
     return applyCaseMiddleware(Axios.create(configuration))
 }
 
-export const isSuccess = (response: AxiosResponse): boolean =>
-    response.status >= 200 && response.status < 300
+export function isSuccess(response: AxiosResponse): boolean {
+    return response.status >= 200 && response.status < 300
+}
 
-export const request = async <T extends unknown>(
+export async function request<T extends unknown>(
     httpMethod: HttpMethod,
     baseUri: string,
     relativePath: string,
     apiToken?: string,
     payload?: unknown,
-): Promise<AxiosResponse<T>> => {
+): Promise<AxiosResponse<T>> {
     try {
         const axiosClient = getAxiosClient(apiToken)
 
