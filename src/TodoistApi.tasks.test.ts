@@ -167,13 +167,18 @@ describe('TodoistApi task endpoints', () => {
     })
 
     describe('quickAddTask', () => {
-        const DEFAULT_QUICK_ADD_TEXT = 'This is a quick add text'
+        const DEFAULT_QUICK_ADD_ARGS = {
+            text: 'This is a quick add text',
+            note: 'This is a note',
+            reminder: 'tomorrow 5pm',
+            autoReminder: true,
+        }
 
         test('calls sync endpoint with expected parameters', async () => {
             const requestMock = setupRestClientMock(DEFAULT_QUICK_ADD_RESPONSE)
             const api = getTarget()
 
-            await api.quickAddTask(DEFAULT_QUICK_ADD_TEXT)
+            await api.quickAddTask(DEFAULT_QUICK_ADD_ARGS)
 
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
@@ -181,7 +186,7 @@ describe('TodoistApi task endpoints', () => {
                 API_SYNC_BASE_URI,
                 ENDPOINT_SYNC_QUICK_ADD,
                 DEFAULT_AUTH_TOKEN,
-                { text: DEFAULT_QUICK_ADD_TEXT },
+                DEFAULT_QUICK_ADD_ARGS,
             )
         })
 
@@ -190,7 +195,7 @@ describe('TodoistApi task endpoints', () => {
             const taskConverter = setupSyncTaskConverter(DEFAULT_TASK)
             const api = getTarget()
 
-            const task = await api.quickAddTask(DEFAULT_QUICK_ADD_TEXT)
+            const task = await api.quickAddTask(DEFAULT_QUICK_ADD_ARGS)
 
             expect(taskConverter).toBeCalledTimes(1)
             expect(taskConverter).toBeCalledWith(DEFAULT_QUICK_ADD_RESPONSE)

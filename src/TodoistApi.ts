@@ -22,6 +22,7 @@ import {
     UpdateProjectArgs,
     UpdateSectionArgs,
     UpdateTaskArgs,
+    QuickAddTaskArgs,
 } from './types/requests'
 import { request, isSuccess } from './restClient'
 import { getTaskFromQuickAddResponse } from './utils/taskConverters'
@@ -95,13 +96,13 @@ export class TodoistApi {
         return validateTask(response.data)
     }
 
-    async quickAddTask(text: string): Promise<Task> {
+    async quickAddTask(args: QuickAddTaskArgs): Promise<Task> {
         const response = await request<QuickAddTaskResponse>(
             'POST',
             API_SYNC_BASE_URI,
             ENDPOINT_SYNC_QUICK_ADD,
             this.authToken,
-            { text },
+            args,
         )
 
         const task = getTaskFromQuickAddResponse(response.data)
