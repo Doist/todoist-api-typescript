@@ -13,6 +13,13 @@ export type AddTaskArgs = {
     assignee?: number
 }
 
+export type QuickAddTaskArgs = {
+    text: string
+    note?: string
+    reminder?: string
+    autoReminder?: boolean
+}
+
 export type GetTasksArgs = {
     projectId?: number
     labelId?: number
