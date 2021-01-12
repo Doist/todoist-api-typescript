@@ -7,6 +7,7 @@
     "license": "MIT",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
+    "sideEffects": false,
     "scripts": {
         "clean": "rimraf dist",
         "format": "npx prettier --write \"./**/*.{ts,tsx,json,md,yml,babelrc,html}\"",
