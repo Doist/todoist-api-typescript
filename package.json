@@ -23,7 +23,7 @@
     },
     "dependencies": {
         "axios": "^0.21.1",
-        "axios-case-converter": "^0.6.0",
+        "axios-case-converter": "^0.7.0",
         "runtypes": "^5.0.1",
         "ts-custom-error": "^3.2.0",
         "url-join": "^4.0.1",
