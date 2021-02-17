@@ -1,7 +1,8 @@
 import { TodoistApi } from '.'
-import { DEFAULT_AUTH_TOKEN, DEFAULT_SECTION } from './testUtils/testDefaults'
+import { DEFAULT_AUTH_TOKEN, DEFAULT_SECTION, INVALID_ENTITY_ID } from './testUtils/testDefaults'
 import { API_REST_BASE_URI, ENDPOINT_REST_SECTIONS } from './consts/endpoints'
 import { setupRestClientMock } from './testUtils/mocks'
+import { assertInputValidationError } from './testUtils/asserts'
 
 function getTarget() {
     return new TodoistApi(DEFAULT_AUTH_TOKEN)
@@ -32,6 +33,12 @@ describe('TodoistApi section endpoints', () => {
             const section = await api.getSection(123)
 
             expect(section).toEqual(DEFAULT_SECTION)
+        })
+
+        test('throws validation error for invalid id input', async () => {
+            await assertInputValidationError(
+                async () => await getTarget().getSection(INVALID_ENTITY_ID),
+            )
         })
     })
 
@@ -123,6 +130,13 @@ describe('TodoistApi section endpoints', () => {
 
             expect(response).toEqual(true)
         })
+
+        test('throws validation error for invalid id input', async () => {
+            await assertInputValidationError(
+                async () =>
+                    await getTarget().updateSection(INVALID_ENTITY_ID, { name: 'a new name' }),
+            )
+        })
     })
 
     describe('deleteSection', () => {
@@ -149,6 +163,12 @@ describe('TodoistApi section endpoints', () => {
             const response = await api.deleteSection(123)
 
             expect(response).toEqual(true)
+        })
+
+        test('throws validation error for invalid id input', async () => {
+            await assertInputValidationError(
+                async () => await getTarget().deleteSection(INVALID_ENTITY_ID),
+            )
         })
     })
 })

@@ -1,7 +1,8 @@
 import { TodoistApi } from '.'
-import { DEFAULT_AUTH_TOKEN, DEFAULT_LABEL } from './testUtils/testDefaults'
+import { DEFAULT_AUTH_TOKEN, DEFAULT_LABEL, INVALID_ENTITY_ID } from './testUtils/testDefaults'
 import { API_REST_BASE_URI, ENDPOINT_REST_LABELS } from './consts/endpoints'
 import { setupRestClientMock } from './testUtils/mocks'
+import { assertInputValidationError } from './testUtils/asserts'
 
 function getTarget() {
     return new TodoistApi(DEFAULT_AUTH_TOKEN)
@@ -32,6 +33,12 @@ describe('TodoistApi label endpoints', () => {
             const label = await api.getLabel(123)
 
             expect(label).toEqual(DEFAULT_LABEL)
+        })
+
+        test('throws validation error for invalid id input', async () => {
+            await assertInputValidationError(
+                async () => await getTarget().getLabel(INVALID_ENTITY_ID),
+            )
         })
     })
 
@@ -123,6 +130,13 @@ describe('TodoistApi label endpoints', () => {
 
             expect(result).toEqual(true)
         })
+
+        test('throws validation error for invalid id input', async () => {
+            await assertInputValidationError(
+                async () =>
+                    await getTarget().updateLabel(INVALID_ENTITY_ID, DEFAULT_UPDATE_LABEL_ARGS),
+            )
+        })
     })
 
     describe('deleteLabel', () => {
@@ -149,6 +163,12 @@ describe('TodoistApi label endpoints', () => {
             const result = await api.deleteLabel(123)
 
             expect(result).toEqual(true)
+        })
+
+        test('throws validation error for invalid id input', async () => {
+            await assertInputValidationError(
+                async () => await getTarget().deleteLabel(INVALID_ENTITY_ID),
+            )
         })
     })
 })

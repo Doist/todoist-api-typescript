@@ -5,6 +5,7 @@ import {
     DEFAULT_AUTH_TOKEN,
     DEFAULT_QUICK_ADD_RESPONSE,
     DEFAULT_TASK,
+    INVALID_ENTITY_ID,
 } from './testUtils/testDefaults'
 import {
     API_REST_BASE_URI,
@@ -15,6 +16,7 @@ import {
     ENDPOINT_SYNC_QUICK_ADD,
 } from './consts/endpoints'
 import { setupRestClientMock } from './testUtils/mocks'
+import { assertInputValidationError } from './testUtils/asserts'
 
 function setupSyncTaskConverter(returnedTask: Task) {
     return jest.spyOn(taskConverters, 'getTaskFromQuickAddResponse').mockReturnValue(returnedTask)
@@ -83,6 +85,13 @@ describe('TodoistApi task endpoints', () => {
 
             expect(response).toEqual(true)
         })
+
+        test('throws validation error for invalid id input', async () => {
+            await assertInputValidationError(
+                async () =>
+                    await getTarget().updateTask(INVALID_ENTITY_ID, { content: 'some content' }),
+            )
+        })
     })
 
     describe('closeTask', () => {
@@ -109,6 +118,12 @@ describe('TodoistApi task endpoints', () => {
             const response = await api.closeTask(123)
 
             expect(response).toEqual(true)
+        })
+
+        test('throws validation error for invalid id input', async () => {
+            await assertInputValidationError(
+                async () => await getTarget().closeTask(INVALID_ENTITY_ID),
+            )
         })
     })
 
@@ -137,6 +152,12 @@ describe('TodoistApi task endpoints', () => {
 
             expect(response).toEqual(true)
         })
+
+        test('throws validation error for invalid id input', async () => {
+            await assertInputValidationError(
+                async () => await getTarget().reopenTask(INVALID_ENTITY_ID),
+            )
+        })
     })
 
     describe('deleteTask', () => {
@@ -163,6 +184,12 @@ describe('TodoistApi task endpoints', () => {
             const response = await api.deleteTask(123)
 
             expect(response).toEqual(true)
+        })
+
+        test('throws validation error for invalid id input', async () => {
+            await assertInputValidationError(
+                async () => await getTarget().deleteTask(INVALID_ENTITY_ID),
+            )
         })
     })
 
@@ -217,6 +244,12 @@ describe('TodoistApi task endpoints', () => {
                 API_REST_BASE_URI,
                 `${ENDPOINT_REST_TASKS}/${taskId}`,
                 DEFAULT_AUTH_TOKEN,
+            )
+        })
+
+        test('throws validation error for invalid id input', async () => {
+            await assertInputValidationError(
+                async () => await getTarget().getTask(INVALID_ENTITY_ID),
             )
         })
     })

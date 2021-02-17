@@ -1,7 +1,8 @@
 import { TodoistApi } from '.'
-import { DEFAULT_AUTH_TOKEN, DEFAULT_COMMENT } from './testUtils/testDefaults'
+import { DEFAULT_AUTH_TOKEN, DEFAULT_COMMENT, INVALID_ENTITY_ID } from './testUtils/testDefaults'
 import { API_REST_BASE_URI, ENDPOINT_REST_COMMENTS } from './consts/endpoints'
 import { setupRestClientMock } from './testUtils/mocks'
+import { assertInputValidationError } from './testUtils/asserts'
 
 function getTarget() {
     return new TodoistApi(DEFAULT_AUTH_TOKEN)
@@ -62,6 +63,12 @@ describe('TodoistApi comment endpoints', () => {
             const comment = await api.getComment(1)
 
             expect(comment).toEqual(expectedComment)
+        })
+
+        test('throws validation error for invalid id input', async () => {
+            await assertInputValidationError(
+                async () => await getTarget().getComment(INVALID_ENTITY_ID),
+            )
         })
     })
 
@@ -128,6 +135,12 @@ describe('TodoistApi comment endpoints', () => {
 
             expect(result).toEqual(true)
         })
+
+        test('throws validation error for invalid id input', async () => {
+            await assertInputValidationError(
+                async () => await getTarget().updateComment(INVALID_ENTITY_ID, updateCommentArgs),
+            )
+        })
     })
 
     describe('deleteComment', () => {
@@ -154,6 +167,12 @@ describe('TodoistApi comment endpoints', () => {
             const result = await api.deleteComment(1)
 
             expect(result).toEqual(true)
+        })
+
+        test('throws validation error for invalid id input', async () => {
+            await assertInputValidationError(
+                async () => await getTarget().deleteComment(INVALID_ENTITY_ID),
+            )
         })
     })
 })

@@ -1,11 +1,17 @@
 import { TodoistApi } from '.'
-import { DEFAULT_AUTH_TOKEN, DEFAULT_PROJECT, DEFAULT_USER } from './testUtils/testDefaults'
+import {
+    DEFAULT_AUTH_TOKEN,
+    DEFAULT_PROJECT,
+    DEFAULT_USER,
+    INVALID_ENTITY_ID,
+} from './testUtils/testDefaults'
 import {
     API_REST_BASE_URI,
     ENDPOINT_REST_PROJECTS,
     ENDPOINT_REST_PROJECT_COLLABORATORS,
 } from './consts/endpoints'
 import { setupRestClientMock } from './testUtils/mocks'
+import { assertInputValidationError } from './testUtils/asserts'
 
 function getTarget() {
     return new TodoistApi(DEFAULT_AUTH_TOKEN)
@@ -36,6 +42,12 @@ describe('TodoistApi project endpoints', () => {
             const project = await api.getProject(123)
 
             expect(project).toEqual(DEFAULT_PROJECT)
+        })
+
+        test('throws validation error for invalid id input', async () => {
+            await assertInputValidationError(
+                async () => await getTarget().getProject(INVALID_ENTITY_ID),
+            )
         })
     })
 
@@ -124,6 +136,12 @@ describe('TodoistApi project endpoints', () => {
 
             expect(result).toEqual(true)
         })
+
+        test('throws validation error for invalid id input', async () => {
+            await assertInputValidationError(
+                async () => await getTarget().updateProject(INVALID_ENTITY_ID, { name: 'a name' }),
+            )
+        })
     })
 
     describe('deleteProject', () => {
@@ -150,6 +168,12 @@ describe('TodoistApi project endpoints', () => {
             const result = await api.deleteProject(123)
 
             expect(result).toEqual(true)
+        })
+
+        test('throws validation error for invalid id input', async () => {
+            await assertInputValidationError(
+                async () => await getTarget().deleteProject(INVALID_ENTITY_ID),
+            )
         })
     })
 
@@ -179,6 +203,12 @@ describe('TodoistApi project endpoints', () => {
             const returnedUsers = await api.getProjectCollaborators(projectId)
 
             expect(returnedUsers).toEqual(users)
+        })
+
+        test('throws validation error for invalid id input', async () => {
+            await assertInputValidationError(
+                async () => await getTarget().getProjectCollaborators(INVALID_ENTITY_ID),
+            )
         })
     })
 })
