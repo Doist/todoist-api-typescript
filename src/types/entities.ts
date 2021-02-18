@@ -1,6 +1,6 @@
 import {
     Boolean,
-    Number as NumberValidator,
+    Number as NumberRunType,
     String,
     Array,
     Record,
@@ -10,7 +10,7 @@ import {
     Union,
 } from 'runtypes'
 
-export const EntityId = NumberValidator.withConstraint(
+export const EntityId = NumberRunType.withConstraint(
     (n) => Number.isInteger(n) || `${n} is not a valid entity id. Should be an integer`,
 )
 
@@ -40,60 +40,60 @@ export const DueDate = Record({
 export type DueDate = Static<typeof DueDate>
 
 export const Task = Record({
-    id: NumberValidator,
-    order: NumberValidator,
+    id: NumberRunType,
+    order: NumberRunType,
     content: String,
-    projectId: NumberValidator,
-    sectionId: NumberValidator,
+    projectId: NumberRunType,
+    sectionId: NumberRunType,
     completed: Boolean,
-    labelIds: Array(NumberValidator),
-    priority: NumberValidator,
-    commentCount: NumberValidator,
+    labelIds: Array(NumberRunType),
+    priority: NumberRunType,
+    commentCount: NumberRunType,
     created: String,
     url: String,
 }).And(
     Partial({
-        parentId: NumberValidator,
+        parentId: NumberRunType,
         due: DueDate,
-        assignee: NumberValidator,
+        assignee: NumberRunType,
     }),
 )
 
 export type Task = Static<typeof Task>
 
 export const Project = Record({
-    id: NumberValidator,
+    id: NumberRunType,
     name: String,
-    color: NumberValidator,
-    commentCount: NumberValidator,
+    color: NumberRunType,
+    commentCount: NumberRunType,
     shared: Boolean,
     favorite: Boolean,
 }).And(
     Partial({
-        parentId: NumberValidator,
-        order: NumberValidator,
+        parentId: NumberRunType,
+        order: NumberRunType,
         inboxProject: Boolean,
         teamInbox: Boolean,
-        syncId: NumberValidator,
+        syncId: NumberRunType,
     }),
 )
 
 export type Project = Static<typeof Project>
 
 export const Section = Record({
-    id: NumberValidator,
-    order: NumberValidator,
+    id: NumberRunType,
+    order: NumberRunType,
     name: String,
-    projectId: NumberValidator,
+    projectId: NumberRunType,
 })
 
 export type Section = Static<typeof Section>
 
 export const Label = Record({
-    id: NumberValidator,
-    order: NumberValidator,
+    id: NumberRunType,
+    order: NumberRunType,
     name: String,
-    color: NumberValidator,
+    color: NumberRunType,
     favorite: Boolean,
 })
 
@@ -101,7 +101,7 @@ export type Label = Static<typeof Label>
 
 export const Attachment = Partial({
     fileName: String,
-    fileSize: NumberValidator,
+    fileSize: NumberRunType,
     fileType: String,
     fileUrl: String,
     uploadState: Union(Literal('pending'), Literal('completed')),
@@ -110,13 +110,13 @@ export const Attachment = Partial({
 export type Attachment = Static<typeof Attachment>
 
 export const Comment = Record({
-    id: NumberValidator,
+    id: NumberRunType,
     content: String,
     posted: String,
 }).And(
     Partial({
-        taskId: NumberValidator,
-        projectId: NumberValidator,
+        taskId: NumberRunType,
+        projectId: NumberRunType,
         attachment: Attachment,
     }),
 )
@@ -124,7 +124,7 @@ export const Comment = Record({
 export type Comment = Static<typeof Comment>
 
 export const User = Record({
-    id: NumberValidator,
+    id: NumberRunType,
     name: String,
     email: String,
 })
