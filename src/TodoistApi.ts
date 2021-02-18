@@ -6,7 +6,7 @@ import {
     User,
     Section,
     Comment,
-    EntityId,
+    Int,
 } from './types/entities'
 import {
     AddLabelArgs,
@@ -63,7 +63,7 @@ export class TodoistApi {
     }
 
     async getTask(id: number): Promise<Task> {
-        EntityId.check(id)
+        Int.check(id)
         const response = await request<Task>(
             'GET',
             API_REST_BASE_URI,
@@ -113,7 +113,7 @@ export class TodoistApi {
     }
 
     async updateTask(id: number, args: UpdateTaskArgs): Promise<boolean> {
-        EntityId.check(id)
+        Int.check(id)
         const response = await request(
             'POST',
             API_REST_BASE_URI,
@@ -125,7 +125,7 @@ export class TodoistApi {
     }
 
     async closeTask(id: number): Promise<boolean> {
-        EntityId.check(id)
+        Int.check(id)
         const response = await request(
             'POST',
             API_REST_BASE_URI,
@@ -136,7 +136,7 @@ export class TodoistApi {
     }
 
     async reopenTask(id: number): Promise<boolean> {
-        EntityId.check(id)
+        Int.check(id)
         const response = await request(
             'POST',
             API_REST_BASE_URI,
@@ -147,7 +147,7 @@ export class TodoistApi {
     }
 
     async deleteTask(id: number): Promise<boolean> {
-        EntityId.check(id)
+        Int.check(id)
         const response = await request(
             'DELETE',
             API_REST_BASE_URI,
@@ -158,7 +158,7 @@ export class TodoistApi {
     }
 
     async getProject(id: number): Promise<Project> {
-        EntityId.check(id)
+        Int.check(id)
         const response = await request<Project>(
             'GET',
             API_REST_BASE_URI,
@@ -193,7 +193,7 @@ export class TodoistApi {
     }
 
     async updateProject(id: number, args: UpdateProjectArgs): Promise<boolean> {
-        EntityId.check(id)
+        Int.check(id)
         const response = await request(
             'POST',
             API_REST_BASE_URI,
@@ -205,7 +205,7 @@ export class TodoistApi {
     }
 
     async deleteProject(id: number): Promise<boolean> {
-        EntityId.check(id)
+        Int.check(id)
         const response = await request(
             'DELETE',
             API_REST_BASE_URI,
@@ -216,7 +216,7 @@ export class TodoistApi {
     }
 
     async getProjectCollaborators(projectId: number): Promise<User[]> {
-        EntityId.check(projectId)
+        Int.check(projectId)
         const response = await request<User[]>(
             'GET',
             API_REST_BASE_URI,
@@ -240,7 +240,7 @@ export class TodoistApi {
     }
 
     async getSection(id: number): Promise<Section> {
-        EntityId.check(id)
+        Int.check(id)
         const response = await request<Section>(
             'GET',
             API_REST_BASE_URI,
@@ -264,7 +264,7 @@ export class TodoistApi {
     }
 
     async updateSection(id: number, args: UpdateSectionArgs): Promise<boolean> {
-        EntityId.check(id)
+        Int.check(id)
         const response = await request(
             'POST',
             API_REST_BASE_URI,
@@ -276,7 +276,7 @@ export class TodoistApi {
     }
 
     async deleteSection(id: number): Promise<boolean> {
-        EntityId.check(id)
+        Int.check(id)
         const response = await request(
             'DELETE',
             API_REST_BASE_URI,
@@ -287,7 +287,7 @@ export class TodoistApi {
     }
 
     async getLabel(id: number): Promise<Label> {
-        EntityId.check(id)
+        Int.check(id)
         const response = await request<Label>(
             'GET',
             API_REST_BASE_URI,
@@ -322,7 +322,7 @@ export class TodoistApi {
     }
 
     async updateLabel(id: number, args: UpdateLabelArgs): Promise<boolean> {
-        EntityId.check(id)
+        Int.check(id)
         const response = await request(
             'POST',
             API_REST_BASE_URI,
@@ -334,7 +334,7 @@ export class TodoistApi {
     }
 
     async deleteLabel(id: number): Promise<boolean> {
-        EntityId.check(id)
+        Int.check(id)
         const response = await request(
             'DELETE',
             API_REST_BASE_URI,
@@ -357,7 +357,7 @@ export class TodoistApi {
     }
 
     async getComment(id: number): Promise<Comment> {
-        EntityId.check(id)
+        Int.check(id)
         const response = await request<Comment>(
             'GET',
             API_REST_BASE_URI,
@@ -381,7 +381,7 @@ export class TodoistApi {
     }
 
     async updateComment(id: number, args: UpdateCommentArgs): Promise<boolean> {
-        EntityId.check(id)
+        Int.check(id)
         const response = await request<boolean>(
             'POST',
             API_REST_BASE_URI,
@@ -393,7 +393,7 @@ export class TodoistApi {
     }
 
     async deleteComment(id: number): Promise<boolean> {
-        EntityId.check(id)
+        Int.check(id)
         const response = await request(
             'DELETE',
             API_REST_BASE_URI,
