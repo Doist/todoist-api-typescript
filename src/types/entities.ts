@@ -1,4 +1,18 @@
-import { Boolean, Number, String, Array, Record, Static, Partial, Literal, Union } from 'runtypes'
+import {
+    Boolean,
+    Number as NumberRunType,
+    String,
+    Array,
+    Record,
+    Static,
+    Partial,
+    Literal,
+    Union,
+} from 'runtypes'
+
+export const Int = NumberRunType.withConstraint(
+    (n) => Number.isInteger(n) || `${n} is not a valid entity id. Should be an integer`,
+)
 
 export type TodoistEntity = {
     id: number
@@ -26,60 +40,60 @@ export const DueDate = Record({
 export type DueDate = Static<typeof DueDate>
 
 export const Task = Record({
-    id: Number,
-    order: Number,
+    id: Int,
+    order: Int,
     content: String,
-    projectId: Number,
-    sectionId: Number,
+    projectId: Int,
+    sectionId: Int,
     completed: Boolean,
-    labelIds: Array(Number),
-    priority: Number,
-    commentCount: Number,
+    labelIds: Array(Int),
+    priority: Int,
+    commentCount: Int,
     created: String,
     url: String,
 }).And(
     Partial({
-        parentId: Number,
+        parentId: Int,
         due: DueDate,
-        assignee: Number,
+        assignee: Int,
     }),
 )
 
 export type Task = Static<typeof Task>
 
 export const Project = Record({
-    id: Number,
+    id: Int,
     name: String,
-    color: Number,
-    commentCount: Number,
+    color: Int,
+    commentCount: Int,
     shared: Boolean,
     favorite: Boolean,
 }).And(
     Partial({
-        parentId: Number,
-        order: Number,
+        parentId: Int,
+        order: Int,
         inboxProject: Boolean,
         teamInbox: Boolean,
-        syncId: Number,
+        syncId: Int,
     }),
 )
 
 export type Project = Static<typeof Project>
 
 export const Section = Record({
-    id: Number,
-    order: Number,
+    id: Int,
+    order: Int,
     name: String,
-    projectId: Number,
+    projectId: Int,
 })
 
 export type Section = Static<typeof Section>
 
 export const Label = Record({
-    id: Number,
-    order: Number,
+    id: Int,
+    order: Int,
     name: String,
-    color: Number,
+    color: Int,
     favorite: Boolean,
 })
 
@@ -87,7 +101,7 @@ export type Label = Static<typeof Label>
 
 export const Attachment = Partial({
     fileName: String,
-    fileSize: Number,
+    fileSize: Int,
     fileType: String,
     fileUrl: String,
     uploadState: Union(Literal('pending'), Literal('completed')),
@@ -96,13 +110,13 @@ export const Attachment = Partial({
 export type Attachment = Static<typeof Attachment>
 
 export const Comment = Record({
-    id: Number,
+    id: Int,
     content: String,
     posted: String,
 }).And(
     Partial({
-        taskId: Number,
-        projectId: Number,
+        taskId: Int,
+        projectId: Int,
         attachment: Attachment,
     }),
 )
@@ -110,7 +124,7 @@ export const Comment = Record({
 export type Comment = Static<typeof Comment>
 
 export const User = Record({
-    id: Number,
+    id: Int,
     name: String,
     email: String,
 })

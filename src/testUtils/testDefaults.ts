@@ -32,6 +32,8 @@ const DEFAULT_COMMENT_CONTENT = 'A comment'
 
 export const DEFAULT_AUTH_TOKEN = 'AToken'
 
+export const INVALID_ENTITY_ID = ('invalid/entity/id' as unknown) as number
+
 export const DEFAULT_DUE_DATE = {
     recurring: false,
     string: 'a date string',
