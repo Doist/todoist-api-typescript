@@ -107,6 +107,7 @@ export const Attachment = Record({
         fileSize: Int,
         fileType: String,
         fileUrl: String,
+        fileDuration: Int,
         uploadState: Union(Literal('pending'), Literal('completed')),
         image: String,
         imageWidth: Int,
