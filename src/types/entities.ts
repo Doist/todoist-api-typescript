@@ -99,13 +99,23 @@ export const Label = Record({
 
 export type Label = Static<typeof Label>
 
-export const Attachment = Partial({
-    fileName: String,
-    fileSize: Int,
-    fileType: String,
-    fileUrl: String,
-    uploadState: Union(Literal('pending'), Literal('completed')),
-})
+export const Attachment = Record({
+    resourceType: String,
+}).And(
+    Partial({
+        fileName: String,
+        fileSize: Int,
+        fileType: String,
+        fileUrl: String,
+        fileDuration: Int,
+        uploadState: Union(Literal('pending'), Literal('completed')),
+        image: String,
+        imageWidth: Int,
+        imageHeight: Int,
+        url: String,
+        title: String,
+    }),
+)
 
 export type Attachment = Static<typeof Attachment>
 

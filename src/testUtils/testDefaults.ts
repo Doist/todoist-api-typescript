@@ -142,6 +142,7 @@ export const INVALID_USER = {
 }
 
 export const DEFAULT_ATTACHMENT: Attachment = {
+    resourceType: 'file',
     fileType: 'image/png',
     fileUrl: 'https://someurl.com/image.jpg',
     uploadState: 'completed',
