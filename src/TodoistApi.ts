@@ -86,13 +86,14 @@ export class TodoistApi {
         return validateTaskArray(response.data)
     }
 
-    async addTask(args: AddTaskArgs): Promise<Task> {
+    async addTask(args: AddTaskArgs, requestId?: string): Promise<Task> {
         const response = await request<Task>(
             'POST',
             API_REST_BASE_URI,
             ENDPOINT_REST_TASKS,
             this.authToken,
             args,
+            requestId,
         )
 
         return validateTask(response.data)
@@ -112,7 +113,7 @@ export class TodoistApi {
         return validateTask(task)
     }
 
-    async updateTask(id: number, args: UpdateTaskArgs): Promise<boolean> {
+    async updateTask(id: number, args: UpdateTaskArgs, requestId?: string): Promise<boolean> {
         Int.check(id)
         const response = await request(
             'POST',
@@ -120,39 +121,46 @@ export class TodoistApi {
             urljoin(ENDPOINT_REST_TASKS, String(id)),
             this.authToken,
             args,
+            requestId,
         )
         return isSuccess(response)
     }
 
-    async closeTask(id: number): Promise<boolean> {
+    async closeTask(id: number, requestId?: string): Promise<boolean> {
         Int.check(id)
         const response = await request(
             'POST',
             API_REST_BASE_URI,
             urljoin(ENDPOINT_REST_TASKS, String(id), ENDPOINT_REST_TASK_CLOSE),
             this.authToken,
+            undefined,
+            requestId,
         )
         return isSuccess(response)
     }
 
-    async reopenTask(id: number): Promise<boolean> {
+    async reopenTask(id: number, requestId?: string): Promise<boolean> {
         Int.check(id)
         const response = await request(
             'POST',
             API_REST_BASE_URI,
             urljoin(ENDPOINT_REST_TASKS, String(id), ENDPOINT_REST_TASK_REOPEN),
             this.authToken,
+            undefined,
+            requestId,
         )
         return isSuccess(response)
     }
 
-    async deleteTask(id: number): Promise<boolean> {
+    async deleteTask(id: number, requestId?: string): Promise<boolean> {
         Int.check(id)
         const response = await request(
             'DELETE',
             API_REST_BASE_URI,
             urljoin(ENDPOINT_REST_TASKS, String(id)),
             this.authToken,
+            undefined,
+            requestId,
         )
         return isSuccess(response)
     }
@@ -180,19 +188,20 @@ export class TodoistApi {
         return validateProjectArray(response.data)
     }
 
-    async addProject(args: AddProjectArgs): Promise<Project> {
+    async addProject(args: AddProjectArgs, requestId?: string): Promise<Project> {
         const response = await request<Project>(
             'POST',
             API_REST_BASE_URI,
             ENDPOINT_REST_PROJECTS,
             this.authToken,
             args,
+            requestId,
         )
 
         return validateProject(response.data)
     }
 
-    async updateProject(id: number, args: UpdateProjectArgs): Promise<boolean> {
+    async updateProject(id: number, args: UpdateProjectArgs, requestId?: string): Promise<boolean> {
         Int.check(id)
         const response = await request(
             'POST',
@@ -200,17 +209,19 @@ export class TodoistApi {
             urljoin(ENDPOINT_REST_PROJECTS, String(id)),
             this.authToken,
             args,
+            requestId,
         )
         return isSuccess(response)
     }
 
-    async deleteProject(id: number): Promise<boolean> {
+    async deleteProject(id: number, requestId?: string): Promise<boolean> {
         Int.check(id)
         const response = await request(
             'DELETE',
             API_REST_BASE_URI,
             urljoin(ENDPOINT_REST_PROJECTS, String(id)),
             this.authToken,
+            requestId,
         )
         return isSuccess(response)
     }
@@ -251,19 +262,20 @@ export class TodoistApi {
         return validateSection(response.data)
     }
 
-    async addSection(args: AddSectionArgs): Promise<Section> {
+    async addSection(args: AddSectionArgs, requestId?: string): Promise<Section> {
         const response = await request<Section>(
             'POST',
             API_REST_BASE_URI,
             ENDPOINT_REST_SECTIONS,
             this.authToken,
             args,
+            requestId,
         )
 
         return validateSection(response.data)
     }
 
-    async updateSection(id: number, args: UpdateSectionArgs): Promise<boolean> {
+    async updateSection(id: number, args: UpdateSectionArgs, requestId?: string): Promise<boolean> {
         Int.check(id)
         const response = await request(
             'POST',
@@ -271,17 +283,20 @@ export class TodoistApi {
             urljoin(ENDPOINT_REST_SECTIONS, String(id)),
             this.authToken,
             args,
+            requestId,
         )
         return isSuccess(response)
     }
 
-    async deleteSection(id: number): Promise<boolean> {
+    async deleteSection(id: number, requestId?: string): Promise<boolean> {
         Int.check(id)
         const response = await request(
             'DELETE',
             API_REST_BASE_URI,
             urljoin(ENDPOINT_REST_SECTIONS, String(id)),
             this.authToken,
+            undefined,
+            requestId,
         )
         return isSuccess(response)
     }
@@ -309,19 +324,20 @@ export class TodoistApi {
         return validateLabelArray(response.data)
     }
 
-    async addLabel(args: AddLabelArgs): Promise<Label> {
+    async addLabel(args: AddLabelArgs, requestId?: string): Promise<Label> {
         const response = await request<Label>(
             'POST',
             API_REST_BASE_URI,
             ENDPOINT_REST_LABELS,
             this.authToken,
             args,
+            requestId,
         )
 
         return validateLabel(response.data)
     }
 
-    async updateLabel(id: number, args: UpdateLabelArgs): Promise<boolean> {
+    async updateLabel(id: number, args: UpdateLabelArgs, requestId?: string): Promise<boolean> {
         Int.check(id)
         const response = await request(
             'POST',
@@ -329,17 +345,20 @@ export class TodoistApi {
             urljoin(ENDPOINT_REST_LABELS, String(id)),
             this.authToken,
             args,
+            requestId,
         )
         return isSuccess(response)
     }
 
-    async deleteLabel(id: number): Promise<boolean> {
+    async deleteLabel(id: number, requestId?: string): Promise<boolean> {
         Int.check(id)
         const response = await request(
             'DELETE',
             API_REST_BASE_URI,
             urljoin(ENDPOINT_REST_LABELS, String(id)),
             this.authToken,
+            undefined,
+            requestId,
         )
         return isSuccess(response)
     }
@@ -368,19 +387,23 @@ export class TodoistApi {
         return validateComment(response.data)
     }
 
-    async addComment(args: AddTaskCommentArgs | AddProjectCommentArgs): Promise<Comment> {
+    async addComment(
+        args: AddTaskCommentArgs | AddProjectCommentArgs,
+        requestId?: string,
+    ): Promise<Comment> {
         const response = await request<Comment>(
             'POST',
             API_REST_BASE_URI,
             ENDPOINT_REST_COMMENTS,
             this.authToken,
             args,
+            requestId,
         )
 
         return validateComment(response.data)
     }
 
-    async updateComment(id: number, args: UpdateCommentArgs): Promise<boolean> {
+    async updateComment(id: number, args: UpdateCommentArgs, requestId?: string): Promise<boolean> {
         Int.check(id)
         const response = await request<boolean>(
             'POST',
@@ -388,17 +411,20 @@ export class TodoistApi {
             urljoin(ENDPOINT_REST_COMMENTS, String(id)),
             this.authToken,
             args,
+            requestId,
         )
         return isSuccess(response)
     }
 
-    async deleteComment(id: number): Promise<boolean> {
+    async deleteComment(id: number, requestId?: string): Promise<boolean> {
         Int.check(id)
         const response = await request(
             'DELETE',
             API_REST_BASE_URI,
             urljoin(ENDPOINT_REST_COMMENTS, String(id)),
             this.authToken,
+            undefined,
+            requestId,
         )
         return isSuccess(response)
     }

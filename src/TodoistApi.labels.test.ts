@@ -1,5 +1,10 @@
 import { TodoistApi } from '.'
-import { DEFAULT_AUTH_TOKEN, DEFAULT_LABEL, INVALID_ENTITY_ID } from './testUtils/testDefaults'
+import {
+    DEFAULT_AUTH_TOKEN,
+    DEFAULT_LABEL,
+    DEFAULT_REQUEST_ID,
+    INVALID_ENTITY_ID,
+} from './testUtils/testDefaults'
 import { API_REST_BASE_URI, ENDPOINT_REST_LABELS } from './consts/endpoints'
 import { setupRestClientMock } from './testUtils/mocks'
 import { assertInputValidationError } from './testUtils/asserts'
@@ -78,7 +83,7 @@ describe('TodoistApi label endpoints', () => {
             const requestMock = setupRestClientMock(DEFAULT_LABEL)
             const api = getTarget()
 
-            await api.addLabel(DEFAULT_ADD_LABEL_ARGS)
+            await api.addLabel(DEFAULT_ADD_LABEL_ARGS, DEFAULT_REQUEST_ID)
 
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
@@ -87,6 +92,7 @@ describe('TodoistApi label endpoints', () => {
                 ENDPOINT_REST_LABELS,
                 DEFAULT_AUTH_TOKEN,
                 DEFAULT_ADD_LABEL_ARGS,
+                DEFAULT_REQUEST_ID,
             )
         })
 
@@ -110,7 +116,7 @@ describe('TodoistApi label endpoints', () => {
             const requestMock = setupRestClientMock(undefined, 204)
             const api = getTarget()
 
-            await api.updateLabel(labelId, DEFAULT_UPDATE_LABEL_ARGS)
+            await api.updateLabel(labelId, DEFAULT_UPDATE_LABEL_ARGS, DEFAULT_REQUEST_ID)
 
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
@@ -119,6 +125,7 @@ describe('TodoistApi label endpoints', () => {
                 `${ENDPOINT_REST_LABELS}/${labelId}`,
                 DEFAULT_AUTH_TOKEN,
                 DEFAULT_UPDATE_LABEL_ARGS,
+                DEFAULT_REQUEST_ID,
             )
         })
 
@@ -145,7 +152,7 @@ describe('TodoistApi label endpoints', () => {
             const requestMock = setupRestClientMock(undefined, 204)
             const api = getTarget()
 
-            await api.deleteLabel(labelId)
+            await api.deleteLabel(labelId, DEFAULT_REQUEST_ID)
 
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
@@ -153,6 +160,8 @@ describe('TodoistApi label endpoints', () => {
                 API_REST_BASE_URI,
                 `${ENDPOINT_REST_LABELS}/${labelId}`,
                 DEFAULT_AUTH_TOKEN,
+                undefined,
+                DEFAULT_REQUEST_ID,
             )
         })
 

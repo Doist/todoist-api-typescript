@@ -4,6 +4,7 @@ import { mock } from 'jest-mock-extended'
 import { TodoistRequestError } from './types/errors'
 import * as caseConverter from 'axios-case-converter'
 import { assertInstance } from './testUtils/asserts'
+import { DEFAULT_REQUEST_ID } from './testUtils/testDefaults'
 
 jest.mock('axios')
 
@@ -18,6 +19,11 @@ const DEFAULT_HEADERS = {
 const AUTHORIZATION_HEADERS = {
     ...DEFAULT_HEADERS,
     Authorization: `Bearer ${DEFAULT_AUTH_TOKEN}`,
+}
+
+const HEADERS_WITH_REQUEST_ID = {
+    ...DEFAULT_HEADERS,
+    'X-Request-Id': DEFAULT_REQUEST_ID,
 }
 
 const DEFAULT_PAYLOAD = {
@@ -77,6 +83,20 @@ describe('restClient', () => {
 
         expect(axiosMock.create).toBeCalledTimes(1)
         expect(axiosMock.create).toBeCalledWith({ headers: AUTHORIZATION_HEADERS })
+    })
+
+    test('request adds request ID header to config if ID is passed', async () => {
+        await request(
+            'GET',
+            DEFAULT_BASE_URI,
+            DEFAULT_ENDPOINT,
+            undefined,
+            undefined,
+            DEFAULT_REQUEST_ID,
+        )
+
+        expect(axiosMock.create).toBeCalledTimes(1)
+        expect(axiosMock.create).toBeCalledWith({ headers: HEADERS_WITH_REQUEST_ID })
     })
 
     test('get calls axios with expected endpoint', async () => {

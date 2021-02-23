@@ -31,6 +31,7 @@ const DEFAULT_COMMENT_ID = 4
 const DEFAULT_COMMENT_CONTENT = 'A comment'
 
 export const DEFAULT_AUTH_TOKEN = 'AToken'
+export const DEFAULT_REQUEST_ID = 'ARequestID'
 
 export const INVALID_ENTITY_ID = ('invalid/entity/id' as unknown) as number
 

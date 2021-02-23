@@ -1,5 +1,10 @@
 import { TodoistApi } from '.'
-import { DEFAULT_AUTH_TOKEN, DEFAULT_SECTION, INVALID_ENTITY_ID } from './testUtils/testDefaults'
+import {
+    DEFAULT_AUTH_TOKEN,
+    DEFAULT_REQUEST_ID,
+    DEFAULT_SECTION,
+    INVALID_ENTITY_ID,
+} from './testUtils/testDefaults'
 import { API_REST_BASE_URI, ENDPOINT_REST_SECTIONS } from './consts/endpoints'
 import { setupRestClientMock } from './testUtils/mocks'
 import { assertInputValidationError } from './testUtils/asserts'
@@ -81,7 +86,7 @@ describe('TodoistApi section endpoints', () => {
             const requestMock = setupRestClientMock(DEFAULT_SECTION)
             const api = getTarget()
 
-            await api.addSection(DEFAULT_ADD_SECTION_ARGS)
+            await api.addSection(DEFAULT_ADD_SECTION_ARGS, DEFAULT_REQUEST_ID)
 
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
@@ -90,6 +95,7 @@ describe('TodoistApi section endpoints', () => {
                 ENDPOINT_REST_SECTIONS,
                 DEFAULT_AUTH_TOKEN,
                 DEFAULT_ADD_SECTION_ARGS,
+                DEFAULT_REQUEST_ID,
             )
         })
 
@@ -110,7 +116,7 @@ describe('TodoistApi section endpoints', () => {
             const requestMock = setupRestClientMock(undefined, 204)
             const api = getTarget()
 
-            await api.updateSection(sectionId, updateArgs)
+            await api.updateSection(sectionId, updateArgs, DEFAULT_REQUEST_ID)
 
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
@@ -119,6 +125,7 @@ describe('TodoistApi section endpoints', () => {
                 `${ENDPOINT_REST_SECTIONS}/${sectionId}`,
                 DEFAULT_AUTH_TOKEN,
                 updateArgs,
+                DEFAULT_REQUEST_ID,
             )
         })
 
@@ -145,7 +152,7 @@ describe('TodoistApi section endpoints', () => {
             const requestMock = setupRestClientMock(true)
             const api = getTarget()
 
-            await api.deleteSection(sectionId)
+            await api.deleteSection(sectionId, DEFAULT_REQUEST_ID)
 
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
@@ -153,6 +160,8 @@ describe('TodoistApi section endpoints', () => {
                 API_REST_BASE_URI,
                 `${ENDPOINT_REST_SECTIONS}/${sectionId}`,
                 DEFAULT_AUTH_TOKEN,
+                undefined,
+                DEFAULT_REQUEST_ID,
             )
         })
 
