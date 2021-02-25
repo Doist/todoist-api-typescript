@@ -4,6 +4,7 @@ import { Task } from './types'
 import {
     DEFAULT_AUTH_TOKEN,
     DEFAULT_QUICK_ADD_RESPONSE,
+    DEFAULT_REQUEST_ID,
     DEFAULT_TASK,
     INVALID_ENTITY_ID,
 } from './testUtils/testDefaults'
@@ -36,7 +37,7 @@ describe('TodoistApi task endpoints', () => {
             const requestMock = setupRestClientMock(DEFAULT_TASK)
             const api = getTarget()
 
-            await api.addTask(DEFAULT_ADD_TASK_ARGS)
+            await api.addTask(DEFAULT_ADD_TASK_ARGS, DEFAULT_REQUEST_ID)
 
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
@@ -45,6 +46,7 @@ describe('TodoistApi task endpoints', () => {
                 ENDPOINT_REST_TASKS,
                 DEFAULT_AUTH_TOKEN,
                 DEFAULT_ADD_TASK_ARGS,
+                DEFAULT_REQUEST_ID,
             )
         })
 
@@ -65,7 +67,7 @@ describe('TodoistApi task endpoints', () => {
             const requestMock = setupRestClientMock(undefined, 204)
             const api = getTarget()
 
-            await api.updateTask(taskId, updateArgs)
+            await api.updateTask(taskId, updateArgs, DEFAULT_REQUEST_ID)
 
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
@@ -74,6 +76,7 @@ describe('TodoistApi task endpoints', () => {
                 `${ENDPOINT_REST_TASKS}/${taskId}`,
                 DEFAULT_AUTH_TOKEN,
                 updateArgs,
+                DEFAULT_REQUEST_ID,
             )
         })
 
@@ -100,7 +103,7 @@ describe('TodoistApi task endpoints', () => {
             const requestMock = setupRestClientMock(undefined, 204)
             const api = getTarget()
 
-            await api.closeTask(taskId)
+            await api.closeTask(taskId, DEFAULT_REQUEST_ID)
 
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
@@ -108,6 +111,8 @@ describe('TodoistApi task endpoints', () => {
                 API_REST_BASE_URI,
                 `${ENDPOINT_REST_TASKS}/${taskId}/${ENDPOINT_REST_TASK_CLOSE}`,
                 DEFAULT_AUTH_TOKEN,
+                undefined,
+                DEFAULT_REQUEST_ID,
             )
         })
 
@@ -133,7 +138,7 @@ describe('TodoistApi task endpoints', () => {
             const requestMock = setupRestClientMock(undefined, 204)
             const api = getTarget()
 
-            await api.reopenTask(taskId)
+            await api.reopenTask(taskId, DEFAULT_REQUEST_ID)
 
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
@@ -141,6 +146,8 @@ describe('TodoistApi task endpoints', () => {
                 API_REST_BASE_URI,
                 `${ENDPOINT_REST_TASKS}/${taskId}/${ENDPOINT_REST_TASK_REOPEN}`,
                 DEFAULT_AUTH_TOKEN,
+                undefined,
+                DEFAULT_REQUEST_ID,
             )
         })
 
@@ -166,7 +173,7 @@ describe('TodoistApi task endpoints', () => {
             const requestMock = setupRestClientMock(undefined, 204)
             const api = getTarget()
 
-            await api.deleteTask(taskId)
+            await api.deleteTask(taskId, DEFAULT_REQUEST_ID)
 
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
@@ -174,6 +181,8 @@ describe('TodoistApi task endpoints', () => {
                 API_REST_BASE_URI,
                 `${ENDPOINT_REST_TASKS}/${taskId}`,
                 DEFAULT_AUTH_TOKEN,
+                undefined,
+                DEFAULT_REQUEST_ID,
             )
         })
 

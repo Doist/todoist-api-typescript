@@ -2,6 +2,7 @@ import { TodoistApi } from '.'
 import {
     DEFAULT_AUTH_TOKEN,
     DEFAULT_PROJECT,
+    DEFAULT_REQUEST_ID,
     DEFAULT_USER,
     INVALID_ENTITY_ID,
 } from './testUtils/testDefaults'
@@ -87,7 +88,7 @@ describe('TodoistApi project endpoints', () => {
             const requestMock = setupRestClientMock(DEFAULT_PROJECT)
             const api = getTarget()
 
-            await api.addProject(DEFAULT_ADD_PROJECT_ARGS)
+            await api.addProject(DEFAULT_ADD_PROJECT_ARGS, DEFAULT_REQUEST_ID)
 
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
@@ -96,6 +97,7 @@ describe('TodoistApi project endpoints', () => {
                 ENDPOINT_REST_PROJECTS,
                 DEFAULT_AUTH_TOKEN,
                 DEFAULT_ADD_PROJECT_ARGS,
+                DEFAULT_REQUEST_ID,
             )
         })
 
@@ -116,7 +118,7 @@ describe('TodoistApi project endpoints', () => {
             const requestMock = setupRestClientMock(undefined, 204)
             const api = getTarget()
 
-            await api.updateProject(projectId, updateArgs)
+            await api.updateProject(projectId, updateArgs, DEFAULT_REQUEST_ID)
 
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
@@ -125,6 +127,7 @@ describe('TodoistApi project endpoints', () => {
                 `${ENDPOINT_REST_PROJECTS}/${projectId}`,
                 DEFAULT_AUTH_TOKEN,
                 updateArgs,
+                DEFAULT_REQUEST_ID,
             )
         })
 
@@ -150,7 +153,7 @@ describe('TodoistApi project endpoints', () => {
             const requestMock = setupRestClientMock(undefined, 204)
             const api = getTarget()
 
-            await api.deleteProject(projectId)
+            await api.deleteProject(projectId, DEFAULT_REQUEST_ID)
 
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
@@ -158,6 +161,7 @@ describe('TodoistApi project endpoints', () => {
                 API_REST_BASE_URI,
                 `${ENDPOINT_REST_PROJECTS}/${projectId}`,
                 DEFAULT_AUTH_TOKEN,
+                DEFAULT_REQUEST_ID,
             )
         })
 

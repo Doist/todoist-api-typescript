@@ -24,15 +24,16 @@ function getTodoistRequestError(error: Error): TodoistRequestError {
     return requestError
 }
 
-function getRequestConfiguration(apiToken?: string) {
+function getRequestConfiguration(apiToken?: string, requestId?: string) {
     const authHeader = apiToken ? { Authorization: getAuthHeader(apiToken) } : undefined
-    const headers = { ...defaultHeaders, ...authHeader }
+    const requestIdHeader = requestId ? { 'X-Request-Id': requestId } : undefined
+    const headers = { ...defaultHeaders, ...authHeader, ...requestIdHeader }
 
     return { headers }
 }
 
-function getAxiosClient(apiToken?: string) {
-    const configuration = getRequestConfiguration(apiToken)
+function getAxiosClient(apiToken?: string, requestId?: string) {
+    const configuration = getRequestConfiguration(apiToken, requestId)
     return applyCaseMiddleware(Axios.create(configuration))
 }
 
@@ -46,9 +47,10 @@ export async function request<T extends unknown>(
     relativePath: string,
     apiToken?: string,
     payload?: unknown,
+    requestId?: string,
 ): Promise<AxiosResponse<T>> {
     try {
-        const axiosClient = getAxiosClient(apiToken)
+        const axiosClient = getAxiosClient(apiToken, requestId)
 
         switch (httpMethod) {
             case 'GET':

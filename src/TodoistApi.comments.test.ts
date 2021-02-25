@@ -1,5 +1,10 @@
 import { TodoistApi } from '.'
-import { DEFAULT_AUTH_TOKEN, DEFAULT_COMMENT, INVALID_ENTITY_ID } from './testUtils/testDefaults'
+import {
+    DEFAULT_AUTH_TOKEN,
+    DEFAULT_COMMENT,
+    DEFAULT_REQUEST_ID,
+    INVALID_ENTITY_ID,
+} from './testUtils/testDefaults'
 import { API_REST_BASE_URI, ENDPOINT_REST_COMMENTS } from './consts/endpoints'
 import { setupRestClientMock } from './testUtils/mocks'
 import { assertInputValidationError } from './testUtils/asserts'
@@ -82,7 +87,7 @@ describe('TodoistApi comment endpoints', () => {
             const requestMock = setupRestClientMock(DEFAULT_COMMENT)
             const api = getTarget()
 
-            await api.addComment(addCommentArgs)
+            await api.addComment(addCommentArgs, DEFAULT_REQUEST_ID)
 
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
@@ -91,6 +96,7 @@ describe('TodoistApi comment endpoints', () => {
                 ENDPOINT_REST_COMMENTS,
                 DEFAULT_AUTH_TOKEN,
                 addCommentArgs,
+                DEFAULT_REQUEST_ID,
             )
         })
 
@@ -115,7 +121,7 @@ describe('TodoistApi comment endpoints', () => {
             const requestMock = setupRestClientMock(undefined, 204)
             const api = getTarget()
 
-            await api.updateComment(taskId, updateCommentArgs)
+            await api.updateComment(taskId, updateCommentArgs, DEFAULT_REQUEST_ID)
 
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
@@ -124,6 +130,7 @@ describe('TodoistApi comment endpoints', () => {
                 `${ENDPOINT_REST_COMMENTS}/${taskId}`,
                 DEFAULT_AUTH_TOKEN,
                 updateCommentArgs,
+                DEFAULT_REQUEST_ID,
             )
         })
 
@@ -149,7 +156,7 @@ describe('TodoistApi comment endpoints', () => {
             const requestMock = setupRestClientMock(undefined, 204)
             const api = getTarget()
 
-            await api.deleteComment(taskId)
+            await api.deleteComment(taskId, DEFAULT_REQUEST_ID)
 
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
@@ -157,6 +164,8 @@ describe('TodoistApi comment endpoints', () => {
                 API_REST_BASE_URI,
                 `${ENDPOINT_REST_COMMENTS}/${taskId}`,
                 DEFAULT_AUTH_TOKEN,
+                undefined,
+                DEFAULT_REQUEST_ID,
             )
         })
 
