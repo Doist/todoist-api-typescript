@@ -117,7 +117,7 @@ describe('authentication', () => {
         const revokeTokenRequest = {
             clientId: 'SomeId',
             clientSecret: 'ASecret',
-            token: 'AToken',
+            accessToken: 'AToken',
         }
 
         test('calls request with expected values', async () => {

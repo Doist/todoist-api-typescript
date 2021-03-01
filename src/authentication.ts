@@ -30,7 +30,7 @@ export type AuthTokenRequestArgs = {
 export type RevokeAuthTokenRequestArgs = {
     clientId: string
     clientSecret: string
-    token: string
+    accessToken: string
 }
 
 export function getAuthStateParameter(): string {
