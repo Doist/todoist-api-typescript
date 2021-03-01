@@ -1,4 +1,4 @@
-import { getAuthorizationUrl, getAuthToken, Permission } from './authentication'
+import { getAuthorizationUrl, getAuthToken, revokeAuthToken, Permission } from './authentication'
 import { setupRestClientMock } from './testUtils/mocks'
 import { assertInstance } from './testUtils/asserts'
 import { TodoistRequestError } from './types'
@@ -110,6 +110,30 @@ describe('authentication', () => {
                 expect(e.message).toEqual('Authentication token exchange failed.')
                 expect(e.responseData).toEqual(missingTokenResponse)
             }
+        })
+    })
+
+    describe('revokeAuthToken', () => {
+        const revokeTokenRequest = {
+            clientId: 'SomeId',
+            clientSecret: 'ASecret',
+            token: 'AToken',
+        }
+
+        test('calls request with expected values', async () => {
+            const requestMock = setupRestClientMock(undefined, 200)
+
+            const isSuccess = await revokeAuthToken(revokeTokenRequest)
+
+            expect(requestMock).toBeCalledTimes(1)
+            expect(requestMock).toBeCalledWith(
+                'POST',
+                'https://api.todoist.com/sync/v8/',
+                'access_tokens/revoke',
+                undefined,
+                revokeTokenRequest,
+            )
+            expect(isSuccess).toEqual(true)
         })
     })
 })
