@@ -1,10 +1,13 @@
-import { request } from './restClient'
+import { request, isSuccess } from './restClient'
 import { v4 as uuid } from 'uuid'
 import { TodoistRequestError } from './types'
-
-const authenticationBaseUri = 'https://todoist.com/oauth/'
-const authorizationEndpoint = 'authorize'
-const authTokenEndpoint = 'access_token'
+import {
+    API_AUTHORIZATION_BASE_URI,
+    API_SYNC_BASE_URI,
+    ENDPOINT_AUTHORIZATION,
+    ENDPOINT_GET_TOKEN,
+    ENDPOINT_REVOKE_TOKEN,
+} from './consts/endpoints'
 
 export type Permission =
     | 'task:add'
@@ -24,6 +27,12 @@ export type AuthTokenRequestArgs = {
     code: string
 }
 
+export type RevokeAuthTokenRequestArgs = {
+    clientId: string
+    clientSecret: string
+    accessToken: string
+}
+
 export function getAuthStateParameter(): string {
     return uuid()
 }
@@ -38,14 +47,14 @@ export function getAuthorizationUrl(
     }
 
     const scope = permissions.join(',')
-    return `${authenticationBaseUri}${authorizationEndpoint}?client_id=${clientId}&scope=${scope}&state=${state}`
+    return `${API_AUTHORIZATION_BASE_URI}${ENDPOINT_AUTHORIZATION}?client_id=${clientId}&scope=${scope}&state=${state}`
 }
 
 export async function getAuthToken(args: AuthTokenRequestArgs): Promise<AuthTokenResponse> {
     const response = await request<AuthTokenResponse>(
         'POST',
-        authenticationBaseUri,
-        authTokenEndpoint,
+        API_AUTHORIZATION_BASE_URI,
+        ENDPOINT_GET_TOKEN,
         undefined,
         args,
     )
@@ -59,4 +68,16 @@ export async function getAuthToken(args: AuthTokenRequestArgs): Promise<AuthToke
     }
 
     return response.data
+}
+
+export async function revokeAuthToken(args: RevokeAuthTokenRequestArgs): Promise<boolean> {
+    const response = await request(
+        'POST',
+        API_SYNC_BASE_URI,
+        ENDPOINT_REVOKE_TOKEN,
+        undefined,
+        args,
+    )
+
+    return isSuccess(response)
 }
