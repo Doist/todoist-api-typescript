@@ -99,6 +99,7 @@ export const DEFAULT_PROJECT: Project = {
     commentCount: 0,
     favorite: false,
     shared: false,
+    url: `https://todoist.com/showProject?id=123`,
 }
 
 export const INVALID_PROJECT = {

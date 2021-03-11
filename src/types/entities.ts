@@ -68,6 +68,7 @@ export const Project = Record({
     commentCount: Int,
     shared: Boolean,
     favorite: Boolean,
+    url: String,
 }).And(
     Partial({
         parentId: Int,
