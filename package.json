@@ -1,6 +1,6 @@
 {
     "name": "@doist/todoist-api-typescript",
-    "version": "1.1.6",
+    "version": "1.2.0",
     "description": "A typescript wrapper for the Todoist REST API.",
     "author": "Doist developers",
     "repository": "git@github.com:doist/todoist-api-typescript.git",
@@ -25,6 +25,7 @@
     "dependencies": {
         "axios": "^0.21.1",
         "axios-case-converter": "^0.7.0",
+        "axios-retry": "^3.1.9",
         "runtypes": "^5.0.1",
         "ts-custom-error": "^3.2.0",
         "url-join": "^4.0.1",
