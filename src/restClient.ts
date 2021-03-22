@@ -18,14 +18,6 @@ function isNetworkError(error: AxiosError) {
     return !!(error && !error.response && error.code !== 'ECONNABORTED')
 }
 
-function isServerError(status?: number) {
-    return status !== undefined && status >= 500 && status <= 599
-}
-
-function shouldRetryRequest(error: AxiosError) {
-    return isNetworkError(error) || isServerError(error.response?.status)
-}
-
 function getTodoistRequestError(error: Error): TodoistRequestError {
     const requestError = new TodoistRequestError(error.message)
 
@@ -52,7 +44,7 @@ function getAxiosClient(apiToken?: string, requestId?: string) {
 
     axiosRetry(client, {
         retries: 3,
-        retryCondition: shouldRetryRequest,
+        retryCondition: isNetworkError,
     })
 
     return client
