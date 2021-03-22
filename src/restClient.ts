@@ -4,7 +4,7 @@ import urljoin from 'url-join'
 import { TodoistRequestError } from './types/errors'
 import { HttpMethod } from './types/http'
 import { v4 as uuidv4 } from 'uuid'
-import axiosRetry, { isNetworkOrIdempotentRequestError } from 'axios-retry'
+import axiosRetry from 'axios-retry'
 
 const defaultHeaders = {
     'Content-Type': 'application/json',
