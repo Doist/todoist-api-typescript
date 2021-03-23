@@ -1,6 +1,6 @@
 {
     "name": "@doist/todoist-api-typescript",
-    "version": "1.1.6",
+    "version": "1.2.4",
     "description": "A typescript wrapper for the Todoist REST API.",
     "author": "Doist developers",
     "repository": "git@github.com:doist/todoist-api-typescript.git",
@@ -25,6 +25,7 @@
     "dependencies": {
         "axios": "^0.21.1",
         "axios-case-converter": "^0.7.0",
+        "axios-retry": "^3.1.9",
         "runtypes": "^5.0.1",
         "ts-custom-error": "^3.2.0",
         "url-join": "^4.0.1",
@@ -34,13 +35,13 @@
         "@doist/eslint-config": "^4.0.0",
         "@doist/prettier-config": "^3.0.5",
         "@types/axios": "^0.14.0",
-        "@types/jest": "^26.0.20",
+        "@types/jest": "^26.0.21",
         "@types/url-join": "^4.0.0",
         "@types/uuid": "^8.3.0",
-        "@typescript-eslint/eslint-plugin": "^4.15.1",
-        "@typescript-eslint/parser": "^4.15.1",
+        "@typescript-eslint/eslint-plugin": "^4.19.0",
+        "@typescript-eslint/parser": "^4.19.0",
         "eslint": "^7.20.0",
-        "eslint-config-prettier": "^7.2.0",
+        "eslint-config-prettier": "^8.1.0",
         "eslint-import-resolver-webpack": "^0.13.0",
         "eslint-plugin-import": "^2.22.1",
         "eslint-plugin-prettier": "^3.3.1",
@@ -51,9 +52,9 @@
         "npm-run-all": "^4.1.5",
         "prettier": "^2.2.1",
         "rimraf": "^3.0.2",
-        "ts-jest": "^26.5.1",
+        "ts-jest": "^26.5.4",
         "ts-node": "^9.1.1",
-        "typescript": "^4.1.5"
+        "typescript": "^4.2.3"
     },
     "prettier": "@doist/prettier-config",
     "husky": {

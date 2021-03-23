@@ -6,7 +6,10 @@ import * as caseConverter from 'axios-case-converter'
 import { assertInstance } from './testUtils/asserts'
 import { DEFAULT_REQUEST_ID } from './testUtils/testDefaults'
 
+const RANDOM_ID = 'SomethingRandom'
+
 jest.mock('axios')
+jest.mock('uuid', () => ({ v4: () => RANDOM_ID }))
 
 const DEFAULT_BASE_URI = 'https://someapi.com/'
 const DEFAULT_ENDPOINT = 'endpoint'
@@ -39,6 +42,7 @@ const DEFAULT_ERROR_MESSAGE = 'There was an error'
 function setupAxiosMock(response = DEFAULT_RESPONSE) {
     const axiosMock = Axios as jest.Mocked<typeof Axios>
 
+    axiosMock.create = jest.fn(() => axiosMock)
     axiosMock.get.mockResolvedValue(response)
     axiosMock.post.mockResolvedValue(response)
     axiosMock.delete.mockResolvedValue(response)
@@ -49,6 +53,8 @@ function setupAxiosMock(response = DEFAULT_RESPONSE) {
 
 function setupAxiosMockWithError(statusCode: number, responseData: unknown) {
     const axiosMock = Axios as jest.Mocked<typeof Axios>
+    axiosMock.create = jest.fn(() => axiosMock)
+
     const axiosError = mock<AxiosError>({
         message: DEFAULT_ERROR_MESSAGE,
         response: { status: statusCode, data: responseData },
@@ -154,6 +160,20 @@ describe('restClient', () => {
 
         expect(axiosMock.post).toBeCalledTimes(1)
         expect(result).toEqual(DEFAULT_RESPONSE)
+    })
+
+    test('random request ID is created if none provided for POST request', async () => {
+        await request(
+            'POST',
+            DEFAULT_BASE_URI,
+            DEFAULT_ENDPOINT,
+            DEFAULT_AUTH_TOKEN,
+            DEFAULT_PAYLOAD,
+        )
+
+        expect(axiosMock.create).toBeCalledWith({
+            headers: { ...AUTHORIZATION_HEADERS, 'X-Request-Id': RANDOM_ID },
+        })
     })
 
     test('delete calls axios with expected endpoint', async () => {

@@ -3,6 +3,8 @@ import applyCaseMiddleware from 'axios-case-converter'
 import urljoin from 'url-join'
 import { TodoistRequestError } from './types/errors'
 import { HttpMethod } from './types/http'
+import { v4 as uuidv4 } from 'uuid'
+import axiosRetry from 'axios-retry'
 
 const defaultHeaders = {
     'Content-Type': 'application/json',
@@ -10,6 +12,14 @@ const defaultHeaders = {
 
 function getAuthHeader(apiKey: string) {
     return `Bearer ${apiKey}`
+}
+
+function isNetworkError(error: AxiosError) {
+    return !!(error && !error.response && error.code !== 'ECONNABORTED')
+}
+
+function getRetryDelay(retryCount: number) {
+    return retryCount === 1 ? 0 : 500
 }
 
 function getTodoistRequestError(error: Error): TodoistRequestError {
@@ -34,7 +44,15 @@ function getRequestConfiguration(apiToken?: string, requestId?: string) {
 
 function getAxiosClient(apiToken?: string, requestId?: string) {
     const configuration = getRequestConfiguration(apiToken, requestId)
-    return applyCaseMiddleware(Axios.create(configuration))
+    const client = applyCaseMiddleware(Axios.create(configuration))
+
+    axiosRetry(client, {
+        retries: 3,
+        retryCondition: isNetworkError,
+        retryDelay: getRetryDelay,
+    })
+
+    return client
 }
 
 export function isSuccess(response: AxiosResponse): boolean {
@@ -50,6 +68,10 @@ export async function request<T extends unknown>(
     requestId?: string,
 ): Promise<AxiosResponse<T>> {
     try {
+        if (httpMethod === 'POST' && !requestId) {
+            requestId = uuidv4()
+        }
+
         const axiosClient = getAxiosClient(apiToken, requestId)
 
         switch (httpMethod) {
