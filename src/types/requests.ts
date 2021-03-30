@@ -22,6 +22,7 @@ export type QuickAddTaskArgs = {
 
 export type GetTasksArgs = {
     projectId?: number
+    sectionId?: number
     labelId?: number
     filter?: string
     lang?: string
