@@ -10,8 +10,8 @@
     "sideEffects": false,
     "scripts": {
         "clean": "rimraf dist",
-        "format": "npx prettier --write \"./**/*.{ts,tsx,json,md,yml,babelrc,html}\"",
         "format-check": "npx prettier --check \"./**/*.{ts,tsx,json,md,yml,babelrc,html}\"",
+        "format-fix": "npx prettier --write \"./**/*.{ts,tsx,json,md,yml,babelrc,html}\"",
         "lint": "eslint ./src --ext ts,tsx --fix",
         "lint-check": "eslint ./src --ext ts,tsx",
         "ts-compile-check": "npx tsc -p tsconfig.json",
