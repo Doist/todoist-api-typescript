@@ -15,22 +15,25 @@ function getAuthHeader(apiKey: string) {
 }
 
 function isNetworkError(error: AxiosError) {
-    return !!(error && !error.response && error.code !== 'ECONNABORTED')
+    return Boolean(!error.response && error.code !== 'ECONNABORTED')
 }
 
 function getRetryDelay(retryCount: number) {
     return retryCount === 1 ? 0 : 500
 }
 
-function getTodoistRequestError(error: Error): TodoistRequestError {
+function isAxiosError(error: unknown): error is AxiosError {
+    return Boolean((error as AxiosError)?.isAxiosError)
+}
+
+function getTodoistRequestError(error: Error | AxiosError): TodoistRequestError {
     const requestError = new TodoistRequestError(error.message)
 
-    const axiosError = error as AxiosError
-
-    if (axiosError.response) {
-        requestError.httpStatusCode = axiosError.response.status
-        requestError.responseData = axiosError.response.data
+    if (isAxiosError(error) && error.response) {
+        requestError.httpStatusCode = error.response.status
+        requestError.responseData = error.response.data
     }
+
     return requestError
 }
 
@@ -82,7 +85,11 @@ export async function request<T extends unknown>(
             case 'DELETE':
                 return await axiosClient.delete<T>(urljoin(baseUri, relativePath))
         }
-    } catch (error) {
+    } catch (error: unknown) {
+        if (!isAxiosError(error) && !(error instanceof Error)) {
+            throw new Error('An unknown error occurred during the request')
+        }
+
         throw getTodoistRequestError(error)
     }
 }

@@ -14,8 +14,8 @@ export function getTaskFromQuickAddResponse(responseData: QuickAddTaskResponse):
               recurring: responseData.due.isRecurring,
               string: responseData.due.string,
               date: responseData.due.date,
-              ...(!!responseData.due.timezone && { datetime: responseData.due.date }),
-              ...(!!responseData.due.timezone && { timezone: responseData.due.timezone }),
+              ...(responseData.due.timezone !== null && { datetime: responseData.due.date }),
+              ...(responseData.due.timezone !== null && { timezone: responseData.due.timezone }),
           }
         : undefined
 
@@ -25,15 +25,15 @@ export function getTaskFromQuickAddResponse(responseData: QuickAddTaskResponse):
         content: responseData.content,
         projectId: responseData.projectId,
         sectionId: responseData.sectionId ?? 0,
-        completed: !!responseData.checked,
+        completed: responseData.checked === 1,
         labelIds: responseData.labels,
         priority: responseData.priority,
         commentCount: 0, // Will always be 0 for a quick add
         created: responseData.dateAdded,
         url: getTaskUrlFromQuickAddResponse(responseData),
-        ...(!!due && { due }),
-        ...(!!responseData.parentId && { parentId: responseData.parentId }),
-        ...(!!responseData.responsibleUid && { assignee: responseData.responsibleUid }),
+        ...(due !== undefined && { due }),
+        ...(responseData.parentId !== null && { parentId: responseData.parentId }),
+        ...(responseData.responsibleUid !== null && { assignee: responseData.responsibleUid }),
     }
 
     return task

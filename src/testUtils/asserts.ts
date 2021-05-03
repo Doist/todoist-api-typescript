@@ -21,7 +21,7 @@ export async function assertInputValidationError(apiCall: () => Promise<unknown>
 
     try {
         await apiCall()
-    } catch (e) {
+    } catch (e: unknown) {
         assertInstance(e, ValidationError)
         expect(requestMock).not.toBeCalled()
     }

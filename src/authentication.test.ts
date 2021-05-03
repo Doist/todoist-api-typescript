@@ -33,7 +33,7 @@ describe('authentication', () => {
 
             try {
                 getAuthorizationUrl('SomeId', [], 'SomeState')
-            } catch (e) {
+            } catch (e: unknown) {
                 assertInstance(e, Error)
                 expect(e.message).toEqual(
                     'At least one scope value should be passed for permissions.',
@@ -85,7 +85,7 @@ describe('authentication', () => {
 
             try {
                 await getAuthToken(defaultAuthRequest)
-            } catch (e) {
+            } catch (e: unknown) {
                 assertInstance(e, TodoistRequestError)
                 expect(e.message).toEqual('Authentication token exchange failed.')
                 expect(e.httpStatusCode).toEqual(failureStatus)
@@ -105,7 +105,7 @@ describe('authentication', () => {
 
             try {
                 await getAuthToken(defaultAuthRequest)
-            } catch (e) {
+            } catch (e: unknown) {
                 assertInstance(e, TodoistRequestError)
                 expect(e.message).toEqual('Authentication token exchange failed.')
                 expect(e.responseData).toEqual(missingTokenResponse)

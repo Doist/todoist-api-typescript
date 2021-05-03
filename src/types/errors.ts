@@ -12,6 +12,10 @@ export class TodoistRequestError extends CustomError {
     }
 
     isAuthenticationError = (): boolean => {
-        return !!this.httpStatusCode && authenticationErrorCodes.includes(this.httpStatusCode)
+        if (!this.httpStatusCode) {
+            return false
+        }
+
+        return authenticationErrorCodes.includes(this.httpStatusCode)
     }
 }
