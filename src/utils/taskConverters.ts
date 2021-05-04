@@ -23,6 +23,7 @@ export function getTaskFromQuickAddResponse(responseData: QuickAddTaskResponse):
         id: responseData.id,
         order: responseData.childOrder,
         content: responseData.content,
+        description: responseData.description,
         projectId: responseData.projectId,
         sectionId: responseData.sectionId ?? 0,
         completed: responseData.checked === 1,

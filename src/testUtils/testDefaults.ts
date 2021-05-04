@@ -11,6 +11,7 @@ import {
 
 const DEFAULT_TASK_ID = 1234
 const DEFAULT_TASK_CONTENT = 'This is a task'
+const DEFAULT_TASK_DESCRIPTION = 'A description'
 const DEFAULT_TASK_PRIORITY = 1
 const DEFAULT_ORDER = 3
 const DEFAULT_PROJECT_ID = 123
@@ -50,6 +51,7 @@ export const DEFAULT_QUICK_ADD_RESPONSE: QuickAddTaskResponse = {
     id: DEFAULT_TASK_ID,
     projectId: DEFAULT_PROJECT_ID,
     content: DEFAULT_TASK_CONTENT,
+    description: DEFAULT_TASK_DESCRIPTION,
     priority: DEFAULT_TASK_PRIORITY,
     sectionId: DEFAULT_SECTION_ID,
     parentId: DEFAULT_PARENT_ID,
@@ -73,6 +75,7 @@ export const DEFAULT_TASK: Task = {
     order: DEFAULT_ORDER,
     parentId: DEFAULT_PARENT_ID,
     content: DEFAULT_TASK_CONTENT,
+    description: DEFAULT_TASK_DESCRIPTION,
     projectId: DEFAULT_PROJECT_ID,
     sectionId: DEFAULT_SECTION_ID,
     completed: false,

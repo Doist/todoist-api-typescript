@@ -1,5 +1,6 @@
 export type AddTaskArgs = {
     content: string
+    description?: string
     projectId?: number
     sectionId?: number
     parentId?: number
@@ -31,6 +32,7 @@ export type GetTasksArgs = {
 
 export type UpdateTaskArgs = {
     content?: string
+    description?: string
     labelIds?: number[]
     priority?: number
     dueString?: string

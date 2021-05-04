@@ -43,6 +43,7 @@ export const Task = Record({
     id: Int,
     order: Int,
     content: String,
+    description: String,
     projectId: Int,
     sectionId: Int,
     completed: Boolean,
@@ -151,6 +152,7 @@ export type QuickAddTaskResponse = {
     id: number
     projectId: number
     content: string
+    description: string
     priority: number
     sectionId: number | null
     parentId: number | null

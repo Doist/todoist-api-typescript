@@ -35,9 +35,12 @@ api.getProjects()
 
 ## Publishing
 
-This project uses [semantic versioning](https://semver.org/). A new version will be published to GitHub Package Registry when a new tag is pushed.
+A new version is published to GitHub Package Registry whenever a new release on GitHub is created.
 
-```
-npm version <major|minor|patch>
-git push --follow-tags
-```
+To update the version in both package.json and package-lock.json:
+
+`npm version <major|minor|patch> --no-git-tag-version`
+
+Once these changes have been pushed and merged, create a release.
+
+A GitHub Action will automatically perform all the necessary steps and will release the version number that's specified inside the package.json's version field so make sure that the release tag reflects the version you want to publish.
