@@ -26,8 +26,13 @@ function isAxiosError(error: unknown): error is AxiosError {
     return Boolean((error as AxiosError)?.isAxiosError)
 }
 
-function getTodoistRequestError(error: Error | AxiosError): TodoistRequestError {
+function getTodoistRequestError(
+    error: Error | AxiosError,
+    originalStack?: Error,
+): TodoistRequestError {
     const requestError = new TodoistRequestError(error.message)
+
+    requestError.stack = isAxiosError(error) && originalStack ? originalStack.stack : error.stack
 
     if (isAxiosError(error) && error.response) {
         requestError.httpStatusCode = error.response.status
@@ -70,6 +75,11 @@ export async function request<T extends unknown>(
     payload?: unknown,
     requestId?: string,
 ): Promise<AxiosResponse<T>> {
+    // axios loses the original stack when returning errors, for the sake of better reporting
+    // we capture it here and reapply it to any thrown errors.
+    // Ref: https://github.com/axios/axios/issues/2387
+    const originalStack = new Error()
+
     try {
         if (httpMethod === 'POST' && !requestId) {
             requestId = uuidv4()
@@ -90,6 +100,6 @@ export async function request<T extends unknown>(
             throw new Error('An unknown error occurred during the request')
         }
 
-        throw getTodoistRequestError(error)
+        throw getTodoistRequestError(error, originalStack)
     }
 }

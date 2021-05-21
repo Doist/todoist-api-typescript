@@ -9,6 +9,7 @@ export class TodoistRequestError extends CustomError {
         public responseData?: unknown,
     ) {
         super(message)
+        Object.defineProperty(this, 'name', { value: 'TodoistRequestError' })
     }
 
     isAuthenticationError = (): boolean => {
