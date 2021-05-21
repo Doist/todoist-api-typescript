@@ -95,6 +95,7 @@ type AddCommentArgs = {
         fileName?: string
         fileUrl: string
         fileType?: string
+        resourceType?: string
     }
 }
 
