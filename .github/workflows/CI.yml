@@ -20,4 +20,4 @@ jobs:
                   NODE_AUTH_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
 
             - name: Run CI Check
-              run: npm run ci
+              run: npm run integrity-checks

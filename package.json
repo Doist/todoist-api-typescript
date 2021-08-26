@@ -18,8 +18,8 @@
         "audit": "npm audit --audit-level=moderate",
         "test": "jest",
         "build": "npx tsc -p tsconfig.json",
-        "ci": "npm-run-all clean format-check lint-check test build",
-        "prepublishOnly": "npm run ci",
+        "integrity-checks": "npm-run-all clean format-check lint-check test build",
+        "prepublishOnly": "npm run integrity-checks",
         "prepare": "npm run build"
     },
     "dependencies": {
@@ -32,18 +32,18 @@
         "uuid": "^8.3.1"
     },
     "devDependencies": {
-        "@doist/eslint-config": "^6.0.0",
+        "@doist/eslint-config": "^7.0.0",
         "@doist/prettier-config": "^3.0.5",
         "@types/axios": "^0.14.0",
         "@types/jest": "^26.0.23",
-        "@types/url-join": "^4.0.0",
+        "@types/url-join": "^4.0.1",
         "@types/uuid": "^8.3.0",
         "@typescript-eslint/eslint-plugin": "^4.22.0",
-        "@typescript-eslint/parser": "^4.22.0",
+        "@typescript-eslint/parser": "^4.29.3",
         "eslint": "^7.25.0",
         "eslint-config-prettier": "^8.3.0",
         "eslint-import-resolver-webpack": "^0.13.1",
-        "eslint-plugin-import": "^2.22.1",
+        "eslint-plugin-import": "^2.24.2",
         "eslint-plugin-prettier": "^3.4.0",
         "husky": "^4.3.8",
         "jest": "^26.6.3",
