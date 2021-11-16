@@ -23,7 +23,7 @@
         "prepare": "npm run build"
     },
     "dependencies": {
-        "axios": "^0.21.1",
+        "axios": "^0.21.2",
         "axios-case-converter": "^0.7.0",
         "axios-retry": "^3.1.9",
         "runtypes": "^5.2.0",
