@@ -1,6 +1,6 @@
-# todoist-api-typescript
+# Todoist API TypeScript Client
 
-A typescript wrapper for the Todoist REST API.
+This is the official TypeScript API client for the Todoist REST API.
 
 ## Installation
 
@@ -8,7 +8,25 @@ A typescript wrapper for the Todoist REST API.
 npm install @doist/todoist-api-typescript
 ```
 
-## Development + Testing
+### Usage
+
+An example of initializing the API client and fetching a user's tasks:
+
+```typescript
+import { TodoistApi } from '@doist/todoist-api-typescript'
+
+const api = new TodoistApi('YOURTOKEN')
+
+api.getTasks()
+    .then((tasks) => console.log(tasks))
+    .catch((error) => console.log(error))
+```
+
+### Documentation
+
+For more detailed reference documentation, have a look at the [API documentation with TypeScript examples](https://developer.todoist.com/rest/v1/?javascript).
+
+## Development and Testing
 
 Instead of having an example app in the repository to assist development and testing, we have included [ts-node](https://github.com/TypeStrong/ts-node) as a dev dependency. This allows us to have a scratch file locally that can import and utilize the API while developing or reviewing pull requests without having to manage a separate app project.
 
@@ -33,14 +51,22 @@ api.getProjects()
     .catch((error) => console.error(error))
 ```
 
-## Publishing
+## Releases
 
-A new version is published to GitHub Package Registry whenever a new release on GitHub is created.
+A new version is published to the NPM Registry whenever a new release on GitHub is created.
 
-To update the version in both package.json and package-lock.json:
+The version in both package.json and package-lock.json is updated with:
 
 `npm version <major|minor|patch> --no-git-tag-version`
 
-Once these changes have been pushed and merged, create a release.
+Once these changes have been pushed and merged, a release should be created, and a GitHub Action will automatically perform all the necessary steps and will release the version number that's specified inside the `package.json` file's version field.
 
-A GitHub Action will automatically perform all the necessary steps and will release the version number that's specified inside the package.json's version field so make sure that the release tag reflects the version you want to publish.
+Users of the API client can then update to this version in their `package.json`.
+
+### Feedback
+
+Any feedback, such as bugs, questions, comments, etc. can be reported as _Issues_ in this repository, and will be handled by us in Todoist.
+
+### Contributions
+
+We would also love contributions in the form of _Pull requests_ in this repository.
