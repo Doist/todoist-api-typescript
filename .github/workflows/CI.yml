@@ -10,9 +10,6 @@ jobs:
 
             - name: Configure doist package repository
               uses: actions/setup-node@v1
-              with:
-                  scope: '@doist'
-                  registry-url: 'https://npm.pkg.github.com'
 
             - name: Install dependencies
               run: npm ci
