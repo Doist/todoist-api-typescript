@@ -25,7 +25,7 @@
     },
     "dependencies": {
         "axios": "^0.21.2",
-        "axios-case-converter": "^0.7.0",
+        "axios-case-converter": "^0.9.0",
         "axios-retry": "^3.1.9",
         "runtypes": "^5.2.0",
         "ts-custom-error": "^3.2.0",
