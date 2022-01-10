@@ -33,7 +33,6 @@ Yes/No
 ## Version information:
 
 -   Package version:
--   Python version:
 
 ## Additional information
 
