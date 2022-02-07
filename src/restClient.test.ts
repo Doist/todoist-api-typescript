@@ -1,6 +1,5 @@
 import Axios, { AxiosStatic, AxiosResponse, AxiosError } from 'axios'
 import { request, isSuccess } from './restClient'
-import { mock } from 'jest-mock-extended'
 import { TodoistRequestError } from './types/errors'
 import * as caseConverter from 'axios-case-converter'
 import { assertInstance } from './testUtils/asserts'
@@ -33,9 +32,9 @@ const DEFAULT_PAYLOAD = {
     someKey: 'someValue',
 }
 
-const DEFAULT_RESPONSE = mock<AxiosResponse>({
+const DEFAULT_RESPONSE = {
     data: DEFAULT_PAYLOAD,
-})
+} as AxiosResponse
 
 const DEFAULT_ERROR_MESSAGE = 'There was an error'
 
@@ -55,10 +54,11 @@ function setupAxiosMockWithError(statusCode: number, responseData: unknown) {
     const axiosMock = Axios as jest.Mocked<typeof Axios>
     axiosMock.create = jest.fn(() => axiosMock)
 
-    const axiosError = mock<AxiosError>({
+    const axiosError = {
         message: DEFAULT_ERROR_MESSAGE,
-        response: { status: statusCode, data: responseData },
-    })
+        response: { status: statusCode, data: responseData } as AxiosResponse,
+        isAxiosError: true,
+    } as AxiosError
 
     function errorFunc(): Promise<unknown> {
         throw axiosError
@@ -215,7 +215,7 @@ describe('restClient', () => {
     ] as const
 
     test.each(responseStatusTheories)('status code %p returns isSuccess %p', (status, expected) => {
-        const response = mock<AxiosResponse>({ status })
+        const response = { status } as AxiosResponse
         const success = isSuccess(response)
         expect(success).toEqual(expected)
     })
