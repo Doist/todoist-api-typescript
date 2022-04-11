@@ -2,6 +2,8 @@
     "extends": [
         "config:base",
         "group:linters",
+        "group:monorepos",
+        "group:postcss",
         "group:recommended",
         "github>doist/renovate-config:integrations-automerge",
         "github>doist/renovate-config:integrations-npm-token"
