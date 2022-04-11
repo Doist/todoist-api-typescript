@@ -1,9 +1,6 @@
 {
     "extends": [
-        "config:base",
-        "group:linters",
-        "group:recommended",
-        "github>doist/renovate-config:integrations-automerge",
-        "github>doist/renovate-config:integrations-npm-token"
+        "github>doist/renovate-config:integrations-base",
+        "github>doist/renovate-config:integrations-automerge"
     ]
 }
