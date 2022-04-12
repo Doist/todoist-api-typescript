@@ -33,7 +33,7 @@
         "uuid": "^8.3.1"
     },
     "devDependencies": {
-        "@doist/eslint-config": "7.0.0",
+        "@doist/eslint-config": "7.1.2",
         "@doist/prettier-config": "3.0.5",
         "@types/axios": "0.14.0",
         "@types/jest": "27.4.1",
@@ -45,7 +45,7 @@
         "eslint-config-prettier": "8.5.0",
         "eslint-import-resolver-webpack": "0.13.2",
         "eslint-plugin-import": "2.26.0",
-        "eslint-plugin-prettier": "3.4.1",
+        "eslint-plugin-prettier": "4.0.0",
         "husky": "7.0.4",
         "jest": "27.5.1",
         "lint-staged": "12.3.7",
