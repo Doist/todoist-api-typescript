@@ -67,7 +67,7 @@ export function isSuccess(response: AxiosResponse): boolean {
     return response.status >= 200 && response.status < 300
 }
 
-export async function request<T extends unknown>(
+export async function request<T>(
     httpMethod: HttpMethod,
     baseUri: string,
     relativePath: string,
