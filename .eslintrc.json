@@ -9,6 +9,7 @@
         "browser": true,
         "jest": true
     },
+    "ignorePatterns": ["dist/", "jest.config.js"],
     "overrides": [
         {
             "files": ["**/*.test.ts?(x)"],
