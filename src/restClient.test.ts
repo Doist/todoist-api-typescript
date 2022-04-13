@@ -81,14 +81,20 @@ describe('restClient', () => {
         await request('GET', DEFAULT_BASE_URI, DEFAULT_ENDPOINT)
 
         expect(axiosMock.create).toBeCalledTimes(1)
-        expect(axiosMock.create).toBeCalledWith({ headers: DEFAULT_HEADERS })
+        expect(axiosMock.create).toBeCalledWith({
+            baseURL: DEFAULT_BASE_URI,
+            headers: DEFAULT_HEADERS,
+        })
     })
 
     test('request adds authorization header to config if token is passed', async () => {
         await request('GET', DEFAULT_BASE_URI, DEFAULT_ENDPOINT, DEFAULT_AUTH_TOKEN)
 
         expect(axiosMock.create).toBeCalledTimes(1)
-        expect(axiosMock.create).toBeCalledWith({ headers: AUTHORIZATION_HEADERS })
+        expect(axiosMock.create).toBeCalledWith({
+            baseURL: DEFAULT_BASE_URI,
+            headers: AUTHORIZATION_HEADERS,
+        })
     })
 
     test('request adds request ID header to config if ID is passed', async () => {
@@ -102,14 +108,17 @@ describe('restClient', () => {
         )
 
         expect(axiosMock.create).toBeCalledTimes(1)
-        expect(axiosMock.create).toBeCalledWith({ headers: HEADERS_WITH_REQUEST_ID })
+        expect(axiosMock.create).toBeCalledWith({
+            baseURL: DEFAULT_BASE_URI,
+            headers: HEADERS_WITH_REQUEST_ID,
+        })
     })
 
     test('get calls axios with expected endpoint', async () => {
         await request('GET', DEFAULT_BASE_URI, DEFAULT_ENDPOINT, DEFAULT_AUTH_TOKEN)
 
         expect(axiosMock.get).toBeCalledTimes(1)
-        expect(axiosMock.get).toBeCalledWith(DEFAULT_BASE_URI + DEFAULT_ENDPOINT, {
+        expect(axiosMock.get).toBeCalledWith(DEFAULT_ENDPOINT, {
             params: undefined,
         })
     })
@@ -124,7 +133,7 @@ describe('restClient', () => {
         )
 
         expect(axiosMock.get).toBeCalledTimes(1)
-        expect(axiosMock.get).toBeCalledWith(DEFAULT_BASE_URI + DEFAULT_ENDPOINT, {
+        expect(axiosMock.get).toBeCalledWith(DEFAULT_ENDPOINT, {
             params: DEFAULT_PAYLOAD,
         })
     })
@@ -146,7 +155,7 @@ describe('restClient', () => {
         )
 
         expect(axiosMock.post).toBeCalledTimes(1)
-        expect(axiosMock.post).toBeCalledWith(DEFAULT_BASE_URI + DEFAULT_ENDPOINT, DEFAULT_PAYLOAD)
+        expect(axiosMock.post).toBeCalledWith(DEFAULT_ENDPOINT, DEFAULT_PAYLOAD)
     })
 
     test('post returns response from axios', async () => {
@@ -172,6 +181,7 @@ describe('restClient', () => {
         )
 
         expect(axiosMock.create).toBeCalledWith({
+            baseURL: DEFAULT_BASE_URI,
             headers: { ...AUTHORIZATION_HEADERS, 'X-Request-Id': RANDOM_ID },
         })
     })
@@ -180,7 +190,7 @@ describe('restClient', () => {
         await request('DELETE', DEFAULT_BASE_URI, DEFAULT_ENDPOINT, DEFAULT_AUTH_TOKEN)
 
         expect(axiosMock.delete).toBeCalledTimes(1)
-        expect(axiosMock.delete).toBeCalledWith(DEFAULT_BASE_URI + DEFAULT_ENDPOINT)
+        expect(axiosMock.delete).toBeCalledWith(DEFAULT_ENDPOINT)
     })
 
     test('request throws TodoistRequestError on axios error with expected values', async () => {
