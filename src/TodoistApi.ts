@@ -27,7 +27,6 @@ import {
 } from './types/requests'
 import { request, isSuccess } from './restClient'
 import { getTaskFromQuickAddResponse } from './utils/taskConverters'
-import urljoin from 'url-join'
 import {
     API_REST_BASE_URI,
     API_SYNC_BASE_URI,
@@ -55,6 +54,10 @@ import {
     validateUserArray,
 } from './utils/validators'
 
+function generatePath(...segments: string[]): string {
+    return segments.join('/')
+}
+
 export class TodoistApi {
     authToken: string
 
@@ -67,7 +70,7 @@ export class TodoistApi {
         const response = await request<Task>(
             'GET',
             API_REST_BASE_URI,
-            urljoin(ENDPOINT_REST_TASKS, String(id)),
+            generatePath(ENDPOINT_REST_TASKS, String(id)),
             this.authToken,
         )
 
@@ -118,7 +121,7 @@ export class TodoistApi {
         const response = await request(
             'POST',
             API_REST_BASE_URI,
-            urljoin(ENDPOINT_REST_TASKS, String(id)),
+            generatePath(ENDPOINT_REST_TASKS, String(id)),
             this.authToken,
             args,
             requestId,
@@ -131,7 +134,7 @@ export class TodoistApi {
         const response = await request(
             'POST',
             API_REST_BASE_URI,
-            urljoin(ENDPOINT_REST_TASKS, String(id), ENDPOINT_REST_TASK_CLOSE),
+            generatePath(ENDPOINT_REST_TASKS, String(id), ENDPOINT_REST_TASK_CLOSE),
             this.authToken,
             undefined,
             requestId,
@@ -144,7 +147,7 @@ export class TodoistApi {
         const response = await request(
             'POST',
             API_REST_BASE_URI,
-            urljoin(ENDPOINT_REST_TASKS, String(id), ENDPOINT_REST_TASK_REOPEN),
+            generatePath(ENDPOINT_REST_TASKS, String(id), ENDPOINT_REST_TASK_REOPEN),
             this.authToken,
             undefined,
             requestId,
@@ -157,7 +160,7 @@ export class TodoistApi {
         const response = await request(
             'DELETE',
             API_REST_BASE_URI,
-            urljoin(ENDPOINT_REST_TASKS, String(id)),
+            generatePath(ENDPOINT_REST_TASKS, String(id)),
             this.authToken,
             undefined,
             requestId,
@@ -170,7 +173,7 @@ export class TodoistApi {
         const response = await request<Project>(
             'GET',
             API_REST_BASE_URI,
-            urljoin(ENDPOINT_REST_PROJECTS, String(id)),
+            generatePath(ENDPOINT_REST_PROJECTS, String(id)),
             this.authToken,
         )
 
@@ -206,7 +209,7 @@ export class TodoistApi {
         const response = await request(
             'POST',
             API_REST_BASE_URI,
-            urljoin(ENDPOINT_REST_PROJECTS, String(id)),
+            generatePath(ENDPOINT_REST_PROJECTS, String(id)),
             this.authToken,
             args,
             requestId,
@@ -219,7 +222,7 @@ export class TodoistApi {
         const response = await request(
             'DELETE',
             API_REST_BASE_URI,
-            urljoin(ENDPOINT_REST_PROJECTS, String(id)),
+            generatePath(ENDPOINT_REST_PROJECTS, String(id)),
             this.authToken,
             requestId,
         )
@@ -231,7 +234,11 @@ export class TodoistApi {
         const response = await request<User[]>(
             'GET',
             API_REST_BASE_URI,
-            urljoin(ENDPOINT_REST_PROJECTS, String(projectId), ENDPOINT_REST_PROJECT_COLLABORATORS),
+            generatePath(
+                ENDPOINT_REST_PROJECTS,
+                String(projectId),
+                ENDPOINT_REST_PROJECT_COLLABORATORS,
+            ),
             this.authToken,
         )
 
@@ -255,7 +262,7 @@ export class TodoistApi {
         const response = await request<Section>(
             'GET',
             API_REST_BASE_URI,
-            urljoin(ENDPOINT_REST_SECTIONS, String(id)),
+            generatePath(ENDPOINT_REST_SECTIONS, String(id)),
             this.authToken,
         )
 
@@ -280,7 +287,7 @@ export class TodoistApi {
         const response = await request(
             'POST',
             API_REST_BASE_URI,
-            urljoin(ENDPOINT_REST_SECTIONS, String(id)),
+            generatePath(ENDPOINT_REST_SECTIONS, String(id)),
             this.authToken,
             args,
             requestId,
@@ -293,7 +300,7 @@ export class TodoistApi {
         const response = await request(
             'DELETE',
             API_REST_BASE_URI,
-            urljoin(ENDPOINT_REST_SECTIONS, String(id)),
+            generatePath(ENDPOINT_REST_SECTIONS, String(id)),
             this.authToken,
             undefined,
             requestId,
@@ -306,7 +313,7 @@ export class TodoistApi {
         const response = await request<Label>(
             'GET',
             API_REST_BASE_URI,
-            urljoin(ENDPOINT_REST_LABELS, String(id)),
+            generatePath(ENDPOINT_REST_LABELS, String(id)),
             this.authToken,
         )
 
@@ -342,7 +349,7 @@ export class TodoistApi {
         const response = await request(
             'POST',
             API_REST_BASE_URI,
-            urljoin(ENDPOINT_REST_LABELS, String(id)),
+            generatePath(ENDPOINT_REST_LABELS, String(id)),
             this.authToken,
             args,
             requestId,
@@ -355,7 +362,7 @@ export class TodoistApi {
         const response = await request(
             'DELETE',
             API_REST_BASE_URI,
-            urljoin(ENDPOINT_REST_LABELS, String(id)),
+            generatePath(ENDPOINT_REST_LABELS, String(id)),
             this.authToken,
             undefined,
             requestId,
@@ -380,7 +387,7 @@ export class TodoistApi {
         const response = await request<Comment>(
             'GET',
             API_REST_BASE_URI,
-            urljoin(ENDPOINT_REST_COMMENTS, String(id)),
+            generatePath(ENDPOINT_REST_COMMENTS, String(id)),
             this.authToken,
         )
 
@@ -408,7 +415,7 @@ export class TodoistApi {
         const response = await request<boolean>(
             'POST',
             API_REST_BASE_URI,
-            urljoin(ENDPOINT_REST_COMMENTS, String(id)),
+            generatePath(ENDPOINT_REST_COMMENTS, String(id)),
             this.authToken,
             args,
             requestId,
@@ -421,7 +428,7 @@ export class TodoistApi {
         const response = await request(
             'DELETE',
             API_REST_BASE_URI,
-            urljoin(ENDPOINT_REST_COMMENTS, String(id)),
+            generatePath(ENDPOINT_REST_COMMENTS, String(id)),
             this.authToken,
             undefined,
             requestId,
