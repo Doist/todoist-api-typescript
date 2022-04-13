@@ -29,7 +29,6 @@
         "axios-retry": "^3.1.9",
         "runtypes": "^6.5.0",
         "ts-custom-error": "^3.2.0",
-        "url-join": "^4.0.1",
         "uuid": "^8.3.1"
     },
     "devDependencies": {
@@ -37,7 +36,6 @@
         "@doist/prettier-config": "3.0.5",
         "@types/axios": "0.14.0",
         "@types/jest": "27.4.1",
-        "@types/url-join": "4.0.1",
         "@types/uuid": "8.3.4",
         "@typescript-eslint/eslint-plugin": "5.19.0",
         "@typescript-eslint/parser": "5.19.0",
