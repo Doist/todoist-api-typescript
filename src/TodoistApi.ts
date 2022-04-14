@@ -54,6 +54,11 @@ import {
     validateUserArray,
 } from './utils/validators'
 
+/**
+ * Joins path segments using `/` separator.
+ * @param segments A list of **valid** path segments.
+ * @returns A joined path.
+ */
 function generatePath(...segments: string[]): string {
     return segments.join('/')
 }
