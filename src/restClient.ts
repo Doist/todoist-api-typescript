@@ -1,6 +1,5 @@
 import Axios, { AxiosResponse, AxiosError } from 'axios'
 import applyCaseMiddleware from 'axios-case-converter'
-import urljoin from 'url-join'
 import { TodoistRequestError } from './types/errors'
 import { HttpMethod } from './types/http'
 import { v4 as uuidv4 } from 'uuid'
@@ -42,16 +41,16 @@ function getTodoistRequestError(
     return requestError
 }
 
-function getRequestConfiguration(apiToken?: string, requestId?: string) {
+function getRequestConfiguration(baseURL: string, apiToken?: string, requestId?: string) {
     const authHeader = apiToken ? { Authorization: getAuthHeader(apiToken) } : undefined
     const requestIdHeader = requestId ? { 'X-Request-Id': requestId } : undefined
     const headers = { ...defaultHeaders, ...authHeader, ...requestIdHeader }
 
-    return { headers }
+    return { baseURL, headers }
 }
 
-function getAxiosClient(apiToken?: string, requestId?: string) {
-    const configuration = getRequestConfiguration(apiToken, requestId)
+function getAxiosClient(baseURL: string, apiToken?: string, requestId?: string) {
+    const configuration = getRequestConfiguration(baseURL, apiToken, requestId)
     const client = applyCaseMiddleware(Axios.create(configuration))
 
     axiosRetry(client, {
@@ -85,15 +84,15 @@ export async function request<T>(
             requestId = uuidv4()
         }
 
-        const axiosClient = getAxiosClient(apiToken, requestId)
+        const axiosClient = getAxiosClient(baseUri, apiToken, requestId)
 
         switch (httpMethod) {
             case 'GET':
-                return await axiosClient.get<T>(urljoin(baseUri, relativePath), { params: payload })
+                return await axiosClient.get<T>(relativePath, { params: payload })
             case 'POST':
-                return await axiosClient.post<T>(urljoin(baseUri, relativePath), payload)
+                return await axiosClient.post<T>(relativePath, payload)
             case 'DELETE':
-                return await axiosClient.delete<T>(urljoin(baseUri, relativePath))
+                return await axiosClient.delete<T>(relativePath)
         }
     } catch (error: unknown) {
         if (!isAxiosError(error) && !(error instanceof Error)) {
