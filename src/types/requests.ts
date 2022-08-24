@@ -1,17 +1,17 @@
 export type AddTaskArgs = {
     content: string
     description?: string
-    projectId?: number
-    sectionId?: number
-    parentId?: number
+    projectId?: string
+    sectionId?: string
+    parentId?: string
     order?: number
-    labelIds?: number[]
+    labels?: string[]
     priority?: number
     dueString?: string
     dueLang?: string
     dueDate?: string
     dueDatetime?: string
-    assigneeId?: number
+    assigneeId?: string
 }
 
 export type QuickAddTaskArgs = {
@@ -22,9 +22,9 @@ export type QuickAddTaskArgs = {
 }
 
 export type GetTasksArgs = {
-    projectId?: number
-    sectionId?: number
-    labelId?: number
+    projectId?: string
+    sectionId?: string
+    label?: string
     filter?: string
     lang?: string
     ids?: number[]
@@ -33,20 +33,20 @@ export type GetTasksArgs = {
 export type UpdateTaskArgs = {
     content?: string
     description?: string
-    labelIds?: number[]
+    labels?: string[]
     priority?: number
     dueString?: string
     dueLang?: string
     dueDate?: string
     dueDatetime?: string
-    assigneeId?: number
+    assigneeId?: string
 }
 
 export type ProjectViewStyle = 'list' | 'board'
 
 export type AddProjectArgs = {
     name: string
-    parentId?: number
+    parentId?: string
     color?: number
     isFavorite?: boolean
     viewStyle?: ProjectViewStyle
@@ -61,7 +61,7 @@ export type UpdateProjectArgs = {
 
 export type AddSectionArgs = {
     name: string
-    projectId: number
+    projectId: string
     order?: number
 }
 
@@ -84,12 +84,12 @@ export type UpdateLabelArgs = {
 }
 
 export type GetTaskCommentsArgs = {
-    taskId: number
+    taskId: string
     projectId?: never
 }
 
 export type GetProjectCommentsArgs = {
-    projectId: number
+    projectId: string
     taskId?: never
 }
 
@@ -104,15 +104,24 @@ type AddCommentArgs = {
 }
 
 export type AddTaskCommentArgs = AddCommentArgs & {
-    taskId: number
+    taskId: string
     projectId?: never
 }
 
 export type AddProjectCommentArgs = AddCommentArgs & {
-    projectId: number
+    projectId: string
     taskId?: never
 }
 
 export type UpdateCommentArgs = {
     content: string
+}
+
+export type RenameSharedLabelArgs = {
+    name: string
+    newName: string
+}
+
+export type RemoveSharedLabelArgs = {
+    name: string
 }
