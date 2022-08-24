@@ -79,7 +79,7 @@ describe('TodoistApi section endpoints', () => {
     describe('addSection', () => {
         const DEFAULT_ADD_SECTION_ARGS = {
             name: 'This is a section',
-            projectId: 123,
+            projectId: '123',
         }
 
         test('calls post on restClient with expected parameters', async () => {

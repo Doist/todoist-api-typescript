@@ -282,7 +282,7 @@ describe('TodoistApi task endpoints', () => {
 
     describe('getTasks', () => {
         const DEFAULT_GET_TASKS_ARGS = {
-            projectId: 123,
+            projectId: '123',
         }
 
         test('calls get on expected endpoint with args', async () => {

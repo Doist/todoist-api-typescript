@@ -16,7 +16,7 @@ function getTarget() {
 describe('TodoistApi comment endpoints', () => {
     describe('getComments', () => {
         test('calls get request with expected params', async () => {
-            const getCommentsArgs = { projectId: 12 }
+            const getCommentsArgs = { projectId: '12' }
             const requestMock = setupRestClientMock([DEFAULT_COMMENT])
             const api = getTarget()
 
@@ -37,7 +37,7 @@ describe('TodoistApi comment endpoints', () => {
             setupRestClientMock(expectedComments)
             const api = getTarget()
 
-            const comments = await api.getComments({ taskId: 12 })
+            const comments = await api.getComments({ taskId: '12' })
 
             expect(comments).toEqual(expectedComments)
         })
@@ -80,7 +80,7 @@ describe('TodoistApi comment endpoints', () => {
     describe('addComment', () => {
         const addCommentArgs = {
             content: 'A comment',
-            taskId: 123,
+            taskId: '123',
         }
 
         test('makes post request with expected params', async () => {

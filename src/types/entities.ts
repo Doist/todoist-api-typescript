@@ -51,6 +51,7 @@ export const Task = Record({
     commentCount: Int,
     createdAt: String,
     url: String,
+    creatorId: String,
 }).And(
     Partial({
         due: DueDate,
@@ -150,18 +151,19 @@ export type Color = TodoistEntity & {
 }
 
 export type QuickAddTaskResponse = {
-    id: string
-    projectId: string
+    id: number
+    projectId: number
     content: string
     description: string
     priority: number
-    sectionId: string | null
-    parentId: string | null
+    sectionId: number | null
+    parentId: number | null
     childOrder: number // order
-    labels: string[] // labelIds
-    responsibleUid: string | null
+    labels: number[] // labelIds
+    responsibleUid: number | null
     checked: number // completed
     dateAdded: string // created
+    creatorId: number | null
     due: {
         date: string
         timezone: string | null

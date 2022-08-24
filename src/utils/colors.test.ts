@@ -1,4 +1,4 @@
-import { getColor, berryRed, charcoal, taupe } from './colors'
+import { berryRed, charcoal, taupe, getColorById } from './colors'
 
 describe('getColor', () => {
     const colorTheories = [
@@ -9,7 +9,7 @@ describe('getColor', () => {
     ] as const
 
     test.each(colorTheories)('id %p returns color %p', (id, expected) => {
-        const color = getColor(id)
+        const color = getColorById(id)
         expect(color).toEqual(expected)
     })
 })

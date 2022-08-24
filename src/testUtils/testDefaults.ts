@@ -23,6 +23,7 @@ const DEFAULT_SECTION_ID = '456'
 const DEFAULT_SECTION_NAME = 'This is a section'
 const DEFAULT_PARENT_ID = '5678'
 const DEFAULT_ASSIGNEE = '1234'
+const DEFAULT_CREATOR = '1234'
 const DEFAULT_DATE = '2020-09-08T12:00:00Z'
 const DEFAULT_ENTITY_COLOR = 'berry_red'
 const DEFAULT_LABELS = ['personal', 'work', 'hobby']
@@ -49,18 +50,19 @@ export const INVALID_DUE_DATE = {
 }
 
 export const DEFAULT_QUICK_ADD_RESPONSE: QuickAddTaskResponse = {
-    id: DEFAULT_TASK_ID,
-    projectId: DEFAULT_PROJECT_ID,
+    id: parseInt(DEFAULT_TASK_ID),
+    projectId: parseInt(DEFAULT_PROJECT_ID),
     content: DEFAULT_TASK_CONTENT,
     description: DEFAULT_TASK_DESCRIPTION,
     priority: DEFAULT_TASK_PRIORITY,
-    sectionId: DEFAULT_SECTION_ID,
-    parentId: DEFAULT_PARENT_ID,
+    sectionId: parseInt(DEFAULT_SECTION_ID),
+    parentId: parseInt(DEFAULT_PARENT_ID),
     childOrder: DEFAULT_ORDER,
-    labels: DEFAULT_LABELS,
-    responsibleUid: DEFAULT_ASSIGNEE,
+    labels: [1, 2, 3],
+    responsibleUid: parseInt(DEFAULT_ASSIGNEE),
     checked: 0,
     dateAdded: DEFAULT_DATE,
+    creatorId: parseInt(DEFAULT_CREATOR),
     due: {
         date: DEFAULT_DATE,
         timezone: null,
@@ -86,6 +88,7 @@ export const DEFAULT_TASK: Task = {
     url: 'https://todoist.com/showTask?id=1234',
     due: DEFAULT_DUE_DATE,
     assigneeId: DEFAULT_ASSIGNEE,
+    creatorId: DEFAULT_CREATOR,
 }
 
 export const INVALID_TASK = {
