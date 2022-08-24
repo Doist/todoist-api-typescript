@@ -9,26 +9,27 @@ import {
     Attachment,
 } from '../types'
 
-const DEFAULT_TASK_ID = 1234
+const DEFAULT_TASK_ID = '1234'
 const DEFAULT_TASK_CONTENT = 'This is a task'
 const DEFAULT_TASK_DESCRIPTION = 'A description'
 const DEFAULT_TASK_PRIORITY = 1
 const DEFAULT_ORDER = 3
-const DEFAULT_PROJECT_ID = 123
+const DEFAULT_PROJECT_ID = '123'
 const DEFAULT_PROJECT_NAME = 'This is a project'
-const DEFAULT_LABEL_ID = 456
+const DEFAULT_PROJECT_VIEW_STYLE = 'list'
+const DEFAULT_LABEL_ID = '456'
 const DEFAULT_LABEL_NAME = 'This is a label'
-const DEFAULT_SECTION_ID = 456
+const DEFAULT_SECTION_ID = '456'
 const DEFAULT_SECTION_NAME = 'This is a section'
-const DEFAULT_PARENT_ID = 5678
-const DEFAULT_ASSIGNEE = 1234
+const DEFAULT_PARENT_ID = '5678'
+const DEFAULT_ASSIGNEE = '1234'
 const DEFAULT_DATE = '2020-09-08T12:00:00Z'
-const DEFAULT_ENTITY_COLOR = 30
-const DEFAULT_LABELS = [1, 2, 3]
-const DEFAULT_USER_ID = 5
+const DEFAULT_ENTITY_COLOR = 'berry_red'
+const DEFAULT_LABELS = ['personal', 'work', 'hobby']
+const DEFAULT_USER_ID = '5'
 const DEFAULT_USER_NAME = 'A User'
 const DEFAULT_USER_EMAIL = 'atestuser@doist.com'
-const DEFAULT_COMMENT_ID = 4
+const DEFAULT_COMMENT_ID = '4'
 const DEFAULT_COMMENT_CONTENT = 'A comment'
 
 export const DEFAULT_AUTH_TOKEN = 'AToken'
@@ -37,14 +38,14 @@ export const DEFAULT_REQUEST_ID = 'ARequestID'
 export const INVALID_ENTITY_ID = 'invalid/entity/id' as unknown as number
 
 export const DEFAULT_DUE_DATE = {
-    recurring: false,
+    isRecurring: false,
     string: 'a date string',
     date: DEFAULT_DATE,
 }
 
 export const INVALID_DUE_DATE = {
     ...DEFAULT_DUE_DATE,
-    recurring: 'false',
+    isRecurring: 'false',
 }
 
 export const DEFAULT_QUICK_ADD_RESPONSE: QuickAddTaskResponse = {
@@ -60,7 +61,6 @@ export const DEFAULT_QUICK_ADD_RESPONSE: QuickAddTaskResponse = {
     responsibleUid: DEFAULT_ASSIGNEE,
     checked: 0,
     dateAdded: DEFAULT_DATE,
-    syncId: null,
     due: {
         date: DEFAULT_DATE,
         timezone: null,
@@ -78,14 +78,14 @@ export const DEFAULT_TASK: Task = {
     description: DEFAULT_TASK_DESCRIPTION,
     projectId: DEFAULT_PROJECT_ID,
     sectionId: DEFAULT_SECTION_ID,
-    completed: false,
-    labelIds: DEFAULT_LABELS,
+    isCompleted: false,
+    labels: DEFAULT_LABELS,
     priority: DEFAULT_TASK_PRIORITY,
     commentCount: 0,
-    created: DEFAULT_DATE,
+    createdAt: DEFAULT_DATE,
     url: 'https://todoist.com/showTask?id=1234',
     due: DEFAULT_DUE_DATE,
-    assignee: DEFAULT_ASSIGNEE,
+    assigneeId: DEFAULT_ASSIGNEE,
 }
 
 export const INVALID_TASK = {
@@ -100,8 +100,11 @@ export const DEFAULT_PROJECT: Project = {
     order: DEFAULT_ORDER,
     parentId: DEFAULT_PROJECT_ID,
     commentCount: 0,
-    favorite: false,
-    shared: false,
+    isFavorite: false,
+    isShared: false,
+    isInboxProject: false,
+    isTeamInbox: false,
+    viewStyle: DEFAULT_PROJECT_VIEW_STYLE,
     url: `https://todoist.com/showProject?id=123`,
 }
 
@@ -127,12 +130,12 @@ export const DEFAULT_LABEL: Label = {
     name: DEFAULT_LABEL_NAME,
     color: DEFAULT_ENTITY_COLOR,
     order: DEFAULT_ORDER,
-    favorite: false,
+    isFavorite: false,
 }
 
 export const INVALID_LABEL = {
     ...DEFAULT_LABEL,
-    favorite: 'true',
+    isFavorite: 'true',
 }
 
 export const DEFAULT_USER: User = {
@@ -163,7 +166,7 @@ export const DEFAULT_COMMENT: Comment = {
     content: DEFAULT_COMMENT_CONTENT,
     projectId: DEFAULT_PROJECT_ID,
     attachment: DEFAULT_ATTACHMENT,
-    posted: DEFAULT_DATE,
+    postedAt: DEFAULT_DATE,
 }
 
 export const INVALID_COMMENT = {

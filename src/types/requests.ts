@@ -11,7 +11,7 @@ export type AddTaskArgs = {
     dueLang?: string
     dueDate?: string
     dueDatetime?: string
-    assignee?: number
+    assigneeId?: number
 }
 
 export type QuickAddTaskArgs = {
@@ -39,20 +39,24 @@ export type UpdateTaskArgs = {
     dueLang?: string
     dueDate?: string
     dueDatetime?: string
-    assignee?: number
+    assigneeId?: number
 }
+
+export type ProjectViewStyle = 'list' | 'board'
 
 export type AddProjectArgs = {
     name: string
     parentId?: number
     color?: number
-    favorite?: boolean
+    isFavorite?: boolean
+    viewStyle?: ProjectViewStyle
 }
 
 export type UpdateProjectArgs = {
     name?: string
     color?: number
-    favorite?: boolean
+    isFavorite?: boolean
+    viewStyle?: ProjectViewStyle
 }
 
 export type AddSectionArgs = {
@@ -69,14 +73,14 @@ export type AddLabelArgs = {
     name: string
     order?: number
     color?: number
-    favorite?: boolean
+    isFavorite?: boolean
 }
 
 export type UpdateLabelArgs = {
     name?: string
     order?: number
     color?: number
-    favorite?: boolean
+    isFavorite?: boolean
 }
 
 export type GetTaskCommentsArgs = {

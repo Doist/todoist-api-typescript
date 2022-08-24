@@ -7,13 +7,13 @@ describe('getTaskFromQuickAddResponse', () => {
         expect(task).toEqual(DEFAULT_TASK)
     })
 
-    test('converts null sectionId to 0', () => {
+    test('converts null sectionId to null', () => {
         const quickAddResponse = {
             ...DEFAULT_QUICK_ADD_RESPONSE,
             sectionId: null,
         }
         const task = getTaskFromQuickAddResponse(quickAddResponse)
-        expect(task.sectionId).toEqual(0)
+        expect(task.sectionId).toEqual(undefined)
     })
 
     test('converts null parentId to undefined', () => {
@@ -25,13 +25,13 @@ describe('getTaskFromQuickAddResponse', () => {
         expect(task.parentId).toEqual(undefined)
     })
 
-    test('converts null assignee to undefined', () => {
+    test('converts null assigneeId to undefined', () => {
         const quickAddResponse = {
             ...DEFAULT_QUICK_ADD_RESPONSE,
             responsibleUid: null,
         }
         const task = getTaskFromQuickAddResponse(quickAddResponse)
-        expect(task.assignee).toEqual(undefined)
+        expect(task.assigneeId).toEqual(undefined)
     })
 
     const completedTheories = [
@@ -48,7 +48,7 @@ describe('getTaskFromQuickAddResponse', () => {
             }
 
             const task = getTaskFromQuickAddResponse(quickAddResponse)
-            expect(task.completed).toEqual(completedBoolean)
+            expect(task.isCompleted).toEqual(completedBoolean)
         },
     )
 
@@ -62,16 +62,14 @@ describe('getTaskFromQuickAddResponse', () => {
     })
 
     const taskUrlTheories = [
-        [1234, null, 'https://todoist.com/showTask?id=1234'],
-        [1234, 0, 'https://todoist.com/showTask?id=1234'],
-        [1234, 5678, 'https://todoist.com/showTask?id=1234&sync_id=5678'],
+        ['1234', 'https://todoist.com/showTask?id=1234'],
+        ['1234', 'https://todoist.com/showTask?id=1234'],
     ] as const
 
-    test.each(taskUrlTheories)('with id %p and syncId %p returns url %p', (id, syncId, url) => {
+    test.each(taskUrlTheories)('with id %p and syncId %p returns url %p', (id, url) => {
         const quickAddResponse = {
             ...DEFAULT_QUICK_ADD_RESPONSE,
             id,
-            syncId,
         }
         const task = getTaskFromQuickAddResponse(quickAddResponse)
         expect(task.url).toEqual(url)
