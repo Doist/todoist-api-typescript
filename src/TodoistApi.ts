@@ -24,6 +24,8 @@ import {
     UpdateSectionArgs,
     UpdateTaskArgs,
     QuickAddTaskArgs,
+    RenameSharedLabelArgs,
+    RemoveSharedLabelArgs,
 } from './types/requests'
 import { request, isSuccess } from './restClient'
 import { getTaskFromQuickAddResponse } from './utils/taskConverters'
@@ -39,6 +41,9 @@ import {
     ENDPOINT_REST_PROJECT_COLLABORATORS,
     ENDPOINT_REST_SECTIONS,
     ENDPOINT_REST_COMMENTS,
+    ENDPOINT_REST_LABELS_SHARED,
+    ENDPOINT_REST_LABELS_SHARED_RENAME,
+    ENDPOINT_REST_LABELS_SHARED_REMOVE,
 } from './consts/endpoints'
 import {
     validateComment,
@@ -319,6 +324,9 @@ export class TodoistApi {
         return isSuccess(response)
     }
 
+    /**
+     * Fetches a personal label
+     */
     async getLabel(id: number): Promise<Label> {
         Int.check(id)
         const response = await request<Label>(
@@ -331,6 +339,9 @@ export class TodoistApi {
         return validateLabel(response.data)
     }
 
+    /**
+     * Fetches the personal labels
+     */
     async getLabels(): Promise<Label[]> {
         const response = await request<Label[]>(
             'GET',
@@ -342,6 +353,9 @@ export class TodoistApi {
         return validateLabelArray(response.data)
     }
 
+    /**
+     * Adds a personal label
+     */
     async addLabel(args: AddLabelArgs, requestId?: string): Promise<Label> {
         const response = await request<Label>(
             'POST',
@@ -355,6 +369,9 @@ export class TodoistApi {
         return validateLabel(response.data)
     }
 
+    /**
+     * Updates a personal label
+     */
     async updateLabel(id: number, args: UpdateLabelArgs, requestId?: string): Promise<boolean> {
         Int.check(id)
         const response = await request(
@@ -368,6 +385,9 @@ export class TodoistApi {
         return isSuccess(response)
     }
 
+    /**
+     * Deletes a personal label
+     */
     async deleteLabel(id: number, requestId?: string): Promise<boolean> {
         Int.check(id)
         const response = await request(
@@ -379,6 +399,37 @@ export class TodoistApi {
             requestId,
         )
         return isSuccess(response)
+    }
+
+    async getSharedLabels(): Promise<string[]> {
+        const response = await request<string[]>(
+            'GET',
+            API_REST_BASE_URI,
+            ENDPOINT_REST_LABELS_SHARED,
+            this.authToken,
+        )
+
+        return response.data
+    }
+
+    async renameSharedLabel(args: RenameSharedLabelArgs): Promise<void> {
+        await request<void>(
+            'POST',
+            API_REST_BASE_URI,
+            ENDPOINT_REST_LABELS_SHARED_RENAME,
+            this.authToken,
+            args,
+        )
+    }
+
+    async removeSharedLabel(args: RemoveSharedLabelArgs): Promise<void> {
+        await request<void>(
+            'POST',
+            API_REST_BASE_URI,
+            ENDPOINT_REST_LABELS_SHARED_REMOVE,
+            this.authToken,
+            args,
+        )
     }
 
     async getComments(args: GetTaskCommentsArgs | GetProjectCommentsArgs): Promise<Comment[]> {
