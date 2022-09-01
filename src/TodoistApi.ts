@@ -132,7 +132,7 @@ export class TodoistApi {
         return validateTask(task)
     }
 
-    async updateTask(id: number, args: UpdateTaskArgs, requestId?: string): Promise<boolean> {
+    async updateTask(id: number, args: UpdateTaskArgs, requestId?: string): Promise<Task> {
         Int.check(id)
         const response = await request(
             'POST',
@@ -142,7 +142,7 @@ export class TodoistApi {
             args,
             requestId,
         )
-        return isSuccess(response)
+        return validateTask(response.data)
     }
 
     async closeTask(id: number, requestId?: string): Promise<boolean> {
@@ -220,7 +220,7 @@ export class TodoistApi {
         return validateProject(response.data)
     }
 
-    async updateProject(id: number, args: UpdateProjectArgs, requestId?: string): Promise<boolean> {
+    async updateProject(id: number, args: UpdateProjectArgs, requestId?: string): Promise<Project> {
         Int.check(id)
         const response = await request(
             'POST',
@@ -230,7 +230,7 @@ export class TodoistApi {
             args,
             requestId,
         )
-        return isSuccess(response)
+        return validateProject(response.data)
     }
 
     async deleteProject(id: number, requestId?: string): Promise<boolean> {
@@ -298,7 +298,7 @@ export class TodoistApi {
         return validateSection(response.data)
     }
 
-    async updateSection(id: number, args: UpdateSectionArgs, requestId?: string): Promise<boolean> {
+    async updateSection(id: number, args: UpdateSectionArgs, requestId?: string): Promise<Section> {
         Int.check(id)
         const response = await request(
             'POST',
@@ -308,7 +308,7 @@ export class TodoistApi {
             args,
             requestId,
         )
-        return isSuccess(response)
+        return validateSection(response.data)
     }
 
     async deleteSection(id: number, requestId?: string): Promise<boolean> {
@@ -372,7 +372,7 @@ export class TodoistApi {
     /**
      * Updates a personal label
      */
-    async updateLabel(id: number, args: UpdateLabelArgs, requestId?: string): Promise<boolean> {
+    async updateLabel(id: number, args: UpdateLabelArgs, requestId?: string): Promise<Label> {
         Int.check(id)
         const response = await request(
             'POST',
@@ -382,7 +382,7 @@ export class TodoistApi {
             args,
             requestId,
         )
-        return isSuccess(response)
+        return validateLabel(response.data)
     }
 
     /**
@@ -472,7 +472,7 @@ export class TodoistApi {
         return validateComment(response.data)
     }
 
-    async updateComment(id: number, args: UpdateCommentArgs, requestId?: string): Promise<boolean> {
+    async updateComment(id: number, args: UpdateCommentArgs, requestId?: string): Promise<Comment> {
         Int.check(id)
         const response = await request<boolean>(
             'POST',
@@ -482,7 +482,7 @@ export class TodoistApi {
             args,
             requestId,
         )
-        return isSuccess(response)
+        return validateComment(response.data)
     }
 
     async deleteComment(id: number, requestId?: string): Promise<boolean> {
