@@ -113,7 +113,7 @@ describe('TodoistApi label endpoints', () => {
 
         test('calls post on restClient with expected parameters', async () => {
             const labelId = 123
-            const requestMock = setupRestClientMock(undefined, 204)
+            const requestMock = setupRestClientMock(DEFAULT_LABEL, 204)
             const api = getTarget()
 
             await api.updateLabel(labelId, DEFAULT_UPDATE_LABEL_ARGS, DEFAULT_REQUEST_ID)
@@ -130,12 +130,13 @@ describe('TodoistApi label endpoints', () => {
         })
 
         test('returns success result from rest client', async () => {
-            setupRestClientMock(undefined, 204)
+            const returnedTask = { ...DEFAULT_LABEL, ...DEFAULT_UPDATE_LABEL_ARGS }
+            setupRestClientMock(returnedTask, 204)
             const api = getTarget()
 
             const result = await api.updateLabel(123, DEFAULT_UPDATE_LABEL_ARGS)
 
-            expect(result).toEqual(true)
+            expect(result).toEqual(returnedTask)
         })
 
         test('throws validation error for invalid id input', async () => {
