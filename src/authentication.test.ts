@@ -10,20 +10,36 @@ describe('authentication', () => {
                 'SomeId',
                 'SomeState',
                 ['data:read_write'] as Permission[],
+                undefined,
                 'https://todoist.com/oauth/authorize?client_id=SomeId&scope=data:read_write&state=SomeState',
             ],
             [
                 'SomeId',
                 'SomeState',
                 ['data:read', 'project:delete'] as Permission[],
+                undefined,
                 'https://todoist.com/oauth/authorize?client_id=SomeId&scope=data:read,project:delete&state=SomeState',
+            ],
+            [
+                'SomeId',
+                'SomeState',
+                ['data:read_write'] as Permission[],
+                'https://staging.todoist.com',
+                'https://staging.todoist.com/oauth/authorize?client_id=SomeId&scope=data:read_write&state=SomeState',
+            ],
+            [
+                'SomeId',
+                'SomeState',
+                ['data:read', 'project:delete'] as Permission[],
+                'https://staging.todoist.com',
+                'https://staging.todoist.com/oauth/authorize?client_id=SomeId&scope=data:read,project:delete&state=SomeState',
             ],
         ] as const
 
         test.each(authUrlTheories)(
             'Formatting %p with arguments %p returns %p',
-            (clientId, state, permissions, expected) => {
-                const url = getAuthorizationUrl(clientId, permissions, state)
+            (clientId, state, permissions, baseUrl, expected) => {
+                const url = getAuthorizationUrl(clientId, permissions, state, baseUrl)
                 expect(url).toEqual(expected)
             },
         )

@@ -2,8 +2,8 @@ import { request, isSuccess } from './restClient'
 import { v4 as uuid } from 'uuid'
 import { TodoistRequestError } from './types'
 import {
-    API_AUTHORIZATION_BASE_URI,
-    API_SYNC_BASE_URI,
+    getAuthBaseUri,
+    getSyncBaseUri,
     ENDPOINT_AUTHORIZATION,
     ENDPOINT_GET_TOKEN,
     ENDPOINT_REVOKE_TOKEN,
@@ -41,19 +41,25 @@ export function getAuthorizationUrl(
     clientId: string,
     permissions: Permission[],
     state: string,
+    baseUrl?: string,
 ): string {
     if (!permissions?.length) {
         throw new Error('At least one scope value should be passed for permissions.')
     }
 
     const scope = permissions.join(',')
-    return `${API_AUTHORIZATION_BASE_URI}${ENDPOINT_AUTHORIZATION}?client_id=${clientId}&scope=${scope}&state=${state}`
+    return `${getAuthBaseUri(
+        baseUrl,
+    )}${ENDPOINT_AUTHORIZATION}?client_id=${clientId}&scope=${scope}&state=${state}`
 }
 
-export async function getAuthToken(args: AuthTokenRequestArgs): Promise<AuthTokenResponse> {
+export async function getAuthToken(
+    args: AuthTokenRequestArgs,
+    baseUrl?: string,
+): Promise<AuthTokenResponse> {
     const response = await request<AuthTokenResponse>(
         'POST',
-        API_AUTHORIZATION_BASE_URI,
+        getAuthBaseUri(baseUrl),
         ENDPOINT_GET_TOKEN,
         undefined,
         args,
@@ -70,10 +76,13 @@ export async function getAuthToken(args: AuthTokenRequestArgs): Promise<AuthToke
     return response.data
 }
 
-export async function revokeAuthToken(args: RevokeAuthTokenRequestArgs): Promise<boolean> {
+export async function revokeAuthToken(
+    args: RevokeAuthTokenRequestArgs,
+    baseUrl?: string,
+): Promise<boolean> {
     const response = await request(
         'POST',
-        API_SYNC_BASE_URI,
+        getSyncBaseUri(baseUrl),
         ENDPOINT_REVOKE_TOKEN,
         undefined,
         args,

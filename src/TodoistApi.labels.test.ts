@@ -5,7 +5,7 @@ import {
     DEFAULT_REQUEST_ID,
     INVALID_ENTITY_ID,
 } from './testUtils/testDefaults'
-import { API_REST_BASE_URI, ENDPOINT_REST_LABELS } from './consts/endpoints'
+import { getRestBaseUri, ENDPOINT_REST_LABELS } from './consts/endpoints'
 import { setupRestClientMock } from './testUtils/mocks'
 import { assertInputValidationError } from './testUtils/asserts'
 
@@ -25,7 +25,7 @@ describe('TodoistApi label endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'GET',
-                API_REST_BASE_URI,
+                getRestBaseUri(),
                 `${ENDPOINT_REST_LABELS}/${labelId}`,
                 DEFAULT_AUTH_TOKEN,
             )
@@ -57,7 +57,7 @@ describe('TodoistApi label endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'GET',
-                API_REST_BASE_URI,
+                getRestBaseUri(),
                 ENDPOINT_REST_LABELS,
                 DEFAULT_AUTH_TOKEN,
             )
@@ -88,7 +88,7 @@ describe('TodoistApi label endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'POST',
-                API_REST_BASE_URI,
+                getRestBaseUri(),
                 ENDPOINT_REST_LABELS,
                 DEFAULT_AUTH_TOKEN,
                 DEFAULT_ADD_LABEL_ARGS,
@@ -121,7 +121,7 @@ describe('TodoistApi label endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'POST',
-                API_REST_BASE_URI,
+                getRestBaseUri(),
                 `${ENDPOINT_REST_LABELS}/${labelId}`,
                 DEFAULT_AUTH_TOKEN,
                 DEFAULT_UPDATE_LABEL_ARGS,
@@ -157,7 +157,7 @@ describe('TodoistApi label endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'DELETE',
-                API_REST_BASE_URI,
+                getRestBaseUri(),
                 `${ENDPOINT_REST_LABELS}/${labelId}`,
                 DEFAULT_AUTH_TOKEN,
                 undefined,

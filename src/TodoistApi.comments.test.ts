@@ -5,7 +5,7 @@ import {
     DEFAULT_REQUEST_ID,
     INVALID_ENTITY_ID,
 } from './testUtils/testDefaults'
-import { API_REST_BASE_URI, ENDPOINT_REST_COMMENTS } from './consts/endpoints'
+import { getRestBaseUri, ENDPOINT_REST_COMMENTS } from './consts/endpoints'
 import { setupRestClientMock } from './testUtils/mocks'
 import { assertInputValidationError } from './testUtils/asserts'
 
@@ -25,7 +25,7 @@ describe('TodoistApi comment endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'GET',
-                API_REST_BASE_URI,
+                getRestBaseUri(),
                 ENDPOINT_REST_COMMENTS,
                 DEFAULT_AUTH_TOKEN,
                 getCommentsArgs,
@@ -54,7 +54,7 @@ describe('TodoistApi comment endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'GET',
-                API_REST_BASE_URI,
+                getRestBaseUri(),
                 `${ENDPOINT_REST_COMMENTS}/${commentId}`,
                 DEFAULT_AUTH_TOKEN,
             )
@@ -92,7 +92,7 @@ describe('TodoistApi comment endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'POST',
-                API_REST_BASE_URI,
+                getRestBaseUri(),
                 ENDPOINT_REST_COMMENTS,
                 DEFAULT_AUTH_TOKEN,
                 addCommentArgs,
@@ -126,7 +126,7 @@ describe('TodoistApi comment endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'POST',
-                API_REST_BASE_URI,
+                getRestBaseUri(),
                 `${ENDPOINT_REST_COMMENTS}/${taskId}`,
                 DEFAULT_AUTH_TOKEN,
                 updateCommentArgs,
@@ -161,7 +161,7 @@ describe('TodoistApi comment endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'DELETE',
-                API_REST_BASE_URI,
+                getRestBaseUri(),
                 `${ENDPOINT_REST_COMMENTS}/${taskId}`,
                 DEFAULT_AUTH_TOKEN,
                 undefined,

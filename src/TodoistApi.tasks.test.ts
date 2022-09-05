@@ -9,8 +9,8 @@ import {
     INVALID_ENTITY_ID,
 } from './testUtils/testDefaults'
 import {
-    API_REST_BASE_URI,
-    API_SYNC_BASE_URI,
+    getRestBaseUri,
+    getSyncBaseUri,
     ENDPOINT_REST_TASK_CLOSE,
     ENDPOINT_REST_TASK_REOPEN,
     ENDPOINT_REST_TASKS,
@@ -23,8 +23,8 @@ function setupSyncTaskConverter(returnedTask: Task) {
     return jest.spyOn(taskConverters, 'getTaskFromQuickAddResponse').mockReturnValue(returnedTask)
 }
 
-function getTarget() {
-    return new TodoistApi(DEFAULT_AUTH_TOKEN)
+function getTarget(baseUrl = 'https://api.todoist.com') {
+    return new TodoistApi(DEFAULT_AUTH_TOKEN, baseUrl)
 }
 
 describe('TodoistApi task endpoints', () => {
@@ -42,7 +42,24 @@ describe('TodoistApi task endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'POST',
-                API_REST_BASE_URI,
+                getRestBaseUri(),
+                ENDPOINT_REST_TASKS,
+                DEFAULT_AUTH_TOKEN,
+                DEFAULT_ADD_TASK_ARGS,
+                DEFAULT_REQUEST_ID,
+            )
+        })
+
+        test('calls post on restClient with expected parameters against staging', async () => {
+            const requestMock = setupRestClientMock(DEFAULT_TASK)
+            const api = getTarget('https://staging.todoist.com')
+
+            await api.addTask(DEFAULT_ADD_TASK_ARGS, DEFAULT_REQUEST_ID)
+
+            expect(requestMock).toBeCalledTimes(1)
+            expect(requestMock).toBeCalledWith(
+                'POST',
+                getRestBaseUri('https://staging.todoist.com'),
                 ENDPOINT_REST_TASKS,
                 DEFAULT_AUTH_TOKEN,
                 DEFAULT_ADD_TASK_ARGS,
@@ -72,7 +89,7 @@ describe('TodoistApi task endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'POST',
-                API_REST_BASE_URI,
+                getRestBaseUri(),
                 `${ENDPOINT_REST_TASKS}/${taskId}`,
                 DEFAULT_AUTH_TOKEN,
                 updateArgs,
@@ -108,7 +125,7 @@ describe('TodoistApi task endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'POST',
-                API_REST_BASE_URI,
+                getRestBaseUri(),
                 `${ENDPOINT_REST_TASKS}/${taskId}/${ENDPOINT_REST_TASK_CLOSE}`,
                 DEFAULT_AUTH_TOKEN,
                 undefined,
@@ -143,7 +160,7 @@ describe('TodoistApi task endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'POST',
-                API_REST_BASE_URI,
+                getRestBaseUri(),
                 `${ENDPOINT_REST_TASKS}/${taskId}/${ENDPOINT_REST_TASK_REOPEN}`,
                 DEFAULT_AUTH_TOKEN,
                 undefined,
@@ -178,7 +195,7 @@ describe('TodoistApi task endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'DELETE',
-                API_REST_BASE_URI,
+                getRestBaseUri(),
                 `${ENDPOINT_REST_TASKS}/${taskId}`,
                 DEFAULT_AUTH_TOKEN,
                 undefined,
@@ -219,7 +236,7 @@ describe('TodoistApi task endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'POST',
-                API_SYNC_BASE_URI,
+                getSyncBaseUri(),
                 ENDPOINT_SYNC_QUICK_ADD,
                 DEFAULT_AUTH_TOKEN,
                 DEFAULT_QUICK_ADD_ARGS,
@@ -250,7 +267,7 @@ describe('TodoistApi task endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'GET',
-                API_REST_BASE_URI,
+                getRestBaseUri(),
                 `${ENDPOINT_REST_TASKS}/${taskId}`,
                 DEFAULT_AUTH_TOKEN,
             )
@@ -277,7 +294,7 @@ describe('TodoistApi task endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'GET',
-                API_REST_BASE_URI,
+                getRestBaseUri(),
                 ENDPOINT_REST_TASKS,
                 DEFAULT_AUTH_TOKEN,
                 DEFAULT_GET_TASKS_ARGS,

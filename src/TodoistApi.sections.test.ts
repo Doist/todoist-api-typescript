@@ -5,7 +5,7 @@ import {
     DEFAULT_SECTION,
     INVALID_ENTITY_ID,
 } from './testUtils/testDefaults'
-import { API_REST_BASE_URI, ENDPOINT_REST_SECTIONS } from './consts/endpoints'
+import { getRestBaseUri, ENDPOINT_REST_SECTIONS } from './consts/endpoints'
 import { setupRestClientMock } from './testUtils/mocks'
 import { assertInputValidationError } from './testUtils/asserts'
 
@@ -25,7 +25,7 @@ describe('TodoistApi section endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'GET',
-                API_REST_BASE_URI,
+                getRestBaseUri(),
                 `${ENDPOINT_REST_SECTIONS}/${sectionId}`,
                 DEFAULT_AUTH_TOKEN,
             )
@@ -58,7 +58,7 @@ describe('TodoistApi section endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'GET',
-                API_REST_BASE_URI,
+                getRestBaseUri(),
                 ENDPOINT_REST_SECTIONS,
                 DEFAULT_AUTH_TOKEN,
                 { projectId },
@@ -91,7 +91,7 @@ describe('TodoistApi section endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'POST',
-                API_REST_BASE_URI,
+                getRestBaseUri(),
                 ENDPOINT_REST_SECTIONS,
                 DEFAULT_AUTH_TOKEN,
                 DEFAULT_ADD_SECTION_ARGS,
@@ -121,7 +121,7 @@ describe('TodoistApi section endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'POST',
-                API_REST_BASE_URI,
+                getRestBaseUri(),
                 `${ENDPOINT_REST_SECTIONS}/${sectionId}`,
                 DEFAULT_AUTH_TOKEN,
                 updateArgs,
@@ -157,7 +157,7 @@ describe('TodoistApi section endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'DELETE',
-                API_REST_BASE_URI,
+                getRestBaseUri(),
                 `${ENDPOINT_REST_SECTIONS}/${sectionId}`,
                 DEFAULT_AUTH_TOKEN,
                 undefined,
