@@ -151,19 +151,19 @@ export type Color = TodoistEntity & {
 }
 
 export type QuickAddTaskResponse = {
-    id: number
-    projectId: number
+    id: string
+    projectId: string
     content: string
     description: string
     priority: number
-    sectionId: number | null
-    parentId: number | null
+    sectionId: string | null
+    parentId: string | null
     childOrder: number // order
-    labels: number[] // labelIds
-    responsibleUid: number | null
+    labels: string[]
+    responsibleUid: string | null
     checked: number // completed
-    dateAdded: string // created
-    creatorId: number | null
+    added_at: string // created
+    added_by_uid: string | null
     due: {
         date: string
         timezone: string | null

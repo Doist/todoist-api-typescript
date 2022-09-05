@@ -50,19 +50,19 @@ export const INVALID_DUE_DATE = {
 }
 
 export const DEFAULT_QUICK_ADD_RESPONSE: QuickAddTaskResponse = {
-    id: parseInt(DEFAULT_TASK_ID),
-    projectId: parseInt(DEFAULT_PROJECT_ID),
+    id: DEFAULT_TASK_ID,
+    projectId: DEFAULT_PROJECT_ID,
     content: DEFAULT_TASK_CONTENT,
     description: DEFAULT_TASK_DESCRIPTION,
     priority: DEFAULT_TASK_PRIORITY,
-    sectionId: parseInt(DEFAULT_SECTION_ID),
-    parentId: parseInt(DEFAULT_PARENT_ID),
+    sectionId: DEFAULT_SECTION_ID,
+    parentId: DEFAULT_PARENT_ID,
     childOrder: DEFAULT_ORDER,
-    labels: [1, 2, 3],
-    responsibleUid: parseInt(DEFAULT_ASSIGNEE),
+    labels: DEFAULT_LABELS,
+    responsibleUid: DEFAULT_ASSIGNEE,
     checked: 0,
-    dateAdded: DEFAULT_DATE,
-    creatorId: parseInt(DEFAULT_CREATOR),
+    added_at: DEFAULT_DATE,
+    added_by_uid: DEFAULT_CREATOR,
     due: {
         date: DEFAULT_DATE,
         timezone: null,

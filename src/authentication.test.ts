@@ -144,7 +144,7 @@ describe('authentication', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'POST',
-                'https://api.todoist.com/sync/v8/',
+                'https://api.todoist.com/sync/v9/',
                 'access_tokens/revoke',
                 undefined,
                 revokeTokenRequest,

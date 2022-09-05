@@ -18,23 +18,23 @@ export function getTaskFromQuickAddResponse(responseData: QuickAddTaskResponse):
         : undefined
 
     const task = {
-        id: String(responseData.id),
+        id: responseData.id,
         order: responseData.childOrder,
         content: responseData.content,
         description: responseData.description,
-        projectId: String(responseData.projectId),
-        sectionId: responseData.sectionId ? String(responseData.sectionId) : undefined,
+        projectId: responseData.projectId,
+        sectionId: responseData.sectionId ? responseData.sectionId : undefined,
         isCompleted: responseData.checked === 1,
-        labels: responseData.labels.map((x) => String(x)),
+        labels: responseData.labels,
         priority: responseData.priority,
         commentCount: 0, // Will always be 0 for a quick add
-        createdAt: responseData.dateAdded,
+        createdAt: responseData.added_at,
         url: getTaskUrlFromQuickAddResponse(responseData),
-        creatorId: responseData.creatorId ? String(responseData.creatorId) : '',
+        creatorId: responseData.added_by_uid ? responseData.added_by_uid : '',
         ...(due !== undefined && { due }),
-        ...(responseData.parentId !== null && { parentId: String(responseData.parentId) }),
+        ...(responseData.parentId !== null && { parentId: responseData.parentId }),
         ...(responseData.responsibleUid !== null && {
-            assigneeId: String(responseData.responsibleUid),
+            assigneeId: responseData.responsibleUid,
         }),
     }
 
