@@ -4,7 +4,7 @@ import { DEFAULT_QUICK_ADD_RESPONSE, DEFAULT_TASK } from '../testUtils/testDefau
 describe('getTaskFromQuickAddResponse', () => {
     test('maps sync data to expected task properties', () => {
         const task = getTaskFromQuickAddResponse(DEFAULT_QUICK_ADD_RESPONSE)
-        expect(task).toEqual({ ...DEFAULT_TASK, labels: ['1', '2', '3'] })
+        expect(task).toEqual({ ...DEFAULT_TASK, labels: ['personal', 'work', 'hobby'] })
     })
 
     test('converts null sectionId to null', () => {
@@ -62,8 +62,8 @@ describe('getTaskFromQuickAddResponse', () => {
     })
 
     const taskUrlTheories = [
-        [1234, 'https://todoist.com/showTask?id=1234'],
-        [1234, 'https://todoist.com/showTask?id=1234'],
+        ['1234', 'https://todoist.com/showTask?id=1234'],
+        ['1234', 'https://todoist.com/showTask?id=1234'],
     ] as const
 
     test.each(taskUrlTheories)('with id %p and syncId %p returns url %p', (id, url) => {
