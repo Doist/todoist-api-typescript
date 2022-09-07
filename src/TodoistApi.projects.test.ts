@@ -7,7 +7,7 @@ import {
     INVALID_ENTITY_ID,
 } from './testUtils/testDefaults'
 import {
-    API_REST_BASE_URI,
+    getRestBaseUri,
     ENDPOINT_REST_PROJECTS,
     ENDPOINT_REST_PROJECT_COLLABORATORS,
 } from './consts/endpoints'
@@ -30,7 +30,7 @@ describe('TodoistApi project endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'GET',
-                API_REST_BASE_URI,
+                getRestBaseUri(),
                 `${ENDPOINT_REST_PROJECTS}/${projectId}`,
                 DEFAULT_AUTH_TOKEN,
             )
@@ -62,7 +62,7 @@ describe('TodoistApi project endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'GET',
-                API_REST_BASE_URI,
+                getRestBaseUri(),
                 ENDPOINT_REST_PROJECTS,
                 DEFAULT_AUTH_TOKEN,
             )
@@ -93,7 +93,7 @@ describe('TodoistApi project endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'POST',
-                API_REST_BASE_URI,
+                getRestBaseUri(),
                 ENDPOINT_REST_PROJECTS,
                 DEFAULT_AUTH_TOKEN,
                 DEFAULT_ADD_PROJECT_ARGS,
@@ -123,7 +123,7 @@ describe('TodoistApi project endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'POST',
-                API_REST_BASE_URI,
+                getRestBaseUri(),
                 `${ENDPOINT_REST_PROJECTS}/${projectId}`,
                 DEFAULT_AUTH_TOKEN,
                 updateArgs,
@@ -158,7 +158,7 @@ describe('TodoistApi project endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'DELETE',
-                API_REST_BASE_URI,
+                getRestBaseUri(),
                 `${ENDPOINT_REST_PROJECTS}/${projectId}`,
                 DEFAULT_AUTH_TOKEN,
                 DEFAULT_REQUEST_ID,
@@ -194,7 +194,7 @@ describe('TodoistApi project endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'GET',
-                API_REST_BASE_URI,
+                getRestBaseUri(),
                 `${ENDPOINT_REST_PROJECTS}/${projectId}/${ENDPOINT_REST_PROJECT_COLLABORATORS}`,
                 DEFAULT_AUTH_TOKEN,
             )
