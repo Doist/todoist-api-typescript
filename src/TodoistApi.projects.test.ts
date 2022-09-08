@@ -112,10 +112,11 @@ describe('TodoistApi project endpoints', () => {
     })
 
     describe('updateProject', () => {
+        const DEFAULT_UPDATE_PROJECT_ARGS = { name: 'a name' }
         test('calls post on restClient with expected parameters', async () => {
             const projectId = 123
             const updateArgs = { name: 'a new name' }
-            const requestMock = setupRestClientMock(undefined, 204)
+            const requestMock = setupRestClientMock(DEFAULT_PROJECT, 204)
             const api = getTarget()
 
             await api.updateProject(projectId, updateArgs, DEFAULT_REQUEST_ID)
@@ -132,17 +133,19 @@ describe('TodoistApi project endpoints', () => {
         })
 
         test('returns success result from rest client', async () => {
-            setupRestClientMock(undefined, 204)
+            const returnedProject = { ...DEFAULT_PROJECT, DEFAULT_UPDATE_PROJECT_ARGS }
+            setupRestClientMock(returnedProject, 204)
             const api = getTarget()
 
-            const result = await api.updateProject(123, { name: 'a name' })
+            const result = await api.updateProject(123, DEFAULT_UPDATE_PROJECT_ARGS)
 
-            expect(result).toEqual(true)
+            expect(result).toEqual(returnedProject)
         })
 
         test('throws validation error for invalid id input', async () => {
             await assertInputValidationError(
-                async () => await getTarget().updateProject(INVALID_ENTITY_ID, { name: 'a name' }),
+                async () =>
+                    await getTarget().updateProject(INVALID_ENTITY_ID, DEFAULT_UPDATE_PROJECT_ARGS),
             )
         })
     })

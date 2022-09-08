@@ -78,13 +78,14 @@ describe('TodoistApi task endpoints', () => {
     })
 
     describe('updateTask', () => {
+        const DEFAULT_UPDATE_TASK_ARGS = { content: 'some new content' }
+
         test('calls post on restClient with expected parameters', async () => {
             const taskId = 123
-            const updateArgs = { content: 'some new content' }
-            const requestMock = setupRestClientMock(undefined, 204)
+            const requestMock = setupRestClientMock(DEFAULT_TASK, 204)
             const api = getTarget()
 
-            await api.updateTask(taskId, updateArgs, DEFAULT_REQUEST_ID)
+            await api.updateTask(taskId, DEFAULT_UPDATE_TASK_ARGS, DEFAULT_REQUEST_ID)
 
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
@@ -92,18 +93,19 @@ describe('TodoistApi task endpoints', () => {
                 getRestBaseUri(),
                 `${ENDPOINT_REST_TASKS}/${taskId}`,
                 DEFAULT_AUTH_TOKEN,
-                updateArgs,
+                DEFAULT_UPDATE_TASK_ARGS,
                 DEFAULT_REQUEST_ID,
             )
         })
 
         test('returns success result from rest client', async () => {
-            setupRestClientMock(undefined, 204)
+            const returnedTask = { ...DEFAULT_TASK, ...DEFAULT_UPDATE_TASK_ARGS }
+            setupRestClientMock(returnedTask, 204)
             const api = getTarget()
 
-            const response = await api.updateTask(123, { content: 'some content' })
+            const response = await api.updateTask(123, DEFAULT_UPDATE_TASK_ARGS)
 
-            expect(response).toEqual(true)
+            expect(response).toEqual(returnedTask)
         })
 
         test('throws validation error for invalid id input', async () => {
@@ -282,7 +284,7 @@ describe('TodoistApi task endpoints', () => {
 
     describe('getTasks', () => {
         const DEFAULT_GET_TASKS_ARGS = {
-            projectId: 123,
+            projectId: '123',
         }
 
         test('calls get on expected endpoint with args', async () => {

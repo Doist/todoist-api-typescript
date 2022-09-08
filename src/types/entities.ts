@@ -11,7 +11,7 @@ import {
 } from 'runtypes'
 
 export const Int = NumberRunType.withConstraint(
-    (n) => Number.isInteger(n) || `${n} is not a valid entity id. Should be an integer`,
+    (n) => Number.isInteger(n) || `${n} is not a valid entity id. Should be a string`,
 )
 
 export type TodoistEntity = {
@@ -27,7 +27,7 @@ export type EntityInHierarchy = OrderedEntity & {
 }
 
 export const DueDate = Record({
-    recurring: Boolean,
+    isRecurring: Boolean,
     string: String,
     date: String,
 }).And(
@@ -40,63 +40,65 @@ export const DueDate = Record({
 export type DueDate = Static<typeof DueDate>
 
 export const Task = Record({
-    id: Int,
+    id: String,
     order: Int,
     content: String,
     description: String,
-    projectId: Int,
-    sectionId: Int,
-    completed: Boolean,
-    labelIds: Array(Int),
+    projectId: String,
+    isCompleted: Boolean,
+    labels: Array(String),
     priority: Int,
     commentCount: Int,
-    created: String,
+    createdAt: String,
     url: String,
+    creatorId: String,
 }).And(
     Partial({
-        parentId: Int,
         due: DueDate,
-        assignee: Int,
+        assigneeId: String,
+        assignerId: String,
+        parentId: String,
+        sectionId: String,
     }),
 )
 
 export type Task = Static<typeof Task>
 
 export const Project = Record({
-    id: Int,
+    id: String,
     name: String,
-    color: Int,
+    color: String,
     commentCount: Int,
-    shared: Boolean,
-    favorite: Boolean,
+    isShared: Boolean,
+    isFavorite: Boolean,
     url: String,
+    isInboxProject: Boolean,
+    isTeamInbox: Boolean,
+    order: Int,
+    viewStyle: String,
 }).And(
     Partial({
-        parentId: Int,
-        order: Int,
-        inboxProject: Boolean,
-        teamInbox: Boolean,
-        syncId: Int,
+        parentId: String,
     }),
 )
 
 export type Project = Static<typeof Project>
 
 export const Section = Record({
-    id: Int,
+    id: String,
     order: Int,
     name: String,
-    projectId: Int,
+    projectId: String,
 })
 
 export type Section = Static<typeof Section>
 
 export const Label = Record({
-    id: Int,
+    id: String,
     order: Int,
     name: String,
-    color: Int,
-    favorite: Boolean,
+    color: String,
+    isFavorite: Boolean,
 })
 
 export type Label = Static<typeof Label>
@@ -122,13 +124,13 @@ export const Attachment = Record({
 export type Attachment = Static<typeof Attachment>
 
 export const Comment = Record({
-    id: Int,
+    id: String,
     content: String,
-    posted: String,
+    postedAt: String,
 }).And(
     Partial({
-        taskId: Int,
-        projectId: Int,
+        taskId: String,
+        projectId: String,
         attachment: Attachment,
     }),
 )
@@ -136,7 +138,7 @@ export const Comment = Record({
 export type Comment = Static<typeof Comment>
 
 export const User = Record({
-    id: Int,
+    id: String,
     name: String,
     email: String,
 })
@@ -149,19 +151,19 @@ export type Color = TodoistEntity & {
 }
 
 export type QuickAddTaskResponse = {
-    id: number
-    projectId: number
+    id: string
+    projectId: string
     content: string
     description: string
     priority: number
-    sectionId: number | null
-    parentId: number | null
+    sectionId: string | null
+    parentId: string | null
     childOrder: number // order
-    labels: number[] // labelIds
-    responsibleUid: number | null
+    labels: string[]
+    responsibleUid: string | null
     checked: number // completed
-    dateAdded: string // created
-    syncId: number | null
+    added_at: string // created
+    added_by_uid: string | null
     due: {
         date: string
         timezone: string | null

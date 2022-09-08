@@ -79,7 +79,7 @@ describe('TodoistApi section endpoints', () => {
     describe('addSection', () => {
         const DEFAULT_ADD_SECTION_ARGS = {
             name: 'This is a section',
-            projectId: 123,
+            projectId: '123',
         }
 
         test('calls post on restClient with expected parameters', async () => {
@@ -110,13 +110,14 @@ describe('TodoistApi section endpoints', () => {
     })
 
     describe('updateSection', () => {
+        const DEFAULT_UPDATE_SECTION_ARGS = { name: 'a new name' }
+
         test('calls post on restClient with expected parameters', async () => {
             const sectionId = 123
-            const updateArgs = { name: 'a new name' }
-            const requestMock = setupRestClientMock(undefined, 204)
+            const requestMock = setupRestClientMock(DEFAULT_SECTION, 204)
             const api = getTarget()
 
-            await api.updateSection(sectionId, updateArgs, DEFAULT_REQUEST_ID)
+            await api.updateSection(sectionId, DEFAULT_UPDATE_SECTION_ARGS, DEFAULT_REQUEST_ID)
 
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
@@ -124,24 +125,25 @@ describe('TodoistApi section endpoints', () => {
                 getRestBaseUri(),
                 `${ENDPOINT_REST_SECTIONS}/${sectionId}`,
                 DEFAULT_AUTH_TOKEN,
-                updateArgs,
+                DEFAULT_UPDATE_SECTION_ARGS,
                 DEFAULT_REQUEST_ID,
             )
         })
 
         test('returns success result from rest client', async () => {
-            setupRestClientMock(undefined, 204)
+            const returnedSection = { ...DEFAULT_SECTION, ...DEFAULT_UPDATE_SECTION_ARGS }
+            setupRestClientMock(returnedSection, 204)
             const api = getTarget()
 
-            const response = await api.updateSection(123, { name: 'a new name' })
+            const response = await api.updateSection(123, DEFAULT_UPDATE_SECTION_ARGS)
 
-            expect(response).toEqual(true)
+            expect(response).toEqual(returnedSection)
         })
 
         test('throws validation error for invalid id input', async () => {
             await assertInputValidationError(
                 async () =>
-                    await getTarget().updateSection(INVALID_ENTITY_ID, { name: 'a new name' }),
+                    await getTarget().updateSection(INVALID_ENTITY_ID, DEFAULT_UPDATE_SECTION_ARGS),
             )
         })
     })
