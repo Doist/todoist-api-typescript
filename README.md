@@ -24,7 +24,7 @@ api.getTasks()
 
 ### Documentation
 
-For more detailed reference documentation, have a look at the [API documentation with TypeScript examples](https://developer.todoist.com/rest/v1/?javascript).
+For more detailed reference documentation, have a look at the [API documentation with TypeScript examples](https://developer.todoist.com/rest/v2/?javascript).
 
 ## Development and Testing
 
