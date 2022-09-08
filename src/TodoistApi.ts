@@ -404,7 +404,7 @@ export class TodoistApi {
     async getSharedLabels(): Promise<string[]> {
         const response = await request<string[]>(
             'GET',
-            API_REST_BASE_URI,
+            this.restApiBase,
             ENDPOINT_REST_LABELS_SHARED,
             this.authToken,
         )
@@ -415,7 +415,7 @@ export class TodoistApi {
     async renameSharedLabel(args: RenameSharedLabelArgs): Promise<void> {
         await request<void>(
             'POST',
-            API_REST_BASE_URI,
+            this.restApiBase,
             ENDPOINT_REST_LABELS_SHARED_RENAME,
             this.authToken,
             args,
@@ -425,7 +425,7 @@ export class TodoistApi {
     async removeSharedLabel(args: RemoveSharedLabelArgs): Promise<void> {
         await request<void>(
             'POST',
-            API_REST_BASE_URI,
+            this.restApiBase,
             ENDPOINT_REST_LABELS_SHARED_REMOVE,
             this.authToken,
             args,
