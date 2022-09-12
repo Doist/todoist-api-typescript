@@ -1,3 +1,4 @@
+import { String } from 'runtypes'
 import {
     Task,
     QuickAddTaskResponse,
@@ -6,7 +7,6 @@ import {
     User,
     Section,
     Comment,
-    Int,
 } from './types/entities'
 import {
     AddLabelArgs,
@@ -81,12 +81,12 @@ export class TodoistApi {
     private restApiBase: string
     private syncApiBase: string
 
-    async getTask(id: number): Promise<Task> {
-        Int.check(id)
+    async getTask(id: string): Promise<Task> {
+        String.check(id)
         const response = await request<Task>(
             'GET',
             this.restApiBase,
-            generatePath(ENDPOINT_REST_TASKS, String(id)),
+            generatePath(ENDPOINT_REST_TASKS, id),
             this.authToken,
         )
 
@@ -132,12 +132,12 @@ export class TodoistApi {
         return validateTask(task)
     }
 
-    async updateTask(id: number, args: UpdateTaskArgs, requestId?: string): Promise<Task> {
-        Int.check(id)
+    async updateTask(id: string, args: UpdateTaskArgs, requestId?: string): Promise<Task> {
+        String.check(id)
         const response = await request(
             'POST',
             this.restApiBase,
-            generatePath(ENDPOINT_REST_TASKS, String(id)),
+            generatePath(ENDPOINT_REST_TASKS, id),
             this.authToken,
             args,
             requestId,
@@ -145,12 +145,12 @@ export class TodoistApi {
         return validateTask(response.data)
     }
 
-    async closeTask(id: number, requestId?: string): Promise<boolean> {
-        Int.check(id)
+    async closeTask(id: string, requestId?: string): Promise<boolean> {
+        String.check(id)
         const response = await request(
             'POST',
             this.restApiBase,
-            generatePath(ENDPOINT_REST_TASKS, String(id), ENDPOINT_REST_TASK_CLOSE),
+            generatePath(ENDPOINT_REST_TASKS, id, ENDPOINT_REST_TASK_CLOSE),
             this.authToken,
             undefined,
             requestId,
@@ -158,12 +158,12 @@ export class TodoistApi {
         return isSuccess(response)
     }
 
-    async reopenTask(id: number, requestId?: string): Promise<boolean> {
-        Int.check(id)
+    async reopenTask(id: string, requestId?: string): Promise<boolean> {
+        String.check(id)
         const response = await request(
             'POST',
             this.restApiBase,
-            generatePath(ENDPOINT_REST_TASKS, String(id), ENDPOINT_REST_TASK_REOPEN),
+            generatePath(ENDPOINT_REST_TASKS, id, ENDPOINT_REST_TASK_REOPEN),
             this.authToken,
             undefined,
             requestId,
@@ -171,12 +171,12 @@ export class TodoistApi {
         return isSuccess(response)
     }
 
-    async deleteTask(id: number, requestId?: string): Promise<boolean> {
-        Int.check(id)
+    async deleteTask(id: string, requestId?: string): Promise<boolean> {
+        String.check(id)
         const response = await request(
             'DELETE',
             this.restApiBase,
-            generatePath(ENDPOINT_REST_TASKS, String(id)),
+            generatePath(ENDPOINT_REST_TASKS, id),
             this.authToken,
             undefined,
             requestId,
@@ -184,12 +184,12 @@ export class TodoistApi {
         return isSuccess(response)
     }
 
-    async getProject(id: number): Promise<Project> {
-        Int.check(id)
+    async getProject(id: string): Promise<Project> {
+        String.check(id)
         const response = await request<Project>(
             'GET',
             this.restApiBase,
-            generatePath(ENDPOINT_REST_PROJECTS, String(id)),
+            generatePath(ENDPOINT_REST_PROJECTS, id),
             this.authToken,
         )
 
@@ -220,12 +220,12 @@ export class TodoistApi {
         return validateProject(response.data)
     }
 
-    async updateProject(id: number, args: UpdateProjectArgs, requestId?: string): Promise<Project> {
-        Int.check(id)
+    async updateProject(id: string, args: UpdateProjectArgs, requestId?: string): Promise<Project> {
+        String.check(id)
         const response = await request(
             'POST',
             this.restApiBase,
-            generatePath(ENDPOINT_REST_PROJECTS, String(id)),
+            generatePath(ENDPOINT_REST_PROJECTS, id),
             this.authToken,
             args,
             requestId,
@@ -233,28 +233,24 @@ export class TodoistApi {
         return validateProject(response.data)
     }
 
-    async deleteProject(id: number, requestId?: string): Promise<boolean> {
-        Int.check(id)
+    async deleteProject(id: string, requestId?: string): Promise<boolean> {
+        String.check(id)
         const response = await request(
             'DELETE',
             this.restApiBase,
-            generatePath(ENDPOINT_REST_PROJECTS, String(id)),
+            generatePath(ENDPOINT_REST_PROJECTS, id),
             this.authToken,
             requestId,
         )
         return isSuccess(response)
     }
 
-    async getProjectCollaborators(projectId: number): Promise<User[]> {
-        Int.check(projectId)
+    async getProjectCollaborators(projectId: string): Promise<User[]> {
+        String.check(projectId)
         const response = await request<User[]>(
             'GET',
             this.restApiBase,
-            generatePath(
-                ENDPOINT_REST_PROJECTS,
-                String(projectId),
-                ENDPOINT_REST_PROJECT_COLLABORATORS,
-            ),
+            generatePath(ENDPOINT_REST_PROJECTS, projectId, ENDPOINT_REST_PROJECT_COLLABORATORS),
             this.authToken,
         )
 
@@ -273,12 +269,12 @@ export class TodoistApi {
         return validateSectionArray(response.data)
     }
 
-    async getSection(id: number): Promise<Section> {
-        Int.check(id)
+    async getSection(id: string): Promise<Section> {
+        String.check(id)
         const response = await request<Section>(
             'GET',
             this.restApiBase,
-            generatePath(ENDPOINT_REST_SECTIONS, String(id)),
+            generatePath(ENDPOINT_REST_SECTIONS, id),
             this.authToken,
         )
 
@@ -298,12 +294,12 @@ export class TodoistApi {
         return validateSection(response.data)
     }
 
-    async updateSection(id: number, args: UpdateSectionArgs, requestId?: string): Promise<Section> {
-        Int.check(id)
+    async updateSection(id: string, args: UpdateSectionArgs, requestId?: string): Promise<Section> {
+        String.check(id)
         const response = await request(
             'POST',
             this.restApiBase,
-            generatePath(ENDPOINT_REST_SECTIONS, String(id)),
+            generatePath(ENDPOINT_REST_SECTIONS, id),
             this.authToken,
             args,
             requestId,
@@ -311,12 +307,12 @@ export class TodoistApi {
         return validateSection(response.data)
     }
 
-    async deleteSection(id: number, requestId?: string): Promise<boolean> {
-        Int.check(id)
+    async deleteSection(id: string, requestId?: string): Promise<boolean> {
+        String.check(id)
         const response = await request(
             'DELETE',
             this.restApiBase,
-            generatePath(ENDPOINT_REST_SECTIONS, String(id)),
+            generatePath(ENDPOINT_REST_SECTIONS, id),
             this.authToken,
             undefined,
             requestId,
@@ -327,12 +323,12 @@ export class TodoistApi {
     /**
      * Fetches a personal label
      */
-    async getLabel(id: number): Promise<Label> {
-        Int.check(id)
+    async getLabel(id: string): Promise<Label> {
+        String.check(id)
         const response = await request<Label>(
             'GET',
             this.restApiBase,
-            generatePath(ENDPOINT_REST_LABELS, String(id)),
+            generatePath(ENDPOINT_REST_LABELS, id),
             this.authToken,
         )
 
@@ -372,12 +368,12 @@ export class TodoistApi {
     /**
      * Updates a personal label
      */
-    async updateLabel(id: number, args: UpdateLabelArgs, requestId?: string): Promise<Label> {
-        Int.check(id)
+    async updateLabel(id: string, args: UpdateLabelArgs, requestId?: string): Promise<Label> {
+        String.check(id)
         const response = await request(
             'POST',
             this.restApiBase,
-            generatePath(ENDPOINT_REST_LABELS, String(id)),
+            generatePath(ENDPOINT_REST_LABELS, id),
             this.authToken,
             args,
             requestId,
@@ -388,12 +384,12 @@ export class TodoistApi {
     /**
      * Deletes a personal label
      */
-    async deleteLabel(id: number, requestId?: string): Promise<boolean> {
-        Int.check(id)
+    async deleteLabel(id: string, requestId?: string): Promise<boolean> {
+        String.check(id)
         const response = await request(
             'DELETE',
             this.restApiBase,
-            generatePath(ENDPOINT_REST_LABELS, String(id)),
+            generatePath(ENDPOINT_REST_LABELS, id),
             this.authToken,
             undefined,
             requestId,
@@ -444,12 +440,12 @@ export class TodoistApi {
         return validateCommentArray(response.data)
     }
 
-    async getComment(id: number): Promise<Comment> {
-        Int.check(id)
+    async getComment(id: string): Promise<Comment> {
+        String.check(id)
         const response = await request<Comment>(
             'GET',
             this.restApiBase,
-            generatePath(ENDPOINT_REST_COMMENTS, String(id)),
+            generatePath(ENDPOINT_REST_COMMENTS, id),
             this.authToken,
         )
 
@@ -472,12 +468,12 @@ export class TodoistApi {
         return validateComment(response.data)
     }
 
-    async updateComment(id: number, args: UpdateCommentArgs, requestId?: string): Promise<Comment> {
-        Int.check(id)
+    async updateComment(id: string, args: UpdateCommentArgs, requestId?: string): Promise<Comment> {
+        String.check(id)
         const response = await request<boolean>(
             'POST',
             this.restApiBase,
-            generatePath(ENDPOINT_REST_COMMENTS, String(id)),
+            generatePath(ENDPOINT_REST_COMMENTS, id),
             this.authToken,
             args,
             requestId,
@@ -485,12 +481,12 @@ export class TodoistApi {
         return validateComment(response.data)
     }
 
-    async deleteComment(id: number, requestId?: string): Promise<boolean> {
-        Int.check(id)
+    async deleteComment(id: string, requestId?: string): Promise<boolean> {
+        String.check(id)
         const response = await request(
             'DELETE',
             this.restApiBase,
-            generatePath(ENDPOINT_REST_COMMENTS, String(id)),
+            generatePath(ENDPOINT_REST_COMMENTS, id),
             this.authToken,
             undefined,
             requestId,

@@ -8,6 +8,7 @@ import {
     Partial,
     Literal,
     Union,
+    Null,
 } from 'runtypes'
 
 export const Int = NumberRunType.withConstraint(
@@ -15,7 +16,7 @@ export const Int = NumberRunType.withConstraint(
 )
 
 export type TodoistEntity = {
-    id: number
+    id: string
 }
 
 export type OrderedEntity = TodoistEntity & {
@@ -32,8 +33,8 @@ export const DueDate = Record({
     date: String,
 }).And(
     Partial({
-        datetime: String,
-        timezone: String,
+        datetime: String.Or(Null),
+        timezone: String.Or(Null),
     }),
 )
 
@@ -54,11 +55,11 @@ export const Task = Record({
     creatorId: String,
 }).And(
     Partial({
-        due: DueDate,
-        assigneeId: String,
-        assignerId: String,
-        parentId: String,
-        sectionId: String,
+        due: DueDate.Or(Null),
+        assigneeId: String.Or(Null),
+        assignerId: String.Or(Null),
+        parentId: String.Or(Null),
+        sectionId: String.Or(Null),
     }),
 )
 
@@ -78,7 +79,7 @@ export const Project = Record({
     viewStyle: String,
 }).And(
     Partial({
-        parentId: String,
+        parentId: String.Or(Null),
     }),
 )
 
@@ -107,17 +108,17 @@ export const Attachment = Record({
     resourceType: String,
 }).And(
     Partial({
-        fileName: String,
-        fileSize: Int,
-        fileType: String,
-        fileUrl: String,
-        fileDuration: Int,
-        uploadState: Union(Literal('pending'), Literal('completed')),
-        image: String,
-        imageWidth: Int,
-        imageHeight: Int,
-        url: String,
-        title: String,
+        fileName: String.Or(Null),
+        fileSize: Int.Or(Null),
+        fileType: String.Or(Null),
+        fileUrl: String.Or(Null),
+        fileDuration: Int.Or(Null),
+        uploadState: Union(Literal('pending'), Literal('completed')).Or(Null),
+        image: String.Or(Null),
+        imageWidth: Int.Or(Null),
+        imageHeight: Int.Or(Null),
+        url: String.Or(Null),
+        title: String.Or(Null),
     }),
 )
 
@@ -129,9 +130,9 @@ export const Comment = Record({
     postedAt: String,
 }).And(
     Partial({
-        taskId: String,
-        projectId: String,
-        attachment: Attachment,
+        taskId: String.Or(Null),
+        projectId: String.Or(Null),
+        attachment: Attachment.Or(Null),
     }),
 )
 
@@ -145,7 +146,8 @@ export const User = Record({
 
 export type User = Static<typeof User>
 
-export type Color = TodoistEntity & {
+export type Color = {
+    id: number
     name: string
     value: string
 }

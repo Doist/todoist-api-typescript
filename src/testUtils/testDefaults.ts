@@ -36,7 +36,7 @@ const DEFAULT_COMMENT_CONTENT = 'A comment'
 export const DEFAULT_AUTH_TOKEN = 'AToken'
 export const DEFAULT_REQUEST_ID = 'ARequestID'
 
-export const INVALID_ENTITY_ID = 'invalid/entity/id' as unknown as number
+export const INVALID_ENTITY_ID = 1234
 
 export const DEFAULT_DUE_DATE = {
     isRecurring: false,
@@ -96,6 +96,15 @@ export const INVALID_TASK = {
     due: INVALID_DUE_DATE,
 }
 
+export const TASK_WITH_OPTIONALS_AS_NULL: Task = {
+    ...DEFAULT_TASK,
+    due: null,
+    assigneeId: null,
+    assignerId: null,
+    parentId: null,
+    sectionId: null,
+}
+
 export const DEFAULT_PROJECT: Project = {
     id: DEFAULT_PROJECT_ID,
     name: DEFAULT_PROJECT_NAME,
@@ -114,6 +123,11 @@ export const DEFAULT_PROJECT: Project = {
 export const INVALID_PROJECT = {
     ...DEFAULT_PROJECT,
     name: 123,
+}
+
+export const PROJECT_WITH_OPTIONALS_AS_NULL: Project = {
+    ...DEFAULT_PROJECT,
+    parentId: null,
 }
 
 export const DEFAULT_SECTION: Section = {
@@ -175,4 +189,33 @@ export const DEFAULT_COMMENT: Comment = {
 export const INVALID_COMMENT = {
     ...DEFAULT_COMMENT,
     attachment: INVALID_ATTACHMENT,
+}
+
+export const COMMENT_WITH_OPTIONALS_AS_NULL_TASK: Comment = {
+    ...DEFAULT_COMMENT,
+    projectId: null,
+    attachment: null,
+}
+
+export const COMMENT_WITH_ATTACHMENT_WITH_OPTIONALS_AS_NULL: Comment = {
+    ...DEFAULT_COMMENT,
+    attachment: {
+        ...DEFAULT_ATTACHMENT,
+        fileName: null,
+        fileSize: null,
+        fileType: null,
+        fileDuration: null,
+        uploadState: null,
+        image: null,
+        imageWidth: null,
+        imageHeight: null,
+        url: null,
+        title: null,
+    },
+}
+
+export const COMMENT_WITH_OPTIONALS_AS_NULL_PROJECT: Comment = {
+    ...DEFAULT_COMMENT,
+    taskId: null,
+    attachment: null,
 }
