@@ -27,7 +27,7 @@ export type GetTasksArgs = {
     label?: string
     filter?: string
     lang?: string
-    ids?: number[]
+    ids?: string[]
 }
 
 export type UpdateTaskArgs = {
