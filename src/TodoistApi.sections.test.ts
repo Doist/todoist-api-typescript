@@ -1,13 +1,7 @@
 import { TodoistApi } from '.'
-import {
-    DEFAULT_AUTH_TOKEN,
-    DEFAULT_REQUEST_ID,
-    DEFAULT_SECTION,
-    INVALID_ENTITY_ID,
-} from './testUtils/testDefaults'
+import { DEFAULT_AUTH_TOKEN, DEFAULT_REQUEST_ID, DEFAULT_SECTION } from './testUtils/testDefaults'
 import { getRestBaseUri, ENDPOINT_REST_SECTIONS } from './consts/endpoints'
 import { setupRestClientMock } from './testUtils/mocks'
-import { assertInputValidationError } from './testUtils/asserts'
 
 function getTarget() {
     return new TodoistApi(DEFAULT_AUTH_TOKEN)
@@ -16,7 +10,7 @@ function getTarget() {
 describe('TodoistApi section endpoints', () => {
     describe('getSection', () => {
         test('calls get request with expected url', async () => {
-            const sectionId = 12
+            const sectionId = '12'
             const requestMock = setupRestClientMock(DEFAULT_SECTION)
             const api = getTarget()
 
@@ -35,15 +29,9 @@ describe('TodoistApi section endpoints', () => {
             setupRestClientMock(DEFAULT_SECTION)
             const api = getTarget()
 
-            const section = await api.getSection(123)
+            const section = await api.getSection('123')
 
             expect(section).toEqual(DEFAULT_SECTION)
-        })
-
-        test('throws validation error for invalid id input', async () => {
-            await assertInputValidationError(
-                async () => await getTarget().getSection(INVALID_ENTITY_ID),
-            )
         })
     })
 
@@ -113,7 +101,7 @@ describe('TodoistApi section endpoints', () => {
         const DEFAULT_UPDATE_SECTION_ARGS = { name: 'a new name' }
 
         test('calls post on restClient with expected parameters', async () => {
-            const sectionId = 123
+            const sectionId = '123'
             const requestMock = setupRestClientMock(DEFAULT_SECTION, 204)
             const api = getTarget()
 
@@ -135,22 +123,15 @@ describe('TodoistApi section endpoints', () => {
             setupRestClientMock(returnedSection, 204)
             const api = getTarget()
 
-            const response = await api.updateSection(123, DEFAULT_UPDATE_SECTION_ARGS)
+            const response = await api.updateSection('123', DEFAULT_UPDATE_SECTION_ARGS)
 
             expect(response).toEqual(returnedSection)
-        })
-
-        test('throws validation error for invalid id input', async () => {
-            await assertInputValidationError(
-                async () =>
-                    await getTarget().updateSection(INVALID_ENTITY_ID, DEFAULT_UPDATE_SECTION_ARGS),
-            )
         })
     })
 
     describe('deleteSection', () => {
         test('calls delete on expected section', async () => {
-            const sectionId = 123
+            const sectionId = '123'
             const requestMock = setupRestClientMock(true)
             const api = getTarget()
 
@@ -171,15 +152,9 @@ describe('TodoistApi section endpoints', () => {
             setupRestClientMock(undefined, 204)
             const api = getTarget()
 
-            const response = await api.deleteSection(123)
+            const response = await api.deleteSection('123')
 
             expect(response).toEqual(true)
-        })
-
-        test('throws validation error for invalid id input', async () => {
-            await assertInputValidationError(
-                async () => await getTarget().deleteSection(INVALID_ENTITY_ID),
-            )
         })
     })
 })
