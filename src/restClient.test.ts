@@ -118,9 +118,12 @@ describe('restClient', () => {
         await request('GET', DEFAULT_BASE_URI, DEFAULT_ENDPOINT, DEFAULT_AUTH_TOKEN)
 
         expect(axiosMock.get).toBeCalledTimes(1)
-        expect(axiosMock.get).toBeCalledWith(DEFAULT_ENDPOINT, {
-            params: undefined,
-        })
+        expect(axiosMock.get).toBeCalledWith(
+            DEFAULT_ENDPOINT,
+            expect.objectContaining({
+                params: undefined,
+            }),
+        )
     })
 
     test('get passes params to axios', async () => {
@@ -133,9 +136,12 @@ describe('restClient', () => {
         )
 
         expect(axiosMock.get).toBeCalledTimes(1)
-        expect(axiosMock.get).toBeCalledWith(DEFAULT_ENDPOINT, {
-            params: DEFAULT_PAYLOAD,
-        })
+        expect(axiosMock.get).toBeCalledWith(
+            DEFAULT_ENDPOINT,
+            expect.objectContaining({
+                params: DEFAULT_PAYLOAD,
+            }),
+        )
     })
 
     test('get returns response from axios', async () => {
