@@ -240,6 +240,7 @@ export class TodoistApi {
             this.restApiBase,
             generatePath(ENDPOINT_REST_PROJECTS, id),
             this.authToken,
+            undefined,
             requestId,
         )
         return isSuccess(response)
@@ -263,7 +264,7 @@ export class TodoistApi {
             this.restApiBase,
             ENDPOINT_REST_SECTIONS,
             this.authToken,
-            projectId && { projectId },
+            projectId ? { projectId } : undefined,
         )
 
         return validateSectionArray(response.data)

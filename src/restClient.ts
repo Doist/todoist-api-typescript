@@ -5,6 +5,21 @@ import { HttpMethod } from './types/http'
 import { v4 as uuidv4 } from 'uuid'
 import axiosRetry from 'axios-retry'
 
+export function paramsSerializer(params: Record<string, unknown>) {
+    const qs = new URLSearchParams()
+
+    Object.keys(params).forEach((key) => {
+        const value = params[key]
+        if (Array.isArray(value)) {
+            qs.append(key, value.join(','))
+        } else {
+            qs.append(key, String(value))
+        }
+    })
+
+    return qs.toString()
+}
+
 const defaultHeaders = {
     'Content-Type': 'application/json',
 }
@@ -71,7 +86,7 @@ export async function request<T>(
     baseUri: string,
     relativePath: string,
     apiToken?: string,
-    payload?: unknown,
+    payload?: Record<string, unknown>,
     requestId?: string,
 ): Promise<AxiosResponse<T>> {
     // axios loses the original stack when returning errors, for the sake of better reporting
@@ -88,7 +103,10 @@ export async function request<T>(
 
         switch (httpMethod) {
             case 'GET':
-                return await axiosClient.get<T>(relativePath, { params: payload })
+                return await axiosClient.get<T>(relativePath, {
+                    params: payload,
+                    paramsSerializer,
+                })
             case 'POST':
                 return await axiosClient.post<T>(relativePath, payload)
             case 'DELETE':

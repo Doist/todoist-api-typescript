@@ -150,6 +150,7 @@ describe('TodoistApi project endpoints', () => {
                 getRestBaseUri(),
                 `${ENDPOINT_REST_PROJECTS}/${projectId}`,
                 DEFAULT_AUTH_TOKEN,
+                undefined,
                 DEFAULT_REQUEST_ID,
             )
         })
