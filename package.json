@@ -32,7 +32,7 @@
         "uuid": "^9.0.0"
     },
     "devDependencies": {
-        "@doist/eslint-config": "7.1.2",
+        "@doist/eslint-config": "7.5.0",
         "@doist/prettier-config": "3.0.5",
         "@types/axios": "0.14.0",
         "@types/jest": "27.5.2",
