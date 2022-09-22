@@ -28,9 +28,9 @@ export function getTaskFromQuickAddResponse(responseData: QuickAddTaskResponse):
         labels: responseData.labels,
         priority: responseData.priority,
         commentCount: 0, // Will always be 0 for a quick add
-        createdAt: responseData.added_at,
+        createdAt: responseData.addedAt,
         url: getTaskUrlFromQuickAddResponse(responseData),
-        creatorId: responseData.added_by_uid ? responseData.added_by_uid : '',
+        creatorId: responseData.addedByUid ? responseData.addedByUid : '',
         ...(due !== undefined && { due }),
         ...(responseData.parentId !== null && { parentId: responseData.parentId }),
         ...(responseData.responsibleUid !== null && {

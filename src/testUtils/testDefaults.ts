@@ -61,8 +61,8 @@ export const DEFAULT_QUICK_ADD_RESPONSE: QuickAddTaskResponse = {
     labels: DEFAULT_LABELS,
     responsibleUid: DEFAULT_ASSIGNEE,
     checked: 0,
-    added_at: DEFAULT_DATE,
-    added_by_uid: DEFAULT_CREATOR,
+    addedAt: DEFAULT_DATE,
+    addedByUid: DEFAULT_CREATOR,
     due: {
         date: DEFAULT_DATE,
         timezone: null,
