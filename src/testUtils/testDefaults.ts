@@ -117,7 +117,7 @@ export const DEFAULT_PROJECT: Project = {
     isInboxProject: false,
     isTeamInbox: false,
     viewStyle: DEFAULT_PROJECT_VIEW_STYLE,
-    url: `https://todoist.com/showProject?id=123`,
+    url: 'https://todoist.com/showProject?id=123',
 }
 
 export const INVALID_PROJECT = {
