@@ -164,8 +164,8 @@ export type QuickAddTaskResponse = {
     labels: string[]
     responsibleUid: string | null
     checked: number // completed
-    added_at: string // created
-    added_by_uid: string | null
+    addedAt: string // created
+    addedByUid: string | null
     due: {
         date: string
         timezone: string | null
