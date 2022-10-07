@@ -39,7 +39,7 @@ export type UpdateTaskArgs = {
     dueLang?: string
     dueDate?: string
     dueDatetime?: string
-    assigneeId?: string
+    assigneeId?: string | null
 }
 
 export type ProjectViewStyle = 'list' | 'board'
