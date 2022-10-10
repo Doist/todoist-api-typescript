@@ -35,11 +35,11 @@ export type UpdateTaskArgs = {
     description?: string
     labels?: string[]
     priority?: number
-    dueString?: string
-    dueLang?: string
-    dueDate?: string
-    dueDatetime?: string
-    assigneeId?: string
+    dueString?: string | null
+    dueLang?: string | null
+    dueDate?: string | null
+    dueDatetime?: string | null
+    assigneeId?: string | null
 }
 
 export type ProjectViewStyle = 'list' | 'board'
