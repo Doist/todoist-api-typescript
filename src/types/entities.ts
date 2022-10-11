@@ -24,7 +24,7 @@ export type OrderedEntity = TodoistEntity & {
 }
 
 export type EntityInHierarchy = OrderedEntity & {
-    parentId?: number
+    parentId?: string
 }
 
 export const DueDate = Record({
