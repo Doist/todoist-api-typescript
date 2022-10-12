@@ -89,7 +89,7 @@ export const colors = [
     taupe,
 ]
 
-const defaultColor: Color = charcoal
+export const defaultColor: Color = charcoal
 
 export function getColorById(colorId: number): Color {
     const color = colors.find((color) => color.id === colorId)
