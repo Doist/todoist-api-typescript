@@ -149,6 +149,7 @@ export type User = Static<typeof User>
 export type Color = {
     id: number
     name: string
+    internalName: string
     value: string
 }
 
