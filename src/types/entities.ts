@@ -148,7 +148,7 @@ export type User = Static<typeof User>
 
 export type Color = {
     /**
-     * @deprecated No longer used in API
+     * @deprecated No longer used
      */
     id: number
     /**
