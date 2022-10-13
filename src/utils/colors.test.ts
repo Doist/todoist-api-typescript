@@ -3,7 +3,7 @@ import {
     taupe,
     getColorById,
     getColorByName,
-    getColorByInternalName,
+    getColorByKey,
     defaultColor,
 } from './colors'
 
@@ -35,7 +35,7 @@ describe('getColorByName', () => {
     })
 })
 
-describe('getColorByInternalName', () => {
+describe('getColorByKey', () => {
     const colorTheories = [
         ['berry_red', berryRed],
         ['taupe', taupe],
@@ -43,8 +43,8 @@ describe('getColorByInternalName', () => {
         ['Some non existing color', defaultColor], // does not exist, defaulted
     ] as const
 
-    test.each(colorTheories)('internalName %p returns color %p', (internalName, expected) => {
-        const color = getColorByInternalName(internalName)
+    test.each(colorTheories)('key %p returns color %p', (key, expected) => {
+        const color = getColorByKey(key)
         expect(color).toEqual(expected)
     })
 })

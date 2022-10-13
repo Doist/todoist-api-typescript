@@ -147,9 +147,29 @@ export const User = Record({
 export type User = Static<typeof User>
 
 export type Color = {
+    /**
+     * @deprecated No longer used in API
+     */
     id: number
+    /**
+     * The key of the color (i.e. 'berry_red')
+     */
+    key: string
+    /**
+     * The display name of the color (i.e. 'Berry Red')
+     */
+    displayName: string
+    /**
+     * @deprecated Use {@link displayName} instead
+     */
     name: string
-    internalName: string
+    /**
+     * The hex value of the color (i.e. '#b8255f')
+     */
+    hexValue: string
+    /**
+     * @deprecated Use {@link hexValue} instead
+     */
     value: string
 }
 
