@@ -60,7 +60,7 @@ export const DEFAULT_QUICK_ADD_RESPONSE: QuickAddTaskResponse = {
     childOrder: DEFAULT_ORDER,
     labels: DEFAULT_LABELS,
     responsibleUid: DEFAULT_ASSIGNEE,
-    checked: 0,
+    checked: false,
     addedAt: DEFAULT_DATE,
     addedByUid: DEFAULT_CREATOR,
     due: {

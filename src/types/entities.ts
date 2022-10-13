@@ -163,7 +163,7 @@ export type QuickAddTaskResponse = {
     childOrder: number // order
     labels: string[]
     responsibleUid: string | null
-    checked: number // completed
+    checked: boolean // completed
     addedAt: string // created
     addedByUid: string | null
     due: {

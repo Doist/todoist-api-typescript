@@ -24,7 +24,7 @@ export function getTaskFromQuickAddResponse(responseData: QuickAddTaskResponse):
         description: responseData.description,
         projectId: responseData.projectId,
         sectionId: responseData.sectionId ? responseData.sectionId : undefined,
-        isCompleted: responseData.checked === 1,
+        isCompleted: responseData.checked,
         labels: responseData.labels,
         priority: responseData.priority,
         commentCount: 0, // Will always be 0 for a quick add

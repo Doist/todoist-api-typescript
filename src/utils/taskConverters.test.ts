@@ -35,16 +35,16 @@ describe('getTaskFromQuickAddResponse', () => {
     })
 
     const completedTheories = [
-        [0, false],
-        [1, true],
+        [false, false],
+        [true, true],
     ] as const
 
     test.each(completedTheories)(
         'checked number value: %p converted to completed boolean value: %p',
-        (checkedInt, completedBoolean) => {
+        (checked, completedBoolean) => {
             const quickAddResponse = {
                 ...DEFAULT_QUICK_ADD_RESPONSE,
-                checked: checkedInt,
+                checked,
             }
 
             const task = getTaskFromQuickAddResponse(quickAddResponse)
