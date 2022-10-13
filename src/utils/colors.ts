@@ -101,7 +101,7 @@ export function getColorByName(colorName: string): Color {
     return color ?? defaultColor
 }
 
-export function getColorByInternalName(colorInternalName: string): Color {
+export function getColorByKey(colorInternalName: string): Color {
     const color = colors.find((color) => color.internalName === colorInternalName)
     return color ?? defaultColor
 }
