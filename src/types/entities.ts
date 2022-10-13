@@ -160,7 +160,7 @@ export type Color = {
      */
     displayName: string
     /**
-     * @deprecated Use {@link displayName} instead
+     * @deprecated Use {@link Color.displayName} instead
      */
     name: string
     /**
@@ -168,7 +168,7 @@ export type Color = {
      */
     hexValue: string
     /**
-     * @deprecated Use {@link hexValue} instead
+     * @deprecated Use {@link Color.hexValue} instead
      */
     value: string
 }
