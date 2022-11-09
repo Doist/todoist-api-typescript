@@ -47,14 +47,14 @@ export type ProjectViewStyle = 'list' | 'board'
 export type AddProjectArgs = {
     name: string
     parentId?: string
-    color?: number
+    color?: string
     isFavorite?: boolean
     viewStyle?: ProjectViewStyle
 }
 
 export type UpdateProjectArgs = {
     name?: string
-    color?: number
+    color?: string
     isFavorite?: boolean
     viewStyle?: ProjectViewStyle
 }
@@ -72,14 +72,14 @@ export type UpdateSectionArgs = {
 export type AddLabelArgs = {
     name: string
     order?: number
-    color?: number
+    color?: string
     isFavorite?: boolean
 }
 
 export type UpdateLabelArgs = {
     name?: string
     order?: number
-    color?: number
+    color?: string
     isFavorite?: boolean
 }
 
