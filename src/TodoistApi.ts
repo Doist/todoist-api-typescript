@@ -258,7 +258,7 @@ export class TodoistApi {
         return validateUserArray(response.data)
     }
 
-    async getSections(projectId?: number): Promise<Section[]> {
+    async getSections(projectId?: string): Promise<Section[]> {
         const response = await request<Section[]>(
             'GET',
             this.restApiBase,

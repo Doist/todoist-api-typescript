@@ -37,7 +37,7 @@ describe('TodoistApi section endpoints', () => {
 
     describe('getSections', () => {
         test('calls get on sections endpoint', async () => {
-            const projectId = 123
+            const projectId = '123'
             const requestMock = setupRestClientMock([DEFAULT_SECTION])
             const api = getTarget()
 
