@@ -132,12 +132,12 @@ export type RemoveSharedLabelArgs = {
     name: string
 }
 
-type RequiredKey<T, M, K extends keyof M, R extends keyof M> = K extends keyof T
-    ? Omit<M, R> & Required<Pick<M, R>>
-    : AddTask
+type RequireUnion<T, R extends keyof T = keyof T> =
+    | (Omit<T, R> & Required<Pick<T, R>>)
+    | (Omit<T, R> & Partial<Record<R, never>>)
 
-export type AddTaskArgs<T> = RequiredKey<T, AddTask, 'duration', 'durationUnit'> &
-    RequiredKey<T, AddTask, 'durationUnit', 'duration'>
+type DurationUnion = 'duration' | 'durationUnit'
 
-export type UpdateTaskArgs<T> = RequiredKey<T, UpdateTask, 'duration', 'durationUnit'> &
-    RequiredKey<T, UpdateTask, 'durationUnit', 'duration'>
+export type AddTaskArgs = RequireUnion<AddTask, DurationUnion>
+
+export type UpdateTaskArgs = RequireUnion<UpdateTask, DurationUnion>

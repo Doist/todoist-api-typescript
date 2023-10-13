@@ -105,7 +105,7 @@ export class TodoistApi {
         return validateTaskArray(response.data)
     }
 
-    async addTask<T extends AddTaskArgs<T>>(args: T, requestId?: string): Promise<Task> {
+    async addTask(args: AddTaskArgs, requestId?: string): Promise<Task> {
         const response = await request<Task>(
             'POST',
             this.restApiBase,
@@ -132,11 +132,7 @@ export class TodoistApi {
         return validateTask(task)
     }
 
-    async updateTask<T extends UpdateTaskArgs<T>>(
-        id: string,
-        args: T,
-        requestId?: string,
-    ): Promise<Task> {
+    async updateTask(id: string, args: UpdateTaskArgs, requestId?: string): Promise<Task> {
         String.check(id)
         const response = await request(
             'POST',
