@@ -1,4 +1,6 @@
-export type AddTaskArgs = {
+import type { GreaterThanZero, Unit } from './entities'
+
+type AddTask = {
     content: string
     description?: string
     projectId?: string
@@ -12,6 +14,8 @@ export type AddTaskArgs = {
     dueDate?: string
     dueDatetime?: string
     assigneeId?: string
+    duration?: GreaterThanZero
+    durationUnit?: Unit
 }
 
 export type QuickAddTaskArgs = {
@@ -30,7 +34,7 @@ export type GetTasksArgs = {
     ids?: string[]
 }
 
-export type UpdateTaskArgs = {
+type UpdateTask = {
     content?: string
     description?: string
     labels?: string[]
@@ -40,6 +44,8 @@ export type UpdateTaskArgs = {
     dueDate?: string | null
     dueDatetime?: string | null
     assigneeId?: string | null
+    duration?: GreaterThanZero
+    durationUnit?: Unit
 }
 
 export type ProjectViewStyle = 'list' | 'board'
@@ -125,3 +131,13 @@ export type RenameSharedLabelArgs = {
 export type RemoveSharedLabelArgs = {
     name: string
 }
+
+type RequiredKey<T, M, K extends keyof M, R extends keyof M> = K extends keyof T
+    ? Omit<M, R> & Required<Pick<M, R>>
+    : AddTask
+
+export type AddTaskArgs<T> = RequiredKey<T, AddTask, 'duration', 'durationUnit'> &
+    RequiredKey<T, AddTask, 'durationUnit', 'duration'>
+
+export type UpdateTaskArgs<T> = RequiredKey<T, UpdateTask, 'duration', 'durationUnit'> &
+    RequiredKey<T, UpdateTask, 'durationUnit', 'duration'>
