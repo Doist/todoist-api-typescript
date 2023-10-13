@@ -7,6 +7,7 @@ import {
     User,
     Comment,
     Attachment,
+    Duration,
 } from '../types'
 
 const DEFAULT_TASK_ID = '1234'
@@ -44,6 +45,11 @@ export const DEFAULT_DUE_DATE = {
     date: DEFAULT_DATE,
 }
 
+export const DEFAULT_DURATION: Duration = {
+    amount: 10,
+    unit: 'minute',
+}
+
 export const INVALID_DUE_DATE = {
     ...DEFAULT_DUE_DATE,
     isRecurring: 'false',
@@ -63,6 +69,7 @@ export const DEFAULT_QUICK_ADD_RESPONSE: QuickAddTaskResponse = {
     checked: false,
     addedAt: DEFAULT_DATE,
     addedByUid: DEFAULT_CREATOR,
+    duration: DEFAULT_DURATION,
     due: {
         date: DEFAULT_DATE,
         timezone: null,
@@ -89,6 +96,7 @@ export const DEFAULT_TASK: Task = {
     due: DEFAULT_DUE_DATE,
     assigneeId: DEFAULT_ASSIGNEE,
     creatorId: DEFAULT_CREATOR,
+    duration: DEFAULT_DURATION,
 }
 
 export const INVALID_TASK = {
@@ -103,6 +111,7 @@ export const TASK_WITH_OPTIONALS_AS_NULL: Task = {
     assignerId: null,
     parentId: null,
     sectionId: null,
+    duration: null,
 }
 
 export const DEFAULT_PROJECT: Project = {

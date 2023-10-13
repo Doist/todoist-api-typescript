@@ -15,6 +15,12 @@ export const Int = NumberRunType.withConstraint(
     (n) => Number.isInteger(n) || `${n} is not a valid entity id. Should be a string`,
 )
 
+export const GreaterThanZero = NumberRunType.withConstraint(
+    (n) => n > 0 || 'Value should be greater than zero',
+)
+
+export type GreaterThanZero = Static<typeof GreaterThanZero>
+
 export type TodoistEntity = {
     id: string
 }
@@ -40,6 +46,17 @@ export const DueDate = Record({
 
 export type DueDate = Static<typeof DueDate>
 
+export const Unit = Union(Literal('minute'), Literal('day'))
+
+export type Unit = Static<typeof Unit>
+
+export const Duration = Record({
+    amount: GreaterThanZero,
+    unit: Unit,
+})
+
+export type Duration = Static<typeof Duration>
+
 export const Task = Record({
     id: String,
     order: Int,
@@ -53,6 +70,7 @@ export const Task = Record({
     createdAt: String,
     url: String,
     creatorId: String,
+    duration: Duration.Or(Null),
 }).And(
     Partial({
         due: DueDate.Or(Null),
@@ -187,6 +205,7 @@ export type QuickAddTaskResponse = {
     checked: boolean // completed
     addedAt: string // created
     addedByUid: string | null
+    duration: Duration | null
     due: {
         date: string
         timezone: string | null
