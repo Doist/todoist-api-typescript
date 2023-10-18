@@ -15,12 +15,6 @@ export const Int = NumberRunType.withConstraint(
     (n) => Number.isInteger(n) || `${n} is not a valid entity id. Should be a string`,
 )
 
-export const GreaterThanZero = NumberRunType.withConstraint(
-    (n) => n > 0 || 'Value should be greater than zero',
-)
-
-export type GreaterThanZero = Static<typeof GreaterThanZero>
-
 export type TodoistEntity = {
     id: string
 }
@@ -46,13 +40,9 @@ export const DueDate = Record({
 
 export type DueDate = Static<typeof DueDate>
 
-export const Unit = Union(Literal('minute'), Literal('day'))
-
-export type Unit = Static<typeof Unit>
-
 export const Duration = Record({
-    amount: GreaterThanZero,
-    unit: Unit,
+    amount: NumberRunType.withConstraint((n) => n > 0 || 'Value should be greater than zero'),
+    unit: Union(Literal('minute'), Literal('day')),
 })
 
 export type Duration = Static<typeof Duration>

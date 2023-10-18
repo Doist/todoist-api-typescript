@@ -1,6 +1,7 @@
-import type { GreaterThanZero, Unit } from './entities'
+import type { RequireAllOrNone } from 'type-fest'
+import type { Duration } from './entities'
 
-type AddTask = {
+export type AddTaskArgs = {
     content: string
     description?: string
     projectId?: string
@@ -14,9 +15,10 @@ type AddTask = {
     dueDate?: string
     dueDatetime?: string
     assigneeId?: string
-    duration?: GreaterThanZero
-    durationUnit?: Unit
-}
+} & RequireAllOrNone<{
+    duration?: Duration['amount']
+    durationUnit?: Duration['unit']
+}>
 
 export type QuickAddTaskArgs = {
     text: string
@@ -34,7 +36,7 @@ export type GetTasksArgs = {
     ids?: string[]
 }
 
-type UpdateTask = {
+export type UpdateTaskArgs = {
     content?: string
     description?: string
     labels?: string[]
@@ -44,9 +46,10 @@ type UpdateTask = {
     dueDate?: string | null
     dueDatetime?: string | null
     assigneeId?: string | null
-    duration?: GreaterThanZero
-    durationUnit?: Unit
-}
+} & RequireAllOrNone<{
+    duration?: Duration['amount']
+    durationUnit?: Duration['unit']
+}>
 
 export type ProjectViewStyle = 'list' | 'board'
 
@@ -131,13 +134,3 @@ export type RenameSharedLabelArgs = {
 export type RemoveSharedLabelArgs = {
     name: string
 }
-
-type RequireUnion<T, R extends keyof T = keyof T> =
-    | (Omit<T, R> & Required<Pick<T, R>>)
-    | (Omit<T, R> & Partial<Record<R, never>>)
-
-type DurationUnion = 'duration' | 'durationUnit'
-
-export type AddTaskArgs = RequireUnion<AddTask, DurationUnion>
-
-export type UpdateTaskArgs = RequireUnion<UpdateTask, DurationUnion>
