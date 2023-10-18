@@ -36,6 +36,7 @@ export function getTaskFromQuickAddResponse(responseData: QuickAddTaskResponse):
         ...(responseData.responsibleUid !== null && {
             assigneeId: responseData.responsibleUid,
         }),
+        duration: responseData.duration,
     }
 
     return task

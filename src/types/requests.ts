@@ -1,3 +1,6 @@
+import type { RequireAllOrNone } from 'type-fest'
+import type { Duration } from './entities'
+
 export type AddTaskArgs = {
     content: string
     description?: string
@@ -12,7 +15,10 @@ export type AddTaskArgs = {
     dueDate?: string
     dueDatetime?: string
     assigneeId?: string
-}
+} & RequireAllOrNone<{
+    duration?: Duration['amount']
+    durationUnit?: Duration['unit']
+}>
 
 export type QuickAddTaskArgs = {
     text: string
@@ -40,7 +46,10 @@ export type UpdateTaskArgs = {
     dueDate?: string | null
     dueDatetime?: string | null
     assigneeId?: string | null
-}
+} & RequireAllOrNone<{
+    duration?: Duration['amount']
+    durationUnit?: Duration['unit']
+}>
 
 export type ProjectViewStyle = 'list' | 'board'
 

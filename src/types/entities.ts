@@ -40,6 +40,13 @@ export const DueDate = Record({
 
 export type DueDate = Static<typeof DueDate>
 
+export const Duration = Record({
+    amount: NumberRunType.withConstraint((n) => n > 0 || 'Value should be greater than zero'),
+    unit: Union(Literal('minute'), Literal('day')),
+})
+
+export type Duration = Static<typeof Duration>
+
 export const Task = Record({
     id: String,
     order: Int,
@@ -53,6 +60,7 @@ export const Task = Record({
     createdAt: String,
     url: String,
     creatorId: String,
+    duration: Duration.Or(Null),
 }).And(
     Partial({
         due: DueDate.Or(Null),
@@ -187,6 +195,7 @@ export type QuickAddTaskResponse = {
     checked: boolean // completed
     addedAt: string // created
     addedByUid: string | null
+    duration: Duration | null
     due: {
         date: string
         timezone: string | null
