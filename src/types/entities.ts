@@ -35,6 +35,7 @@ export const DueDate = Record({
     Partial({
         datetime: String.Or(Null),
         timezone: String.Or(Null),
+        lang: String.Or(Null),
     }),
 )
 
@@ -84,7 +85,7 @@ export const Project = Record({
     isInboxProject: Boolean,
     isTeamInbox: Boolean,
     order: Int,
-    viewStyle: String,
+    viewStyle: Union(Literal('list'), Literal('board')),
 }).And(
     Partial({
         parentId: String.Or(Null),

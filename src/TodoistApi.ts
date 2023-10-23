@@ -9,12 +9,11 @@ import {
     Comment,
 } from './types/entities'
 import {
+    AddCommentArgs,
     AddLabelArgs,
     AddProjectArgs,
     AddSectionArgs,
-    AddProjectCommentArgs,
     AddTaskArgs,
-    AddTaskCommentArgs,
     GetProjectCommentsArgs,
     GetTaskCommentsArgs,
     GetTasksArgs,
@@ -24,6 +23,7 @@ import {
     UpdateSectionArgs,
     UpdateTaskArgs,
     QuickAddTaskArgs,
+    GetSharedLabelsArgs,
     RenameSharedLabelArgs,
     RemoveSharedLabelArgs,
 } from './types/requests'
@@ -398,12 +398,13 @@ export class TodoistApi {
         return isSuccess(response)
     }
 
-    async getSharedLabels(): Promise<string[]> {
+    async getSharedLabels(args?: GetSharedLabelsArgs): Promise<string[]> {
         const response = await request<string[]>(
             'GET',
             this.restApiBase,
             ENDPOINT_REST_LABELS_SHARED,
             this.authToken,
+            args,
         )
 
         return response.data
@@ -453,10 +454,7 @@ export class TodoistApi {
         return validateComment(response.data)
     }
 
-    async addComment(
-        args: AddTaskCommentArgs | AddProjectCommentArgs,
-        requestId?: string,
-    ): Promise<Comment> {
+    async addComment(args: AddCommentArgs, requestId?: string): Promise<Comment> {
         const response = await request<Comment>(
             'POST',
             this.restApiBase,
