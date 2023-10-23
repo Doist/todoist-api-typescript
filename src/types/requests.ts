@@ -43,15 +43,17 @@ export type UpdateTaskArgs = {
     description?: string
     labels?: string[]
     priority?: number
-    dueString?: string | null
     dueLang?: string | null
-    dueDate?: string | null
-    dueDatetime?: string | null
     assigneeId?: string | null
-} & RequireAllOrNone<{
-    duration?: Duration['amount']
-    durationUnit?: Duration['unit']
-}>
+} & RequireOneOrNone<{
+    dueString?: string
+    dueDate?: string
+    dueDatetime?: string
+}> &
+    RequireAllOrNone<{
+        duration?: Duration['amount']
+        durationUnit?: Duration['unit']
+    }>
 
 export type ProjectViewStyle = Project['viewStyle']
 
