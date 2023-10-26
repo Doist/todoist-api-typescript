@@ -67,7 +67,7 @@ describe('authentication', () => {
 
         const successfulTokenResponse = {
             accessToken: 'AToken',
-            state: 'AState',
+            tokenType: 'Bearer',
         }
 
         test('calls request with expected values', async () => {
@@ -112,7 +112,7 @@ describe('authentication', () => {
         test('throws error if token not present in response', async () => {
             const missingTokenResponse = {
                 accessToken: undefined,
-                state: 'AState',
+                tokenType: undefined,
             }
 
             setupRestClientMock(missingTokenResponse)

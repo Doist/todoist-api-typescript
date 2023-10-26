@@ -1,5 +1,5 @@
-import type { RequireAllOrNone } from 'type-fest'
-import type { Duration } from './entities'
+import type { RequireAllOrNone, RequireOneOrNone, RequireExactlyOne } from 'type-fest'
+import type { Duration, ProjectViewStyle } from './entities'
 
 export type AddTaskArgs = {
     content: string
@@ -10,15 +10,17 @@ export type AddTaskArgs = {
     order?: number
     labels?: string[]
     priority?: number
-    dueString?: string
     dueLang?: string
+    assigneeId?: string
+    dueString?: string
+} & RequireOneOrNone<{
     dueDate?: string
     dueDatetime?: string
-    assigneeId?: string
-} & RequireAllOrNone<{
-    duration?: Duration['amount']
-    durationUnit?: Duration['unit']
-}>
+}> &
+    RequireAllOrNone<{
+        duration?: Duration['amount']
+        durationUnit?: Duration['unit']
+    }>
 
 export type QuickAddTaskArgs = {
     text: string
@@ -41,17 +43,17 @@ export type UpdateTaskArgs = {
     description?: string
     labels?: string[]
     priority?: number
-    dueString?: string | null
     dueLang?: string | null
-    dueDate?: string | null
-    dueDatetime?: string | null
     assigneeId?: string | null
-} & RequireAllOrNone<{
-    duration?: Duration['amount']
-    durationUnit?: Duration['unit']
-}>
-
-export type ProjectViewStyle = 'list' | 'board'
+    dueString?: string
+} & RequireOneOrNone<{
+    dueDate?: string
+    dueDatetime?: string
+}> &
+    RequireAllOrNone<{
+        duration?: Duration['amount']
+        durationUnit?: Duration['unit']
+    }>
 
 export type AddProjectArgs = {
     name: string
@@ -102,7 +104,7 @@ export type GetProjectCommentsArgs = {
     taskId?: never
 }
 
-type AddCommentArgs = {
+export type AddCommentArgs = {
     content: string
     attachment?: {
         fileName?: string
@@ -110,20 +112,17 @@ type AddCommentArgs = {
         fileType?: string
         resourceType?: string
     }
-}
-
-export type AddTaskCommentArgs = AddCommentArgs & {
-    taskId: string
-    projectId?: never
-}
-
-export type AddProjectCommentArgs = AddCommentArgs & {
-    projectId: string
-    taskId?: never
-}
+} & RequireExactlyOne<{
+    taskId?: string
+    projectId?: string
+}>
 
 export type UpdateCommentArgs = {
     content: string
+}
+
+export type GetSharedLabelsArgs = {
+    omitPersonal?: boolean
 }
 
 export type RenameSharedLabelArgs = {

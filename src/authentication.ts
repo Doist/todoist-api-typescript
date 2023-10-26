@@ -18,7 +18,7 @@ export type Permission =
 
 export type AuthTokenResponse = {
     accessToken: string
-    state: string
+    tokenType: string
 }
 
 export type AuthTokenRequestArgs = {
