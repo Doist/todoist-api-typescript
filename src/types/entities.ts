@@ -85,14 +85,15 @@ export const Project = Record({
     isInboxProject: Boolean,
     isTeamInbox: Boolean,
     order: Int,
-    viewStyle: Union(Literal('list'), Literal('board')),
+    viewStyle: String,
 }).And(
     Partial({
         parentId: String.Or(Null),
     }),
 )
 
-export type Project = Static<typeof Project>
+// This allows us to accept any string during validation, but provide intellisense for the two possible values in request args
+export type Project = Omit<Static<typeof Project>, 'viewStyle'> & { viewStyle: 'list' | 'board' }
 
 export const Section = Record({
     id: String,

@@ -55,8 +55,6 @@ export type UpdateTaskArgs = {
         durationUnit?: Duration['unit']
     }>
 
-export type ProjectViewStyle = Project['viewStyle']
-
 export type AddProjectArgs = {
     name: string
     parentId?: string
@@ -69,7 +67,7 @@ export type UpdateProjectArgs = {
     name?: string
     color?: string
     isFavorite?: boolean
-    viewStyle?: ProjectViewStyle
+    viewStyle?: Project['viewStyle']
 }
 
 export type AddSectionArgs = {
