@@ -1,5 +1,5 @@
 import type { RequireAllOrNone, RequireOneOrNone, RequireExactlyOne } from 'type-fest'
-import type { Duration, Project } from './entities'
+import type { Duration, ProjectViewStyle } from './entities'
 
 export type AddTaskArgs = {
     content: string
@@ -60,14 +60,14 @@ export type AddProjectArgs = {
     parentId?: string
     color?: string
     isFavorite?: boolean
-    viewStyle?: Project['viewStyle']
+    viewStyle?: ProjectViewStyle
 }
 
 export type UpdateProjectArgs = {
     name?: string
     color?: string
     isFavorite?: boolean
-    viewStyle?: Project['viewStyle']
+    viewStyle?: ProjectViewStyle
 }
 
 export type AddSectionArgs = {

@@ -92,8 +92,10 @@ export const Project = Record({
     }),
 )
 
+export type Project = Static<typeof Project>
+
 // This allows us to accept any string during validation, but provide intellisense for the two possible values in request args
-export type Project = Omit<Static<typeof Project>, 'viewStyle'> & { viewStyle: 'list' | 'board' }
+export type ProjectViewStyle = 'list' | 'board'
 
 export const Section = Record({
     id: String,
