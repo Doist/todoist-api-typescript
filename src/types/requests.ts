@@ -12,8 +12,8 @@ export type AddTaskArgs = {
     priority?: number
     dueLang?: string
     assigneeId?: string
-} & RequireOneOrNone<{
     dueString?: string
+} & RequireOneOrNone<{
     dueDate?: string
     dueDatetime?: string
 }> &
@@ -45,8 +45,8 @@ export type UpdateTaskArgs = {
     priority?: number
     dueLang?: string | null
     assigneeId?: string | null
-} & RequireOneOrNone<{
     dueString?: string
+} & RequireOneOrNone<{
     dueDate?: string
     dueDatetime?: string
 }> &
