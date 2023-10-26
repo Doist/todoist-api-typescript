@@ -117,16 +117,6 @@ export type AddCommentArgs = {
     projectId?: string
 }>
 
-export type AddTaskCommentArgs = AddCommentArgs & {
-    taskId: string
-    projectId?: never
-}
-
-export type AddProjectCommentArgs = AddCommentArgs & {
-    projectId: string
-    taskId?: never
-}
-
 export type UpdateCommentArgs = {
     content: string
 }
