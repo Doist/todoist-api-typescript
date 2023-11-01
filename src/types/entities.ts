@@ -61,10 +61,10 @@ export const Task = Record({
     createdAt: String,
     url: String,
     creatorId: String,
-    duration: Duration.Or(Null),
 }).And(
     Partial({
         due: DueDate.Or(Null),
+        duration: Duration.Or(Null),
         assigneeId: String.Or(Null),
         assignerId: String.Or(Null),
         parentId: String.Or(Null),
