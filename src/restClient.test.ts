@@ -121,7 +121,9 @@ describe('restClient', () => {
         expect(axiosMock.get).toBeCalledTimes(1)
         expect(axiosMock.get).toBeCalledWith(DEFAULT_ENDPOINT, {
             params: undefined,
-            paramsSerializer,
+            paramsSerializer: {
+                serialize: paramsSerializer,
+            },
         })
     })
 
@@ -137,7 +139,9 @@ describe('restClient', () => {
         expect(axiosMock.get).toBeCalledTimes(1)
         expect(axiosMock.get).toBeCalledWith(DEFAULT_ENDPOINT, {
             params: DEFAULT_PAYLOAD,
-            paramsSerializer,
+            paramsSerializer: {
+                serialize: paramsSerializer,
+            },
         })
     })
 
