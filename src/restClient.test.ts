@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-named-as-default
 import Axios, { AxiosStatic, AxiosResponse, AxiosError } from 'axios'
 import { request, isSuccess, paramsSerializer } from './restClient'
 import { TodoistRequestError } from './types/errors'
