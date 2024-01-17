@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-named-as-default
 import Axios, { AxiosResponse, AxiosError } from 'axios'
 import applyCaseMiddleware from 'axios-case-converter'
 import { TodoistRequestError } from './types/errors'
@@ -105,7 +106,9 @@ export async function request<T>(
             case 'GET':
                 return await axiosClient.get<T>(relativePath, {
                     params: payload,
-                    paramsSerializer,
+                    paramsSerializer: {
+                        serialize: paramsSerializer,
+                    },
                 })
             case 'POST':
                 return await axiosClient.post<T>(relativePath, payload)
