@@ -11,7 +11,9 @@ describe('axios tests without mocking', () => {
             params: {
                 ids: ['12345', '56789'],
             },
-            paramsSerializer,
+            paramsSerializer: {
+                serialize: paramsSerializer,
+            },
         })
         expect(requestUri).toEqual('https://api.todoist.com/rest/v2/tasks?ids=12345%2C56789')
     })

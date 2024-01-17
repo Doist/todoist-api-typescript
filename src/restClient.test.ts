@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-named-as-default
 import Axios, { AxiosStatic, AxiosResponse, AxiosError } from 'axios'
 import { request, isSuccess, paramsSerializer } from './restClient'
 import { TodoistRequestError } from './types/errors'
@@ -120,7 +121,9 @@ describe('restClient', () => {
         expect(axiosMock.get).toBeCalledTimes(1)
         expect(axiosMock.get).toBeCalledWith(DEFAULT_ENDPOINT, {
             params: undefined,
-            paramsSerializer,
+            paramsSerializer: {
+                serialize: paramsSerializer,
+            },
         })
     })
 
@@ -136,7 +139,9 @@ describe('restClient', () => {
         expect(axiosMock.get).toBeCalledTimes(1)
         expect(axiosMock.get).toBeCalledWith(DEFAULT_ENDPOINT, {
             params: DEFAULT_PAYLOAD,
-            paramsSerializer,
+            paramsSerializer: {
+                serialize: paramsSerializer,
+            },
         })
     })
 
