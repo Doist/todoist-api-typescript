@@ -1,6 +1,6 @@
 const BASE_URI = 'https://api.todoist.com'
 const API_REST_BASE_URI = '/rest/v2/'
-const API_SYNC_BASE_URI = '/sync/v9/'
+export const API_SYNC_BASE_URI = '/sync/v9/'
 const TODOIST_URI = 'https://todoist.com'
 const API_AUTHORIZATION_BASE_URI = '/oauth/'
 
