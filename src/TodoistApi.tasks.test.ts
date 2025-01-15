@@ -259,7 +259,7 @@ describe('TodoistApi task endpoints', () => {
         test('calls get on expected endpoint with args', async () => {
             const requestMock = setupRestClientMock({
                 results: [DEFAULT_TASK, TASK_WITH_OPTIONALS_AS_NULL],
-                next_cursor: '123',
+                nextCursor: '123',
             })
             const api = getTarget()
 
@@ -277,7 +277,7 @@ describe('TodoistApi task endpoints', () => {
 
         test('returns result from rest client', async () => {
             const tasks = [DEFAULT_TASK]
-            setupRestClientMock({ results: tasks, next_cursor: '123' })
+            setupRestClientMock({ results: tasks, nextCursor: '123' })
             const api = getTarget()
 
             const { results, nextCursor } = await api.getTasks(DEFAULT_GET_TASKS_ARGS)

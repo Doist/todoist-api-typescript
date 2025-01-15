@@ -39,7 +39,7 @@ describe('TodoistApi label endpoints', () => {
         test('calls get on labels endpoint', async () => {
             const requestMock = setupRestClientMock({
                 results: [DEFAULT_LABEL],
-                next_cursor: '123',
+                nextCursor: '123',
             })
             const api = getTarget()
 
@@ -62,7 +62,7 @@ describe('TodoistApi label endpoints', () => {
             const labels = [DEFAULT_LABEL]
             setupRestClientMock({
                 results: [DEFAULT_LABEL],
-                next_cursor: '123',
+                nextCursor: '123',
             })
             const api = getTarget()
 

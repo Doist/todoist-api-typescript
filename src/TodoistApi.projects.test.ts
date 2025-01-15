@@ -49,7 +49,7 @@ describe('TodoistApi project endpoints', () => {
         test('calls get on projects endpoint', async () => {
             const requestMock = setupRestClientMock({
                 results: [DEFAULT_PROJECT],
-                next_cursor: '123',
+                nextCursor: '123',
             })
             const api = getTarget()
 
@@ -68,7 +68,7 @@ describe('TodoistApi project endpoints', () => {
 
         test('returns result from rest client', async () => {
             const projects = [DEFAULT_PROJECT, PROJECT_WITH_OPTIONALS_AS_NULL]
-            setupRestClientMock({ results: projects, next_cursor: '123' })
+            setupRestClientMock({ results: projects, nextCursor: '123' })
             const api = getTarget()
 
             const { results, nextCursor } = await api.getProjects()
@@ -176,7 +176,7 @@ describe('TodoistApi project endpoints', () => {
         const users = [DEFAULT_USER]
 
         test('calls get on expected endpoint', async () => {
-            const requestMock = setupRestClientMock({ results: users, next_cursor: '123' })
+            const requestMock = setupRestClientMock({ results: users, nextCursor: '123' })
             const api = getTarget()
 
             const args = { limit: 10, cursor: '0' }
@@ -193,7 +193,7 @@ describe('TodoistApi project endpoints', () => {
         })
 
         test('returns result from rest client', async () => {
-            setupRestClientMock({ results: users, next_cursor: '123' })
+            setupRestClientMock({ results: users, nextCursor: '123' })
             const api = getTarget()
 
             const { results, nextCursor } = await api.getProjectCollaborators(projectId)

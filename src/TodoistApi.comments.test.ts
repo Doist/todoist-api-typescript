@@ -20,7 +20,7 @@ describe('TodoistApi comment endpoints', () => {
             const getCommentsArgs = { projectId: '12', limit: 10, cursor: '0' }
             const requestMock = setupRestClientMock({
                 results: [DEFAULT_COMMENT],
-                next_cursor: '123',
+                nextCursor: '123',
             })
             const api = getTarget()
 
@@ -43,7 +43,7 @@ describe('TodoistApi comment endpoints', () => {
                 COMMENT_WITH_OPTIONALS_AS_NULL_PROJECT,
                 COMMENT_WITH_ATTACHMENT_WITH_OPTIONALS_AS_NULL,
             ]
-            setupRestClientMock({ results: expectedComments, next_cursor: '123' })
+            setupRestClientMock({ results: expectedComments, nextCursor: '123' })
             const api = getTarget()
 
             const { results: comments, nextCursor } = await api.getComments({ taskId: '12' })

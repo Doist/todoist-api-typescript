@@ -40,7 +40,7 @@ describe('TodoistApi section endpoints', () => {
             const projectId = '123'
             const requestMock = setupRestClientMock({
                 results: [DEFAULT_SECTION],
-                next_cursor: '123',
+                nextCursor: '123',
             })
             const api = getTarget()
 
@@ -59,7 +59,7 @@ describe('TodoistApi section endpoints', () => {
 
         test('returns result from rest client', async () => {
             const sections = [DEFAULT_SECTION]
-            setupRestClientMock({ results: sections, next_cursor: '123' })
+            setupRestClientMock({ results: sections, nextCursor: '123' })
             const api = getTarget()
 
             const { results, nextCursor } = await api.getSections({ projectId: '123' })
