@@ -1,6 +1,6 @@
 import { TodoistApi } from '.'
 import { DEFAULT_AUTH_TOKEN, DEFAULT_LABEL, DEFAULT_REQUEST_ID } from './testUtils/testDefaults'
-import { getRestBaseUri, ENDPOINT_REST_LABELS } from './consts/endpoints'
+import { getSyncBaseUri, ENDPOINT_REST_LABELS } from './consts/endpoints'
 import { setupRestClientMock } from './testUtils/mocks'
 
 function getTarget() {
@@ -19,7 +19,7 @@ describe('TodoistApi label endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'GET',
-                getRestBaseUri(),
+                getSyncBaseUri(),
                 `${ENDPOINT_REST_LABELS}/${labelId}`,
                 DEFAULT_AUTH_TOKEN,
             )
@@ -37,28 +37,39 @@ describe('TodoistApi label endpoints', () => {
 
     describe('getLabels', () => {
         test('calls get on labels endpoint', async () => {
-            const requestMock = setupRestClientMock([DEFAULT_LABEL])
+            const requestMock = setupRestClientMock({
+                results: [DEFAULT_LABEL],
+                next_cursor: '123',
+            })
             const api = getTarget()
 
-            await api.getLabels()
+            await api.getLabels({ limit: 10, cursor: '0' })
 
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'GET',
-                getRestBaseUri(),
+                getSyncBaseUri(),
                 ENDPOINT_REST_LABELS,
                 DEFAULT_AUTH_TOKEN,
+                {
+                    limit: 10,
+                    cursor: '0',
+                },
             )
         })
 
         test('returns result from rest client', async () => {
             const labels = [DEFAULT_LABEL]
-            setupRestClientMock(labels)
+            setupRestClientMock({
+                results: [DEFAULT_LABEL],
+                next_cursor: '123',
+            })
             const api = getTarget()
 
-            const response = await api.getLabels()
+            const { results, nextCursor } = await api.getLabels()
 
-            expect(response).toEqual(labels)
+            expect(results).toEqual(labels)
+            expect(nextCursor).toBe('123')
         })
     })
 
@@ -76,7 +87,7 @@ describe('TodoistApi label endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'POST',
-                getRestBaseUri(),
+                getSyncBaseUri(),
                 ENDPOINT_REST_LABELS,
                 DEFAULT_AUTH_TOKEN,
                 DEFAULT_ADD_LABEL_ARGS,
@@ -109,7 +120,7 @@ describe('TodoistApi label endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'POST',
-                getRestBaseUri(),
+                getSyncBaseUri(),
                 `${ENDPOINT_REST_LABELS}/${labelId}`,
                 DEFAULT_AUTH_TOKEN,
                 DEFAULT_UPDATE_LABEL_ARGS,
@@ -139,7 +150,7 @@ describe('TodoistApi label endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'DELETE',
-                getRestBaseUri(),
+                getSyncBaseUri(),
                 `${ENDPOINT_REST_LABELS}/${labelId}`,
                 DEFAULT_AUTH_TOKEN,
                 undefined,

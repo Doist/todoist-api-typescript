@@ -5,7 +5,7 @@ import { TodoistRequestError } from './types/errors'
 import * as caseConverter from 'axios-case-converter'
 import { assertInstance } from './testUtils/asserts'
 import { DEFAULT_REQUEST_ID } from './testUtils/testDefaults'
-import { API_SYNC_BASE_URI } from './consts/endpoints'
+import { API_BASE_URI } from './consts/endpoints'
 
 const RANDOM_ID = 'SomethingRandom'
 
@@ -195,7 +195,7 @@ describe('restClient', () => {
     })
 
     test('random request ID is not created if none provided for POST request on the sync endpoint', async () => {
-        const syncUrl = new URL(API_SYNC_BASE_URI, DEFAULT_BASE_URI).toString()
+        const syncUrl = new URL(API_BASE_URI, DEFAULT_BASE_URI).toString()
         await request('POST', syncUrl, DEFAULT_ENDPOINT, DEFAULT_AUTH_TOKEN, DEFAULT_PAYLOAD)
 
         expect(axiosMock.create).toBeCalledWith({
