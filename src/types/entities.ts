@@ -48,54 +48,56 @@ export const Duration = Record({
 
 export type Duration = Static<typeof Duration>
 
+export const Deadline = Record({
+    date: String,
+    lang: String,
+})
+
+export type Deadline = Static<typeof Deadline>
+
 export const Task = Record({
     id: String,
+    assignerId: String.Or(Null),
+    assigneeId: String.Or(Null),
+    projectId: String,
+    sectionId: String.Or(Null),
+    parentId: String.Or(Null),
     order: Int,
     content: String,
     description: String,
-    projectId: String,
     isCompleted: Boolean,
     labels: Array(String),
     priority: Int,
     commentCount: Int,
-    createdAt: String,
-    url: String,
     creatorId: String,
-}).And(
-    Partial({
-        due: DueDate.Or(Null),
-        duration: Duration.Or(Null),
-        assigneeId: String.Or(Null),
-        assignerId: String.Or(Null),
-        parentId: String.Or(Null),
-        sectionId: String.Or(Null),
-    }),
-)
+    createdAt: String,
+    due: DueDate.Or(Null),
+    url: String,
+    duration: Duration.Or(Null),
+    deadline: Deadline.Or(Null),
+})
 
 export type Task = Static<typeof Task>
 
 export const Project = Record({
     id: String,
-    name: String,
+    parentId: String.Or(Null),
+    order: Int.Or(Null),
     color: String,
+    name: String,
     commentCount: Int,
     isShared: Boolean,
     isFavorite: Boolean,
-    url: String,
     isInboxProject: Boolean,
     isTeamInbox: Boolean,
-    order: Int,
+    url: String,
     viewStyle: String,
-}).And(
-    Partial({
-        parentId: String.Or(Null),
-    }),
-)
+})
 
 export type Project = Static<typeof Project>
 
 // This allows us to accept any string during validation, but provide intellisense for the two possible values in request args
-export type ProjectViewStyle = 'list' | 'board'
+export type ProjectViewStyle = 'list' | 'board' | 'calendar'
 
 export const Section = Record({
     id: String,
@@ -108,7 +110,7 @@ export type Section = Static<typeof Section>
 
 export const Label = Record({
     id: String,
-    order: Int,
+    order: Int.Or(Null),
     name: String,
     color: String,
     isFavorite: Boolean,
@@ -138,15 +140,12 @@ export type Attachment = Static<typeof Attachment>
 
 export const Comment = Record({
     id: String,
+    taskId: String.Or(Null),
+    projectId: String.Or(Null),
     content: String,
     postedAt: String,
-}).And(
-    Partial({
-        taskId: String.Or(Null),
-        projectId: String.Or(Null),
-        attachment: Attachment.Or(Null),
-    }),
-)
+    attachment: Attachment.Or(Null),
+})
 
 export type Comment = Static<typeof Comment>
 
@@ -195,16 +194,12 @@ export type QuickAddTaskResponse = {
     parentId: string | null
     childOrder: number // order
     labels: string[]
+    assignedByUid: string | null
     responsibleUid: string | null
     checked: boolean // completed
     addedAt: string // created
     addedByUid: string | null
     duration: Duration | null
-    due: {
-        date: string
-        timezone: string | null
-        isRecurring: boolean
-        string: string
-        lang: string
-    } | null
+    due: DueDate | null
+    deadline: Deadline | null
 }

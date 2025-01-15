@@ -8,6 +8,7 @@ import {
     Comment,
     Attachment,
     Duration,
+    Deadline,
 } from '../types'
 
 const DEFAULT_TASK_ID = '1234'
@@ -43,6 +44,8 @@ export const DEFAULT_DUE_DATE = {
     isRecurring: false,
     string: 'a date string',
     date: DEFAULT_DATE,
+    lang: 'en',
+    timezone: null,
 }
 
 export const DEFAULT_DURATION: Duration = {
@@ -50,9 +53,9 @@ export const DEFAULT_DURATION: Duration = {
     unit: 'minute',
 }
 
-export const INVALID_DUE_DATE = {
-    ...DEFAULT_DUE_DATE,
-    isRecurring: 'false',
+export const DEFAULT_DEADLINE: Deadline = {
+    date: '2020-09-08',
+    lang: 'en',
 }
 
 export const DEFAULT_QUICK_ADD_RESPONSE: QuickAddTaskResponse = {
@@ -77,6 +80,8 @@ export const DEFAULT_QUICK_ADD_RESPONSE: QuickAddTaskResponse = {
         lang: 'en',
         isRecurring: false,
     },
+    deadline: DEFAULT_DEADLINE,
+    assignedByUid: DEFAULT_CREATOR,
 }
 
 export const DEFAULT_TASK: Task = {
@@ -94,14 +99,16 @@ export const DEFAULT_TASK: Task = {
     createdAt: DEFAULT_DATE,
     url: 'https://todoist.com/showTask?id=1234',
     due: DEFAULT_DUE_DATE,
+    assignerId: DEFAULT_CREATOR,
     assigneeId: DEFAULT_ASSIGNEE,
     creatorId: DEFAULT_CREATOR,
     duration: DEFAULT_DURATION,
+    deadline: DEFAULT_DEADLINE,
 }
 
 export const INVALID_TASK = {
     ...DEFAULT_TASK,
-    due: INVALID_DUE_DATE,
+    due: '2020-01-31',
 }
 
 export const TASK_WITH_OPTIONALS_AS_NULL: Task = {
@@ -190,6 +197,7 @@ export const INVALID_ATTACHMENT = {
 export const DEFAULT_COMMENT: Comment = {
     id: DEFAULT_COMMENT_ID,
     content: DEFAULT_COMMENT_CONTENT,
+    taskId: null,
     projectId: DEFAULT_PROJECT_ID,
     attachment: DEFAULT_ATTACHMENT,
     postedAt: DEFAULT_DATE,

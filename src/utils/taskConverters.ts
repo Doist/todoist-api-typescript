@@ -7,23 +7,13 @@ function getTaskUrlFromQuickAddResponse(responseData: QuickAddTaskResponse) {
 }
 
 export function getTaskFromQuickAddResponse(responseData: QuickAddTaskResponse): Task {
-    const due = responseData.due
-        ? {
-              isRecurring: responseData.due.isRecurring,
-              string: responseData.due.string,
-              date: responseData.due.date,
-              ...(responseData.due.timezone !== null && { datetime: responseData.due.date }),
-              ...(responseData.due.timezone !== null && { timezone: responseData.due.timezone }),
-          }
-        : undefined
-
     const task = {
         id: responseData.id,
         order: responseData.childOrder,
         content: responseData.content,
         description: responseData.description,
         projectId: responseData.projectId,
-        sectionId: responseData.sectionId ? responseData.sectionId : undefined,
+        sectionId: responseData.sectionId,
         isCompleted: responseData.checked,
         labels: responseData.labels,
         priority: responseData.priority,
@@ -31,12 +21,12 @@ export function getTaskFromQuickAddResponse(responseData: QuickAddTaskResponse):
         createdAt: responseData.addedAt,
         url: getTaskUrlFromQuickAddResponse(responseData),
         creatorId: responseData.addedByUid ?? '',
-        ...(due !== undefined && { due }),
-        ...(responseData.parentId !== null && { parentId: responseData.parentId }),
-        ...(responseData.responsibleUid !== null && {
-            assigneeId: responseData.responsibleUid,
-        }),
+        parentId: responseData.parentId,
         duration: responseData.duration,
+        assignerId: responseData.assignedByUid,
+        assigneeId: responseData.responsibleUid,
+        deadline: responseData.deadline,
+        due: responseData.due,
     }
 
     return task
