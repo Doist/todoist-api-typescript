@@ -7,7 +7,7 @@ import {
     DEFAULT_COMMENT,
     DEFAULT_REQUEST_ID,
 } from './testUtils/testDefaults'
-import { getRestBaseUri, ENDPOINT_REST_COMMENTS } from './consts/endpoints'
+import { getSyncBaseUri, ENDPOINT_REST_COMMENTS } from './consts/endpoints'
 import { setupRestClientMock } from './testUtils/mocks'
 
 function getTarget() {
@@ -17,8 +17,11 @@ function getTarget() {
 describe('TodoistApi comment endpoints', () => {
     describe('getComments', () => {
         test('calls get request with expected params', async () => {
-            const getCommentsArgs = { projectId: '12' }
-            const requestMock = setupRestClientMock([DEFAULT_COMMENT])
+            const getCommentsArgs = { projectId: '12', limit: 10, cursor: '0' }
+            const requestMock = setupRestClientMock({
+                results: [DEFAULT_COMMENT],
+                nextCursor: '123',
+            })
             const api = getTarget()
 
             await api.getComments(getCommentsArgs)
@@ -26,7 +29,7 @@ describe('TodoistApi comment endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'GET',
-                getRestBaseUri(),
+                getSyncBaseUri(),
                 ENDPOINT_REST_COMMENTS,
                 DEFAULT_AUTH_TOKEN,
                 getCommentsArgs,
@@ -40,12 +43,13 @@ describe('TodoistApi comment endpoints', () => {
                 COMMENT_WITH_OPTIONALS_AS_NULL_PROJECT,
                 COMMENT_WITH_ATTACHMENT_WITH_OPTIONALS_AS_NULL,
             ]
-            setupRestClientMock(expectedComments)
+            setupRestClientMock({ results: expectedComments, nextCursor: '123' })
             const api = getTarget()
 
-            const comments = await api.getComments({ taskId: '12' })
+            const { results: comments, nextCursor } = await api.getComments({ taskId: '12' })
 
             expect(comments).toEqual(expectedComments)
+            expect(nextCursor).toBe('123')
         })
     })
 
@@ -60,7 +64,7 @@ describe('TodoistApi comment endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'GET',
-                getRestBaseUri(),
+                getSyncBaseUri(),
                 `${ENDPOINT_REST_COMMENTS}/${commentId}`,
                 DEFAULT_AUTH_TOKEN,
             )
@@ -92,7 +96,7 @@ describe('TodoistApi comment endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'POST',
-                getRestBaseUri(),
+                getSyncBaseUri(),
                 ENDPOINT_REST_COMMENTS,
                 DEFAULT_AUTH_TOKEN,
                 addCommentArgs,
@@ -126,7 +130,7 @@ describe('TodoistApi comment endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'POST',
-                getRestBaseUri(),
+                getSyncBaseUri(),
                 `${ENDPOINT_REST_COMMENTS}/${taskId}`,
                 DEFAULT_AUTH_TOKEN,
                 updateCommentArgs,
@@ -156,7 +160,7 @@ describe('TodoistApi comment endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'DELETE',
-                getRestBaseUri(),
+                getSyncBaseUri(),
                 `${ENDPOINT_REST_COMMENTS}/${taskId}`,
                 DEFAULT_AUTH_TOKEN,
                 undefined,

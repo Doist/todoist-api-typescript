@@ -1,6 +1,6 @@
 import { TodoistApi } from '.'
 import { DEFAULT_AUTH_TOKEN, DEFAULT_REQUEST_ID, DEFAULT_SECTION } from './testUtils/testDefaults'
-import { getRestBaseUri, ENDPOINT_REST_SECTIONS } from './consts/endpoints'
+import { getSyncBaseUri, ENDPOINT_REST_SECTIONS } from './consts/endpoints'
 import { setupRestClientMock } from './testUtils/mocks'
 
 function getTarget() {
@@ -19,7 +19,7 @@ describe('TodoistApi section endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'GET',
-                getRestBaseUri(),
+                getSyncBaseUri(),
                 `${ENDPOINT_REST_SECTIONS}/${sectionId}`,
                 DEFAULT_AUTH_TOKEN,
             )
@@ -38,29 +38,34 @@ describe('TodoistApi section endpoints', () => {
     describe('getSections', () => {
         test('calls get on sections endpoint', async () => {
             const projectId = '123'
-            const requestMock = setupRestClientMock([DEFAULT_SECTION])
+            const requestMock = setupRestClientMock({
+                results: [DEFAULT_SECTION],
+                nextCursor: '123',
+            })
             const api = getTarget()
 
-            await api.getSections(projectId)
+            const args = { projectId, limit: 10, cursor: '0' }
+            await api.getSections(args)
 
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'GET',
-                getRestBaseUri(),
+                getSyncBaseUri(),
                 ENDPOINT_REST_SECTIONS,
                 DEFAULT_AUTH_TOKEN,
-                { projectId },
+                args,
             )
         })
 
         test('returns result from rest client', async () => {
             const sections = [DEFAULT_SECTION]
-            setupRestClientMock(sections)
+            setupRestClientMock({ results: sections, nextCursor: '123' })
             const api = getTarget()
 
-            const response = await api.getSections()
+            const { results, nextCursor } = await api.getSections({ projectId: '123' })
 
-            expect(response).toEqual(sections)
+            expect(results).toEqual(sections)
+            expect(nextCursor).toBe('123')
         })
     })
 
@@ -79,7 +84,7 @@ describe('TodoistApi section endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'POST',
-                getRestBaseUri(),
+                getSyncBaseUri(),
                 ENDPOINT_REST_SECTIONS,
                 DEFAULT_AUTH_TOKEN,
                 DEFAULT_ADD_SECTION_ARGS,
@@ -110,7 +115,7 @@ describe('TodoistApi section endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'POST',
-                getRestBaseUri(),
+                getSyncBaseUri(),
                 `${ENDPOINT_REST_SECTIONS}/${sectionId}`,
                 DEFAULT_AUTH_TOKEN,
                 DEFAULT_UPDATE_SECTION_ARGS,
@@ -140,7 +145,7 @@ describe('TodoistApi section endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'DELETE',
-                getRestBaseUri(),
+                getSyncBaseUri(),
                 `${ENDPOINT_REST_SECTIONS}/${sectionId}`,
                 DEFAULT_AUTH_TOKEN,
                 undefined,
