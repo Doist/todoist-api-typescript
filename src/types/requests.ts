@@ -10,9 +10,11 @@ export type AddTaskArgs = {
     order?: number
     labels?: string[]
     priority?: number
-    dueLang?: string
     assigneeId?: string
     dueString?: string
+    dueLang?: string
+    deadlineLang?: string
+    deadlineDate?: string
 } & RequireOneOrNone<{
     dueDate?: string
     dueDatetime?: string
@@ -27,6 +29,7 @@ export type QuickAddTaskArgs = {
     note?: string
     reminder?: string
     autoReminder?: boolean
+    meta?: boolean
 }
 
 export type GetTasksArgs = {
@@ -36,6 +39,8 @@ export type GetTasksArgs = {
     filter?: string
     lang?: string
     ids?: string[]
+    cursor?: string | null
+    limit?: number
 }
 
 export type UpdateTaskArgs = {
@@ -43,9 +48,11 @@ export type UpdateTaskArgs = {
     description?: string
     labels?: string[]
     priority?: number
+    dueString?: string
     dueLang?: string | null
     assigneeId?: string | null
-    dueString?: string
+    deadlineDate?: string | null
+    deadlineLang?: string | null
 } & RequireOneOrNone<{
     dueDate?: string
     dueDatetime?: string
@@ -55,10 +62,15 @@ export type UpdateTaskArgs = {
         durationUnit?: Duration['unit']
     }>
 
+export type GetProjectsArgs = {
+    cursor?: string | null
+    limit?: number
+}
+
 export type AddProjectArgs = {
     name: string
     parentId?: string
-    color?: string
+    color?: string | number
     isFavorite?: boolean
     viewStyle?: ProjectViewStyle
 }
@@ -70,36 +82,57 @@ export type UpdateProjectArgs = {
     viewStyle?: ProjectViewStyle
 }
 
+export type GetProjectCollaboratorsArgs = {
+    cursor?: string | null
+    limit?: number
+}
+
+export type GetSections = {
+    projectId: string | null
+    cursor?: string | null
+    limit?: number
+}
+
 export type AddSectionArgs = {
     name: string
     projectId: string
-    order?: number
+    order?: number | null
 }
 
 export type UpdateSectionArgs = {
     name: string
 }
 
+export type GetLabelsArgs = {
+    cursor?: string | null
+    limit?: number
+}
+
 export type AddLabelArgs = {
     name: string
-    order?: number
-    color?: string
+    order?: number | null
+    color?: string | number
     isFavorite?: boolean
 }
 
 export type UpdateLabelArgs = {
     name?: string
-    order?: number
+    order?: number | null
     color?: string
     isFavorite?: boolean
 }
 
-export type GetTaskCommentsArgs = {
+export type GetCommentsBaseArgs = {
+    cursor?: string | null
+    limit?: number
+}
+
+export type GetTaskCommentsArgs = GetCommentsBaseArgs & {
     taskId: string
     projectId?: never
 }
 
-export type GetProjectCommentsArgs = {
+export type GetProjectCommentsArgs = GetCommentsBaseArgs & {
     projectId: string
     taskId?: never
 }
@@ -111,7 +144,7 @@ export type AddCommentArgs = {
         fileUrl: string
         fileType?: string
         resourceType?: string
-    }
+    } | null
 } & RequireExactlyOne<{
     taskId?: string
     projectId?: string
@@ -123,6 +156,8 @@ export type UpdateCommentArgs = {
 
 export type GetSharedLabelsArgs = {
     omitPersonal?: boolean
+    cursor?: string | null
+    limit?: number
 }
 
 export type RenameSharedLabelArgs = {

@@ -2,6 +2,9 @@
 
 This is the official TypeScript API client for the Todoist REST API.
 
+> [!IMPORTANT]  
+> This library is currently being migrated from the Todoist REST API to the Todoist Sync API. As a result, parts of the documentation may be outdated. However, the client API remains consistent with the latest stable release, [v3.0.3](https://github.com/Doist/todoist-api-typescript/releases/tag/v3.0.3). Please note that some client methods may return unexpected data or encounter failures during this transition.
+
 ## Installation
 
 ```

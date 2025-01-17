@@ -26,11 +26,14 @@ import {
     GetSharedLabelsArgs,
     RenameSharedLabelArgs,
     RemoveSharedLabelArgs,
+    GetProjectsArgs,
+    GetProjectCollaboratorsArgs,
+    GetSections,
+    GetLabelsArgs,
 } from './types/requests'
 import { request, isSuccess } from './restClient'
 import { getTaskFromQuickAddResponse } from './utils/taskConverters'
 import {
-    getRestBaseUri,
     getSyncBaseUri,
     ENDPOINT_REST_TASKS,
     ENDPOINT_REST_PROJECTS,
@@ -73,19 +76,16 @@ export class TodoistApi {
 
     constructor(authToken: string, baseUrl?: string) {
         this.authToken = authToken
-
-        this.restApiBase = getRestBaseUri(baseUrl)
         this.syncApiBase = getSyncBaseUri(baseUrl)
     }
 
-    private restApiBase: string
     private syncApiBase: string
 
     async getTask(id: string): Promise<Task> {
         String.check(id)
         const response = await request<Task>(
             'GET',
-            this.restApiBase,
+            this.syncApiBase,
             generatePath(ENDPOINT_REST_TASKS, id),
             this.authToken,
         )
@@ -93,22 +93,27 @@ export class TodoistApi {
         return validateTask(response.data)
     }
 
-    async getTasks(args?: GetTasksArgs): Promise<Task[]> {
-        const response = await request<Task[]>(
-            'GET',
-            this.restApiBase,
-            ENDPOINT_REST_TASKS,
-            this.authToken,
-            args,
-        )
+    async getTasks(args: GetTasksArgs = {}): Promise<{
+        results: Task[]
+        nextCursor: string | null
+    }> {
+        const {
+            data: { results, nextCursor },
+        } = await request<{
+            results: Task[]
+            nextCursor: string | null
+        }>('GET', this.syncApiBase, ENDPOINT_REST_TASKS, this.authToken, args)
 
-        return validateTaskArray(response.data)
+        return {
+            results: validateTaskArray(results),
+            nextCursor,
+        }
     }
 
     async addTask(args: AddTaskArgs, requestId?: string): Promise<Task> {
         const response = await request<Task>(
             'POST',
-            this.restApiBase,
+            this.syncApiBase,
             ENDPOINT_REST_TASKS,
             this.authToken,
             args,
@@ -136,7 +141,7 @@ export class TodoistApi {
         String.check(id)
         const response = await request(
             'POST',
-            this.restApiBase,
+            this.syncApiBase,
             generatePath(ENDPOINT_REST_TASKS, id),
             this.authToken,
             args,
@@ -149,7 +154,7 @@ export class TodoistApi {
         String.check(id)
         const response = await request(
             'POST',
-            this.restApiBase,
+            this.syncApiBase,
             generatePath(ENDPOINT_REST_TASKS, id, ENDPOINT_REST_TASK_CLOSE),
             this.authToken,
             undefined,
@@ -162,7 +167,7 @@ export class TodoistApi {
         String.check(id)
         const response = await request(
             'POST',
-            this.restApiBase,
+            this.syncApiBase,
             generatePath(ENDPOINT_REST_TASKS, id, ENDPOINT_REST_TASK_REOPEN),
             this.authToken,
             undefined,
@@ -175,7 +180,7 @@ export class TodoistApi {
         String.check(id)
         const response = await request(
             'DELETE',
-            this.restApiBase,
+            this.syncApiBase,
             generatePath(ENDPOINT_REST_TASKS, id),
             this.authToken,
             undefined,
@@ -188,7 +193,7 @@ export class TodoistApi {
         String.check(id)
         const response = await request<Project>(
             'GET',
-            this.restApiBase,
+            this.syncApiBase,
             generatePath(ENDPOINT_REST_PROJECTS, id),
             this.authToken,
         )
@@ -196,21 +201,29 @@ export class TodoistApi {
         return validateProject(response.data)
     }
 
-    async getProjects(): Promise<Project[]> {
-        const response = await request<Project[]>(
+    async getProjects(
+        args: GetProjectsArgs = {},
+    ): Promise<{ results: Project[]; nextCursor: string | null }> {
+        const {
+            data: { results, nextCursor },
+        } = await request<{ results: Project[]; nextCursor: string | null }>(
             'GET',
-            this.restApiBase,
+            this.syncApiBase,
             ENDPOINT_REST_PROJECTS,
             this.authToken,
+            args,
         )
 
-        return validateProjectArray(response.data)
+        return {
+            results: validateProjectArray(results),
+            nextCursor,
+        }
     }
 
     async addProject(args: AddProjectArgs, requestId?: string): Promise<Project> {
         const response = await request<Project>(
             'POST',
-            this.restApiBase,
+            this.syncApiBase,
             ENDPOINT_REST_PROJECTS,
             this.authToken,
             args,
@@ -224,7 +237,7 @@ export class TodoistApi {
         String.check(id)
         const response = await request(
             'POST',
-            this.restApiBase,
+            this.syncApiBase,
             generatePath(ENDPOINT_REST_PROJECTS, id),
             this.authToken,
             args,
@@ -237,7 +250,7 @@ export class TodoistApi {
         String.check(id)
         const response = await request(
             'DELETE',
-            this.restApiBase,
+            this.syncApiBase,
             generatePath(ENDPOINT_REST_PROJECTS, id),
             this.authToken,
             undefined,
@@ -246,35 +259,51 @@ export class TodoistApi {
         return isSuccess(response)
     }
 
-    async getProjectCollaborators(projectId: string): Promise<User[]> {
+    async getProjectCollaborators(
+        projectId: string,
+        args: GetProjectCollaboratorsArgs = {},
+    ): Promise<{ results: User[]; nextCursor: string | null }> {
         String.check(projectId)
-        const response = await request<User[]>(
+        const {
+            data: { results, nextCursor },
+        } = await request<{ results: User[]; nextCursor: string | null }>(
             'GET',
-            this.restApiBase,
+            this.syncApiBase,
             generatePath(ENDPOINT_REST_PROJECTS, projectId, ENDPOINT_REST_PROJECT_COLLABORATORS),
             this.authToken,
+            args,
         )
 
-        return validateUserArray(response.data)
+        return {
+            results: validateUserArray(results),
+            nextCursor,
+        }
     }
 
-    async getSections(projectId?: string): Promise<Section[]> {
-        const response = await request<Section[]>(
+    async getSections(
+        args: GetSections,
+    ): Promise<{ results: Section[]; nextCursor: string | null }> {
+        const {
+            data: { results, nextCursor },
+        } = await request<{ results: Section[]; nextCursor: string | null }>(
             'GET',
-            this.restApiBase,
+            this.syncApiBase,
             ENDPOINT_REST_SECTIONS,
             this.authToken,
-            projectId ? { projectId } : undefined,
+            args,
         )
 
-        return validateSectionArray(response.data)
+        return {
+            results: validateSectionArray(results),
+            nextCursor,
+        }
     }
 
     async getSection(id: string): Promise<Section> {
         String.check(id)
         const response = await request<Section>(
             'GET',
-            this.restApiBase,
+            this.syncApiBase,
             generatePath(ENDPOINT_REST_SECTIONS, id),
             this.authToken,
         )
@@ -285,7 +314,7 @@ export class TodoistApi {
     async addSection(args: AddSectionArgs, requestId?: string): Promise<Section> {
         const response = await request<Section>(
             'POST',
-            this.restApiBase,
+            this.syncApiBase,
             ENDPOINT_REST_SECTIONS,
             this.authToken,
             args,
@@ -299,7 +328,7 @@ export class TodoistApi {
         String.check(id)
         const response = await request(
             'POST',
-            this.restApiBase,
+            this.syncApiBase,
             generatePath(ENDPOINT_REST_SECTIONS, id),
             this.authToken,
             args,
@@ -312,7 +341,7 @@ export class TodoistApi {
         String.check(id)
         const response = await request(
             'DELETE',
-            this.restApiBase,
+            this.syncApiBase,
             generatePath(ENDPOINT_REST_SECTIONS, id),
             this.authToken,
             undefined,
@@ -328,7 +357,7 @@ export class TodoistApi {
         String.check(id)
         const response = await request<Label>(
             'GET',
-            this.restApiBase,
+            this.syncApiBase,
             generatePath(ENDPOINT_REST_LABELS, id),
             this.authToken,
         )
@@ -339,15 +368,23 @@ export class TodoistApi {
     /**
      * Fetches the personal labels
      */
-    async getLabels(): Promise<Label[]> {
-        const response = await request<Label[]>(
+    async getLabels(
+        args: GetLabelsArgs = {},
+    ): Promise<{ results: Label[]; nextCursor: string | null }> {
+        const {
+            data: { results, nextCursor: nextCursor },
+        } = await request<{ results: Label[]; nextCursor: string | null }>(
             'GET',
-            this.restApiBase,
+            this.syncApiBase,
             ENDPOINT_REST_LABELS,
             this.authToken,
+            args,
         )
 
-        return validateLabelArray(response.data)
+        return {
+            results: validateLabelArray(results),
+            nextCursor,
+        }
     }
 
     /**
@@ -356,7 +393,7 @@ export class TodoistApi {
     async addLabel(args: AddLabelArgs, requestId?: string): Promise<Label> {
         const response = await request<Label>(
             'POST',
-            this.restApiBase,
+            this.syncApiBase,
             ENDPOINT_REST_LABELS,
             this.authToken,
             args,
@@ -373,7 +410,7 @@ export class TodoistApi {
         String.check(id)
         const response = await request(
             'POST',
-            this.restApiBase,
+            this.syncApiBase,
             generatePath(ENDPOINT_REST_LABELS, id),
             this.authToken,
             args,
@@ -389,7 +426,7 @@ export class TodoistApi {
         String.check(id)
         const response = await request(
             'DELETE',
-            this.restApiBase,
+            this.syncApiBase,
             generatePath(ENDPOINT_REST_LABELS, id),
             this.authToken,
             undefined,
@@ -398,55 +435,70 @@ export class TodoistApi {
         return isSuccess(response)
     }
 
-    async getSharedLabels(args?: GetSharedLabelsArgs): Promise<string[]> {
-        const response = await request<string[]>(
+    async getSharedLabels(
+        args?: GetSharedLabelsArgs,
+    ): Promise<{ results: string[]; nextCursor: string | null }> {
+        const {
+            data: { results, nextCursor: nextCursor },
+        } = await request<{ results: string[]; nextCursor: string | null }>(
             'GET',
-            this.restApiBase,
+            this.syncApiBase,
             ENDPOINT_REST_LABELS_SHARED,
             this.authToken,
             args,
         )
 
-        return response.data
+        return { results, nextCursor }
     }
 
-    async renameSharedLabel(args: RenameSharedLabelArgs): Promise<void> {
-        await request<void>(
+    async renameSharedLabel(args: RenameSharedLabelArgs): Promise<boolean> {
+        const response = await request<void>(
             'POST',
-            this.restApiBase,
+            this.syncApiBase,
             ENDPOINT_REST_LABELS_SHARED_RENAME,
             this.authToken,
             args,
         )
+
+        return isSuccess(response)
     }
 
-    async removeSharedLabel(args: RemoveSharedLabelArgs): Promise<void> {
-        await request<void>(
+    async removeSharedLabel(args: RemoveSharedLabelArgs): Promise<boolean> {
+        const response = await request<void>(
             'POST',
-            this.restApiBase,
+            this.syncApiBase,
             ENDPOINT_REST_LABELS_SHARED_REMOVE,
             this.authToken,
             args,
         )
+
+        return isSuccess(response)
     }
 
-    async getComments(args: GetTaskCommentsArgs | GetProjectCommentsArgs): Promise<Comment[]> {
-        const response = await request<Comment[]>(
+    async getComments(
+        args: GetTaskCommentsArgs | GetProjectCommentsArgs,
+    ): Promise<{ results: Comment[]; nextCursor: string | null }> {
+        const {
+            data: { results, nextCursor },
+        } = await request<{ results: Comment[]; nextCursor: string | null }>(
             'GET',
-            this.restApiBase,
+            this.syncApiBase,
             ENDPOINT_REST_COMMENTS,
             this.authToken,
             args,
         )
 
-        return validateCommentArray(response.data)
+        return {
+            results: validateCommentArray(results),
+            nextCursor,
+        }
     }
 
     async getComment(id: string): Promise<Comment> {
         String.check(id)
         const response = await request<Comment>(
             'GET',
-            this.restApiBase,
+            this.syncApiBase,
             generatePath(ENDPOINT_REST_COMMENTS, id),
             this.authToken,
         )
@@ -457,7 +509,7 @@ export class TodoistApi {
     async addComment(args: AddCommentArgs, requestId?: string): Promise<Comment> {
         const response = await request<Comment>(
             'POST',
-            this.restApiBase,
+            this.syncApiBase,
             ENDPOINT_REST_COMMENTS,
             this.authToken,
             args,
@@ -471,7 +523,7 @@ export class TodoistApi {
         String.check(id)
         const response = await request<boolean>(
             'POST',
-            this.restApiBase,
+            this.syncApiBase,
             generatePath(ENDPOINT_REST_COMMENTS, id),
             this.authToken,
             args,
@@ -484,7 +536,7 @@ export class TodoistApi {
         String.check(id)
         const response = await request(
             'DELETE',
-            this.restApiBase,
+            this.syncApiBase,
             generatePath(ENDPOINT_REST_COMMENTS, id),
             this.authToken,
             undefined,

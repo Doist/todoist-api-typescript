@@ -1,15 +1,15 @@
 const BASE_URI = 'https://api.todoist.com'
-const API_REST_BASE_URI = '/rest/v2/'
-export const API_SYNC_BASE_URI = '/sync/v9/'
 const TODOIST_URI = 'https://todoist.com'
+
+// The API version is not configurable, to ensure
+// compatibility between the API and the client.
+export const API_VERSION = 'v9.208'
+
+export const API_BASE_URI = `/api/${API_VERSION}/`
 const API_AUTHORIZATION_BASE_URI = '/oauth/'
 
-export function getRestBaseUri(domainBase: string = BASE_URI): string {
-    return new URL(API_REST_BASE_URI, domainBase).toString()
-}
-
 export function getSyncBaseUri(domainBase: string = BASE_URI): string {
-    return new URL(API_SYNC_BASE_URI, domainBase).toString()
+    return new URL(API_BASE_URI, domainBase).toString()
 }
 
 export function getAuthBaseUri(domainBase: string = TODOIST_URI): string {
@@ -28,7 +28,7 @@ export const ENDPOINT_REST_TASK_CLOSE = 'close'
 export const ENDPOINT_REST_TASK_REOPEN = 'reopen'
 export const ENDPOINT_REST_PROJECT_COLLABORATORS = 'collaborators'
 
-export const ENDPOINT_SYNC_QUICK_ADD = 'quick/add'
+export const ENDPOINT_SYNC_QUICK_ADD = 'quick'
 
 export const ENDPOINT_AUTHORIZATION = 'authorize'
 export const ENDPOINT_GET_TOKEN = 'access_token'
