@@ -1,5 +1,14 @@
 import type { RequireAllOrNone, RequireOneOrNone, RequireExactlyOne } from 'type-fest'
-import type { Duration, ProjectViewStyle } from './entities'
+import type {
+    Comment,
+    Duration,
+    Label,
+    Project,
+    ProjectViewStyle,
+    Section,
+    Task,
+    User,
+} from './entities'
 
 export type AddTaskArgs = {
     content: string
@@ -42,6 +51,10 @@ export type GetTasksArgs = {
     cursor?: string | null
     limit?: number
 }
+export type GetTasksResponse = {
+    results: Task[]
+    nextCursor: string | null
+}
 
 export type UpdateTaskArgs = {
     content?: string
@@ -66,6 +79,10 @@ export type GetProjectsArgs = {
     cursor?: string | null
     limit?: number
 }
+export type GetProjectsResponse = {
+    results: Project[]
+    nextCursor: string | null
+}
 
 export type AddProjectArgs = {
     name: string
@@ -86,11 +103,19 @@ export type GetProjectCollaboratorsArgs = {
     cursor?: string | null
     limit?: number
 }
+export type GetProjectCollaboratorsResponse = {
+    results: User[]
+    nextCursor: string | null
+}
 
-export type GetSections = {
+export type GetSectionsArgs = {
     projectId: string | null
     cursor?: string | null
     limit?: number
+}
+export type GetSectionsResponse = {
+    results: Section[]
+    nextCursor: string | null
 }
 
 export type AddSectionArgs = {
@@ -106,6 +131,10 @@ export type UpdateSectionArgs = {
 export type GetLabelsArgs = {
     cursor?: string | null
     limit?: number
+}
+export type GetLabelsResponse = {
+    results: Label[]
+    nextCursor: string | null
 }
 
 export type AddLabelArgs = {
@@ -125,6 +154,10 @@ export type UpdateLabelArgs = {
 export type GetCommentsBaseArgs = {
     cursor?: string | null
     limit?: number
+}
+export type GetCommentsResponse = {
+    results: Comment[]
+    nextCursor: string | null
 }
 
 export type GetTaskCommentsArgs = GetCommentsBaseArgs & {
@@ -158,6 +191,10 @@ export type GetSharedLabelsArgs = {
     omitPersonal?: boolean
     cursor?: string | null
     limit?: number
+}
+export type GetSharedLabelsResponse = {
+    results: string[]
+    nextCursor: string | null
 }
 
 export type RenameSharedLabelArgs = {

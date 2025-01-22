@@ -1,13 +1,5 @@
 import { String } from 'runtypes'
-import {
-    Task,
-    QuickAddTaskResponse,
-    Project,
-    Label,
-    User,
-    Section,
-    Comment,
-} from './types/entities'
+import { Task, QuickAddTaskResponse, Project, Label, Section, Comment } from './types/entities'
 import {
     AddCommentArgs,
     AddLabelArgs,
@@ -28,8 +20,15 @@ import {
     RemoveSharedLabelArgs,
     GetProjectsArgs,
     GetProjectCollaboratorsArgs,
-    GetSections,
     GetLabelsArgs,
+    GetLabelsResponse,
+    GetTasksResponse,
+    GetProjectsResponse,
+    GetProjectCollaboratorsResponse,
+    GetSectionsArgs,
+    GetSectionsResponse,
+    GetSharedLabelsResponse,
+    GetCommentsResponse,
 } from './types/requests'
 import { request, isSuccess } from './restClient'
 import { getTaskFromQuickAddResponse } from './utils/taskConverters'
@@ -93,16 +92,16 @@ export class TodoistApi {
         return validateTask(response.data)
     }
 
-    async getTasks(args: GetTasksArgs = {}): Promise<{
-        results: Task[]
-        nextCursor: string | null
-    }> {
+    async getTasks(args: GetTasksArgs = {}): Promise<GetTasksResponse> {
         const {
             data: { results, nextCursor },
-        } = await request<{
-            results: Task[]
-            nextCursor: string | null
-        }>('GET', this.syncApiBase, ENDPOINT_REST_TASKS, this.authToken, args)
+        } = await request<GetTasksResponse>(
+            'GET',
+            this.syncApiBase,
+            ENDPOINT_REST_TASKS,
+            this.authToken,
+            args,
+        )
 
         return {
             results: validateTaskArray(results),
@@ -201,12 +200,10 @@ export class TodoistApi {
         return validateProject(response.data)
     }
 
-    async getProjects(
-        args: GetProjectsArgs = {},
-    ): Promise<{ results: Project[]; nextCursor: string | null }> {
+    async getProjects(args: GetProjectsArgs = {}): Promise<GetProjectsResponse> {
         const {
             data: { results, nextCursor },
-        } = await request<{ results: Project[]; nextCursor: string | null }>(
+        } = await request<GetProjectsResponse>(
             'GET',
             this.syncApiBase,
             ENDPOINT_REST_PROJECTS,
@@ -262,11 +259,11 @@ export class TodoistApi {
     async getProjectCollaborators(
         projectId: string,
         args: GetProjectCollaboratorsArgs = {},
-    ): Promise<{ results: User[]; nextCursor: string | null }> {
+    ): Promise<GetProjectCollaboratorsResponse> {
         String.check(projectId)
         const {
             data: { results, nextCursor },
-        } = await request<{ results: User[]; nextCursor: string | null }>(
+        } = await request<GetProjectCollaboratorsResponse>(
             'GET',
             this.syncApiBase,
             generatePath(ENDPOINT_REST_PROJECTS, projectId, ENDPOINT_REST_PROJECT_COLLABORATORS),
@@ -280,12 +277,10 @@ export class TodoistApi {
         }
     }
 
-    async getSections(
-        args: GetSections,
-    ): Promise<{ results: Section[]; nextCursor: string | null }> {
+    async getSections(args: GetSectionsArgs): Promise<GetSectionsResponse> {
         const {
             data: { results, nextCursor },
-        } = await request<{ results: Section[]; nextCursor: string | null }>(
+        } = await request<GetSectionsResponse>(
             'GET',
             this.syncApiBase,
             ENDPOINT_REST_SECTIONS,
@@ -368,12 +363,10 @@ export class TodoistApi {
     /**
      * Fetches the personal labels
      */
-    async getLabels(
-        args: GetLabelsArgs = {},
-    ): Promise<{ results: Label[]; nextCursor: string | null }> {
+    async getLabels(args: GetLabelsArgs = {}): Promise<GetLabelsResponse> {
         const {
             data: { results, nextCursor: nextCursor },
-        } = await request<{ results: Label[]; nextCursor: string | null }>(
+        } = await request<GetLabelsResponse>(
             'GET',
             this.syncApiBase,
             ENDPOINT_REST_LABELS,
@@ -435,12 +428,10 @@ export class TodoistApi {
         return isSuccess(response)
     }
 
-    async getSharedLabels(
-        args?: GetSharedLabelsArgs,
-    ): Promise<{ results: string[]; nextCursor: string | null }> {
+    async getSharedLabels(args?: GetSharedLabelsArgs): Promise<GetSharedLabelsResponse> {
         const {
             data: { results, nextCursor: nextCursor },
-        } = await request<{ results: string[]; nextCursor: string | null }>(
+        } = await request<GetSharedLabelsResponse>(
             'GET',
             this.syncApiBase,
             ENDPOINT_REST_LABELS_SHARED,
@@ -477,10 +468,10 @@ export class TodoistApi {
 
     async getComments(
         args: GetTaskCommentsArgs | GetProjectCommentsArgs,
-    ): Promise<{ results: Comment[]; nextCursor: string | null }> {
+    ): Promise<GetCommentsResponse> {
         const {
             data: { results, nextCursor },
-        } = await request<{ results: Comment[]; nextCursor: string | null }>(
+        } = await request<GetCommentsResponse>(
             'GET',
             this.syncApiBase,
             ENDPOINT_REST_COMMENTS,
