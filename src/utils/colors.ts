@@ -187,6 +187,7 @@ export const colors = [
 export const defaultColor: Color = charcoal
 
 /**
+ * @private
  * @deprecated Use {@link getColorByKey} instead
  */
 export function getColorById(colorId: number): Color {
@@ -195,6 +196,7 @@ export function getColorById(colorId: number): Color {
 }
 
 /**
+ * @private
  * @deprecated Use {@link getColorByKey} instead
  */
 export function getColorByName(colorName: string): Color {
@@ -202,6 +204,18 @@ export function getColorByName(colorName: string): Color {
     return color ?? defaultColor
 }
 
+/**
+ * Retrieves a {@link Color} object by its key identifier.
+ *
+ * @param colorKey - The unique key identifier of the color to find (e.g., 'berry_red', 'sky_blue')
+ * @returns The matching Color object if found, otherwise returns the default color (charcoal)
+ *
+ * @example
+ * ```typescript
+ * const color = getColorByKey('berry_red');
+ * console.log(color.hexValue); // '#b8255f'
+ * ```
+ */
 export function getColorByKey(colorKey: string): Color {
     const color = colors.find((color) => color.key === colorKey)
     return color ?? defaultColor
