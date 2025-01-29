@@ -34,7 +34,10 @@ jobs:
               with:
                   node-version-file: .nvmrc
 
-            - name: Install dependencies
+            - name: Install SDK dependencies
+              run: npm ci
+
+            - name: Install docusaurus dependencies
               working-directory: ./website
               run: npm ci
 
