@@ -99,6 +99,22 @@ function removeAppLinks(input: string) {
     return input
 }
 
+/**
+ * Sanitizes a string by removing Todoist's formatting syntax (e.g. bold, italic, code blocks, links).
+ *
+ * @example
+ * // Removes bold/italic formatting
+ * getSanitizedContent('Some **bold** and *italic*') // 'Some bold and italic'
+ *
+ * // Removes markdown links
+ * getSanitizedContent('A [markdown](http://url.com) link') // 'A markdown link'
+ *
+ * // Removes app-specific links
+ * getSanitizedContent('A [[gmail=id, link from gmail]]') // 'A link from gmail'
+ *
+ * @param input - The string to sanitize
+ * @returns The sanitized string with all formatting removed
+ */
 export function getSanitizedContent(input: string): string {
     input = removeStyleFormatting(input)
     input = removeCodeFormatting(input)
@@ -110,6 +126,19 @@ export function getSanitizedContent(input: string): string {
     return input
 }
 
+/**
+ * Takes an array of tasks and returns a new array with sanitized content
+ * added as 'sanitizedContent' property to each task.
+ *
+ * @see {@link getSanitizedContent}
+ *
+ * @example
+ * const tasks = [{ content: '**Bold** task', ... }]
+ * getSanitizedTasks(tasks) // [{ content: '**Bold** task', sanitizedContent: 'Bold task', ... }]
+ *
+ * @param tasks - Array of Task objects to sanitize
+ * @returns Array of tasks with added sanitizedContent property
+ */
 export function getSanitizedTasks(tasks: Task[]): TaskWithSanitizedContent[] {
     return tasks.map((task) => ({ ...task, sanitizedContent: getSanitizedContent(task.content) }))
 }

@@ -1,3 +1,4 @@
+import { ZodError } from 'zod'
 import {
     DEFAULT_TASK,
     INVALID_TASK,
@@ -26,7 +27,6 @@ import {
     validateUser,
     validateUserArray,
 } from './validators'
-import { ValidationError } from 'runtypes'
 
 describe('validators', () => {
     describe('validateTask', () => {
@@ -38,7 +38,7 @@ describe('validators', () => {
         test('validation throws error for an invalid task', () => {
             expect(() => {
                 validateTask(INVALID_TASK)
-            }).toThrow(ValidationError)
+            }).toThrow(ZodError)
         })
     })
 
@@ -56,7 +56,7 @@ describe('validators', () => {
         test('validation throws error for an invalid task array ', () => {
             expect(() => {
                 validateTaskArray([INVALID_TASK])
-            }).toThrow(ValidationError)
+            }).toThrow(ZodError)
         })
     })
 
@@ -69,7 +69,7 @@ describe('validators', () => {
         test('validation throws error for an invalid project', () => {
             expect(() => {
                 validateProject(INVALID_PROJECT)
-            }).toThrow(ValidationError)
+            }).toThrow(ZodError)
         })
     })
 
@@ -87,7 +87,7 @@ describe('validators', () => {
         test('validation throws error for an invalid project array ', () => {
             expect(() => {
                 validateProjectArray([INVALID_PROJECT])
-            }).toThrow(ValidationError)
+            }).toThrow(ZodError)
         })
     })
 
@@ -100,7 +100,7 @@ describe('validators', () => {
         test('validation throws error for an invalid section', () => {
             expect(() => {
                 validateSection(INVALID_SECTION)
-            }).toThrow(ValidationError)
+            }).toThrow(ZodError)
         })
     })
 
@@ -118,7 +118,7 @@ describe('validators', () => {
         test('validation throws error for an invalid section array ', () => {
             expect(() => {
                 validateSectionArray([INVALID_SECTION])
-            }).toThrow(ValidationError)
+            }).toThrow(ZodError)
         })
     })
 
@@ -131,7 +131,7 @@ describe('validators', () => {
         test('validation throws error for an invalid label', () => {
             expect(() => {
                 validateLabel(INVALID_LABEL)
-            }).toThrow(ValidationError)
+            }).toThrow(ZodError)
         })
     })
 
@@ -149,7 +149,7 @@ describe('validators', () => {
         test('validation throws error for an invalid label array ', () => {
             expect(() => {
                 validateLabelArray([INVALID_LABEL])
-            }).toThrow(ValidationError)
+            }).toThrow(ZodError)
         })
     })
 
@@ -162,7 +162,7 @@ describe('validators', () => {
         test('validation throws error for an invalid comment', () => {
             expect(() => {
                 validateComment(INVALID_COMMENT)
-            }).toThrow(ValidationError)
+            }).toThrow(ZodError)
         })
     })
 
@@ -180,7 +180,7 @@ describe('validators', () => {
         test('validation throws error for an invalid comment array ', () => {
             expect(() => {
                 validateCommentArray([INVALID_COMMENT])
-            }).toThrow(ValidationError)
+            }).toThrow(ZodError)
         })
     })
 
@@ -193,7 +193,7 @@ describe('validators', () => {
         test('validation throws error for an invalid user', () => {
             expect(() => {
                 validateUser(INVALID_USER)
-            }).toThrow(ValidationError)
+            }).toThrow(ZodError)
         })
     })
 
@@ -211,7 +211,7 @@ describe('validators', () => {
         test('validation throws error for an invalid user array ', () => {
             expect(() => {
                 validateUserArray([INVALID_USER])
-            }).toThrow(ValidationError)
+            }).toThrow(ZodError)
         })
     })
 })

@@ -132,7 +132,7 @@ describe('TodoistApi project endpoints', () => {
         })
 
         test('returns success result from rest client', async () => {
-            const returnedProject = { ...DEFAULT_PROJECT, DEFAULT_UPDATE_PROJECT_ARGS }
+            const returnedProject = { ...DEFAULT_PROJECT, ...DEFAULT_UPDATE_PROJECT_ARGS }
             setupRestClientMock(returnedProject, 204)
             const api = getTarget()
 
