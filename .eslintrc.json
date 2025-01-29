@@ -4,7 +4,7 @@
         "sourceType": "module",
         "project": ["tsconfig.json", "tsconfig.test.json"]
     },
-    "extends": ["@doist/eslint-config/recommended-requiring-type-checking"],
+    "extends": ["@doist/eslint-config/recommended-type-checked"],
     "env": {
         "browser": true,
         "jest": true

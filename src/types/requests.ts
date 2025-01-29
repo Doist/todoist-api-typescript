@@ -1,6 +1,8 @@
 import type { RequireAllOrNone, RequireOneOrNone, RequireExactlyOne } from 'type-fest'
 import type {
     Comment,
+    Deadline,
+    DueDate,
     Duration,
     Label,
     Project,
@@ -10,6 +12,9 @@ import type {
     User,
 } from './entities'
 
+/**
+ * @see https://developer.todoist.com/rest/v2/#create-a-new-task
+ */
 export type AddTaskArgs = {
     content: string
     description?: string
@@ -33,14 +38,9 @@ export type AddTaskArgs = {
         durationUnit?: Duration['unit']
     }>
 
-export type QuickAddTaskArgs = {
-    text: string
-    note?: string
-    reminder?: string
-    autoReminder?: boolean
-    meta?: boolean
-}
-
+/**
+ * @see https://developer.todoist.com/rest/v2/#tasks
+ */
 export type GetTasksArgs = {
     projectId?: string
     sectionId?: string
@@ -51,11 +51,17 @@ export type GetTasksArgs = {
     cursor?: string | null
     limit?: number
 }
+/**
+ * @see https://developer.todoist.com/rest/v2/#tasks
+ */
 export type GetTasksResponse = {
     results: Task[]
     nextCursor: string | null
 }
 
+/**
+ * @see https://developer.todoist.com/rest/v2/#update-a-task
+ */
 export type UpdateTaskArgs = {
     content?: string
     description?: string
@@ -75,15 +81,58 @@ export type UpdateTaskArgs = {
         durationUnit?: Duration['unit']
     }>
 
+/**
+ * @see https://developer.todoist.com/rest/v2/#quick-add-task
+ */
+export type QuickAddTaskArgs = {
+    text: string
+    note?: string
+    reminder?: string
+    autoReminder?: boolean
+    meta?: boolean
+}
+
+/**
+ * @see https://developer.todoist.com/rest/v2/#quick-add-task
+ */
+export type QuickAddTaskResponse = {
+    id: string
+    projectId: string
+    content: string
+    description: string
+    priority: number
+    sectionId: string | null
+    parentId: string | null
+    childOrder: number // order
+    labels: string[]
+    assignedByUid: string | null
+    responsibleUid: string | null
+    checked: boolean // completed
+    addedAt: string // created
+    addedByUid: string | null
+    duration: Duration | null
+    due: DueDate | null
+    deadline: Deadline | null
+}
+
+/**
+ * @see https://developer.todoist.com/rest/v2/#get-all-projects
+ */
 export type GetProjectsArgs = {
     cursor?: string | null
     limit?: number
 }
+/**
+ * @see https://developer.todoist.com/rest/v2/#get-all-projects
+ */
 export type GetProjectsResponse = {
     results: Project[]
     nextCursor: string | null
 }
 
+/**
+ * @see https://developer.todoist.com/rest/v2/#create-a-new-project
+ */
 export type AddProjectArgs = {
     name: string
     parentId?: string
@@ -92,6 +141,9 @@ export type AddProjectArgs = {
     viewStyle?: ProjectViewStyle
 }
 
+/**
+ * @see https://developer.todoist.com/rest/v2/#update-a-project
+ */
 export type UpdateProjectArgs = {
     name?: string
     color?: string
@@ -99,44 +151,71 @@ export type UpdateProjectArgs = {
     viewStyle?: ProjectViewStyle
 }
 
+/**
+ * @see https://developer.todoist.com/rest/v2/#get-all-collaborators
+ */
 export type GetProjectCollaboratorsArgs = {
     cursor?: string | null
     limit?: number
 }
+/**
+ * @see https://developer.todoist.com/rest/v2/#get-all-collaborators
+ */
 export type GetProjectCollaboratorsResponse = {
     results: User[]
     nextCursor: string | null
 }
 
+/**
+ * @see https://developer.todoist.com/rest/v2/#sections
+ */
 export type GetSectionsArgs = {
     projectId: string | null
     cursor?: string | null
     limit?: number
 }
+/**
+ * @see https://developer.todoist.com/rest/v2/#sections
+ */
 export type GetSectionsResponse = {
     results: Section[]
     nextCursor: string | null
 }
 
+/**
+ * @see https://developer.todoist.com/rest/v2/#create-a-new-section
+ */
 export type AddSectionArgs = {
     name: string
     projectId: string
     order?: number | null
 }
 
+/**
+ * @see https://developer.todoist.com/rest/v2/#update-a-section
+ */
 export type UpdateSectionArgs = {
     name: string
 }
 
+/**
+ * @see https://developer.todoist.com/rest/v2/#get-all-personal-labels
+ */
 export type GetLabelsArgs = {
     cursor?: string | null
     limit?: number
 }
+/**
+ * @see https://developer.todoist.com/rest/v2/#get-all-personal-labels
+ */
 export type GetLabelsResponse = {
     results: Label[]
     nextCursor: string | null
 }
 
+/**
+ * @see https://developer.todoist.com/rest/v2/#create-a-new-personal-label
+ */
 export type AddLabelArgs = {
     name: string
     order?: number | null
@@ -144,6 +223,9 @@ export type AddLabelArgs = {
     isFavorite?: boolean
 }
 
+/**
+ * @see https://developer.todoist.com/rest/v2/#update-a-personal-label
+ */
 export type UpdateLabelArgs = {
     name?: string
     order?: number | null
@@ -151,25 +233,66 @@ export type UpdateLabelArgs = {
     isFavorite?: boolean
 }
 
-export type GetCommentsBaseArgs = {
+/**
+ * @see https://developer.todoist.com/rest/v2/#get-all-shared-labels
+ */
+export type GetSharedLabelsArgs = {
+    omitPersonal?: boolean
     cursor?: string | null
     limit?: number
 }
+/**
+ * @see https://developer.todoist.com/rest/v2/#get-all-shared-labels
+ */
+export type GetSharedLabelsResponse = {
+    results: string[]
+    nextCursor: string | null
+}
+
+/**
+ * @see https://developer.todoist.com/rest/v2/#rename-shared-labels
+ */
+export type RenameSharedLabelArgs = {
+    name: string
+    newName: string
+}
+
+/**
+ * @see https://developer.todoist.com/rest/v2/#remove-shared-labels
+ */
+export type RemoveSharedLabelArgs = {
+    name: string
+}
+
+/**
+ * @see https://developer.todoist.com/rest/v2/#get-all-comments
+ */
+export type GetTaskCommentsArgs = {
+    taskId: string
+    projectId?: never
+    cursor?: string | null
+    limit?: number
+}
+/**
+ * @see https://developer.todoist.com/rest/v2/#get-all-comments
+ */
+export type GetProjectCommentsArgs = {
+    projectId: string
+    taskId?: never
+    cursor?: string | null
+    limit?: number
+}
+/**
+ * @see https://developer.todoist.com/rest/v2/#get-all-comments
+ */
 export type GetCommentsResponse = {
     results: Comment[]
     nextCursor: string | null
 }
 
-export type GetTaskCommentsArgs = GetCommentsBaseArgs & {
-    taskId: string
-    projectId?: never
-}
-
-export type GetProjectCommentsArgs = GetCommentsBaseArgs & {
-    projectId: string
-    taskId?: never
-}
-
+/**
+ * @see https://developer.todoist.com/rest/v2/#create-a-new-comment
+ */
 export type AddCommentArgs = {
     content: string
     attachment?: {
@@ -183,25 +306,9 @@ export type AddCommentArgs = {
     projectId?: string
 }>
 
+/**
+ * @see https://developer.todoist.com/rest/v2/#update-a-comment
+ */
 export type UpdateCommentArgs = {
     content: string
-}
-
-export type GetSharedLabelsArgs = {
-    omitPersonal?: boolean
-    cursor?: string | null
-    limit?: number
-}
-export type GetSharedLabelsResponse = {
-    results: string[]
-    nextCursor: string | null
-}
-
-export type RenameSharedLabelArgs = {
-    name: string
-    newName: string
-}
-
-export type RemoveSharedLabelArgs = {
-    name: string
 }
