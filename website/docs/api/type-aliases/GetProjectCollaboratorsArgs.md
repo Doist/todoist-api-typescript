@@ -2,17 +2,17 @@
 
 ```ts
 type GetProjectCollaboratorsArgs = {
-    cursor: string | null
-    limit: number
-}
+  cursor: string | null;
+  limit: number;
+};
 ```
 
 ## Type declaration
 
-| Name                          | Type               |
-| ----------------------------- | ------------------ |
+| Name | Type |
+| ------ | ------ |
 | <a id="cursor"></a> `cursor`? | `string` \| `null` |
-| <a id="limit"></a> `limit`?   | `number`           |
+| <a id="limit"></a> `limit`? | `number` |
 
 ## See
 

@@ -8,13 +8,13 @@ https://developer.todoist.com/sync/v9/#sections
 
 ## Extends
 
--   `TypeOf`\<_typeof_ `SectionSchema`\>
+- `TypeOf`\<*typeof* `SectionSchema`\>
 
 ## Properties
 
-| Property                           | Type     |
-| ---------------------------------- | -------- |
-| <a id="id"></a> `id`               | `string` |
-| <a id="name"></a> `name`           | `string` |
-| <a id="order"></a> `order`         | `number` |
+| Property | Type |
+| ------ | ------ |
+| <a id="id"></a> `id` | `string` |
+| <a id="name"></a> `name` | `string` |
+| <a id="order"></a> `order` | `number` |
 | <a id="projectid"></a> `projectId` | `string` |

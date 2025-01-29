@@ -2,14 +2,14 @@
 
 ```ts
 type UpdateSectionArgs = {
-    name: string
-}
+  name: string;
+};
 ```
 
 ## Type declaration
 
-| Name                     | Type     |
-| ------------------------ | -------- |
+| Name | Type |
+| ------ | ------ |
 | <a id="name"></a> `name` | `string` |
 
 ## See

@@ -2,14 +2,14 @@
 
 ```ts
 type UpdateCommentArgs = {
-    content: string
-}
+  content: string;
+};
 ```
 
 ## Type declaration
 
-| Name                           | Type     |
-| ------------------------------ | -------- |
+| Name | Type |
+| ------ | ------ |
 | <a id="content"></a> `content` | `string` |
 
 ## See

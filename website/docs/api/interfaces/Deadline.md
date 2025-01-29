@@ -4,11 +4,11 @@ Represents a task deadline.
 
 ## Extends
 
--   `TypeOf`\<_typeof_ `DeadlineSchema`\>
+- `TypeOf`\<*typeof* `DeadlineSchema`\>
 
 ## Properties
 
-| Property                 | Type     |
-| ------------------------ | -------- |
+| Property | Type |
+| ------ | ------ |
 | <a id="date"></a> `date` | `string` |
 | <a id="lang"></a> `lang` | `string` |

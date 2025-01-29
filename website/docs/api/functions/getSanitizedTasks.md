@@ -9,9 +9,9 @@ added as 'sanitizedContent' property to each task.
 
 ## Parameters
 
-| Parameter | Type                              | Description                       |
-| --------- | --------------------------------- | --------------------------------- |
-| `tasks`   | [`Task`](../interfaces/Task.md)[] | Array of Task objects to sanitize |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `tasks` | [`Task`](../interfaces/Task.md)[] | Array of Task objects to sanitize |
 
 ## Returns
 

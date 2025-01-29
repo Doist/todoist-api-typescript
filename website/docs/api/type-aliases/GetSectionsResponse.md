@@ -2,17 +2,17 @@
 
 ```ts
 type GetSectionsResponse = {
-    nextCursor: string | null
-    results: Section[]
-}
+  nextCursor: string | null;
+  results: Section[];
+};
 ```
 
 ## Type declaration
 
-| Name                                 | Type                                    |
-| ------------------------------------ | --------------------------------------- |
-| <a id="nextcursor"></a> `nextCursor` | `string` \| `null`                      |
-| <a id="results"></a> `results`       | [`Section`](../interfaces/Section.md)[] |
+| Name | Type |
+| ------ | ------ |
+| <a id="nextcursor"></a> `nextCursor` | `string` \| `null` |
+| <a id="results"></a> `results` | [`Section`](../interfaces/Section.md)[] |
 
 ## See
 

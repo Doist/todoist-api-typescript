@@ -2,16 +2,16 @@
 
 ```ts
 type RenameSharedLabelArgs = {
-    name: string
-    newName: string
-}
+  name: string;
+  newName: string;
+};
 ```
 
 ## Type declaration
 
-| Name                           | Type     |
-| ------------------------------ | -------- |
-| <a id="name"></a> `name`       | `string` |
+| Name | Type |
+| ------ | ------ |
+| <a id="name"></a> `name` | `string` |
 | <a id="newname"></a> `newName` | `string` |
 
 ## See

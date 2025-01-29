@@ -8,9 +8,9 @@ Sanitizes a string by removing Todoist's formatting syntax (e.g. bold, italic, c
 
 ## Parameters
 
-| Parameter | Type     | Description            |
-| --------- | -------- | ---------------------- |
-| `input`   | `string` | The string to sanitize |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `input` | `string` | The string to sanitize |
 
 ## Returns
 

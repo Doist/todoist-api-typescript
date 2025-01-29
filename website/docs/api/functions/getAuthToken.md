@@ -8,10 +8,10 @@ Exchanges an authorization code for an access token.
 
 ## Parameters
 
-| Parameter  | Type                                                              |
-| ---------- | ----------------------------------------------------------------- |
-| `args`     | [`AuthTokenRequestArgs`](../type-aliases/AuthTokenRequestArgs.md) |
-| `baseUrl`? | `string`                                                          |
+| Parameter | Type |
+| ------ | ------ |
+| `args` | [`AuthTokenRequestArgs`](../type-aliases/AuthTokenRequestArgs.md) |
+| `baseUrl`? | `string` |
 
 ## Returns
 
@@ -23,9 +23,9 @@ The access token response
 
 ```typescript
 const { accessToken } = await getAuthToken({
-    clientId: 'your-client-id',
-    clientSecret: 'your-client-secret',
-    code: authCode,
+  clientId: 'your-client-id',
+  clientSecret: 'your-client-secret',
+  code: authCode
 })
 ```
 

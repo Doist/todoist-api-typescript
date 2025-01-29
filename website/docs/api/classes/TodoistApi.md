@@ -6,16 +6,16 @@ This class provides methods to manage tasks, projects, sections, labels, and com
 ## Example
 
 ```typescript
-const api = new TodoistApi('your-api-token')
+const api = new TodoistApi('your-api-token');
 
 // Get all tasks
-const tasks = await api.getTasks()
+const tasks = await api.getTasks();
 
 // Create a new task
 const newTask = await api.addTask({
-    content: 'My new task',
-    projectId: '12345',
-})
+  content: 'My new task',
+  projectId: '12345'
+});
 ```
 
 ## Constructors
@@ -28,10 +28,10 @@ new TodoistApi(authToken: string, baseUrl?: string): TodoistApi
 
 #### Parameters
 
-| Parameter   | Type     | Description                                                                                |
-| ----------- | -------- | ------------------------------------------------------------------------------------------ |
-| `authToken` | `string` | Your Todoist API token.                                                                    |
-| `baseUrl`?  | `string` | Optional custom API base URL. If not provided, defaults to Todoist's standard API endpoint |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `authToken` | `string` | Your Todoist API token. |
+| `baseUrl`? | `string` | Optional custom API base URL. If not provided, defaults to Todoist's standard API endpoint |
 
 #### Returns
 
@@ -49,10 +49,10 @@ Adds a comment to a task or project.
 
 #### Parameters
 
-| Parameter    | Type                                                  | Description                                                                             |
-| ------------ | ----------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| `args`       | [`AddCommentArgs`](../type-aliases/AddCommentArgs.md) | Parameters for creating the comment, such as content and the target task or project ID. |
-| `requestId`? | `string`                                              | Optional unique identifier for idempotency.                                             |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `args` | [`AddCommentArgs`](../type-aliases/AddCommentArgs.md) | Parameters for creating the comment, such as content and the target task or project ID. |
+| `requestId`? | `string` | Optional unique identifier for idempotency. |
 
 #### Returns
 
@@ -60,7 +60,7 @@ Adds a comment to a task or project.
 
 A promise that resolves to the created comment.
 
----
+***
 
 ### addLabel()
 
@@ -72,10 +72,10 @@ Adds a new label.
 
 #### Parameters
 
-| Parameter    | Type                                              | Description                                 |
-| ------------ | ------------------------------------------------- | ------------------------------------------- |
-| `args`       | [`AddLabelArgs`](../type-aliases/AddLabelArgs.md) | Label creation parameters such as name.     |
-| `requestId`? | `string`                                          | Optional unique identifier for idempotency. |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `args` | [`AddLabelArgs`](../type-aliases/AddLabelArgs.md) | Label creation parameters such as name. |
+| `requestId`? | `string` | Optional unique identifier for idempotency. |
 
 #### Returns
 
@@ -83,7 +83,7 @@ Adds a new label.
 
 A promise that resolves to the created label.
 
----
+***
 
 ### addProject()
 
@@ -95,10 +95,10 @@ Creates a new project with the provided parameters.
 
 #### Parameters
 
-| Parameter    | Type                                                  | Description                                        |
-| ------------ | ----------------------------------------------------- | -------------------------------------------------- |
-| `args`       | [`AddProjectArgs`](../type-aliases/AddProjectArgs.md) | Project creation parameters such as name or color. |
-| `requestId`? | `string`                                              | Optional unique identifier for idempotency.        |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `args` | [`AddProjectArgs`](../type-aliases/AddProjectArgs.md) | Project creation parameters such as name or color. |
+| `requestId`? | `string` | Optional unique identifier for idempotency. |
 
 #### Returns
 
@@ -106,7 +106,7 @@ Creates a new project with the provided parameters.
 
 A promise that resolves to the created project.
 
----
+***
 
 ### addSection()
 
@@ -118,10 +118,10 @@ Creates a new section within a project.
 
 #### Parameters
 
-| Parameter    | Type                                                  | Description                                             |
-| ------------ | ----------------------------------------------------- | ------------------------------------------------------- |
-| `args`       | [`AddSectionArgs`](../type-aliases/AddSectionArgs.md) | Section creation parameters such as name or project ID. |
-| `requestId`? | `string`                                              | Optional unique identifier for idempotency.             |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `args` | [`AddSectionArgs`](../type-aliases/AddSectionArgs.md) | Section creation parameters such as name or project ID. |
+| `requestId`? | `string` | Optional unique identifier for idempotency. |
 
 #### Returns
 
@@ -129,7 +129,7 @@ Creates a new section within a project.
 
 A promise that resolves to the created section.
 
----
+***
 
 ### addTask()
 
@@ -141,10 +141,10 @@ Creates a new task with the provided parameters.
 
 #### Parameters
 
-| Parameter    | Type                                            | Description                                                      |
-| ------------ | ----------------------------------------------- | ---------------------------------------------------------------- |
-| `args`       | [`AddTaskArgs`](../type-aliases/AddTaskArgs.md) | Task creation parameters such as content, due date, or priority. |
-| `requestId`? | `string`                                        | Optional unique identifier for idempotency.                      |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `args` | [`AddTaskArgs`](../type-aliases/AddTaskArgs.md) | Task creation parameters such as content, due date, or priority. |
+| `requestId`? | `string` | Optional unique identifier for idempotency. |
 
 #### Returns
 
@@ -152,7 +152,7 @@ Creates a new task with the provided parameters.
 
 A promise that resolves to the created task.
 
----
+***
 
 ### closeTask()
 
@@ -164,9 +164,9 @@ Closes (completes) a task by its ID.
 
 #### Parameters
 
-| Parameter    | Type     | Description                                 |
-| ------------ | -------- | ------------------------------------------- |
-| `id`         | `string` | The unique identifier of the task to close. |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `id` | `string` | The unique identifier of the task to close. |
 | `requestId`? | `string` | Optional unique identifier for idempotency. |
 
 #### Returns
@@ -175,7 +175,7 @@ Closes (completes) a task by its ID.
 
 A promise that resolves to `true` if successful.
 
----
+***
 
 ### deleteComment()
 
@@ -187,10 +187,10 @@ Deletes a comment by its ID.
 
 #### Parameters
 
-| Parameter    | Type     | Description                                     |
-| ------------ | -------- | ----------------------------------------------- |
-| `id`         | `string` | The unique identifier of the comment to delete. |
-| `requestId`? | `string` | Optional unique identifier for idempotency.     |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `id` | `string` | The unique identifier of the comment to delete. |
+| `requestId`? | `string` | Optional unique identifier for idempotency. |
 
 #### Returns
 
@@ -198,7 +198,7 @@ Deletes a comment by its ID.
 
 A promise that resolves to `true` if successful.
 
----
+***
 
 ### deleteLabel()
 
@@ -210,10 +210,10 @@ Deletes a label by its ID.
 
 #### Parameters
 
-| Parameter    | Type     | Description                                   |
-| ------------ | -------- | --------------------------------------------- |
-| `id`         | `string` | The unique identifier of the label to delete. |
-| `requestId`? | `string` | Optional unique identifier for idempotency.   |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `id` | `string` | The unique identifier of the label to delete. |
+| `requestId`? | `string` | Optional unique identifier for idempotency. |
 
 #### Returns
 
@@ -221,7 +221,7 @@ Deletes a label by its ID.
 
 A promise that resolves to `true` if successful.
 
----
+***
 
 ### deleteProject()
 
@@ -233,10 +233,10 @@ Deletes a project by its ID.
 
 #### Parameters
 
-| Parameter    | Type     | Description                                     |
-| ------------ | -------- | ----------------------------------------------- |
-| `id`         | `string` | The unique identifier of the project to delete. |
-| `requestId`? | `string` | Optional unique identifier for idempotency.     |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `id` | `string` | The unique identifier of the project to delete. |
+| `requestId`? | `string` | Optional unique identifier for idempotency. |
 
 #### Returns
 
@@ -244,7 +244,7 @@ Deletes a project by its ID.
 
 A promise that resolves to `true` if successful.
 
----
+***
 
 ### deleteSection()
 
@@ -256,10 +256,10 @@ Deletes a section by its ID.
 
 #### Parameters
 
-| Parameter    | Type     | Description                                     |
-| ------------ | -------- | ----------------------------------------------- |
-| `id`         | `string` | The unique identifier of the section to delete. |
-| `requestId`? | `string` | Optional unique identifier for idempotency.     |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `id` | `string` | The unique identifier of the section to delete. |
+| `requestId`? | `string` | Optional unique identifier for idempotency. |
 
 #### Returns
 
@@ -267,7 +267,7 @@ Deletes a section by its ID.
 
 A promise that resolves to `true` if successful.
 
----
+***
 
 ### deleteTask()
 
@@ -279,10 +279,10 @@ Deletes a task by its ID.
 
 #### Parameters
 
-| Parameter    | Type     | Description                                  |
-| ------------ | -------- | -------------------------------------------- |
-| `id`         | `string` | The unique identifier of the task to delete. |
-| `requestId`? | `string` | Optional unique identifier for idempotency.  |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `id` | `string` | The unique identifier of the task to delete. |
+| `requestId`? | `string` | Optional unique identifier for idempotency. |
 
 #### Returns
 
@@ -290,7 +290,7 @@ Deletes a task by its ID.
 
 A promise that resolves to `true` if successful.
 
----
+***
 
 ### getComment()
 
@@ -302,9 +302,9 @@ Retrieves a specific comment by its ID.
 
 #### Parameters
 
-| Parameter | Type     | Description                                       |
-| --------- | -------- | ------------------------------------------------- |
-| `id`      | `string` | The unique identifier of the comment to retrieve. |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `id` | `string` | The unique identifier of the comment to retrieve. |
 
 #### Returns
 
@@ -312,12 +312,12 @@ Retrieves a specific comment by its ID.
 
 A promise that resolves to the requested comment.
 
----
+***
 
 ### getComments()
 
 ```ts
-getComments(args:
+getComments(args: 
   | GetTaskCommentsArgs
 | GetProjectCommentsArgs): Promise<GetCommentsResponse>
 ```
@@ -326,9 +326,9 @@ Retrieves all comments associated with a task or project.
 
 #### Parameters
 
-| Parameter | Type                                                                                                                                        | Description                                                        |
-| --------- | ------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| `args`    | \| [`GetTaskCommentsArgs`](../type-aliases/GetTaskCommentsArgs.md) \| [`GetProjectCommentsArgs`](../type-aliases/GetProjectCommentsArgs.md) | Parameters for retrieving comments, such as task ID or project ID. |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `args` | \| [`GetTaskCommentsArgs`](../type-aliases/GetTaskCommentsArgs.md) \| [`GetProjectCommentsArgs`](../type-aliases/GetProjectCommentsArgs.md) | Parameters for retrieving comments, such as task ID or project ID. |
 
 #### Returns
 
@@ -336,7 +336,7 @@ Retrieves all comments associated with a task or project.
 
 A promise that resolves to an array of comments.
 
----
+***
 
 ### getLabel()
 
@@ -348,9 +348,9 @@ Retrieves a label by its ID.
 
 #### Parameters
 
-| Parameter | Type     | Description                         |
-| --------- | -------- | ----------------------------------- |
-| `id`      | `string` | The unique identifier of the label. |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `id` | `string` | The unique identifier of the label. |
 
 #### Returns
 
@@ -358,7 +358,7 @@ Retrieves a label by its ID.
 
 A promise that resolves to the requested label.
 
----
+***
 
 ### getLabels()
 
@@ -370,9 +370,9 @@ Retrieves all labels.
 
 #### Parameters
 
-| Parameter | Type                                                | Description                 |
-| --------- | --------------------------------------------------- | --------------------------- |
-| `args`    | [`GetLabelsArgs`](../type-aliases/GetLabelsArgs.md) | Optional filter parameters. |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `args` | [`GetLabelsArgs`](../type-aliases/GetLabelsArgs.md) | Optional filter parameters. |
 
 #### Returns
 
@@ -380,7 +380,7 @@ Retrieves all labels.
 
 A promise that resolves to an array of labels.
 
----
+***
 
 ### getProject()
 
@@ -392,9 +392,9 @@ Retrieves a project by its ID.
 
 #### Parameters
 
-| Parameter | Type     | Description                           |
-| --------- | -------- | ------------------------------------- |
-| `id`      | `string` | The unique identifier of the project. |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `id` | `string` | The unique identifier of the project. |
 
 #### Returns
 
@@ -402,7 +402,7 @@ Retrieves a project by its ID.
 
 A promise that resolves to the requested project.
 
----
+***
 
 ### getProjectCollaborators()
 
@@ -414,10 +414,10 @@ Retrieves a list of collaborators for a specific project.
 
 #### Parameters
 
-| Parameter   | Type                                                                            | Description                                  |
-| ----------- | ------------------------------------------------------------------------------- | -------------------------------------------- |
-| `projectId` | `string`                                                                        | The unique identifier of the project.        |
-| `args`      | [`GetProjectCollaboratorsArgs`](../type-aliases/GetProjectCollaboratorsArgs.md) | Optional parameters to filter collaborators. |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `projectId` | `string` | The unique identifier of the project. |
+| `args` | [`GetProjectCollaboratorsArgs`](../type-aliases/GetProjectCollaboratorsArgs.md) | Optional parameters to filter collaborators. |
 
 #### Returns
 
@@ -425,7 +425,7 @@ Retrieves a list of collaborators for a specific project.
 
 A promise that resolves to an array of collaborators for the project.
 
----
+***
 
 ### getProjects()
 
@@ -437,9 +437,9 @@ Retrieves all projects with optional filters.
 
 #### Parameters
 
-| Parameter | Type                                                    | Description                               |
-| --------- | ------------------------------------------------------- | ----------------------------------------- |
-| `args`    | [`GetProjectsArgs`](../type-aliases/GetProjectsArgs.md) | Optional filters for retrieving projects. |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `args` | [`GetProjectsArgs`](../type-aliases/GetProjectsArgs.md) | Optional filters for retrieving projects. |
 
 #### Returns
 
@@ -447,7 +447,7 @@ Retrieves all projects with optional filters.
 
 A promise that resolves to an array of projects.
 
----
+***
 
 ### getSection()
 
@@ -459,9 +459,9 @@ Retrieves a single section by its ID.
 
 #### Parameters
 
-| Parameter | Type     | Description                           |
-| --------- | -------- | ------------------------------------- |
-| `id`      | `string` | The unique identifier of the section. |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `id` | `string` | The unique identifier of the section. |
 
 #### Returns
 
@@ -469,7 +469,7 @@ Retrieves a single section by its ID.
 
 A promise that resolves to the requested section.
 
----
+***
 
 ### getSections()
 
@@ -481,9 +481,9 @@ Retrieves all sections within a specific project or matching criteria.
 
 #### Parameters
 
-| Parameter | Type                                                    | Description                           |
-| --------- | ------------------------------------------------------- | ------------------------------------- |
-| `args`    | [`GetSectionsArgs`](../type-aliases/GetSectionsArgs.md) | Filter parameters such as project ID. |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `args` | [`GetSectionsArgs`](../type-aliases/GetSectionsArgs.md) | Filter parameters such as project ID. |
 
 #### Returns
 
@@ -491,7 +491,7 @@ Retrieves all sections within a specific project or matching criteria.
 
 A promise that resolves to an array of sections.
 
----
+***
 
 ### getSharedLabels()
 
@@ -503,9 +503,9 @@ Retrieves a list of shared labels.
 
 #### Parameters
 
-| Parameter | Type                                                            | Description                                  |
-| --------- | --------------------------------------------------------------- | -------------------------------------------- |
-| `args`?   | [`GetSharedLabelsArgs`](../type-aliases/GetSharedLabelsArgs.md) | Optional parameters to filter shared labels. |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `args`? | [`GetSharedLabelsArgs`](../type-aliases/GetSharedLabelsArgs.md) | Optional parameters to filter shared labels. |
 
 #### Returns
 
@@ -513,7 +513,7 @@ Retrieves a list of shared labels.
 
 A promise that resolves to an array of shared labels.
 
----
+***
 
 ### getTask()
 
@@ -525,9 +525,9 @@ Retrieves a single active (non-completed) task by its ID.
 
 #### Parameters
 
-| Parameter | Type     | Description                        |
-| --------- | -------- | ---------------------------------- |
-| `id`      | `string` | The unique identifier of the task. |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `id` | `string` | The unique identifier of the task. |
 
 #### Returns
 
@@ -535,7 +535,7 @@ Retrieves a single active (non-completed) task by its ID.
 
 A promise that resolves to the requested task.
 
----
+***
 
 ### getTasks()
 
@@ -547,9 +547,9 @@ Retrieves a list of active tasks filtered by specific parameters.
 
 #### Parameters
 
-| Parameter | Type                                              | Description                                                  |
-| --------- | ------------------------------------------------- | ------------------------------------------------------------ |
-| `args`    | [`GetTasksArgs`](../type-aliases/GetTasksArgs.md) | Filter parameters such as project ID, label ID, or due date. |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `args` | [`GetTasksArgs`](../type-aliases/GetTasksArgs.md) | Filter parameters such as project ID, label ID, or due date. |
 
 #### Returns
 
@@ -557,7 +557,7 @@ Retrieves a list of active tasks filtered by specific parameters.
 
 A promise that resolves to an array of tasks.
 
----
+***
 
 ### quickAddTask()
 
@@ -569,9 +569,9 @@ Quickly adds a task using natural language processing for due dates.
 
 #### Parameters
 
-| Parameter | Type                                                      | Description                                                |
-| --------- | --------------------------------------------------------- | ---------------------------------------------------------- |
-| `args`    | [`QuickAddTaskArgs`](../type-aliases/QuickAddTaskArgs.md) | Quick add task parameters, including content and due date. |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `args` | [`QuickAddTaskArgs`](../type-aliases/QuickAddTaskArgs.md) | Quick add task parameters, including content and due date. |
 
 #### Returns
 
@@ -579,7 +579,7 @@ Quickly adds a task using natural language processing for due dates.
 
 A promise that resolves to the created task.
 
----
+***
 
 ### removeSharedLabel()
 
@@ -591,9 +591,9 @@ Removes a shared label.
 
 #### Parameters
 
-| Parameter | Type                                                                | Description                               |
-| --------- | ------------------------------------------------------------------- | ----------------------------------------- |
-| `args`    | [`RemoveSharedLabelArgs`](../type-aliases/RemoveSharedLabelArgs.md) | Parameters for removing the shared label. |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `args` | [`RemoveSharedLabelArgs`](../type-aliases/RemoveSharedLabelArgs.md) | Parameters for removing the shared label. |
 
 #### Returns
 
@@ -601,7 +601,7 @@ Removes a shared label.
 
 A promise that resolves to `true` if successful.
 
----
+***
 
 ### renameSharedLabel()
 
@@ -613,9 +613,9 @@ Renames an existing shared label.
 
 #### Parameters
 
-| Parameter | Type                                                                | Description                                                                   |
-| --------- | ------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| `args`    | [`RenameSharedLabelArgs`](../type-aliases/RenameSharedLabelArgs.md) | Parameters for renaming the shared label, including the current and new name. |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `args` | [`RenameSharedLabelArgs`](../type-aliases/RenameSharedLabelArgs.md) | Parameters for renaming the shared label, including the current and new name. |
 
 #### Returns
 
@@ -623,7 +623,7 @@ Renames an existing shared label.
 
 A promise that resolves to `true` if successful.
 
----
+***
 
 ### reopenTask()
 
@@ -635,10 +635,10 @@ Reopens a previously closed (completed) task by its ID.
 
 #### Parameters
 
-| Parameter    | Type     | Description                                  |
-| ------------ | -------- | -------------------------------------------- |
-| `id`         | `string` | The unique identifier of the task to reopen. |
-| `requestId`? | `string` | Optional unique identifier for idempotency.  |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `id` | `string` | The unique identifier of the task to reopen. |
+| `requestId`? | `string` | Optional unique identifier for idempotency. |
 
 #### Returns
 
@@ -646,14 +646,14 @@ Reopens a previously closed (completed) task by its ID.
 
 A promise that resolves to `true` if successful.
 
----
+***
 
 ### updateComment()
 
 ```ts
 updateComment(
-   id: string,
-   args: UpdateCommentArgs,
+   id: string, 
+   args: UpdateCommentArgs, 
 requestId?: string): Promise<Comment>
 ```
 
@@ -661,11 +661,11 @@ Updates an existing comment by its ID.
 
 #### Parameters
 
-| Parameter    | Type                                                        | Description                                     |
-| ------------ | ----------------------------------------------------------- | ----------------------------------------------- |
-| `id`         | `string`                                                    | The unique identifier of the comment to update. |
-| `args`       | [`UpdateCommentArgs`](../type-aliases/UpdateCommentArgs.md) | Update parameters such as new content.          |
-| `requestId`? | `string`                                                    | Optional unique identifier for idempotency.     |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `id` | `string` | The unique identifier of the comment to update. |
+| `args` | [`UpdateCommentArgs`](../type-aliases/UpdateCommentArgs.md) | Update parameters such as new content. |
+| `requestId`? | `string` | Optional unique identifier for idempotency. |
 
 #### Returns
 
@@ -673,14 +673,14 @@ Updates an existing comment by its ID.
 
 A promise that resolves to the updated comment.
 
----
+***
 
 ### updateLabel()
 
 ```ts
 updateLabel(
-   id: string,
-   args: UpdateLabelArgs,
+   id: string, 
+   args: UpdateLabelArgs, 
 requestId?: string): Promise<Label>
 ```
 
@@ -688,11 +688,11 @@ Updates an existing label by its ID.
 
 #### Parameters
 
-| Parameter    | Type                                                    | Description                                   |
-| ------------ | ------------------------------------------------------- | --------------------------------------------- |
-| `id`         | `string`                                                | The unique identifier of the label to update. |
-| `args`       | [`UpdateLabelArgs`](../type-aliases/UpdateLabelArgs.md) | Update parameters such as name or color.      |
-| `requestId`? | `string`                                                | Optional unique identifier for idempotency.   |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `id` | `string` | The unique identifier of the label to update. |
+| `args` | [`UpdateLabelArgs`](../type-aliases/UpdateLabelArgs.md) | Update parameters such as name or color. |
+| `requestId`? | `string` | Optional unique identifier for idempotency. |
 
 #### Returns
 
@@ -700,14 +700,14 @@ Updates an existing label by its ID.
 
 A promise that resolves to the updated label.
 
----
+***
 
 ### updateProject()
 
 ```ts
 updateProject(
-   id: string,
-   args: UpdateProjectArgs,
+   id: string, 
+   args: UpdateProjectArgs, 
 requestId?: string): Promise<Project>
 ```
 
@@ -715,11 +715,11 @@ Updates an existing project by its ID with the provided parameters.
 
 #### Parameters
 
-| Parameter    | Type                                                        | Description                                     |
-| ------------ | ----------------------------------------------------------- | ----------------------------------------------- |
-| `id`         | `string`                                                    | The unique identifier of the project to update. |
-| `args`       | [`UpdateProjectArgs`](../type-aliases/UpdateProjectArgs.md) | Update parameters such as name or color.        |
-| `requestId`? | `string`                                                    | Optional unique identifier for idempotency.     |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `id` | `string` | The unique identifier of the project to update. |
+| `args` | [`UpdateProjectArgs`](../type-aliases/UpdateProjectArgs.md) | Update parameters such as name or color. |
+| `requestId`? | `string` | Optional unique identifier for idempotency. |
 
 #### Returns
 
@@ -727,14 +727,14 @@ Updates an existing project by its ID with the provided parameters.
 
 A promise that resolves to the updated project.
 
----
+***
 
 ### updateSection()
 
 ```ts
 updateSection(
-   id: string,
-   args: UpdateSectionArgs,
+   id: string, 
+   args: UpdateSectionArgs, 
 requestId?: string): Promise<Section>
 ```
 
@@ -742,11 +742,11 @@ Updates a section by its ID with the provided parameters.
 
 #### Parameters
 
-| Parameter    | Type                                                        | Description                                     |
-| ------------ | ----------------------------------------------------------- | ----------------------------------------------- |
-| `id`         | `string`                                                    | The unique identifier of the section to update. |
-| `args`       | [`UpdateSectionArgs`](../type-aliases/UpdateSectionArgs.md) | Update parameters such as name or project ID.   |
-| `requestId`? | `string`                                                    | Optional unique identifier for idempotency.     |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `id` | `string` | The unique identifier of the section to update. |
+| `args` | [`UpdateSectionArgs`](../type-aliases/UpdateSectionArgs.md) | Update parameters such as name or project ID. |
+| `requestId`? | `string` | Optional unique identifier for idempotency. |
 
 #### Returns
 
@@ -754,14 +754,14 @@ Updates a section by its ID with the provided parameters.
 
 A promise that resolves to the updated section.
 
----
+***
 
 ### updateTask()
 
 ```ts
 updateTask(
-   id: string,
-   args: UpdateTaskArgs,
+   id: string, 
+   args: UpdateTaskArgs, 
 requestId?: string): Promise<Task>
 ```
 
@@ -769,11 +769,11 @@ Updates an existing task by its ID with the provided parameters.
 
 #### Parameters
 
-| Parameter    | Type                                                  | Description                                               |
-| ------------ | ----------------------------------------------------- | --------------------------------------------------------- |
-| `id`         | `string`                                              | The unique identifier of the task to update.              |
-| `args`       | [`UpdateTaskArgs`](../type-aliases/UpdateTaskArgs.md) | Update parameters such as content, priority, or due date. |
-| `requestId`? | `string`                                              | Optional unique identifier for idempotency.               |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `id` | `string` | The unique identifier of the task to update. |
+| `args` | [`UpdateTaskArgs`](../type-aliases/UpdateTaskArgs.md) | Update parameters such as content, priority, or due date. |
+| `requestId`? | `string` | Optional unique identifier for idempotency. |
 
 #### Returns
 
