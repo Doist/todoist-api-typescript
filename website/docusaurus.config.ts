@@ -9,14 +9,13 @@ const config: Config = {
     tagline: 'The official TypeScript API client for the Todoist Sync API.',
     favicon: 'img/favicon.ico',
 
-    url: 'https://todoist.com',
+    url: 'https://doist.github.io/',
     // Set the /<baseUrl>/ pathname under which your site is served
     // For GitHub pages deployment, it is often '/<projectName>/'
-    baseUrl: '/',
+    baseUrl: '/todoist-api-typescript/',
 
     organizationName: 'Doist',
     projectName: 'todoist-api-typescript',
-    deploymentBranch: 'v4',
 
     onBrokenLinks: 'throw',
     onBrokenMarkdownLinks: 'warn',
