@@ -1,7 +1,12 @@
 # Permission
 
 ```ts
-type Permission = 'task:add' | 'data:read' | 'data:read_write' | 'data:delete' | 'project:delete'
+type Permission = 
+  | "task:add"
+  | "data:read"
+  | "data:read_write"
+  | "data:delete"
+  | "project:delete";
 ```
 
 Permission scopes that can be requested during OAuth2 authorization.

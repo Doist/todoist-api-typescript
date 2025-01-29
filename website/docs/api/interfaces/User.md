@@ -8,12 +8,12 @@ https://developer.todoist.com/sync/v9/#user
 
 ## Extends
 
--   `TypeOf`\<_typeof_ `UserSchema`\>
+- `TypeOf`\<*typeof* `UserSchema`\>
 
 ## Properties
 
-| Property                   | Type     |
-| -------------------------- | -------- |
+| Property | Type |
+| ------ | ------ |
 | <a id="email"></a> `email` | `string` |
-| <a id="id"></a> `id`       | `string` |
-| <a id="name"></a> `name`   | `string` |
+| <a id="id"></a> `id` | `string` |
+| <a id="name"></a> `name` | `string` |

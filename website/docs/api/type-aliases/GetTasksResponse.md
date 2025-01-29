@@ -2,17 +2,17 @@
 
 ```ts
 type GetTasksResponse = {
-    nextCursor: string | null
-    results: Task[]
-}
+  nextCursor: string | null;
+  results: Task[];
+};
 ```
 
 ## Type declaration
 
-| Name                                 | Type                              |
-| ------------------------------------ | --------------------------------- |
-| <a id="nextcursor"></a> `nextCursor` | `string` \| `null`                |
-| <a id="results"></a> `results`       | [`Task`](../interfaces/Task.md)[] |
+| Name | Type |
+| ------ | ------ |
+| <a id="nextcursor"></a> `nextCursor` | `string` \| `null` |
+| <a id="results"></a> `results` | [`Task`](../interfaces/Task.md)[] |
 
 ## See
 

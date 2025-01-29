@@ -1,7 +1,7 @@
 # ProjectViewStyle
 
 ```ts
-type ProjectViewStyle = 'list' | 'board' | 'calendar'
+type ProjectViewStyle = "list" | "board" | "calendar";
 ```
 
 ## See

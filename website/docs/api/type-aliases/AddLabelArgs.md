@@ -2,21 +2,21 @@
 
 ```ts
 type AddLabelArgs = {
-    color: string | number
-    isFavorite: boolean
-    name: string
-    order: number | null
-}
+  color: string | number;
+  isFavorite: boolean;
+  name: string;
+  order: number | null;
+};
 ```
 
 ## Type declaration
 
-| Name                                  | Type                 |
-| ------------------------------------- | -------------------- |
-| <a id="color"></a> `color`?           | `string` \| `number` |
-| <a id="isfavorite"></a> `isFavorite`? | `boolean`            |
-| <a id="name"></a> `name`              | `string`             |
-| <a id="order"></a> `order`?           | `number` \| `null`   |
+| Name | Type |
+| ------ | ------ |
+| <a id="color"></a> `color`? | `string` \| `number` |
+| <a id="isfavorite"></a> `isFavorite`? | `boolean` |
+| <a id="name"></a> `name` | `string` |
+| <a id="order"></a> `order`? | `number` \| `null` |
 
 ## See
 

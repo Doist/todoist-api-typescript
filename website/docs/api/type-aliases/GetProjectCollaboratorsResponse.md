@@ -2,17 +2,17 @@
 
 ```ts
 type GetProjectCollaboratorsResponse = {
-    nextCursor: string | null
-    results: User[]
-}
+  nextCursor: string | null;
+  results: User[];
+};
 ```
 
 ## Type declaration
 
-| Name                                 | Type                              |
-| ------------------------------------ | --------------------------------- |
-| <a id="nextcursor"></a> `nextCursor` | `string` \| `null`                |
-| <a id="results"></a> `results`       | [`User`](../interfaces/User.md)[] |
+| Name | Type |
+| ------ | ------ |
+| <a id="nextcursor"></a> `nextCursor` | `string` \| `null` |
+| <a id="results"></a> `results` | [`User`](../interfaces/User.md)[] |
 
 ## See
 

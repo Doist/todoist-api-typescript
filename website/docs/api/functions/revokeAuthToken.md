@@ -8,10 +8,10 @@ Revokes an access token, making it invalid for future use.
 
 ## Parameters
 
-| Parameter  | Type                                                                          |
-| ---------- | ----------------------------------------------------------------------------- |
-| `args`     | [`RevokeAuthTokenRequestArgs`](../type-aliases/RevokeAuthTokenRequestArgs.md) |
-| `baseUrl`? | `string`                                                                      |
+| Parameter | Type |
+| ------ | ------ |
+| `args` | [`RevokeAuthTokenRequestArgs`](../type-aliases/RevokeAuthTokenRequestArgs.md) |
+| `baseUrl`? | `string` |
 
 ## Returns
 
@@ -23,8 +23,8 @@ True if revocation was successful
 
 ```typescript
 await revokeAuthToken({
-    clientId: 'your-client-id',
-    clientSecret: 'your-client-secret',
-    accessToken: token,
+  clientId: 'your-client-id',
+  clientSecret: 'your-client-secret',
+  accessToken: token
 })
 ```

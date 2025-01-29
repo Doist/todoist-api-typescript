@@ -2,17 +2,17 @@
 
 ```ts
 type GetSharedLabelsResponse = {
-    nextCursor: string | null
-    results: string[]
-}
+  nextCursor: string | null;
+  results: string[];
+};
 ```
 
 ## Type declaration
 
-| Name                                 | Type               |
-| ------------------------------------ | ------------------ |
+| Name | Type |
+| ------ | ------ |
 | <a id="nextcursor"></a> `nextCursor` | `string` \| `null` |
-| <a id="results"></a> `results`       | `string`[]         |
+| <a id="results"></a> `results` | `string`[] |
 
 ## See
 

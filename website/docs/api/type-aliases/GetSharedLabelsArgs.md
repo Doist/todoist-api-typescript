@@ -2,19 +2,19 @@
 
 ```ts
 type GetSharedLabelsArgs = {
-    cursor: string | null
-    limit: number
-    omitPersonal: boolean
-}
+  cursor: string | null;
+  limit: number;
+  omitPersonal: boolean;
+};
 ```
 
 ## Type declaration
 
-| Name                                      | Type               |
-| ----------------------------------------- | ------------------ |
-| <a id="cursor"></a> `cursor`?             | `string` \| `null` |
-| <a id="limit"></a> `limit`?               | `number`           |
-| <a id="omitpersonal"></a> `omitPersonal`? | `boolean`          |
+| Name | Type |
+| ------ | ------ |
+| <a id="cursor"></a> `cursor`? | `string` \| `null` |
+| <a id="limit"></a> `limit`? | `number` |
+| <a id="omitpersonal"></a> `omitPersonal`? | `boolean` |
 
 ## See
 

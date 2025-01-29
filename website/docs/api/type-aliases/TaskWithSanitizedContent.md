@@ -2,12 +2,12 @@
 
 ```ts
 type TaskWithSanitizedContent = Task & {
-    sanitizedContent: string
-}
+  sanitizedContent: string;
+};
 ```
 
 ## Type declaration
 
-| Name               | Type     |
-| ------------------ | -------- |
+| Name | Type |
+| ------ | ------ |
 | `sanitizedContent` | `string` |

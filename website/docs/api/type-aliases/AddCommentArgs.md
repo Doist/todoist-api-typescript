@@ -2,25 +2,26 @@
 
 ```ts
 type AddCommentArgs = {
-    attachment: {
-        fileName: string
-        fileType: string
-        fileUrl: string
-        resourceType: string
-    } | null
-    content: string
-} & RequireExactlyOne<{
-    projectId: string
-    taskId: string
-}>
+  attachment:   | {
+     fileName: string;
+     fileType: string;
+     fileUrl: string;
+     resourceType: string;
+    }
+     | null;
+  content: string;
+ } & RequireExactlyOne<{
+  projectId: string;
+  taskId: string;
+}>;
 ```
 
 ## Type declaration
 
-| Name          | Type                                                                                                          |
-| ------------- | ------------------------------------------------------------------------------------------------------------- |
+| Name | Type |
+| ------ | ------ |
 | `attachment`? | \| \{ `fileName`: `string`; `fileType`: `string`; `fileUrl`: `string`; `resourceType`: `string`; \} \| `null` |
-| `content`     | `string`                                                                                                      |
+| `content` | `string` |
 
 ## See
 
