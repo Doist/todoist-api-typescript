@@ -30,6 +30,7 @@ import {
     GetSharedLabelsResponse,
     GetCommentsResponse,
     QuickAddTaskResponse,
+    type MoveTaskArgs,
 } from './types/requests'
 import { request, isSuccess } from './restClient'
 import { getTaskFromQuickAddResponse } from './utils/taskConverters'
@@ -47,6 +48,7 @@ import {
     ENDPOINT_REST_LABELS_SHARED,
     ENDPOINT_REST_LABELS_SHARED_RENAME,
     ENDPOINT_REST_LABELS_SHARED_REMOVE,
+    ENDPOINT_SYNC,
 } from './consts/endpoints'
 import {
     validateComment,
@@ -62,6 +64,12 @@ import {
     validateUserArray,
 } from './utils/validators'
 import { z } from 'zod'
+
+import { v4 as uuidv4 } from 'uuid'
+import { SyncResponse, type Command, type SyncRequest } from './types/sync'
+import { TodoistRequestError } from './types'
+
+const MAX_COMMAND_COUNT = 100
 
 /**
  * Joins path segments using `/` separator.
@@ -209,6 +217,67 @@ export class TodoistApi {
             requestId,
         )
         return validateTask(response.data)
+    }
+
+    /**
+     * Moves existing tasks by their ID to either a different parent/section/project.
+     *
+     * @param ids - The unique identifier of the tasks to be moved.
+     * @param args - The paramets that should contain only one of projectId, sectionId, or parentId
+     * @param requestId - Optional unique identifier for idempotency.
+     * @returns - A promise that resolves to an array of the updated tasks.
+     */
+    async moveTasks(ids: string[], args: MoveTaskArgs, requestId?: string): Promise<Task[]> {
+        if (ids.length > MAX_COMMAND_COUNT) {
+            throw new TodoistRequestError(`Maximum number of items is ${MAX_COMMAND_COUNT}`, 400)
+        }
+        const uuid = uuidv4()
+        const commands: Command[] = ids.map((id) => ({
+            type: 'item_move',
+            uuid,
+            args: {
+                id,
+                ...(args.projectId && { project_id: args.projectId }),
+                ...(args.sectionId && { section_id: args.sectionId }),
+                ...(args.parentId && { parent_id: args.parentId }),
+            },
+        }))
+
+        const syncRequest: SyncRequest = {
+            commands,
+            resource_types: ['items'],
+        }
+
+        const response = await request<SyncResponse>(
+            'POST',
+            this.syncApiBase,
+            ENDPOINT_SYNC,
+            this.authToken,
+            syncRequest,
+            requestId,
+            /*hasSyncCommands: */ true,
+        )
+
+        if (response.data.sync_status) {
+            Object.entries(response.data.sync_status).forEach(([_, value]) => {
+                if (value === 'ok') return
+
+                throw new TodoistRequestError(value.error, value.http_code, value.error_extra)
+            })
+        }
+
+        if (!response.data.items?.length) {
+            throw new TodoistRequestError('Tasks not found', 404)
+        }
+
+        const syncTasks = response.data.items.filter((task) => ids.includes(task.id))
+        if (!syncTasks.length) {
+            throw new TodoistRequestError('Tasks not found', 404)
+        }
+
+        const tasks = syncTasks.map(getTaskFromQuickAddResponse)
+
+        return validateTaskArray(tasks)
     }
 
     /**

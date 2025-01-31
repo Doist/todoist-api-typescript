@@ -30,6 +30,8 @@ export const ENDPOINT_REST_PROJECT_COLLABORATORS = 'collaborators'
 
 export const ENDPOINT_SYNC_QUICK_ADD = 'quick'
 
+export const ENDPOINT_SYNC = 'sync'
+
 export const ENDPOINT_AUTHORIZATION = 'authorize'
 export const ENDPOINT_GET_TOKEN = 'access_token'
 export const ENDPOINT_REVOKE_TOKEN = 'access_tokens/revoke'
