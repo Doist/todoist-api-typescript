@@ -95,7 +95,7 @@ export type QuickAddTaskArgs = {
 /**
  * @see https://developer.todoist.com/rest/v2/#quick-add-task
  */
-export type QuickAddTaskResponse = {
+export type SyncTask = {
     id: string
     projectId: string
     content: string
@@ -114,6 +114,20 @@ export type QuickAddTaskResponse = {
     due: DueDate | null
     deadline: Deadline | null
 }
+
+/**
+ * @see https://developer.todoist.com/rest/v2/#quick-add-task
+ */
+export type QuickAddTaskResponse = SyncTask
+
+/**
+ * @see https://developer.todoist.com/sync/v9/#move-an-item
+ */
+export type MoveTaskArgs = RequireExactlyOne<{
+    projectId?: string
+    sectionId?: string
+    parentId?: string
+}>
 
 /**
  * @see https://developer.todoist.com/rest/v2/#get-all-projects

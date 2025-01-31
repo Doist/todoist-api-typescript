@@ -166,6 +166,21 @@ describe('restClient', () => {
         expect(axiosMock.post).toBeCalledWith(DEFAULT_ENDPOINT, DEFAULT_PAYLOAD)
     })
 
+    test('post sends expected endpoint and payload to axios when sync commands are used', async () => {
+        await request(
+            'POST',
+            DEFAULT_BASE_URI,
+            DEFAULT_ENDPOINT,
+            DEFAULT_AUTH_TOKEN,
+            DEFAULT_PAYLOAD,
+            undefined,
+            true,
+        )
+
+        expect(axiosMock.post).toBeCalledTimes(1)
+        expect(axiosMock.post).toBeCalledWith(DEFAULT_ENDPOINT, '{"someKey":"someValue"}')
+    })
+
     test('post returns response from axios', async () => {
         const result = await request(
             'POST',
