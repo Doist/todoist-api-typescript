@@ -90,6 +90,7 @@ export async function request<T>(
     apiToken?: string,
     payload?: Record<string, unknown>,
     requestId?: string,
+    hasSyncCommands?: boolean,
 ): Promise<AxiosResponse<T>> {
     // axios loses the original stack when returning errors, for the sake of better reporting
     // we capture it here and reapply it to any thrown errors.
@@ -113,7 +114,10 @@ export async function request<T>(
                     },
                 })
             case 'POST':
-                return await axiosClient.post<T>(relativePath, JSON.stringify(payload))
+                return await axiosClient.post<T>(
+                    relativePath,
+                    hasSyncCommands ? JSON.stringify(payload) : payload,
+                )
             case 'DELETE':
                 return await axiosClient.delete<T>(relativePath)
         }

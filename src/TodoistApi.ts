@@ -255,6 +255,7 @@ export class TodoistApi {
             this.authToken,
             syncRequest,
             requestId,
+            /*hasSyncCommands: */ true,
         )
 
         if (response.data.sync_status) {
