@@ -113,7 +113,7 @@ export async function request<T>(
                     },
                 })
             case 'POST':
-                return await axiosClient.post<T>(relativePath, payload)
+                return await axiosClient.post<T>(relativePath, JSON.stringify(payload))
             case 'DELETE':
                 return await axiosClient.delete<T>(relativePath)
         }
