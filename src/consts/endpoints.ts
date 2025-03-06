@@ -28,7 +28,7 @@ export const ENDPOINT_REST_TASK_CLOSE = 'close'
 export const ENDPOINT_REST_TASK_REOPEN = 'reopen'
 export const ENDPOINT_REST_PROJECT_COLLABORATORS = 'collaborators'
 
-export const ENDPOINT_SYNC_QUICK_ADD = 'quick'
+export const ENDPOINT_SYNC_QUICK_ADD = ENDPOINT_REST_TASKS + '/quick'
 
 export const ENDPOINT_SYNC = 'sync'
 
