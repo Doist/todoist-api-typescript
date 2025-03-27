@@ -3,7 +3,7 @@ const TODOIST_URI = 'https://todoist.com'
 
 // The API version is not configurable, to ensure
 // compatibility between the API and the client.
-export const API_VERSION = 'v9.218'
+export const API_VERSION = 'v9.220'
 
 export const API_BASE_URI = `/api/${API_VERSION}/`
 const API_AUTHORIZATION_BASE_URI = '/oauth/'
