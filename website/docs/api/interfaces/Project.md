@@ -15,7 +15,6 @@ https://developer.todoist.com/sync/v9/#projects
 | Property | Type |
 | ------ | ------ |
 | <a id="color"></a> `color` | `string` |
-| <a id="commentcount"></a> `commentCount` | `number` |
 | <a id="id"></a> `id` | `string` |
 | <a id="isfavorite"></a> `isFavorite` | `boolean` |
 | <a id="isinboxproject"></a> `isInboxProject` | `boolean` |

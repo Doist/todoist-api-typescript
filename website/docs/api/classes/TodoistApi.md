@@ -559,6 +559,33 @@ A promise that resolves to an array of tasks.
 
 ***
 
+### moveTasks()
+
+```ts
+moveTasks(
+   ids: string[], 
+   args: MoveTaskArgs, 
+requestId?: string): Promise<Task[]>
+```
+
+Moves existing tasks by their ID to either a different parent/section/project.
+
+#### Parameters
+
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `ids` | `string`[] | The unique identifier of the tasks to be moved. |
+| `args` | [`MoveTaskArgs`](../type-aliases/MoveTaskArgs.md) | The paramets that should contain only one of projectId, sectionId, or parentId |
+| `requestId`? | `string` | Optional unique identifier for idempotency. |
+
+#### Returns
+
+`Promise`\<[`Task`](../interfaces/Task.md)[]\>
+
+- A promise that resolves to an array of the updated tasks.
+
+***
+
 ### quickAddTask()
 
 ```ts

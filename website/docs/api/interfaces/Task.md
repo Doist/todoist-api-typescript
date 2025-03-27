@@ -16,7 +16,6 @@ https://developer.todoist.com/sync/v9/#items
 | ------ | ------ |
 | <a id="assigneeid"></a> `assigneeId` | `null` \| `string` |
 | <a id="assignerid"></a> `assignerId` | `null` \| `string` |
-| <a id="commentcount"></a> `commentCount` | `number` |
 | <a id="content"></a> `content` | `string` |
 | <a id="createdat"></a> `createdAt` | `string` |
 | <a id="creatorid"></a> `creatorId` | `string` |
