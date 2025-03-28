@@ -89,9 +89,16 @@ export type ProjectViewStyle = 'list' | 'board' | 'calendar'
 
 export const SectionSchema = z.object({
     id: z.string(),
-    order: z.number().int(),
-    name: z.string(),
+    userId: z.string(),
     projectId: z.string(),
+    addedAt: z.string(),
+    updatedAt: z.string(),
+    archivedAt: z.string().nullable(),
+    name: z.string(),
+    sectionOrder: z.number().int(),
+    isArchived: z.boolean(),
+    isDeleted: z.boolean(),
+    isCollapsed: z.boolean(),
 })
 /**
  * Represents a section within a project, used to group tasks.

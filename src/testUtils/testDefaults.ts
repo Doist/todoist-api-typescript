@@ -146,9 +146,16 @@ export const PROJECT_WITH_OPTIONALS_AS_NULL: Project = {
 
 export const DEFAULT_SECTION: Section = {
     id: DEFAULT_SECTION_ID,
-    name: DEFAULT_SECTION_NAME,
-    order: DEFAULT_ORDER,
+    userId: DEFAULT_USER_ID,
     projectId: DEFAULT_PROJECT_ID,
+    addedAt: '2025-03-28T14:01:23.334881Z',
+    updatedAt: '2025-03-28T14:01:23.334885Z',
+    archivedAt: null,
+    name: DEFAULT_SECTION_NAME,
+    sectionOrder: DEFAULT_ORDER,
+    isArchived: false,
+    isDeleted: false,
+    isCollapsed: false,
 }
 
 export const INVALID_SECTION = {
