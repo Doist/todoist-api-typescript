@@ -12,6 +12,7 @@ import {
     INVALID_COMMENT,
     DEFAULT_USER,
     INVALID_USER,
+    DEFAULT_RAW_COMMENT,
 } from '../testUtils/testDefaults'
 import {
     validateTask,
@@ -155,7 +156,7 @@ describe('validators', () => {
 
     describe('validateComment', () => {
         test('validation passes for a valid comment', () => {
-            const result = validateComment(DEFAULT_COMMENT)
+            const result = validateComment(DEFAULT_RAW_COMMENT)
             expect(result).toEqual(DEFAULT_COMMENT)
         })
 
@@ -173,7 +174,7 @@ describe('validators', () => {
         })
 
         test('validation passes for valid comment array', () => {
-            const result = validateCommentArray([DEFAULT_COMMENT])
+            const result = validateCommentArray([DEFAULT_RAW_COMMENT])
             expect(result).toEqual([DEFAULT_COMMENT])
         })
 

@@ -5,7 +5,7 @@ import {
     Section,
     Task,
     User,
-    Comment,
+    RawComment,
     Attachment,
     Duration,
     Deadline,
@@ -34,6 +34,7 @@ const DEFAULT_USER_NAME = 'A User'
 const DEFAULT_USER_EMAIL = 'atestuser@doist.com'
 const DEFAULT_COMMENT_ID = '4'
 const DEFAULT_COMMENT_CONTENT = 'A comment'
+const DEFAULT_COMMENT_REACTIONS = { '👍': ['1234', '5678'] }
 
 export const DEFAULT_AUTH_TOKEN = 'AToken'
 export const DEFAULT_REQUEST_ID = 'ARequestID'
@@ -146,9 +147,16 @@ export const PROJECT_WITH_OPTIONALS_AS_NULL: Project = {
 
 export const DEFAULT_SECTION: Section = {
     id: DEFAULT_SECTION_ID,
-    name: DEFAULT_SECTION_NAME,
-    order: DEFAULT_ORDER,
+    userId: DEFAULT_USER_ID,
     projectId: DEFAULT_PROJECT_ID,
+    addedAt: '2025-03-28T14:01:23.334881Z',
+    updatedAt: '2025-03-28T14:01:23.334885Z',
+    archivedAt: null,
+    name: DEFAULT_SECTION_NAME,
+    sectionOrder: DEFAULT_ORDER,
+    isArchived: false,
+    isDeleted: false,
+    isCollapsed: false,
 }
 
 export const INVALID_SECTION = {
@@ -192,30 +200,46 @@ export const INVALID_ATTACHMENT = {
     uploadState: 'something random',
 }
 
-export const DEFAULT_COMMENT: Comment = {
+export const DEFAULT_RAW_COMMENT: RawComment = {
     id: DEFAULT_COMMENT_ID,
+    postedUid: DEFAULT_USER_ID,
     content: DEFAULT_COMMENT_CONTENT,
-    taskId: null,
-    projectId: DEFAULT_PROJECT_ID,
-    attachment: DEFAULT_ATTACHMENT,
+    fileAttachment: DEFAULT_ATTACHMENT,
+    uidsToNotify: null,
+    isDeleted: false,
     postedAt: DEFAULT_DATE,
+    reactions: DEFAULT_COMMENT_REACTIONS,
+    itemId: DEFAULT_TASK_ID,
+}
+
+export const DEFAULT_COMMENT = {
+    ...DEFAULT_RAW_COMMENT,
+    taskId: DEFAULT_RAW_COMMENT.itemId,
+    itemId: undefined,
 }
 
 export const INVALID_COMMENT = {
-    ...DEFAULT_COMMENT,
-    attachment: INVALID_ATTACHMENT,
+    ...DEFAULT_RAW_COMMENT,
+    isDeleted: 'true',
 }
 
-export const COMMENT_WITH_OPTIONALS_AS_NULL_TASK: Comment = {
-    ...DEFAULT_COMMENT,
-    projectId: null,
-    attachment: null,
+export const RAW_COMMENT_WITH_OPTIONALS_AS_NULL_TASK: RawComment = {
+    ...DEFAULT_RAW_COMMENT,
+    fileAttachment: null,
+    uidsToNotify: null,
+    reactions: null,
 }
 
-export const COMMENT_WITH_ATTACHMENT_WITH_OPTIONALS_AS_NULL: Comment = {
-    ...DEFAULT_COMMENT,
-    attachment: {
-        ...DEFAULT_ATTACHMENT,
+export const COMMENT_WITH_OPTIONALS_AS_NULL_TASK = {
+    ...RAW_COMMENT_WITH_OPTIONALS_AS_NULL_TASK,
+    taskId: RAW_COMMENT_WITH_OPTIONALS_AS_NULL_TASK.itemId,
+    itemId: undefined,
+}
+
+export const RAW_COMMENT_WITH_ATTACHMENT_WITH_OPTIONALS_AS_NULL: RawComment = {
+    ...DEFAULT_RAW_COMMENT,
+    fileAttachment: {
+        resourceType: 'file',
         fileName: null,
         fileSize: null,
         fileType: null,
@@ -229,8 +253,19 @@ export const COMMENT_WITH_ATTACHMENT_WITH_OPTIONALS_AS_NULL: Comment = {
     },
 }
 
-export const COMMENT_WITH_OPTIONALS_AS_NULL_PROJECT: Comment = {
-    ...DEFAULT_COMMENT,
-    taskId: null,
-    attachment: null,
+export const COMMENT_WITH_ATTACHMENT_WITH_OPTIONALS_AS_NULL = {
+    ...RAW_COMMENT_WITH_ATTACHMENT_WITH_OPTIONALS_AS_NULL,
+    taskId: RAW_COMMENT_WITH_ATTACHMENT_WITH_OPTIONALS_AS_NULL.itemId,
+    itemId: undefined,
+}
+
+export const RAW_COMMENT_WITH_OPTIONALS_AS_NULL_PROJECT: RawComment = {
+    ...DEFAULT_RAW_COMMENT,
+    itemId: undefined,
+    projectId: DEFAULT_PROJECT_ID,
+}
+
+export const COMMENT_WITH_OPTIONALS_AS_NULL_PROJECT = {
+    ...RAW_COMMENT_WITH_OPTIONALS_AS_NULL_PROJECT,
+    taskId: undefined,
 }

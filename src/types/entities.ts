@@ -89,9 +89,16 @@ export type ProjectViewStyle = 'list' | 'board' | 'calendar'
 
 export const SectionSchema = z.object({
     id: z.string(),
-    order: z.number().int(),
-    name: z.string(),
+    userId: z.string(),
     projectId: z.string(),
+    addedAt: z.string(),
+    updatedAt: z.string(),
+    archivedAt: z.string().nullable(),
+    name: z.string(),
+    sectionOrder: z.number().int(),
+    isArchived: z.boolean(),
+    isDeleted: z.boolean(),
+    isCollapsed: z.boolean(),
 })
 /**
  * Represents a section within a project, used to group tasks.
@@ -135,14 +142,47 @@ export const AttachmentSchema = z
  */
 export interface Attachment extends z.infer<typeof AttachmentSchema> {}
 
-export const CommentSchema = z.object({
-    id: z.string(),
-    taskId: z.string().nullable(),
-    projectId: z.string().nullable(),
-    content: z.string(),
-    postedAt: z.string(),
-    attachment: AttachmentSchema.nullable(),
+export const RawCommentSchema = z
+    .object({
+        id: z.string(),
+        itemId: z.string().optional(),
+        projectId: z.string().optional(),
+        content: z.string(),
+        postedAt: z.string(),
+        fileAttachment: AttachmentSchema.nullable(),
+        postedUid: z.string(),
+        uidsToNotify: z.array(z.string()).nullable(),
+        reactions: z.record(z.string(), z.array(z.string())).nullable(),
+        isDeleted: z.boolean(),
+    })
+    .refine(
+        (data) => {
+            // At least one of itemId or projectId must be present
+            return (
+                (data.itemId !== undefined && data.projectId === undefined) ||
+                (data.itemId === undefined && data.projectId !== undefined)
+            )
+        },
+        {
+            message: 'Exactly one of itemId or projectId must be provided',
+        },
+    )
+
+/**
+ * Represents the raw comment data as received from the API before transformation.
+ * @see https://developer.todoist.com/sync/v9/#notes
+ */
+export interface RawComment extends z.infer<typeof RawCommentSchema> {}
+
+export const CommentSchema = RawCommentSchema.transform((data) => {
+    const { itemId, ...rest } = data
+    return {
+        ...rest,
+        // Map itemId to taskId for backwards compatibility
+        taskId: itemId,
+    }
 })
+
 /**
  * Represents a comment on a task or project in Todoist.
  * @see https://developer.todoist.com/sync/v9/#notes
