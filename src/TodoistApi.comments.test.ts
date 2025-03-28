@@ -5,7 +5,11 @@ import {
     COMMENT_WITH_OPTIONALS_AS_NULL_TASK,
     DEFAULT_AUTH_TOKEN,
     DEFAULT_COMMENT,
+    DEFAULT_RAW_COMMENT,
     DEFAULT_REQUEST_ID,
+    RAW_COMMENT_WITH_ATTACHMENT_WITH_OPTIONALS_AS_NULL,
+    RAW_COMMENT_WITH_OPTIONALS_AS_NULL_PROJECT,
+    RAW_COMMENT_WITH_OPTIONALS_AS_NULL_TASK,
 } from './testUtils/testDefaults'
 import { getSyncBaseUri, ENDPOINT_REST_COMMENTS } from './consts/endpoints'
 import { setupRestClientMock } from './testUtils/mocks'
@@ -19,7 +23,7 @@ describe('TodoistApi comment endpoints', () => {
         test('calls get request with expected params', async () => {
             const getCommentsArgs = { projectId: '12', limit: 10, cursor: '0' }
             const requestMock = setupRestClientMock({
-                results: [DEFAULT_COMMENT],
+                results: [DEFAULT_RAW_COMMENT],
                 nextCursor: '123',
             })
             const api = getTarget()
@@ -37,13 +41,19 @@ describe('TodoistApi comment endpoints', () => {
         })
 
         test('returns result from rest client', async () => {
+            const mockResponses = [
+                DEFAULT_RAW_COMMENT,
+                RAW_COMMENT_WITH_OPTIONALS_AS_NULL_TASK,
+                RAW_COMMENT_WITH_OPTIONALS_AS_NULL_PROJECT,
+                RAW_COMMENT_WITH_ATTACHMENT_WITH_OPTIONALS_AS_NULL,
+            ]
             const expectedComments = [
                 DEFAULT_COMMENT,
                 COMMENT_WITH_OPTIONALS_AS_NULL_TASK,
                 COMMENT_WITH_OPTIONALS_AS_NULL_PROJECT,
                 COMMENT_WITH_ATTACHMENT_WITH_OPTIONALS_AS_NULL,
             ]
-            setupRestClientMock({ results: expectedComments, nextCursor: '123' })
+            setupRestClientMock({ results: mockResponses, nextCursor: '123' })
             const api = getTarget()
 
             const { results: comments, nextCursor } = await api.getComments({ taskId: '12' })
@@ -56,7 +66,7 @@ describe('TodoistApi comment endpoints', () => {
     describe('getComment', () => {
         test('calls get on expected url', async () => {
             const commentId = '1'
-            const requestMock = setupRestClientMock(DEFAULT_COMMENT)
+            const requestMock = setupRestClientMock(DEFAULT_RAW_COMMENT)
             const api = getTarget()
 
             await api.getComment(commentId)
@@ -71,13 +81,12 @@ describe('TodoistApi comment endpoints', () => {
         })
 
         test('returns result from rest client', async () => {
-            const expectedComment = DEFAULT_COMMENT
-            setupRestClientMock(expectedComment)
+            setupRestClientMock(DEFAULT_RAW_COMMENT)
             const api = getTarget()
 
             const comment = await api.getComment('1')
 
-            expect(comment).toEqual(expectedComment)
+            expect(comment).toEqual(DEFAULT_COMMENT)
         })
     })
 
@@ -88,7 +97,7 @@ describe('TodoistApi comment endpoints', () => {
         }
 
         test('makes post request with expected params', async () => {
-            const requestMock = setupRestClientMock(DEFAULT_COMMENT)
+            const requestMock = setupRestClientMock(DEFAULT_RAW_COMMENT)
             const api = getTarget()
 
             await api.addComment(addCommentArgs, DEFAULT_REQUEST_ID)
@@ -105,13 +114,12 @@ describe('TodoistApi comment endpoints', () => {
         })
 
         test('returns result from rest client', async () => {
-            const expectedComment = DEFAULT_COMMENT
-            setupRestClientMock(expectedComment)
+            setupRestClientMock(DEFAULT_RAW_COMMENT)
             const api = getTarget()
 
             const comment = await api.addComment(addCommentArgs)
 
-            expect(comment).toEqual(expectedComment)
+            expect(comment).toEqual(DEFAULT_COMMENT)
         })
     })
 
@@ -122,7 +130,7 @@ describe('TodoistApi comment endpoints', () => {
 
         test('makes post request with expected params', async () => {
             const taskId = '1'
-            const requestMock = setupRestClientMock(DEFAULT_COMMENT, 204)
+            const requestMock = setupRestClientMock(DEFAULT_RAW_COMMENT, 204)
             const api = getTarget()
 
             await api.updateComment(taskId, updateCommentArgs, DEFAULT_REQUEST_ID)
@@ -139,13 +147,14 @@ describe('TodoistApi comment endpoints', () => {
         })
 
         test('returns success result from rest client', async () => {
-            const returnedComment = { ...DEFAULT_COMMENT, ...updateCommentArgs }
+            const returnedComment = { ...DEFAULT_RAW_COMMENT, content: updateCommentArgs.content }
+            const expectedComment = { ...DEFAULT_COMMENT, content: updateCommentArgs.content }
             setupRestClientMock(returnedComment, 204)
             const api = getTarget()
 
             const result = await api.updateComment('1', updateCommentArgs)
 
-            expect(result).toEqual(returnedComment)
+            expect(result).toEqual(expectedComment)
         })
     })
 
