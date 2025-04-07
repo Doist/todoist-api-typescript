@@ -10,6 +10,8 @@ type AddProjectArgs = {
 };
 ```
 
+Arguments for creating a new project.
+
 ## Type declaration
 
 | Name | Type |
@@ -22,4 +24,4 @@ type AddProjectArgs = {
 
 ## See
 
-https://developer.todoist.com/rest/v2/#create-a-new-project
+https://todoist.com/api/v1/docs#tag/Projects/operation/create_project_api_v1_projects_post

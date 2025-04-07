@@ -38,4 +38,4 @@ const url = getAuthorizationUrl(
 
 ## See
 
-https://developer.todoist.com/guides/#step-1-authorization-request
+https://todoist.com/api/v1/docs#tag/Authorization/OAuth

@@ -1,10 +1,10 @@
 # Comment
 
-Represents a comment on a task or project in Todoist.
+Represents a comment in Todoist.
 
 ## See
 
-https://developer.todoist.com/sync/v9/#notes
+https://todoist.com/api/v1/docs#tag/Comments
 
 ## Extends
 

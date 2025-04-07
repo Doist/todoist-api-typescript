@@ -6,6 +6,8 @@ type UpdateSectionArgs = {
 };
 ```
 
+Arguments for updating a section.
+
 ## Type declaration
 
 | Name | Type |
@@ -14,4 +16,4 @@ type UpdateSectionArgs = {
 
 ## See
 
-https://developer.todoist.com/rest/v2/#update-a-section
+https://todoist.com/api/v1/docs#tag/Sections/operation/update_section_api_v1_sections__section_id__post

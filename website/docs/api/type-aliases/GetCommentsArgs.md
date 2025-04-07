@@ -1,7 +1,7 @@
-# GetTaskCommentsArgs
+# GetCommentsArgs
 
 ```ts
-type GetTaskCommentsArgs = {
+type GetCommentsArgs = {
   cursor: string | null;
   limit: number;
   projectId: never;
@@ -9,7 +9,7 @@ type GetTaskCommentsArgs = {
 };
 ```
 
-Arguments for retrieving task comments.
+Arguments for retrieving comments.
 
 ## Type declaration
 

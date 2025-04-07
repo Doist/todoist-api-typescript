@@ -6,6 +6,8 @@ type UpdateCommentArgs = {
 };
 ```
 
+Arguments for updating a comment.
+
 ## Type declaration
 
 | Name | Type |
@@ -14,4 +16,4 @@ type UpdateCommentArgs = {
 
 ## See
 
-https://developer.todoist.com/rest/v2/#update-a-comment
+https://todoist.com/api/v1/docs#tag/Comments/operation/update_comment_api_v1_comments__comment_id__post

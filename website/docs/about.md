@@ -8,19 +8,18 @@ slug: /
 
 This is the official TypeScript API client for the Todoist REST API.
 
-:::caution warning
-
-This documentation is only compatible with version `v4.0.0` and newer.
-
+:::caution Version 4.0.0 - Major Update
+This version introduces breaking changes to align with Todoist's new v1 API.
 ### Important Changes
 
-We are currently transitioning from the [Todoist REST API](https://developer.todoist.com/rest/v2/) to the [Todoist Sync API](https://developer.todoist.com/sync/v9/#overview). Due to this migration:
+We have transitioned from the [Todoist REST API v2](https://developer.todoist.com/rest/v2/) to the [Todoist API v1](https://todoist.com/api/v1). This migration brings several improvements:
 
--   Documentation for versions `v3.0.3` and earlier may be outdated
--   Some features might not be backward compatible
--   Pre-release versions of `v4.0.0` should not be used in production
+- New unified API structure
+- Enhanced TypeScript types and documentation
+- Better error handling with specific error types
+- New endpoint implementations
 
-For older versions, please refer to the [legacy](https://developer.todoist.com/rest/v2/) documentation.
+For detailed migration instructions from v9, please refer to the [official Todoist API v1 migration guide](https://todoist.com/api/v1/docs#tag/Migrating-from-v9).
 :::
 
 ## Installation

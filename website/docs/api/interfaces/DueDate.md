@@ -4,7 +4,7 @@ Represents a due date for a task.
 
 ## See
 
-https://developer.todoist.com/sync/v9/#due-dates
+https://todoist.com/api/v1/docs#tag/Tasks/operation/get_tasks_api_v1_tasks_get
 
 ## Extends
 

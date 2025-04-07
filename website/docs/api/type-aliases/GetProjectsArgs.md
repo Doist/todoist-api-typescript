@@ -7,6 +7,8 @@ type GetProjectsArgs = {
 };
 ```
 
+Arguments for retrieving projects.
+
 ## Type declaration
 
 | Name | Type |
@@ -16,4 +18,4 @@ type GetProjectsArgs = {
 
 ## See
 
-https://developer.todoist.com/rest/v2/#get-all-projects
+https://todoist.com/api/v1/docs#tag/Projects/operation/get_projects_api_v1_projects_get

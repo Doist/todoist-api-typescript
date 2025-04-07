@@ -7,6 +7,8 @@ type GetCommentsResponse = {
 };
 ```
 
+Response from retrieving comments.
+
 ## Type declaration
 
 | Name | Type |
@@ -16,4 +18,4 @@ type GetCommentsResponse = {
 
 ## See
 
-https://developer.todoist.com/rest/v2/#get-all-comments
+https://todoist.com/api/v1/docs#tag/Comments/operation/get_comments_api_v1_comments_get

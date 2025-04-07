@@ -1,10 +1,10 @@
 # Task
 
-A task is a unit of work. It can be a simple to-do item or a more complex task with subtasks, comments, and attachments.
+Represents a task in Todoist.
 
 ## See
 
-https://developer.todoist.com/sync/v9/#items
+https://todoist.com/api/v1/docs#tag/Tasks
 
 ## Extends
 

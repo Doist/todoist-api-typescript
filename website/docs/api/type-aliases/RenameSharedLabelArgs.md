@@ -7,6 +7,8 @@ type RenameSharedLabelArgs = {
 };
 ```
 
+Arguments for renaming a shared label.
+
 ## Type declaration
 
 | Name | Type |
@@ -16,4 +18,4 @@ type RenameSharedLabelArgs = {
 
 ## See
 
-https://developer.todoist.com/rest/v2/#rename-shared-labels
+https://todoist.com/api/v1/docs#tag/Labels/operation/shared_labels_rename_api_v1_labels_shared_rename_post

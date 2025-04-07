@@ -12,6 +12,8 @@ type GetTasksArgs = {
 };
 ```
 
+Arguments for retrieving tasks.
+
 ## Type declaration
 
 | Name | Type |
@@ -26,4 +28,4 @@ type GetTasksArgs = {
 
 ## See
 
-https://developer.todoist.com/rest/v2/#tasks
+https://todoist.com/api/v1/docs#tag/Tasks/operation/get_tasks_api_v1_tasks_get

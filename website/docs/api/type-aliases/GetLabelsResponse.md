@@ -7,6 +7,8 @@ type GetLabelsResponse = {
 };
 ```
 
+Response from retrieving labels.
+
 ## Type declaration
 
 | Name | Type |
@@ -16,4 +18,4 @@ type GetLabelsResponse = {
 
 ## See
 
-https://developer.todoist.com/rest/v2/#get-all-personal-labels
+https://todoist.com/api/v1/docs#tag/Labels/operation/get_labels_api_v1_labels_get

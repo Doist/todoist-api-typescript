@@ -1,10 +1,10 @@
 # Label
 
-Represents a label in Todoist, which is used to categorize tasks.
+Represents a label in Todoist.
 
 ## See
 
-https://developer.todoist.com/sync/v9/#labels
+https://todoist.com/api/v1/docs#tag/Labels
 
 ## Extends
 

@@ -1,10 +1,10 @@
 # Section
 
-Represents a section within a project, used to group tasks.
+Represents a section in a Todoist project.
 
 ## See
 
-https://developer.todoist.com/sync/v9/#sections
+https://todoist.com/api/v1/docs#tag/Sections
 
 ## Extends
 

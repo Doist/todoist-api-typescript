@@ -1,10 +1,10 @@
 # Project
 
-Represents a project in Todoist, which can contain multiple tasks.
+Represents a project in Todoist.
 
 ## See
 
-https://developer.todoist.com/sync/v9/#projects
+https://todoist.com/api/v1/docs#tag/Projects
 
 ## Extends
 

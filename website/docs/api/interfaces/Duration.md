@@ -1,10 +1,10 @@
 # Duration
 
-Represents the duration of a task.
+Represents a duration for a task deadline.
 
 ## See
 
-https://developer.todoist.com/sync/v9/#deadlines
+https://todoist.com/api/v1/docs#tag/Tasks
 
 ## Extends
 

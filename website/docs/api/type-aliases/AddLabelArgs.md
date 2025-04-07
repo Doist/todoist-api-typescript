@@ -9,6 +9,8 @@ type AddLabelArgs = {
 };
 ```
 
+Arguments for creating a new label.
+
 ## Type declaration
 
 | Name | Type |
@@ -20,4 +22,4 @@ type AddLabelArgs = {
 
 ## See
 
-https://developer.todoist.com/rest/v2/#create-a-new-personal-label
+https://todoist.com/api/v1/docs#tag/Labels/operation/create_label_api_v1_labels_post

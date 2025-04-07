@@ -8,6 +8,8 @@ type AddSectionArgs = {
 };
 ```
 
+Arguments for creating a new section.
+
 ## Type declaration
 
 | Name | Type |
@@ -18,4 +20,4 @@ type AddSectionArgs = {
 
 ## See
 
-https://developer.todoist.com/rest/v2/#create-a-new-section
+https://todoist.com/api/v1/docs#tag/Sections/operation/create_section_api_v1_sections_post
