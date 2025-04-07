@@ -3,7 +3,7 @@ name: Deploy Docs to Pages
 on:
     push:
         branches:
-            - v4
+            - main
     workflow_dispatch:
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
@@ -34,7 +34,10 @@ jobs:
               with:
                   node-version-file: .nvmrc
 
-            - name: Install dependencies
+            - name: Install SDK dependencies
+              run: npm ci
+
+            - name: Install docusaurus dependencies
               working-directory: ./website
               run: npm ci
 

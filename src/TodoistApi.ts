@@ -1,13 +1,5 @@
-import { String } from 'runtypes'
-import {
-    Task,
-    QuickAddTaskResponse,
-    Project,
-    Label,
-    User,
-    Section,
-    Comment,
-} from './types/entities'
+import { Project, Label, Section, Comment } from './types/entities'
+import type { Task } from './types/entities'
 import {
     AddCommentArgs,
     AddLabelArgs,
@@ -17,6 +9,7 @@ import {
     GetProjectCommentsArgs,
     GetTaskCommentsArgs,
     GetTasksArgs,
+    GetTasksByFilterArgs,
     UpdateCommentArgs,
     UpdateLabelArgs,
     UpdateProjectArgs,
@@ -26,13 +19,26 @@ import {
     GetSharedLabelsArgs,
     RenameSharedLabelArgs,
     RemoveSharedLabelArgs,
+    GetProjectsArgs,
+    GetProjectCollaboratorsArgs,
+    GetLabelsArgs,
+    GetLabelsResponse,
+    GetTasksResponse,
+    GetProjectsResponse,
+    GetProjectCollaboratorsResponse,
+    GetSectionsArgs,
+    GetSectionsResponse,
+    GetSharedLabelsResponse,
+    GetCommentsResponse,
+    QuickAddTaskResponse,
+    type MoveTaskArgs,
 } from './types/requests'
 import { request, isSuccess } from './restClient'
 import { getTaskFromQuickAddResponse } from './utils/taskConverters'
 import {
-    getRestBaseUri,
     getSyncBaseUri,
     ENDPOINT_REST_TASKS,
+    ENDPOINT_REST_TASKS_FILTER,
     ENDPOINT_REST_PROJECTS,
     ENDPOINT_SYNC_QUICK_ADD,
     ENDPOINT_REST_TASK_CLOSE,
@@ -44,6 +50,7 @@ import {
     ENDPOINT_REST_LABELS_SHARED,
     ENDPOINT_REST_LABELS_SHARED_RENAME,
     ENDPOINT_REST_LABELS_SHARED_REMOVE,
+    ENDPOINT_SYNC,
 } from './consts/endpoints'
 import {
     validateComment,
@@ -58,6 +65,13 @@ import {
     validateTaskArray,
     validateUserArray,
 } from './utils/validators'
+import { z } from 'zod'
+
+import { v4 as uuidv4 } from 'uuid'
+import { SyncResponse, type Command, type SyncRequest } from './types/sync'
+import { TodoistRequestError } from './types'
+
+const MAX_COMMAND_COUNT = 100
 
 /**
  * Joins path segments using `/` separator.
@@ -68,24 +82,56 @@ function generatePath(...segments: string[]): string {
     return segments.join('/')
 }
 
+/**
+ * A client for interacting with the Todoist API v1.
+ * This class provides methods to manage tasks, projects, sections, labels, and comments in Todoist.
+ *
+ * @example
+ * ```typescript
+ * const api = new TodoistApi('your-api-token');
+ *
+ * // Get all tasks
+ * const tasks = await api.getTasks();
+ *
+ * // Create a new task
+ * const newTask = await api.addTask({
+ *   content: 'My new task',
+ *   projectId: '12345'
+ * });
+ * ```
+ *
+ * For more information about the Todoist API v1, see the [official documentation](https://todoist.com/api/v1).
+ * If you're migrating from v9, please refer to the [migration guide](https://todoist.com/api/v1/docs#tag/Migrating-from-v9).
+ */
 export class TodoistApi {
-    authToken: string
+    private authToken: string
+    private syncApiBase: string
 
-    constructor(authToken: string, baseUrl?: string) {
+    constructor(
+        /**
+         * Your Todoist API token.
+         */
+        authToken: string,
+        /**
+         * Optional custom API base URL. If not provided, defaults to Todoist's standard API endpoint
+         */
+        baseUrl?: string,
+    ) {
         this.authToken = authToken
-
-        this.restApiBase = getRestBaseUri(baseUrl)
         this.syncApiBase = getSyncBaseUri(baseUrl)
     }
 
-    private restApiBase: string
-    private syncApiBase: string
-
+    /**
+     * Retrieves a single active (non-completed) task by its ID.
+     *
+     * @param id - The unique identifier of the task.
+     * @returns A promise that resolves to the requested task.
+     */
     async getTask(id: string): Promise<Task> {
-        String.check(id)
+        z.string().parse(id)
         const response = await request<Task>(
             'GET',
-            this.restApiBase,
+            this.syncApiBase,
             generatePath(ENDPOINT_REST_TASKS, id),
             this.authToken,
         )
@@ -93,22 +139,63 @@ export class TodoistApi {
         return validateTask(response.data)
     }
 
-    async getTasks(args?: GetTasksArgs): Promise<Task[]> {
-        const response = await request<Task[]>(
+    /**
+     * Retrieves a list of active tasks filtered by specific parameters.
+     *
+     * @param args - Filter parameters such as project ID, label ID, or due date.
+     * @returns A promise that resolves to an array of tasks.
+     */
+    async getTasks(args: GetTasksArgs = {}): Promise<GetTasksResponse> {
+        const {
+            data: { results, nextCursor },
+        } = await request<GetTasksResponse>(
             'GET',
-            this.restApiBase,
+            this.syncApiBase,
             ENDPOINT_REST_TASKS,
             this.authToken,
             args,
         )
 
-        return validateTaskArray(response.data)
+        return {
+            results: validateTaskArray(results),
+            nextCursor,
+        }
     }
 
+    /**
+     * Retrieves tasks filtered by a filter string.
+     *
+     * @param args - Parameters for filtering tasks, including the query string and optional language.
+     * @returns A promise that resolves to a paginated response of tasks.
+     */
+    async getTasksByFilter(args: GetTasksByFilterArgs): Promise<GetTasksResponse> {
+        const {
+            data: { results, nextCursor },
+        } = await request<GetTasksResponse>(
+            'GET',
+            this.syncApiBase,
+            ENDPOINT_REST_TASKS_FILTER,
+            this.authToken,
+            args,
+        )
+
+        return {
+            results: validateTaskArray(results),
+            nextCursor,
+        }
+    }
+
+    /**
+     * Creates a new task with the provided parameters.
+     *
+     * @param args - Task creation parameters such as content, due date, or priority.
+     * @param requestId - Optional unique identifier for idempotency.
+     * @returns A promise that resolves to the created task.
+     */
     async addTask(args: AddTaskArgs, requestId?: string): Promise<Task> {
         const response = await request<Task>(
             'POST',
-            this.restApiBase,
+            this.syncApiBase,
             ENDPOINT_REST_TASKS,
             this.authToken,
             args,
@@ -118,6 +205,12 @@ export class TodoistApi {
         return validateTask(response.data)
     }
 
+    /**
+     * Quickly adds a task using natural language processing for due dates.
+     *
+     * @param args - Quick add task parameters, including content and due date.
+     * @returns A promise that resolves to the created task.
+     */
     async quickAddTask(args: QuickAddTaskArgs): Promise<Task> {
         const response = await request<QuickAddTaskResponse>(
             'POST',
@@ -132,11 +225,19 @@ export class TodoistApi {
         return validateTask(task)
     }
 
+    /**
+     * Updates an existing task by its ID with the provided parameters.
+     *
+     * @param id - The unique identifier of the task to update.
+     * @param args - Update parameters such as content, priority, or due date.
+     * @param requestId - Optional unique identifier for idempotency.
+     * @returns A promise that resolves to the updated task.
+     */
     async updateTask(id: string, args: UpdateTaskArgs, requestId?: string): Promise<Task> {
-        String.check(id)
+        z.string().parse(id)
         const response = await request(
             'POST',
-            this.restApiBase,
+            this.syncApiBase,
             generatePath(ENDPOINT_REST_TASKS, id),
             this.authToken,
             args,
@@ -145,11 +246,79 @@ export class TodoistApi {
         return validateTask(response.data)
     }
 
+    /**
+     * Moves existing tasks by their ID to either a different parent/section/project.
+     *
+     * @param ids - The unique identifier of the tasks to be moved.
+     * @param args - The paramets that should contain only one of projectId, sectionId, or parentId
+     * @param requestId - Optional unique identifier for idempotency.
+     * @returns - A promise that resolves to an array of the updated tasks.
+     */
+    async moveTasks(ids: string[], args: MoveTaskArgs, requestId?: string): Promise<Task[]> {
+        if (ids.length > MAX_COMMAND_COUNT) {
+            throw new TodoistRequestError(`Maximum number of items is ${MAX_COMMAND_COUNT}`, 400)
+        }
+        const uuid = uuidv4()
+        const commands: Command[] = ids.map((id) => ({
+            type: 'item_move',
+            uuid,
+            args: {
+                id,
+                ...(args.projectId && { project_id: args.projectId }),
+                ...(args.sectionId && { section_id: args.sectionId }),
+                ...(args.parentId && { parent_id: args.parentId }),
+            },
+        }))
+
+        const syncRequest: SyncRequest = {
+            commands,
+            resource_types: ['items'],
+        }
+
+        const response = await request<SyncResponse>(
+            'POST',
+            this.syncApiBase,
+            ENDPOINT_SYNC,
+            this.authToken,
+            syncRequest,
+            requestId,
+            /*hasSyncCommands: */ true,
+        )
+
+        if (response.data.sync_status) {
+            Object.entries(response.data.sync_status).forEach(([_, value]) => {
+                if (value === 'ok') return
+
+                throw new TodoistRequestError(value.error, value.http_code, value.error_extra)
+            })
+        }
+
+        if (!response.data.items?.length) {
+            throw new TodoistRequestError('Tasks not found', 404)
+        }
+
+        const syncTasks = response.data.items.filter((task) => ids.includes(task.id))
+        if (!syncTasks.length) {
+            throw new TodoistRequestError('Tasks not found', 404)
+        }
+
+        const tasks = syncTasks.map(getTaskFromQuickAddResponse)
+
+        return validateTaskArray(tasks)
+    }
+
+    /**
+     * Closes (completes) a task by its ID.
+     *
+     * @param id - The unique identifier of the task to close.
+     * @param requestId - Optional unique identifier for idempotency.
+     * @returns A promise that resolves to `true` if successful.
+     */
     async closeTask(id: string, requestId?: string): Promise<boolean> {
-        String.check(id)
+        z.string().parse(id)
         const response = await request(
             'POST',
-            this.restApiBase,
+            this.syncApiBase,
             generatePath(ENDPOINT_REST_TASKS, id, ENDPOINT_REST_TASK_CLOSE),
             this.authToken,
             undefined,
@@ -158,11 +327,18 @@ export class TodoistApi {
         return isSuccess(response)
     }
 
+    /**
+     * Reopens a previously closed (completed) task by its ID.
+     *
+     * @param id - The unique identifier of the task to reopen.
+     * @param requestId - Optional unique identifier for idempotency.
+     * @returns A promise that resolves to `true` if successful.
+     */
     async reopenTask(id: string, requestId?: string): Promise<boolean> {
-        String.check(id)
+        z.string().parse(id)
         const response = await request(
             'POST',
-            this.restApiBase,
+            this.syncApiBase,
             generatePath(ENDPOINT_REST_TASKS, id, ENDPOINT_REST_TASK_REOPEN),
             this.authToken,
             undefined,
@@ -171,11 +347,18 @@ export class TodoistApi {
         return isSuccess(response)
     }
 
+    /**
+     * Deletes a task by its ID.
+     *
+     * @param id - The unique identifier of the task to delete.
+     * @param requestId - Optional unique identifier for idempotency.
+     * @returns A promise that resolves to `true` if successful.
+     */
     async deleteTask(id: string, requestId?: string): Promise<boolean> {
-        String.check(id)
+        z.string().parse(id)
         const response = await request(
             'DELETE',
-            this.restApiBase,
+            this.syncApiBase,
             generatePath(ENDPOINT_REST_TASKS, id),
             this.authToken,
             undefined,
@@ -184,11 +367,17 @@ export class TodoistApi {
         return isSuccess(response)
     }
 
+    /**
+     * Retrieves a project by its ID.
+     *
+     * @param id - The unique identifier of the project.
+     * @returns A promise that resolves to the requested project.
+     */
     async getProject(id: string): Promise<Project> {
-        String.check(id)
+        z.string().parse(id)
         const response = await request<Project>(
             'GET',
-            this.restApiBase,
+            this.syncApiBase,
             generatePath(ENDPOINT_REST_PROJECTS, id),
             this.authToken,
         )
@@ -196,21 +385,40 @@ export class TodoistApi {
         return validateProject(response.data)
     }
 
-    async getProjects(): Promise<Project[]> {
-        const response = await request<Project[]>(
+    /**
+     * Retrieves all projects with optional filters.
+     *
+     * @param args - Optional filters for retrieving projects.
+     * @returns A promise that resolves to an array of projects.
+     */
+    async getProjects(args: GetProjectsArgs = {}): Promise<GetProjectsResponse> {
+        const {
+            data: { results, nextCursor },
+        } = await request<GetProjectsResponse>(
             'GET',
-            this.restApiBase,
+            this.syncApiBase,
             ENDPOINT_REST_PROJECTS,
             this.authToken,
+            args,
         )
 
-        return validateProjectArray(response.data)
+        return {
+            results: validateProjectArray(results),
+            nextCursor,
+        }
     }
 
+    /**
+     * Creates a new project with the provided parameters.
+     *
+     * @param args - Project creation parameters such as name or color.
+     * @param requestId - Optional unique identifier for idempotency.
+     * @returns A promise that resolves to the created project.
+     */
     async addProject(args: AddProjectArgs, requestId?: string): Promise<Project> {
         const response = await request<Project>(
             'POST',
-            this.restApiBase,
+            this.syncApiBase,
             ENDPOINT_REST_PROJECTS,
             this.authToken,
             args,
@@ -220,11 +428,19 @@ export class TodoistApi {
         return validateProject(response.data)
     }
 
+    /**
+     * Updates an existing project by its ID with the provided parameters.
+     *
+     * @param id - The unique identifier of the project to update.
+     * @param args - Update parameters such as name or color.
+     * @param requestId - Optional unique identifier for idempotency.
+     * @returns A promise that resolves to the updated project.
+     */
     async updateProject(id: string, args: UpdateProjectArgs, requestId?: string): Promise<Project> {
-        String.check(id)
+        z.string().parse(id)
         const response = await request(
             'POST',
-            this.restApiBase,
+            this.syncApiBase,
             generatePath(ENDPOINT_REST_PROJECTS, id),
             this.authToken,
             args,
@@ -233,11 +449,18 @@ export class TodoistApi {
         return validateProject(response.data)
     }
 
+    /**
+     * Deletes a project by its ID.
+     *
+     * @param id - The unique identifier of the project to delete.
+     * @param requestId - Optional unique identifier for idempotency.
+     * @returns A promise that resolves to `true` if successful.
+     */
     async deleteProject(id: string, requestId?: string): Promise<boolean> {
-        String.check(id)
+        z.string().parse(id)
         const response = await request(
             'DELETE',
-            this.restApiBase,
+            this.syncApiBase,
             generatePath(ENDPOINT_REST_PROJECTS, id),
             this.authToken,
             undefined,
@@ -246,35 +469,68 @@ export class TodoistApi {
         return isSuccess(response)
     }
 
-    async getProjectCollaborators(projectId: string): Promise<User[]> {
-        String.check(projectId)
-        const response = await request<User[]>(
+    /**
+     * Retrieves a list of collaborators for a specific project.
+     *
+     * @param projectId - The unique identifier of the project.
+     * @param args - Optional parameters to filter collaborators.
+     * @returns A promise that resolves to an array of collaborators for the project.
+     */
+    async getProjectCollaborators(
+        projectId: string,
+        args: GetProjectCollaboratorsArgs = {},
+    ): Promise<GetProjectCollaboratorsResponse> {
+        z.string().parse(projectId)
+        const {
+            data: { results, nextCursor },
+        } = await request<GetProjectCollaboratorsResponse>(
             'GET',
-            this.restApiBase,
+            this.syncApiBase,
             generatePath(ENDPOINT_REST_PROJECTS, projectId, ENDPOINT_REST_PROJECT_COLLABORATORS),
             this.authToken,
+            args,
         )
 
-        return validateUserArray(response.data)
+        return {
+            results: validateUserArray(results),
+            nextCursor,
+        }
     }
 
-    async getSections(projectId?: string): Promise<Section[]> {
-        const response = await request<Section[]>(
+    /**
+     * Retrieves all sections within a specific project or matching criteria.
+     *
+     * @param args - Filter parameters such as project ID.
+     * @returns A promise that resolves to an array of sections.
+     */
+    async getSections(args: GetSectionsArgs): Promise<GetSectionsResponse> {
+        const {
+            data: { results, nextCursor },
+        } = await request<GetSectionsResponse>(
             'GET',
-            this.restApiBase,
+            this.syncApiBase,
             ENDPOINT_REST_SECTIONS,
             this.authToken,
-            projectId ? { projectId } : undefined,
+            args,
         )
 
-        return validateSectionArray(response.data)
+        return {
+            results: validateSectionArray(results),
+            nextCursor,
+        }
     }
 
+    /**
+     * Retrieves a single section by its ID.
+     *
+     * @param id - The unique identifier of the section.
+     * @returns A promise that resolves to the requested section.
+     */
     async getSection(id: string): Promise<Section> {
-        String.check(id)
+        z.string().parse(id)
         const response = await request<Section>(
             'GET',
-            this.restApiBase,
+            this.syncApiBase,
             generatePath(ENDPOINT_REST_SECTIONS, id),
             this.authToken,
         )
@@ -282,10 +538,17 @@ export class TodoistApi {
         return validateSection(response.data)
     }
 
+    /**
+     * Creates a new section within a project.
+     *
+     * @param args - Section creation parameters such as name or project ID.
+     * @param requestId - Optional unique identifier for idempotency.
+     * @returns A promise that resolves to the created section.
+     */
     async addSection(args: AddSectionArgs, requestId?: string): Promise<Section> {
         const response = await request<Section>(
             'POST',
-            this.restApiBase,
+            this.syncApiBase,
             ENDPOINT_REST_SECTIONS,
             this.authToken,
             args,
@@ -295,11 +558,19 @@ export class TodoistApi {
         return validateSection(response.data)
     }
 
+    /**
+     * Updates a section by its ID with the provided parameters.
+     *
+     * @param id - The unique identifier of the section to update.
+     * @param args - Update parameters such as name or project ID.
+     * @param requestId - Optional unique identifier for idempotency.
+     * @returns A promise that resolves to the updated section.
+     */
     async updateSection(id: string, args: UpdateSectionArgs, requestId?: string): Promise<Section> {
-        String.check(id)
+        z.string().parse(id)
         const response = await request(
             'POST',
-            this.restApiBase,
+            this.syncApiBase,
             generatePath(ENDPOINT_REST_SECTIONS, id),
             this.authToken,
             args,
@@ -308,11 +579,18 @@ export class TodoistApi {
         return validateSection(response.data)
     }
 
+    /**
+     * Deletes a section by its ID.
+     *
+     * @param id - The unique identifier of the section to delete.
+     * @param requestId - Optional unique identifier for idempotency.
+     * @returns A promise that resolves to `true` if successful.
+     */
     async deleteSection(id: string, requestId?: string): Promise<boolean> {
-        String.check(id)
+        z.string().parse(id)
         const response = await request(
             'DELETE',
-            this.restApiBase,
+            this.syncApiBase,
             generatePath(ENDPOINT_REST_SECTIONS, id),
             this.authToken,
             undefined,
@@ -322,13 +600,16 @@ export class TodoistApi {
     }
 
     /**
-     * Fetches a personal label
+     * Retrieves a label by its ID.
+     *
+     * @param id - The unique identifier of the label.
+     * @returns A promise that resolves to the requested label.
      */
     async getLabel(id: string): Promise<Label> {
-        String.check(id)
+        z.string().parse(id)
         const response = await request<Label>(
             'GET',
-            this.restApiBase,
+            this.syncApiBase,
             generatePath(ENDPOINT_REST_LABELS, id),
             this.authToken,
         )
@@ -337,26 +618,39 @@ export class TodoistApi {
     }
 
     /**
-     * Fetches the personal labels
+     * Retrieves all labels.
+     *
+     * @param args - Optional filter parameters.
+     * @returns A promise that resolves to an array of labels.
      */
-    async getLabels(): Promise<Label[]> {
-        const response = await request<Label[]>(
+    async getLabels(args: GetLabelsArgs = {}): Promise<GetLabelsResponse> {
+        const {
+            data: { results, nextCursor: nextCursor },
+        } = await request<GetLabelsResponse>(
             'GET',
-            this.restApiBase,
+            this.syncApiBase,
             ENDPOINT_REST_LABELS,
             this.authToken,
+            args,
         )
 
-        return validateLabelArray(response.data)
+        return {
+            results: validateLabelArray(results),
+            nextCursor,
+        }
     }
 
     /**
-     * Adds a personal label
+     * Adds a new label.
+     *
+     * @param args - Label creation parameters such as name.
+     * @param requestId - Optional unique identifier for idempotency.
+     * @returns A promise that resolves to the created label.
      */
     async addLabel(args: AddLabelArgs, requestId?: string): Promise<Label> {
         const response = await request<Label>(
             'POST',
-            this.restApiBase,
+            this.syncApiBase,
             ENDPOINT_REST_LABELS,
             this.authToken,
             args,
@@ -367,13 +661,18 @@ export class TodoistApi {
     }
 
     /**
-     * Updates a personal label
+     * Updates an existing label by its ID.
+     *
+     * @param id - The unique identifier of the label to update.
+     * @param args - Update parameters such as name or color.
+     * @param requestId - Optional unique identifier for idempotency.
+     * @returns A promise that resolves to the updated label.
      */
     async updateLabel(id: string, args: UpdateLabelArgs, requestId?: string): Promise<Label> {
-        String.check(id)
+        z.string().parse(id)
         const response = await request(
             'POST',
-            this.restApiBase,
+            this.syncApiBase,
             generatePath(ENDPOINT_REST_LABELS, id),
             this.authToken,
             args,
@@ -383,13 +682,17 @@ export class TodoistApi {
     }
 
     /**
-     * Deletes a personal label
+     * Deletes a label by its ID.
+     *
+     * @param id - The unique identifier of the label to delete.
+     * @param requestId - Optional unique identifier for idempotency.
+     * @returns A promise that resolves to `true` if successful.
      */
     async deleteLabel(id: string, requestId?: string): Promise<boolean> {
-        String.check(id)
+        z.string().parse(id)
         const response = await request(
             'DELETE',
-            this.restApiBase,
+            this.syncApiBase,
             generatePath(ENDPOINT_REST_LABELS, id),
             this.authToken,
             undefined,
@@ -398,55 +701,98 @@ export class TodoistApi {
         return isSuccess(response)
     }
 
-    async getSharedLabels(args?: GetSharedLabelsArgs): Promise<string[]> {
-        const response = await request<string[]>(
+    /**
+     * Retrieves a list of shared labels.
+     *
+     * @param args - Optional parameters to filter shared labels.
+     * @returns A promise that resolves to an array of shared labels.
+     */
+    async getSharedLabels(args?: GetSharedLabelsArgs): Promise<GetSharedLabelsResponse> {
+        const {
+            data: { results, nextCursor: nextCursor },
+        } = await request<GetSharedLabelsResponse>(
             'GET',
-            this.restApiBase,
+            this.syncApiBase,
             ENDPOINT_REST_LABELS_SHARED,
             this.authToken,
             args,
         )
 
-        return response.data
+        return { results, nextCursor }
     }
 
-    async renameSharedLabel(args: RenameSharedLabelArgs): Promise<void> {
-        await request<void>(
+    /**
+     * Renames an existing shared label.
+     *
+     * @param args - Parameters for renaming the shared label, including the current and new name.
+     * @returns A promise that resolves to `true` if successful.
+     */
+    async renameSharedLabel(args: RenameSharedLabelArgs): Promise<boolean> {
+        const response = await request<void>(
             'POST',
-            this.restApiBase,
+            this.syncApiBase,
             ENDPOINT_REST_LABELS_SHARED_RENAME,
             this.authToken,
             args,
         )
+
+        return isSuccess(response)
     }
 
-    async removeSharedLabel(args: RemoveSharedLabelArgs): Promise<void> {
-        await request<void>(
+    /**
+     * Removes a shared label.
+     *
+     * @param args - Parameters for removing the shared label.
+     * @returns A promise that resolves to `true` if successful.
+     */
+    async removeSharedLabel(args: RemoveSharedLabelArgs): Promise<boolean> {
+        const response = await request<void>(
             'POST',
-            this.restApiBase,
+            this.syncApiBase,
             ENDPOINT_REST_LABELS_SHARED_REMOVE,
             this.authToken,
             args,
         )
+
+        return isSuccess(response)
     }
 
-    async getComments(args: GetTaskCommentsArgs | GetProjectCommentsArgs): Promise<Comment[]> {
-        const response = await request<Comment[]>(
+    /**
+     * Retrieves all comments associated with a task or project.
+     *
+     * @param args - Parameters for retrieving comments, such as task ID or project ID.
+     * @returns A promise that resolves to an array of comments.
+     */
+    async getComments(
+        args: GetTaskCommentsArgs | GetProjectCommentsArgs,
+    ): Promise<GetCommentsResponse> {
+        const {
+            data: { results, nextCursor },
+        } = await request<GetCommentsResponse>(
             'GET',
-            this.restApiBase,
+            this.syncApiBase,
             ENDPOINT_REST_COMMENTS,
             this.authToken,
             args,
         )
 
-        return validateCommentArray(response.data)
+        return {
+            results: validateCommentArray(results),
+            nextCursor,
+        }
     }
 
+    /**
+     * Retrieves a specific comment by its ID.
+     *
+     * @param id - The unique identifier of the comment to retrieve.
+     * @returns A promise that resolves to the requested comment.
+     */
     async getComment(id: string): Promise<Comment> {
-        String.check(id)
+        z.string().parse(id)
         const response = await request<Comment>(
             'GET',
-            this.restApiBase,
+            this.syncApiBase,
             generatePath(ENDPOINT_REST_COMMENTS, id),
             this.authToken,
         )
@@ -454,10 +800,17 @@ export class TodoistApi {
         return validateComment(response.data)
     }
 
+    /**
+     * Adds a comment to a task or project.
+     *
+     * @param args - Parameters for creating the comment, such as content and the target task or project ID.
+     * @param requestId - Optional unique identifier for idempotency.
+     * @returns A promise that resolves to the created comment.
+     */
     async addComment(args: AddCommentArgs, requestId?: string): Promise<Comment> {
         const response = await request<Comment>(
             'POST',
-            this.restApiBase,
+            this.syncApiBase,
             ENDPOINT_REST_COMMENTS,
             this.authToken,
             args,
@@ -467,11 +820,19 @@ export class TodoistApi {
         return validateComment(response.data)
     }
 
+    /**
+     * Updates an existing comment by its ID.
+     *
+     * @param id - The unique identifier of the comment to update.
+     * @param args - Update parameters such as new content.
+     * @param requestId - Optional unique identifier for idempotency.
+     * @returns A promise that resolves to the updated comment.
+     */
     async updateComment(id: string, args: UpdateCommentArgs, requestId?: string): Promise<Comment> {
-        String.check(id)
+        z.string().parse(id)
         const response = await request<boolean>(
             'POST',
-            this.restApiBase,
+            this.syncApiBase,
             generatePath(ENDPOINT_REST_COMMENTS, id),
             this.authToken,
             args,
@@ -480,11 +841,18 @@ export class TodoistApi {
         return validateComment(response.data)
     }
 
+    /**
+     * Deletes a comment by its ID.
+     *
+     * @param id - The unique identifier of the comment to delete.
+     * @param requestId - Optional unique identifier for idempotency.
+     * @returns A promise that resolves to `true` if successful.
+     */
     async deleteComment(id: string, requestId?: string): Promise<boolean> {
-        String.check(id)
+        z.string().parse(id)
         const response = await request(
             'DELETE',
-            this.restApiBase,
+            this.syncApiBase,
             generatePath(ENDPOINT_REST_COMMENTS, id),
             this.authToken,
             undefined,

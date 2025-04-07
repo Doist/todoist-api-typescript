@@ -2,6 +2,7 @@ import { getAuthorizationUrl, getAuthToken, revokeAuthToken, Permission } from '
 import { setupRestClientMock } from './testUtils/mocks'
 import { assertInstance } from './testUtils/asserts'
 import { TodoistRequestError } from './types'
+import { getSyncBaseUri } from './consts/endpoints'
 
 describe('authentication', () => {
     describe('getAuthorizationUrl', () => {
@@ -144,7 +145,7 @@ describe('authentication', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'POST',
-                'https://api.todoist.com/sync/v9/',
+                getSyncBaseUri(),
                 'access_tokens/revoke',
                 undefined,
                 revokeTokenRequest,

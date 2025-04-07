@@ -9,11 +9,11 @@ import {
     TASK_WITH_OPTIONALS_AS_NULL,
 } from './testUtils/testDefaults'
 import {
-    getRestBaseUri,
     getSyncBaseUri,
     ENDPOINT_REST_TASK_CLOSE,
     ENDPOINT_REST_TASK_REOPEN,
     ENDPOINT_REST_TASKS,
+    ENDPOINT_REST_TASKS_FILTER,
     ENDPOINT_SYNC_QUICK_ADD,
 } from './consts/endpoints'
 import { setupRestClientMock } from './testUtils/mocks'
@@ -41,7 +41,7 @@ describe('TodoistApi task endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'POST',
-                getRestBaseUri(),
+                getSyncBaseUri(),
                 ENDPOINT_REST_TASKS,
                 DEFAULT_AUTH_TOKEN,
                 DEFAULT_ADD_TASK_ARGS,
@@ -58,7 +58,7 @@ describe('TodoistApi task endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'POST',
-                getRestBaseUri('https://staging.todoist.com'),
+                getSyncBaseUri('https://staging.todoist.com'),
                 ENDPOINT_REST_TASKS,
                 DEFAULT_AUTH_TOKEN,
                 DEFAULT_ADD_TASK_ARGS,
@@ -89,7 +89,7 @@ describe('TodoistApi task endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'POST',
-                getRestBaseUri(),
+                getSyncBaseUri(),
                 `${ENDPOINT_REST_TASKS}/${taskId}`,
                 DEFAULT_AUTH_TOKEN,
                 DEFAULT_UPDATE_TASK_ARGS,
@@ -119,7 +119,7 @@ describe('TodoistApi task endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'POST',
-                getRestBaseUri(),
+                getSyncBaseUri(),
                 `${ENDPOINT_REST_TASKS}/${taskId}/${ENDPOINT_REST_TASK_CLOSE}`,
                 DEFAULT_AUTH_TOKEN,
                 undefined,
@@ -148,7 +148,7 @@ describe('TodoistApi task endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'POST',
-                getRestBaseUri(),
+                getSyncBaseUri(),
                 `${ENDPOINT_REST_TASKS}/${taskId}/${ENDPOINT_REST_TASK_REOPEN}`,
                 DEFAULT_AUTH_TOKEN,
                 undefined,
@@ -177,7 +177,7 @@ describe('TodoistApi task endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'DELETE',
-                getRestBaseUri(),
+                getSyncBaseUri(),
                 `${ENDPOINT_REST_TASKS}/${taskId}`,
                 DEFAULT_AUTH_TOKEN,
                 undefined,
@@ -243,7 +243,7 @@ describe('TodoistApi task endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'GET',
-                getRestBaseUri(),
+                getSyncBaseUri(),
                 `${ENDPOINT_REST_TASKS}/${taskId}`,
                 DEFAULT_AUTH_TOKEN,
             )
@@ -253,10 +253,15 @@ describe('TodoistApi task endpoints', () => {
     describe('getTasks', () => {
         const DEFAULT_GET_TASKS_ARGS = {
             projectId: '123',
+            limit: 10,
+            cursor: '0',
         }
 
         test('calls get on expected endpoint with args', async () => {
-            const requestMock = setupRestClientMock([DEFAULT_TASK, TASK_WITH_OPTIONALS_AS_NULL])
+            const requestMock = setupRestClientMock({
+                results: [DEFAULT_TASK, TASK_WITH_OPTIONALS_AS_NULL],
+                nextCursor: '123',
+            })
             const api = getTarget()
 
             await api.getTasks(DEFAULT_GET_TASKS_ARGS)
@@ -264,7 +269,7 @@ describe('TodoistApi task endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'GET',
-                getRestBaseUri(),
+                getSyncBaseUri(),
                 ENDPOINT_REST_TASKS,
                 DEFAULT_AUTH_TOKEN,
                 DEFAULT_GET_TASKS_ARGS,
@@ -273,12 +278,58 @@ describe('TodoistApi task endpoints', () => {
 
         test('returns result from rest client', async () => {
             const tasks = [DEFAULT_TASK]
-            setupRestClientMock(tasks)
+            setupRestClientMock({ results: tasks, nextCursor: '123' })
             const api = getTarget()
 
-            const response = await api.getTasks(DEFAULT_GET_TASKS_ARGS)
+            const { results, nextCursor } = await api.getTasks(DEFAULT_GET_TASKS_ARGS)
 
-            expect(response).toEqual(tasks)
+            expect(results).toEqual(tasks)
+            expect(nextCursor).toBe('123')
+        })
+    })
+
+    describe('getTasksByFilter', () => {
+        const DEFAULT_GET_TASKS_BY_FILTER_ARGS = {
+            query: 'today',
+            lang: 'en',
+            cursor: null,
+            limit: 10,
+        }
+
+        test('calls get request with expected url', async () => {
+            const requestMock = setupRestClientMock({ results: [DEFAULT_TASK], nextCursor: null })
+            const api = getTarget()
+
+            await api.getTasksByFilter(DEFAULT_GET_TASKS_BY_FILTER_ARGS)
+
+            expect(requestMock).toBeCalledTimes(1)
+            expect(requestMock).toBeCalledWith(
+                'GET',
+                getSyncBaseUri(),
+                ENDPOINT_REST_TASKS_FILTER,
+                DEFAULT_AUTH_TOKEN,
+                DEFAULT_GET_TASKS_BY_FILTER_ARGS,
+            )
+        })
+
+        test('returns result from rest client', async () => {
+            setupRestClientMock({ results: [DEFAULT_TASK], nextCursor: null })
+            const api = getTarget()
+
+            const response = await api.getTasksByFilter(DEFAULT_GET_TASKS_BY_FILTER_ARGS)
+
+            expect(response).toEqual({
+                results: [DEFAULT_TASK],
+                nextCursor: null,
+            })
+        })
+
+        test('validates task array in response', async () => {
+            const invalidTask = { ...DEFAULT_TASK, due: '2020-01-31' }
+            setupRestClientMock({ results: [invalidTask], nextCursor: null })
+            const api = getTarget()
+
+            await expect(api.getTasksByFilter(DEFAULT_GET_TASKS_BY_FILTER_ARGS)).rejects.toThrow()
         })
     })
 })

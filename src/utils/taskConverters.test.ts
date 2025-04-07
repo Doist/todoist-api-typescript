@@ -7,33 +7,6 @@ describe('getTaskFromQuickAddResponse', () => {
         expect(task).toEqual({ ...DEFAULT_TASK, labels: ['personal', 'work', 'hobby'] })
     })
 
-    test('converts null sectionId to null', () => {
-        const quickAddResponse = {
-            ...DEFAULT_QUICK_ADD_RESPONSE,
-            sectionId: null,
-        }
-        const task = getTaskFromQuickAddResponse(quickAddResponse)
-        expect(task.sectionId).toEqual(undefined)
-    })
-
-    test('converts null parentId to undefined', () => {
-        const quickAddResponse = {
-            ...DEFAULT_QUICK_ADD_RESPONSE,
-            parentId: null,
-        }
-        const task = getTaskFromQuickAddResponse(quickAddResponse)
-        expect(task.parentId).toEqual(undefined)
-    })
-
-    test('converts null assigneeId to undefined', () => {
-        const quickAddResponse = {
-            ...DEFAULT_QUICK_ADD_RESPONSE,
-            responsibleUid: null,
-        }
-        const task = getTaskFromQuickAddResponse(quickAddResponse)
-        expect(task.assigneeId).toEqual(undefined)
-    })
-
     const completedTheories = [
         [false, false],
         [true, true],
@@ -51,15 +24,6 @@ describe('getTaskFromQuickAddResponse', () => {
             expect(task.isCompleted).toEqual(completedBoolean)
         },
     )
-
-    test('converts null due date to undefined', () => {
-        const quickAddResponse = {
-            ...DEFAULT_QUICK_ADD_RESPONSE,
-            due: null,
-        }
-        const task = getTaskFromQuickAddResponse(quickAddResponse)
-        expect(task.due).toEqual(undefined)
-    })
 
     const taskUrlTheories = [
         ['1234', 'https://todoist.com/showTask?id=1234'],

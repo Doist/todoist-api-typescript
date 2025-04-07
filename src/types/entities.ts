@@ -1,210 +1,223 @@
-import {
-    Boolean,
-    Number as NumberRunType,
-    String,
-    Array,
-    Record,
-    Static,
-    Partial,
-    Literal,
-    Union,
-    Null,
-} from 'runtypes'
+import { z } from 'zod'
 
-export const Int = NumberRunType.withConstraint(
-    (n) => Number.isInteger(n) || `${n} is not a valid entity id. Should be a string`,
-)
+export const DueDateSchema = z
+    .object({
+        isRecurring: z.boolean(),
+        string: z.string(),
+        date: z.string(),
+    })
+    .extend({
+        datetime: z.string().nullable().optional(),
+        timezone: z.string().nullable().optional(),
+        lang: z.string().nullable().optional(),
+    })
+/**
+ * Represents a due date for a task.
+ * @see https://todoist.com/api/v1/docs#tag/Tasks/operation/get_tasks_api_v1_tasks_get
+ */
+export interface DueDate extends z.infer<typeof DueDateSchema> {}
 
-export type TodoistEntity = {
-    id: string
-}
-
-export type OrderedEntity = TodoistEntity & {
-    order: number
-}
-
-export type EntityInHierarchy = OrderedEntity & {
-    parentId?: string | null
-}
-
-export const DueDate = Record({
-    isRecurring: Boolean,
-    string: String,
-    date: String,
-}).And(
-    Partial({
-        datetime: String.Or(Null),
-        timezone: String.Or(Null),
-        lang: String.Or(Null),
-    }),
-)
-
-export type DueDate = Static<typeof DueDate>
-
-export const Duration = Record({
-    amount: NumberRunType.withConstraint((n) => n > 0 || 'Value should be greater than zero'),
-    unit: Union(Literal('minute'), Literal('day')),
+export const DurationSchema = z.object({
+    amount: z.number().positive('Value should be greater than zero'),
+    unit: z.enum(['minute', 'day']),
 })
+/**
+ * Represents a duration for a task deadline.
+ * @see https://todoist.com/api/v1/docs#tag/Tasks
+ */
+export interface Duration extends z.infer<typeof DurationSchema> {}
 
-export type Duration = Static<typeof Duration>
+export const DeadlineSchema = z.object({
+    date: z.string(),
+    lang: z.string(),
+})
+/**
+ * Represents a task deadline.
+ */
+export interface Deadline extends z.infer<typeof DeadlineSchema> {}
 
-export const Task = Record({
-    id: String,
-    order: Int,
-    content: String,
-    description: String,
-    projectId: String,
-    isCompleted: Boolean,
-    labels: Array(String),
-    priority: Int,
-    commentCount: Int,
-    createdAt: String,
-    url: String,
-    creatorId: String,
-}).And(
-    Partial({
-        due: DueDate.Or(Null),
-        duration: Duration.Or(Null),
-        assigneeId: String.Or(Null),
-        assignerId: String.Or(Null),
-        parentId: String.Or(Null),
-        sectionId: String.Or(Null),
-    }),
-)
+export const TaskSchema = z.object({
+    id: z.string(),
+    assignerId: z.string().nullable(),
+    assigneeId: z.string().nullable(),
+    projectId: z.string(),
+    sectionId: z.string().nullable(),
+    parentId: z.string().nullable(),
+    order: z.number().int(),
+    content: z.string(),
+    description: z.string(),
+    isCompleted: z.boolean(),
+    labels: z.array(z.string()),
+    priority: z.number().int(),
+    creatorId: z.string(),
+    createdAt: z.string(),
+    due: DueDateSchema.nullable(),
+    url: z.string(),
+    duration: DurationSchema.nullable(),
+    deadline: DeadlineSchema.nullable(),
+})
+/**
+ * Represents a task in Todoist.
+ * @see https://todoist.com/api/v1/docs#tag/Tasks
+ */
+export interface Task extends z.infer<typeof TaskSchema> {}
 
-export type Task = Static<typeof Task>
-
-export const Project = Record({
-    id: String,
-    name: String,
-    color: String,
-    commentCount: Int,
-    isShared: Boolean,
-    isFavorite: Boolean,
-    url: String,
-    isInboxProject: Boolean,
-    isTeamInbox: Boolean,
-    order: Int,
-    viewStyle: String,
-}).And(
-    Partial({
-        parentId: String.Or(Null),
-    }),
-)
-
-export type Project = Static<typeof Project>
+export const ProjectSchema = z.object({
+    id: z.string(),
+    parentId: z.string().nullable(),
+    order: z.number().int().nullable(),
+    color: z.string(),
+    name: z.string(),
+    isShared: z.boolean(),
+    isFavorite: z.boolean(),
+    isInboxProject: z.boolean(),
+    isTeamInbox: z.boolean(),
+    url: z.string(),
+    viewStyle: z.string(),
+})
+/**
+ * Represents a project in Todoist.
+ * @see https://todoist.com/api/v1/docs#tag/Projects
+ */
+export interface Project extends z.infer<typeof ProjectSchema> {}
 
 // This allows us to accept any string during validation, but provide intellisense for the two possible values in request args
-export type ProjectViewStyle = 'list' | 'board'
+/**
+ * @see https://todoist.com/api/v1/docs#tag/Projects
+ */
+export type ProjectViewStyle = 'list' | 'board' | 'calendar'
 
-export const Section = Record({
-    id: String,
-    order: Int,
-    name: String,
-    projectId: String,
+export const SectionSchema = z.object({
+    id: z.string(),
+    userId: z.string(),
+    projectId: z.string(),
+    addedAt: z.string(),
+    updatedAt: z.string(),
+    archivedAt: z.string().nullable(),
+    name: z.string(),
+    sectionOrder: z.number().int(),
+    isArchived: z.boolean(),
+    isDeleted: z.boolean(),
+    isCollapsed: z.boolean(),
+})
+/**
+ * Represents a section in a Todoist project.
+ * @see https://todoist.com/api/v1/docs#tag/Sections
+ */
+export interface Section extends z.infer<typeof SectionSchema> {}
+
+export const LabelSchema = z.object({
+    id: z.string(),
+    order: z.number().int().nullable(),
+    name: z.string(),
+    color: z.string(),
+    isFavorite: z.boolean(),
+})
+/**
+ * Represents a label in Todoist.
+ * @see https://todoist.com/api/v1/docs#tag/Labels
+ */
+export interface Label extends z.infer<typeof LabelSchema> {}
+
+export const AttachmentSchema = z
+    .object({
+        resourceType: z.string(),
+    })
+    .extend({
+        fileName: z.string().nullable().optional(),
+        fileSize: z.number().int().nullable().optional(),
+        fileType: z.string().nullable().optional(),
+        fileUrl: z.string().nullable().optional(),
+        fileDuration: z.number().int().nullable().optional(),
+        uploadState: z.enum(['pending', 'completed']).nullable().optional(),
+        image: z.string().nullable().optional(),
+        imageWidth: z.number().int().nullable().optional(),
+        imageHeight: z.number().int().nullable().optional(),
+        url: z.string().nullable().optional(),
+        title: z.string().nullable().optional(),
+    })
+/**
+ * Represents a file attachment in a comment.
+ * @see https://todoist.com/api/v1/docs#tag/Sync/Comments/File-Attachments
+ */
+export interface Attachment extends z.infer<typeof AttachmentSchema> {}
+
+export const RawCommentSchema = z
+    .object({
+        id: z.string(),
+        itemId: z.string().optional(),
+        projectId: z.string().optional(),
+        content: z.string(),
+        postedAt: z.string(),
+        fileAttachment: AttachmentSchema.nullable(),
+        postedUid: z.string(),
+        uidsToNotify: z.array(z.string()).nullable(),
+        reactions: z.record(z.string(), z.array(z.string())).nullable(),
+        isDeleted: z.boolean(),
+    })
+    .refine(
+        (data) => {
+            // At least one of itemId or projectId must be present
+            return (
+                (data.itemId !== undefined && data.projectId === undefined) ||
+                (data.itemId === undefined && data.projectId !== undefined)
+            )
+        },
+        {
+            message: 'Exactly one of itemId or projectId must be provided',
+        },
+    )
+
+/**
+ * Represents a raw comment response from the API.
+ * @see https://todoist.com/api/v1/docs#tag/Comments
+ */
+export interface RawComment extends z.infer<typeof RawCommentSchema> {}
+
+export const CommentSchema = RawCommentSchema.transform((data) => {
+    const { itemId, ...rest } = data
+    return {
+        ...rest,
+        // Map itemId to taskId for backwards compatibility
+        taskId: itemId,
+    }
 })
 
-export type Section = Static<typeof Section>
+/**
+ * Represents a comment in Todoist.
+ * @see https://todoist.com/api/v1/docs#tag/Comments
+ */
+export interface Comment extends z.infer<typeof CommentSchema> {}
 
-export const Label = Record({
-    id: String,
-    order: Int,
-    name: String,
-    color: String,
-    isFavorite: Boolean,
+export const UserSchema = z.object({
+    id: z.string(),
+    name: z.string(),
+    email: z.string(),
 })
+/**
+ * Represents a user in Todoist.
+ * @see https://todoist.com/api/v1/docs#tag/User
+ */
+export interface User extends z.infer<typeof UserSchema> {}
 
-export type Label = Static<typeof Label>
-
-export const Attachment = Record({
-    resourceType: String,
-}).And(
-    Partial({
-        fileName: String.Or(Null),
-        fileSize: Int.Or(Null),
-        fileType: String.Or(Null),
-        fileUrl: String.Or(Null),
-        fileDuration: Int.Or(Null),
-        uploadState: Union(Literal('pending'), Literal('completed')).Or(Null),
-        image: String.Or(Null),
-        imageWidth: Int.Or(Null),
-        imageHeight: Int.Or(Null),
-        url: String.Or(Null),
-        title: String.Or(Null),
-    }),
-)
-
-export type Attachment = Static<typeof Attachment>
-
-export const Comment = Record({
-    id: String,
-    content: String,
-    postedAt: String,
-}).And(
-    Partial({
-        taskId: String.Or(Null),
-        projectId: String.Or(Null),
-        attachment: Attachment.Or(Null),
-    }),
-)
-
-export type Comment = Static<typeof Comment>
-
-export const User = Record({
-    id: String,
-    name: String,
-    email: String,
-})
-
-export type User = Static<typeof User>
-
-export type Color = {
-    /**
-     * @deprecated No longer used
-     */
-    id: number
-    /**
-     * The key of the color (i.e. 'berry_red')
-     */
-    key: string
-    /**
-     * The display name of the color (i.e. 'Berry Red')
-     */
-    displayName: string
-    /**
-     * @deprecated Use {@link Color.displayName} instead
-     */
-    name: string
-    /**
-     * The hex value of the color (i.e. '#b8255f')
-     */
-    hexValue: string
+export const ColorSchema = z.object({
+    /** @deprecated No longer used */
+    id: z.number(),
+    /** The key of the color (i.e. 'berry_red') */
+    key: z.string(),
+    /** The display name of the color (i.e. 'Berry Red') */
+    displayName: z.string(),
+    /** @deprecated Use {@link Color.displayName} instead */
+    name: z.string(),
+    /** The hex value of the color (i.e. '#b8255f') */
+    hexValue: z.string(),
     /**
      * @deprecated Use {@link Color.hexValue} instead
      */
-    value: string
-}
-
-export type QuickAddTaskResponse = {
-    id: string
-    projectId: string
-    content: string
-    description: string
-    priority: number
-    sectionId: string | null
-    parentId: string | null
-    childOrder: number // order
-    labels: string[]
-    responsibleUid: string | null
-    checked: boolean // completed
-    addedAt: string // created
-    addedByUid: string | null
-    duration: Duration | null
-    due: {
-        date: string
-        timezone: string | null
-        isRecurring: boolean
-        string: string
-        lang: string
-    } | null
-}
+    value: z.string(),
+})
+/**
+ * Represents a color in Todoist.
+ * @see https://todoist.com/api/v1/docs#tag/Colors
+ */
+export interface Color extends z.infer<typeof ColorSchema> {}

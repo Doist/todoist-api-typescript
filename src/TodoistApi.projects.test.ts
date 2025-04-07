@@ -7,7 +7,7 @@ import {
     PROJECT_WITH_OPTIONALS_AS_NULL,
 } from './testUtils/testDefaults'
 import {
-    getRestBaseUri,
+    getSyncBaseUri,
     ENDPOINT_REST_PROJECTS,
     ENDPOINT_REST_PROJECT_COLLABORATORS,
 } from './consts/endpoints'
@@ -29,7 +29,7 @@ describe('TodoistApi project endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'GET',
-                getRestBaseUri(),
+                getSyncBaseUri(),
                 `${ENDPOINT_REST_PROJECTS}/${projectId}`,
                 DEFAULT_AUTH_TOKEN,
             )
@@ -47,28 +47,34 @@ describe('TodoistApi project endpoints', () => {
 
     describe('getProjects', () => {
         test('calls get on projects endpoint', async () => {
-            const requestMock = setupRestClientMock([DEFAULT_PROJECT])
+            const requestMock = setupRestClientMock({
+                results: [DEFAULT_PROJECT],
+                nextCursor: '123',
+            })
             const api = getTarget()
 
-            await api.getProjects()
+            const args = { limit: 10, cursor: '0' }
+            await api.getProjects(args)
 
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'GET',
-                getRestBaseUri(),
+                getSyncBaseUri(),
                 ENDPOINT_REST_PROJECTS,
                 DEFAULT_AUTH_TOKEN,
+                args,
             )
         })
 
         test('returns result from rest client', async () => {
             const projects = [DEFAULT_PROJECT, PROJECT_WITH_OPTIONALS_AS_NULL]
-            setupRestClientMock(projects)
+            setupRestClientMock({ results: projects, nextCursor: '123' })
             const api = getTarget()
 
-            const response = await api.getProjects()
+            const { results, nextCursor } = await api.getProjects()
 
-            expect(response).toEqual(projects)
+            expect(results).toEqual(projects)
+            expect(nextCursor).toBe('123')
         })
     })
 
@@ -86,7 +92,7 @@ describe('TodoistApi project endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'POST',
-                getRestBaseUri(),
+                getSyncBaseUri(),
                 ENDPOINT_REST_PROJECTS,
                 DEFAULT_AUTH_TOKEN,
                 DEFAULT_ADD_PROJECT_ARGS,
@@ -117,7 +123,7 @@ describe('TodoistApi project endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'POST',
-                getRestBaseUri(),
+                getSyncBaseUri(),
                 `${ENDPOINT_REST_PROJECTS}/${projectId}`,
                 DEFAULT_AUTH_TOKEN,
                 updateArgs,
@@ -126,7 +132,7 @@ describe('TodoistApi project endpoints', () => {
         })
 
         test('returns success result from rest client', async () => {
-            const returnedProject = { ...DEFAULT_PROJECT, DEFAULT_UPDATE_PROJECT_ARGS }
+            const returnedProject = { ...DEFAULT_PROJECT, ...DEFAULT_UPDATE_PROJECT_ARGS }
             setupRestClientMock(returnedProject, 204)
             const api = getTarget()
 
@@ -147,7 +153,7 @@ describe('TodoistApi project endpoints', () => {
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'DELETE',
-                getRestBaseUri(),
+                getSyncBaseUri(),
                 `${ENDPOINT_REST_PROJECTS}/${projectId}`,
                 DEFAULT_AUTH_TOKEN,
                 undefined,
@@ -170,27 +176,30 @@ describe('TodoistApi project endpoints', () => {
         const users = [DEFAULT_USER]
 
         test('calls get on expected endpoint', async () => {
-            const requestMock = setupRestClientMock(users)
+            const requestMock = setupRestClientMock({ results: users, nextCursor: '123' })
             const api = getTarget()
 
-            await api.getProjectCollaborators(projectId)
+            const args = { limit: 10, cursor: '0' }
+            await api.getProjectCollaborators(projectId, args)
 
             expect(requestMock).toBeCalledTimes(1)
             expect(requestMock).toBeCalledWith(
                 'GET',
-                getRestBaseUri(),
+                getSyncBaseUri(),
                 `${ENDPOINT_REST_PROJECTS}/${projectId}/${ENDPOINT_REST_PROJECT_COLLABORATORS}`,
                 DEFAULT_AUTH_TOKEN,
+                args,
             )
         })
 
         test('returns result from rest client', async () => {
-            setupRestClientMock(users)
+            setupRestClientMock({ results: users, nextCursor: '123' })
             const api = getTarget()
 
-            const returnedUsers = await api.getProjectCollaborators(projectId)
+            const { results, nextCursor } = await api.getProjectCollaborators(projectId)
 
-            expect(returnedUsers).toEqual(users)
+            expect(results).toEqual(users)
+            expect(nextCursor).toBe('123')
         })
     })
 })

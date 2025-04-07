@@ -5,9 +5,10 @@ import {
     Section,
     Task,
     User,
-    Comment,
+    RawComment,
     Attachment,
     Duration,
+    Deadline,
 } from '../types'
 
 const DEFAULT_TASK_ID = '1234'
@@ -33,6 +34,7 @@ const DEFAULT_USER_NAME = 'A User'
 const DEFAULT_USER_EMAIL = 'atestuser@doist.com'
 const DEFAULT_COMMENT_ID = '4'
 const DEFAULT_COMMENT_CONTENT = 'A comment'
+const DEFAULT_COMMENT_REACTIONS = { '👍': ['1234', '5678'] }
 
 export const DEFAULT_AUTH_TOKEN = 'AToken'
 export const DEFAULT_REQUEST_ID = 'ARequestID'
@@ -43,6 +45,8 @@ export const DEFAULT_DUE_DATE = {
     isRecurring: false,
     string: 'a date string',
     date: DEFAULT_DATE,
+    lang: 'en',
+    timezone: null,
 }
 
 export const DEFAULT_DURATION: Duration = {
@@ -50,9 +54,9 @@ export const DEFAULT_DURATION: Duration = {
     unit: 'minute',
 }
 
-export const INVALID_DUE_DATE = {
-    ...DEFAULT_DUE_DATE,
-    isRecurring: 'false',
+export const DEFAULT_DEADLINE: Deadline = {
+    date: '2020-09-08',
+    lang: 'en',
 }
 
 export const DEFAULT_QUICK_ADD_RESPONSE: QuickAddTaskResponse = {
@@ -77,6 +81,8 @@ export const DEFAULT_QUICK_ADD_RESPONSE: QuickAddTaskResponse = {
         lang: 'en',
         isRecurring: false,
     },
+    deadline: DEFAULT_DEADLINE,
+    assignedByUid: DEFAULT_CREATOR,
 }
 
 export const DEFAULT_TASK: Task = {
@@ -90,18 +96,19 @@ export const DEFAULT_TASK: Task = {
     isCompleted: false,
     labels: DEFAULT_LABELS,
     priority: DEFAULT_TASK_PRIORITY,
-    commentCount: 0,
     createdAt: DEFAULT_DATE,
     url: 'https://todoist.com/showTask?id=1234',
     due: DEFAULT_DUE_DATE,
+    assignerId: DEFAULT_CREATOR,
     assigneeId: DEFAULT_ASSIGNEE,
     creatorId: DEFAULT_CREATOR,
     duration: DEFAULT_DURATION,
+    deadline: DEFAULT_DEADLINE,
 }
 
 export const INVALID_TASK = {
     ...DEFAULT_TASK,
-    due: INVALID_DUE_DATE,
+    due: '2020-01-31',
 }
 
 export const TASK_WITH_OPTIONALS_AS_NULL: Task = {
@@ -120,7 +127,6 @@ export const DEFAULT_PROJECT: Project = {
     color: DEFAULT_ENTITY_COLOR,
     order: DEFAULT_ORDER,
     parentId: DEFAULT_PROJECT_ID,
-    commentCount: 0,
     isFavorite: false,
     isShared: false,
     isInboxProject: false,
@@ -141,9 +147,16 @@ export const PROJECT_WITH_OPTIONALS_AS_NULL: Project = {
 
 export const DEFAULT_SECTION: Section = {
     id: DEFAULT_SECTION_ID,
-    name: DEFAULT_SECTION_NAME,
-    order: DEFAULT_ORDER,
+    userId: DEFAULT_USER_ID,
     projectId: DEFAULT_PROJECT_ID,
+    addedAt: '2025-03-28T14:01:23.334881Z',
+    updatedAt: '2025-03-28T14:01:23.334885Z',
+    archivedAt: null,
+    name: DEFAULT_SECTION_NAME,
+    sectionOrder: DEFAULT_ORDER,
+    isArchived: false,
+    isDeleted: false,
+    isCollapsed: false,
 }
 
 export const INVALID_SECTION = {
@@ -187,29 +200,46 @@ export const INVALID_ATTACHMENT = {
     uploadState: 'something random',
 }
 
-export const DEFAULT_COMMENT: Comment = {
+export const DEFAULT_RAW_COMMENT: RawComment = {
     id: DEFAULT_COMMENT_ID,
+    postedUid: DEFAULT_USER_ID,
     content: DEFAULT_COMMENT_CONTENT,
-    projectId: DEFAULT_PROJECT_ID,
-    attachment: DEFAULT_ATTACHMENT,
+    fileAttachment: DEFAULT_ATTACHMENT,
+    uidsToNotify: null,
+    isDeleted: false,
     postedAt: DEFAULT_DATE,
+    reactions: DEFAULT_COMMENT_REACTIONS,
+    itemId: DEFAULT_TASK_ID,
+}
+
+export const DEFAULT_COMMENT = {
+    ...DEFAULT_RAW_COMMENT,
+    taskId: DEFAULT_RAW_COMMENT.itemId,
+    itemId: undefined,
 }
 
 export const INVALID_COMMENT = {
-    ...DEFAULT_COMMENT,
-    attachment: INVALID_ATTACHMENT,
+    ...DEFAULT_RAW_COMMENT,
+    isDeleted: 'true',
 }
 
-export const COMMENT_WITH_OPTIONALS_AS_NULL_TASK: Comment = {
-    ...DEFAULT_COMMENT,
-    projectId: null,
-    attachment: null,
+export const RAW_COMMENT_WITH_OPTIONALS_AS_NULL_TASK: RawComment = {
+    ...DEFAULT_RAW_COMMENT,
+    fileAttachment: null,
+    uidsToNotify: null,
+    reactions: null,
 }
 
-export const COMMENT_WITH_ATTACHMENT_WITH_OPTIONALS_AS_NULL: Comment = {
-    ...DEFAULT_COMMENT,
-    attachment: {
-        ...DEFAULT_ATTACHMENT,
+export const COMMENT_WITH_OPTIONALS_AS_NULL_TASK = {
+    ...RAW_COMMENT_WITH_OPTIONALS_AS_NULL_TASK,
+    taskId: RAW_COMMENT_WITH_OPTIONALS_AS_NULL_TASK.itemId,
+    itemId: undefined,
+}
+
+export const RAW_COMMENT_WITH_ATTACHMENT_WITH_OPTIONALS_AS_NULL: RawComment = {
+    ...DEFAULT_RAW_COMMENT,
+    fileAttachment: {
+        resourceType: 'file',
         fileName: null,
         fileSize: null,
         fileType: null,
@@ -223,8 +253,19 @@ export const COMMENT_WITH_ATTACHMENT_WITH_OPTIONALS_AS_NULL: Comment = {
     },
 }
 
-export const COMMENT_WITH_OPTIONALS_AS_NULL_PROJECT: Comment = {
-    ...DEFAULT_COMMENT,
-    taskId: null,
-    attachment: null,
+export const COMMENT_WITH_ATTACHMENT_WITH_OPTIONALS_AS_NULL = {
+    ...RAW_COMMENT_WITH_ATTACHMENT_WITH_OPTIONALS_AS_NULL,
+    taskId: RAW_COMMENT_WITH_ATTACHMENT_WITH_OPTIONALS_AS_NULL.itemId,
+    itemId: undefined,
+}
+
+export const RAW_COMMENT_WITH_OPTIONALS_AS_NULL_PROJECT: RawComment = {
+    ...DEFAULT_RAW_COMMENT,
+    itemId: undefined,
+    projectId: DEFAULT_PROJECT_ID,
+}
+
+export const COMMENT_WITH_OPTIONALS_AS_NULL_PROJECT = {
+    ...RAW_COMMENT_WITH_OPTIONALS_AS_NULL_PROJECT,
+    taskId: undefined,
 }
