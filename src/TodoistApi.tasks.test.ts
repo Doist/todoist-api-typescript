@@ -13,6 +13,7 @@ import {
     ENDPOINT_REST_TASK_CLOSE,
     ENDPOINT_REST_TASK_REOPEN,
     ENDPOINT_REST_TASKS,
+    ENDPOINT_REST_TASKS_FILTER,
     ENDPOINT_SYNC_QUICK_ADD,
 } from './consts/endpoints'
 import { setupRestClientMock } from './testUtils/mocks'
@@ -284,6 +285,51 @@ describe('TodoistApi task endpoints', () => {
 
             expect(results).toEqual(tasks)
             expect(nextCursor).toBe('123')
+        })
+    })
+
+    describe('getTasksByFilter', () => {
+        const DEFAULT_GET_TASKS_BY_FILTER_ARGS = {
+            query: 'today',
+            lang: 'en',
+            cursor: null,
+            limit: 10,
+        }
+
+        test('calls get request with expected url', async () => {
+            const requestMock = setupRestClientMock({ results: [DEFAULT_TASK], nextCursor: null })
+            const api = getTarget()
+
+            await api.getTasksByFilter(DEFAULT_GET_TASKS_BY_FILTER_ARGS)
+
+            expect(requestMock).toBeCalledTimes(1)
+            expect(requestMock).toBeCalledWith(
+                'GET',
+                getSyncBaseUri(),
+                ENDPOINT_REST_TASKS_FILTER,
+                DEFAULT_AUTH_TOKEN,
+                DEFAULT_GET_TASKS_BY_FILTER_ARGS,
+            )
+        })
+
+        test('returns result from rest client', async () => {
+            setupRestClientMock({ results: [DEFAULT_TASK], nextCursor: null })
+            const api = getTarget()
+
+            const response = await api.getTasksByFilter(DEFAULT_GET_TASKS_BY_FILTER_ARGS)
+
+            expect(response).toEqual({
+                results: [DEFAULT_TASK],
+                nextCursor: null,
+            })
+        })
+
+        test('validates task array in response', async () => {
+            const invalidTask = { ...DEFAULT_TASK, due: '2020-01-31' }
+            setupRestClientMock({ results: [invalidTask], nextCursor: null })
+            const api = getTarget()
+
+            await expect(api.getTasksByFilter(DEFAULT_GET_TASKS_BY_FILTER_ARGS)).rejects.toThrow()
         })
     })
 })

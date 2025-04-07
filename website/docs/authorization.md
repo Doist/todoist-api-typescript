@@ -64,4 +64,4 @@ const task = await api.addTask({
 -   `data:delete` - Full access including delete
 -   `project:delete` - Can delete projects
 
-📖 For detailed implementation steps and security considerations, consult the [Todoist API Authorization Guide](https://developer.todoist.com/guides/#authorization).
+📖 For detailed implementation steps and security considerations, consult the [Todoist API v1 Authorization Guide](https://todoist.com/api/v1/docs#tag/Authorization).

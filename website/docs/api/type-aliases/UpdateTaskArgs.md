@@ -20,6 +20,8 @@ type UpdateTaskArgs = {
 }>;
 ```
 
+Arguments for updating a task.
+
 ## Type declaration
 
 | Name | Type |
@@ -36,4 +38,4 @@ type UpdateTaskArgs = {
 
 ## See
 
-https://developer.todoist.com/rest/v2/#update-a-task
+https://todoist.com/api/v1/docs#tag/Tasks/operation/update_task_api_v1_tasks__task_id__post

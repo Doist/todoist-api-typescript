@@ -20,4 +20,4 @@ Parameters required to exchange an authorization code for an access token.
 
 ## See
 
-https://developer.todoist.com/guides/#step-3-token-exchange
+https://todoist.com/api/v1/docs#tag/Authorization/OAuth

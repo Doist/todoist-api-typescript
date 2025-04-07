@@ -9,6 +9,8 @@ type UpdateLabelArgs = {
 };
 ```
 
+Arguments for updating a label.
+
 ## Type declaration
 
 | Name | Type |
@@ -20,4 +22,4 @@ type UpdateLabelArgs = {
 
 ## See
 
-https://developer.todoist.com/rest/v2/#update-a-personal-label
+https://todoist.com/api/v1/docs#tag/Labels/operation/update_label_api_v1_labels__label_id__post

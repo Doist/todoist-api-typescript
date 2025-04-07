@@ -13,7 +13,8 @@ import type {
 } from './entities'
 
 /**
- * @see https://developer.todoist.com/rest/v2/#create-a-new-task
+ * Arguments for creating a new task.
+ * @see https://todoist.com/api/v1/docs#tag/Tasks/operation/create_task_api_v1_tasks_post
  */
 export type AddTaskArgs = {
     content: string
@@ -39,7 +40,8 @@ export type AddTaskArgs = {
     }>
 
 /**
- * @see https://developer.todoist.com/rest/v2/#tasks
+ * Arguments for retrieving tasks.
+ * @see https://todoist.com/api/v1/docs#tag/Tasks/operation/get_tasks_api_v1_tasks_get
  */
 export type GetTasksArgs = {
     projectId?: string
@@ -52,7 +54,8 @@ export type GetTasksArgs = {
 }
 
 /**
- * @see http://todoist.com/api/v1/docs#tag/Tasks/operation/get_tasks_by_filter_api_v1_tasks_filter_get
+ * Arguments for retrieving tasks by filter.
+ * @see https://todoist.com/api/v1/docs#tag/Tasks/operation/get_tasks_by_filter_api_v1_tasks_filter_get
  */
 export type GetTasksByFilterArgs = {
     query: string
@@ -62,7 +65,7 @@ export type GetTasksByFilterArgs = {
 }
 
 /**
- * @see https://developer.todoist.com/rest/v2/#tasks
+ * @see https://todoist.com/api/v1/docs#tag/Tasks/operation/get_tasks_api_v1_tasks_get
  */
 export type GetTasksResponse = {
     results: Task[]
@@ -70,7 +73,8 @@ export type GetTasksResponse = {
 }
 
 /**
- * @see https://developer.todoist.com/rest/v2/#update-a-task
+ * Arguments for updating a task.
+ * @see https://todoist.com/api/v1/docs#tag/Tasks/operation/update_task_api_v1_tasks__task_id__post
  */
 export type UpdateTaskArgs = {
     content?: string
@@ -92,7 +96,8 @@ export type UpdateTaskArgs = {
     }>
 
 /**
- * @see https://developer.todoist.com/rest/v2/#quick-add-task
+ * Arguments for quick adding a task.
+ * @see https://todoist.com/api/v1/docs#tag/Tasks/operation/quick_add_api_v1_tasks_quick_post
  */
 export type QuickAddTaskArgs = {
     text: string
@@ -103,7 +108,8 @@ export type QuickAddTaskArgs = {
 }
 
 /**
- * @see https://developer.todoist.com/rest/v2/#quick-add-task
+ * Response from quick adding a task.
+ * @see https://todoist.com/api/v1/docs#tag/Tasks/operation/quick_add_api_v1_tasks_quick_post
  */
 export type SyncTask = {
     id: string
@@ -126,12 +132,14 @@ export type SyncTask = {
 }
 
 /**
- * @see https://developer.todoist.com/rest/v2/#quick-add-task
+ * Response from quick adding a task.
+ * @see https://todoist.com/api/v1/docs#tag/Tasks/operation/quick_add_api_v1_tasks_quick_post
  */
 export type QuickAddTaskResponse = SyncTask
 
 /**
- * @see https://developer.todoist.com/sync/v9/#move-an-item
+ * Arguments for moving a task.
+ * @see https://todoist.com/api/v1/docs#tag/Tasks/operation/move_task_api_v1_tasks__task_id__move_post
  */
 export type MoveTaskArgs = RequireExactlyOne<{
     projectId?: string
@@ -140,14 +148,17 @@ export type MoveTaskArgs = RequireExactlyOne<{
 }>
 
 /**
- * @see https://developer.todoist.com/rest/v2/#get-all-projects
+ * Arguments for retrieving projects.
+ * @see https://todoist.com/api/v1/docs#tag/Projects/operation/get_projects_api_v1_projects_get
  */
 export type GetProjectsArgs = {
     cursor?: string | null
     limit?: number
 }
+
 /**
- * @see https://developer.todoist.com/rest/v2/#get-all-projects
+ * Response from retrieving projects.
+ * @see https://todoist.com/api/v1/docs#tag/Projects/operation/get_projects_api_v1_projects_get
  */
 export type GetProjectsResponse = {
     results: Project[]
@@ -155,7 +166,8 @@ export type GetProjectsResponse = {
 }
 
 /**
- * @see https://developer.todoist.com/rest/v2/#create-a-new-project
+ * Arguments for creating a new project.
+ * @see https://todoist.com/api/v1/docs#tag/Projects/operation/create_project_api_v1_projects_post
  */
 export type AddProjectArgs = {
     name: string
@@ -166,7 +178,8 @@ export type AddProjectArgs = {
 }
 
 /**
- * @see https://developer.todoist.com/rest/v2/#update-a-project
+ * Arguments for updating a project.
+ * @see https://todoist.com/api/v1/docs#tag/Projects/operation/update_project_api_v1_projects__project_id__post
  */
 export type UpdateProjectArgs = {
     name?: string
@@ -176,14 +189,17 @@ export type UpdateProjectArgs = {
 }
 
 /**
- * @see https://developer.todoist.com/rest/v2/#get-all-collaborators
+ * Arguments for retrieving project collaborators.
+ * @see https://todoist.com/api/v1/docs#tag/Projects/operation/get_project_collaborators_api_v1_projects__project_id__collaborators_get
  */
 export type GetProjectCollaboratorsArgs = {
     cursor?: string | null
     limit?: number
 }
+
 /**
- * @see https://developer.todoist.com/rest/v2/#get-all-collaborators
+ * Response from retrieving project collaborators.
+ * @see https://todoist.com/api/v1/docs#tag/Projects/operation/get_project_collaborators_api_v1_projects__project_id__collaborators_get
  */
 export type GetProjectCollaboratorsResponse = {
     results: User[]
@@ -191,15 +207,18 @@ export type GetProjectCollaboratorsResponse = {
 }
 
 /**
- * @see https://developer.todoist.com/rest/v2/#sections
+ * Arguments for retrieving sections.
+ * @see https://todoist.com/api/v1/docs#tag/Sections/operation/get_sections_api_v1_sections_get
  */
 export type GetSectionsArgs = {
     projectId: string | null
     cursor?: string | null
     limit?: number
 }
+
 /**
- * @see https://developer.todoist.com/rest/v2/#sections
+ * Response from retrieving sections.
+ * @see https://todoist.com/api/v1/docs#tag/Sections/operation/get_sections_api_v1_sections_get
  */
 export type GetSectionsResponse = {
     results: Section[]
@@ -207,7 +226,8 @@ export type GetSectionsResponse = {
 }
 
 /**
- * @see https://developer.todoist.com/rest/v2/#create-a-new-section
+ * Arguments for creating a new section.
+ * @see https://todoist.com/api/v1/docs#tag/Sections/operation/create_section_api_v1_sections_post
  */
 export type AddSectionArgs = {
     name: string
@@ -216,21 +236,25 @@ export type AddSectionArgs = {
 }
 
 /**
- * @see https://developer.todoist.com/rest/v2/#update-a-section
+ * Arguments for updating a section.
+ * @see https://todoist.com/api/v1/docs#tag/Sections/operation/update_section_api_v1_sections__section_id__post
  */
 export type UpdateSectionArgs = {
     name: string
 }
 
 /**
- * @see https://developer.todoist.com/rest/v2/#get-all-personal-labels
+ * Arguments for retrieving labels.
+ * @see https://todoist.com/api/v1/docs#tag/Labels/operation/get_labels_api_v1_labels_get
  */
 export type GetLabelsArgs = {
     cursor?: string | null
     limit?: number
 }
+
 /**
- * @see https://developer.todoist.com/rest/v2/#get-all-personal-labels
+ * Response from retrieving labels.
+ * @see https://todoist.com/api/v1/docs#tag/Labels/operation/get_labels_api_v1_labels_get
  */
 export type GetLabelsResponse = {
     results: Label[]
@@ -238,7 +262,8 @@ export type GetLabelsResponse = {
 }
 
 /**
- * @see https://developer.todoist.com/rest/v2/#create-a-new-personal-label
+ * Arguments for creating a new label.
+ * @see https://todoist.com/api/v1/docs#tag/Labels/operation/create_label_api_v1_labels_post
  */
 export type AddLabelArgs = {
     name: string
@@ -248,7 +273,8 @@ export type AddLabelArgs = {
 }
 
 /**
- * @see https://developer.todoist.com/rest/v2/#update-a-personal-label
+ * Arguments for updating a label.
+ * @see https://todoist.com/api/v1/docs#tag/Labels/operation/update_label_api_v1_labels__label_id__post
  */
 export type UpdateLabelArgs = {
     name?: string
@@ -258,15 +284,18 @@ export type UpdateLabelArgs = {
 }
 
 /**
- * @see https://developer.todoist.com/rest/v2/#get-all-shared-labels
+ * Arguments for retrieving shared labels.
+ * @see https://todoist.com/api/v1/docs#tag/Labels/operation/shared_labels_api_v1_labels_shared_get
  */
 export type GetSharedLabelsArgs = {
     omitPersonal?: boolean
     cursor?: string | null
     limit?: number
 }
+
 /**
- * @see https://developer.todoist.com/rest/v2/#get-all-shared-labels
+ * Response from retrieving shared labels.
+ * @see https://todoist.com/api/v1/docs#tag/Labels/operation/shared_labels_api_v1_labels_shared_get
  */
 export type GetSharedLabelsResponse = {
     results: string[]
@@ -274,7 +303,8 @@ export type GetSharedLabelsResponse = {
 }
 
 /**
- * @see https://developer.todoist.com/rest/v2/#rename-shared-labels
+ * Arguments for renaming a shared label.
+ * @see https://todoist.com/api/v1/docs#tag/Labels/operation/shared_labels_rename_api_v1_labels_shared_rename_post
  */
 export type RenameSharedLabelArgs = {
     name: string
@@ -282,14 +312,27 @@ export type RenameSharedLabelArgs = {
 }
 
 /**
- * @see https://developer.todoist.com/rest/v2/#remove-shared-labels
+ * Arguments for removing a shared label.
+ * @see https://todoist.com/api/v1/docs#tag/Labels/operation/shared_labels_remove_api_v1_labels_shared_remove_post
  */
 export type RemoveSharedLabelArgs = {
     name: string
 }
 
 /**
- * @see https://developer.todoist.com/rest/v2/#get-all-comments
+ * Arguments for retrieving comments.
+ * @see https://todoist.com/api/v1/docs#tag/Comments/operation/get_comments_api_v1_comments_get
+ */
+export type GetCommentsArgs = {
+    taskId: string
+    projectId?: never
+    cursor?: string | null
+    limit?: number
+}
+
+/**
+ * Arguments for retrieving task comments.
+ * @see https://todoist.com/api/v1/docs#tag/Comments/operation/get_comments_api_v1_comments_get
  */
 export type GetTaskCommentsArgs = {
     taskId: string
@@ -297,8 +340,10 @@ export type GetTaskCommentsArgs = {
     cursor?: string | null
     limit?: number
 }
+
 /**
- * @see https://developer.todoist.com/rest/v2/#get-all-comments
+ * Arguments for retrieving project comments.
+ * @see https://todoist.com/api/v1/docs#tag/Comments/operation/get_comments_api_v1_comments_get
  */
 export type GetProjectCommentsArgs = {
     projectId: string
@@ -306,8 +351,10 @@ export type GetProjectCommentsArgs = {
     cursor?: string | null
     limit?: number
 }
+
 /**
- * @see https://developer.todoist.com/rest/v2/#get-all-comments
+ * Response from retrieving comments.
+ * @see https://todoist.com/api/v1/docs#tag/Comments/operation/get_comments_api_v1_comments_get
  */
 export type GetCommentsResponse = {
     results: Comment[]
@@ -315,7 +362,8 @@ export type GetCommentsResponse = {
 }
 
 /**
- * @see https://developer.todoist.com/rest/v2/#create-a-new-comment
+ * Arguments for creating a new comment.
+ * @see https://todoist.com/api/v1/docs#tag/Comments/operation/create_comment_api_v1_comments_post
  */
 export type AddCommentArgs = {
     content: string
@@ -331,7 +379,8 @@ export type AddCommentArgs = {
 }>
 
 /**
- * @see https://developer.todoist.com/rest/v2/#update-a-comment
+ * Arguments for updating a comment.
+ * @see https://todoist.com/api/v1/docs#tag/Comments/operation/update_comment_api_v1_comments__comment_id__post
  */
 export type UpdateCommentArgs = {
     content: string

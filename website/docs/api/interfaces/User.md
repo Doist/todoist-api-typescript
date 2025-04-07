@@ -4,7 +4,7 @@ Represents a user in Todoist.
 
 ## See
 
-https://developer.todoist.com/sync/v9/#user
+https://todoist.com/api/v1/docs#tag/User
 
 ## Extends
 

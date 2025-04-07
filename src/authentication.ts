@@ -11,7 +11,7 @@ import {
 
 /**
  * Permission scopes that can be requested during OAuth2 authorization.
- * @see {@link https://developer.todoist.com/guides/#step-1-authorization-request}
+ * @see {@link https://todoist.com/api/v1/docs#tag/Authorization}
  */
 export type Permission =
     | 'task:add'
@@ -22,7 +22,7 @@ export type Permission =
 
 /**
  * Parameters required to exchange an authorization code for an access token.
- * @see https://developer.todoist.com/guides/#step-3-token-exchange
+ * @see https://todoist.com/api/v1/docs#tag/Authorization/OAuth
  */
 export type AuthTokenRequestArgs = {
     clientId: string
@@ -31,7 +31,7 @@ export type AuthTokenRequestArgs = {
 }
 /**
  * Response from a successful OAuth2 token exchange.
- * @see https://developer.todoist.com/guides/#step-3-token-exchange
+ * @see https://todoist.com/api/v1/docs#tag/Authorization/OAuth
  */
 export type AuthTokenResponse = {
     accessToken: string
@@ -40,7 +40,7 @@ export type AuthTokenResponse = {
 
 /**
  * Parameters required to revoke an access token.
- * @see https://developer.todoist.com/rest/v2/#authorization
+ * @see https://todoist.com/api/v1/docs#tag/Authorization/operation/revoke_access_token_api_api_v1_access_tokens_delete
  */
 export type RevokeAuthTokenRequestArgs = {
     clientId: string
@@ -79,7 +79,7 @@ export function getAuthStateParameter(): string {
  * ```
  *
  * @returns The full authorization URL to redirect users to
- * @see https://developer.todoist.com/guides/#step-1-authorization-request
+ * @see https://todoist.com/api/v1/docs#tag/Authorization/OAuth
  */
 export function getAuthorizationUrl(
     clientId: string,
@@ -148,6 +148,7 @@ export async function getAuthToken(
  * ```
  *
  * @returns True if revocation was successful
+ * @see https://todoist.com/api/v1/docs#tag/Authorization/operation/revoke_access_token_api_api_v1_access_tokens_delete
  */
 export async function revokeAuthToken(
     args: RevokeAuthTokenRequestArgs,

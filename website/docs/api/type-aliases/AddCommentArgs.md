@@ -16,6 +16,8 @@ type AddCommentArgs = {
 }>;
 ```
 
+Arguments for creating a new comment.
+
 ## Type declaration
 
 | Name | Type |
@@ -25,4 +27,4 @@ type AddCommentArgs = {
 
 ## See
 
-https://developer.todoist.com/rest/v2/#create-a-new-comment
+https://todoist.com/api/v1/docs#tag/Comments/operation/create_comment_api_v1_comments_post

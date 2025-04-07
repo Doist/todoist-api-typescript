@@ -1,10 +1,10 @@
 # RawComment
 
-Represents the raw comment data as received from the API before transformation.
+Represents a raw comment response from the API.
 
 ## See
 
-https://developer.todoist.com/sync/v9/#notes
+https://todoist.com/api/v1/docs#tag/Comments
 
 ## Extends
 

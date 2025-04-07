@@ -1,6 +1,6 @@
 # TodoistApi
 
-A client for interacting with the Todoist Sync API.
+A client for interacting with the Todoist API v1.
 This class provides methods to manage tasks, projects, sections, labels, and comments in Todoist.
 
 ## Example
@@ -17,6 +17,9 @@ const newTask = await api.addTask({
   projectId: '12345'
 });
 ```
+
+For more information about the Todoist API v1, see the [official documentation](https://todoist.com/api/v1).
+If you're migrating from v9, please refer to the [migration guide](https://todoist.com/api/v1/docs#tag/Migrating-from-v9).
 
 ## Constructors
 

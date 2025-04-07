@@ -24,6 +24,8 @@ type AddTaskArgs = {
 }>;
 ```
 
+Arguments for creating a new task.
+
 ## Type declaration
 
 | Name | Type |
@@ -44,4 +46,4 @@ type AddTaskArgs = {
 
 ## See
 
-https://developer.todoist.com/rest/v2/#create-a-new-task
+https://todoist.com/api/v1/docs#tag/Tasks/operation/create_task_api_v1_tasks_post

@@ -7,6 +7,8 @@ type GetProjectCollaboratorsArgs = {
 };
 ```
 
+Arguments for retrieving project collaborators.
+
 ## Type declaration
 
 | Name | Type |
@@ -16,4 +18,4 @@ type GetProjectCollaboratorsArgs = {
 
 ## See
 
-https://developer.todoist.com/rest/v2/#get-all-collaborators
+https://todoist.com/api/v1/docs#tag/Projects/operation/get_project_collaborators_api_v1_projects__project_id__collaborators_get

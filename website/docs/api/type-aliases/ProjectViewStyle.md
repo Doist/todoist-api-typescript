@@ -6,4 +6,4 @@ type ProjectViewStyle = "list" | "board" | "calendar";
 
 ## See
 
-https://developer.todoist.com/sync/v9/#projects
+https://todoist.com/api/v1/docs#tag/Projects

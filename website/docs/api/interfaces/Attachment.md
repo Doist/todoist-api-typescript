@@ -1,10 +1,10 @@
 # Attachment
 
-Represents an attachment associated with a comment in Todoist.
+Represents a file attachment in a comment.
 
 ## See
 
-https://developer.todoist.com/sync/v9/#file-attachments
+https://todoist.com/api/v1/docs#tag/Sync/Comments/File-Attachments
 
 ## Extends
 

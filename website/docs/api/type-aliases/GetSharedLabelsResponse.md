@@ -7,6 +7,8 @@ type GetSharedLabelsResponse = {
 };
 ```
 
+Response from retrieving shared labels.
+
 ## Type declaration
 
 | Name | Type |
@@ -16,4 +18,4 @@ type GetSharedLabelsResponse = {
 
 ## See
 
-https://developer.todoist.com/rest/v2/#get-all-shared-labels
+https://todoist.com/api/v1/docs#tag/Labels/operation/shared_labels_api_v1_labels_shared_get

@@ -1,10 +1,10 @@
 {
     "name": "@doist/todoist-api-typescript",
-    "version": "4.0.0-alpha.7",
+    "version": "4.0.0",
     "description": "A typescript wrapper for the Todoist REST API.",
     "author": "Doist developers",
     "repository": "git@github.com:doist/todoist-api-typescript.git",
-    "homepage": "https://developer.todoist.com/rest/v1/?javascript",
+    "homepage": "https://doist.github.io/todoist-api-typescript/",
     "license": "MIT",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",

@@ -1,10 +1,10 @@
 # Color
 
-Represents a color in Todoist, used for projects, labels, or other visual elements.
+Represents a color in Todoist.
 
 ## See
 
-https://developer.todoist.com/guides/#colors
+https://todoist.com/api/v1/docs#tag/Colors
 
 ## Extends
 

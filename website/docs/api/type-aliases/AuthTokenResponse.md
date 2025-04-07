@@ -18,4 +18,4 @@ Response from a successful OAuth2 token exchange.
 
 ## See
 
-https://developer.todoist.com/guides/#step-3-token-exchange
+https://todoist.com/api/v1/docs#tag/Authorization/OAuth

@@ -13,7 +13,7 @@ export const DueDateSchema = z
     })
 /**
  * Represents a due date for a task.
- * @see https://developer.todoist.com/sync/v9/#due-dates
+ * @see https://todoist.com/api/v1/docs#tag/Tasks/operation/get_tasks_api_v1_tasks_get
  */
 export interface DueDate extends z.infer<typeof DueDateSchema> {}
 
@@ -22,8 +22,8 @@ export const DurationSchema = z.object({
     unit: z.enum(['minute', 'day']),
 })
 /**
- * Represents the duration of a task.
- * @see https://developer.todoist.com/sync/v9/#deadlines
+ * Represents a duration for a task deadline.
+ * @see https://todoist.com/api/v1/docs#tag/Tasks
  */
 export interface Duration extends z.infer<typeof DurationSchema> {}
 
@@ -57,8 +57,8 @@ export const TaskSchema = z.object({
     deadline: DeadlineSchema.nullable(),
 })
 /**
- * A task is a unit of work. It can be a simple to-do item or a more complex task with subtasks, comments, and attachments.
- * @see https://developer.todoist.com/sync/v9/#items
+ * Represents a task in Todoist.
+ * @see https://todoist.com/api/v1/docs#tag/Tasks
  */
 export interface Task extends z.infer<typeof TaskSchema> {}
 
@@ -76,14 +76,14 @@ export const ProjectSchema = z.object({
     viewStyle: z.string(),
 })
 /**
- * Represents a project in Todoist, which can contain multiple tasks.
- * @see https://developer.todoist.com/sync/v9/#projects
+ * Represents a project in Todoist.
+ * @see https://todoist.com/api/v1/docs#tag/Projects
  */
 export interface Project extends z.infer<typeof ProjectSchema> {}
 
 // This allows us to accept any string during validation, but provide intellisense for the two possible values in request args
 /**
- * @see https://developer.todoist.com/sync/v9/#projects
+ * @see https://todoist.com/api/v1/docs#tag/Projects
  */
 export type ProjectViewStyle = 'list' | 'board' | 'calendar'
 
@@ -101,8 +101,8 @@ export const SectionSchema = z.object({
     isCollapsed: z.boolean(),
 })
 /**
- * Represents a section within a project, used to group tasks.
- * @see https://developer.todoist.com/sync/v9/#sections
+ * Represents a section in a Todoist project.
+ * @see https://todoist.com/api/v1/docs#tag/Sections
  */
 export interface Section extends z.infer<typeof SectionSchema> {}
 
@@ -114,8 +114,8 @@ export const LabelSchema = z.object({
     isFavorite: z.boolean(),
 })
 /**
- * Represents a label in Todoist, which is used to categorize tasks.
- * @see https://developer.todoist.com/sync/v9/#labels
+ * Represents a label in Todoist.
+ * @see https://todoist.com/api/v1/docs#tag/Labels
  */
 export interface Label extends z.infer<typeof LabelSchema> {}
 
@@ -137,8 +137,8 @@ export const AttachmentSchema = z
         title: z.string().nullable().optional(),
     })
 /**
- * Represents an attachment associated with a comment in Todoist.
- * @see https://developer.todoist.com/sync/v9/#file-attachments
+ * Represents a file attachment in a comment.
+ * @see https://todoist.com/api/v1/docs#tag/Sync/Comments/File-Attachments
  */
 export interface Attachment extends z.infer<typeof AttachmentSchema> {}
 
@@ -169,8 +169,8 @@ export const RawCommentSchema = z
     )
 
 /**
- * Represents the raw comment data as received from the API before transformation.
- * @see https://developer.todoist.com/sync/v9/#notes
+ * Represents a raw comment response from the API.
+ * @see https://todoist.com/api/v1/docs#tag/Comments
  */
 export interface RawComment extends z.infer<typeof RawCommentSchema> {}
 
@@ -184,8 +184,8 @@ export const CommentSchema = RawCommentSchema.transform((data) => {
 })
 
 /**
- * Represents a comment on a task or project in Todoist.
- * @see https://developer.todoist.com/sync/v9/#notes
+ * Represents a comment in Todoist.
+ * @see https://todoist.com/api/v1/docs#tag/Comments
  */
 export interface Comment extends z.infer<typeof CommentSchema> {}
 
@@ -196,7 +196,7 @@ export const UserSchema = z.object({
 })
 /**
  * Represents a user in Todoist.
- * @see https://developer.todoist.com/sync/v9/#user
+ * @see https://todoist.com/api/v1/docs#tag/User
  */
 export interface User extends z.infer<typeof UserSchema> {}
 
@@ -217,7 +217,7 @@ export const ColorSchema = z.object({
     value: z.string(),
 })
 /**
- * Represents a color in Todoist, used for projects, labels, or other visual elements.
- * @see https://developer.todoist.com/guides/#colors
+ * Represents a color in Todoist.
+ * @see https://todoist.com/api/v1/docs#tag/Colors
  */
 export interface Color extends z.infer<typeof ColorSchema> {}

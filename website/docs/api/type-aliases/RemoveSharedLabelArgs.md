@@ -6,6 +6,8 @@ type RemoveSharedLabelArgs = {
 };
 ```
 
+Arguments for removing a shared label.
+
 ## Type declaration
 
 | Name | Type |
@@ -14,4 +16,4 @@ type RemoveSharedLabelArgs = {
 
 ## See
 
-https://developer.todoist.com/rest/v2/#remove-shared-labels
+https://todoist.com/api/v1/docs#tag/Labels/operation/shared_labels_remove_api_v1_labels_shared_remove_post

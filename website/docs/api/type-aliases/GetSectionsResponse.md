@@ -7,6 +7,8 @@ type GetSectionsResponse = {
 };
 ```
 
+Response from retrieving sections.
+
 ## Type declaration
 
 | Name | Type |
@@ -16,4 +18,4 @@ type GetSectionsResponse = {
 
 ## See
 
-https://developer.todoist.com/rest/v2/#sections
+https://todoist.com/api/v1/docs#tag/Sections/operation/get_sections_api_v1_sections_get

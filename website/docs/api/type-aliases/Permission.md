@@ -13,4 +13,4 @@ Permission scopes that can be requested during OAuth2 authorization.
 
 ## See
 
-[https://developer.todoist.com/guides/#step-1-authorization-request](https://developer.todoist.com/guides/#step-1-authorization-request)
+[https://todoist.com/api/v1/docs#tag/Authorization](https://todoist.com/api/v1/docs#tag/Authorization)

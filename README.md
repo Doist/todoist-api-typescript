@@ -2,9 +2,6 @@
 
 This is the official TypeScript API client for the Todoist REST API.
 
-> [!IMPORTANT]  
-> This library is currently being migrated from the Todoist REST API to the Todoist Sync API. As a result, parts of the documentation may be outdated. However, the client API remains consistent with the latest stable release, [v3.0.3](https://github.com/Doist/todoist-api-typescript/releases/tag/v3.0.3). Please note that some client methods may return unexpected data or encounter failures during this transition.
-
 ## Installation
 
 ```
@@ -27,7 +24,19 @@ api.getTasks()
 
 ### Documentation
 
-For more detailed reference documentation, have a look at the [API documentation with TypeScript examples](https://developer.todoist.com/rest/v2/?javascript).
+For more detailed reference documentation, have a look at the [Todoist API v1 Documentation](https://todoist.com/api/v1).
+
+### Migration Guide
+
+If you're migrating from an older version of the Todoist API (v9), please refer to the [official migration guide](https://todoist.com/api/v1/docs#tag/Migrating-from-v9) for detailed information about the changes and breaking updates.
+
+Key changes in v1 include:
+
+-   Updated endpoint structure
+-   New pagination system
+-   Unified error response format
+-   Object renames (e.g., items → tasks, notes → comments)
+-   URL renames and endpoint signature changes
 
 ## Development and Testing
 

@@ -9,6 +9,8 @@ type UpdateProjectArgs = {
 };
 ```
 
+Arguments for updating a project.
+
 ## Type declaration
 
 | Name | Type |
@@ -20,4 +22,4 @@ type UpdateProjectArgs = {
 
 ## See
 
-https://developer.todoist.com/rest/v2/#update-a-project
+https://todoist.com/api/v1/docs#tag/Projects/operation/update_project_api_v1_projects__project_id__post
