@@ -3,11 +3,10 @@
 ```ts
 type GetTasksArgs = {
   cursor: string | null;
-  filter: string;
   ids: string[];
   label: string;
-  lang: string;
   limit: number;
+  parentId: string;
   projectId: string;
   sectionId: string;
 };
@@ -18,11 +17,10 @@ type GetTasksArgs = {
 | Name | Type |
 | ------ | ------ |
 | <a id="cursor"></a> `cursor`? | `string` \| `null` |
-| <a id="filter"></a> `filter`? | `string` |
 | <a id="ids"></a> `ids`? | `string`[] |
 | <a id="label"></a> `label`? | `string` |
-| <a id="lang"></a> `lang`? | `string` |
 | <a id="limit"></a> `limit`? | `number` |
+| <a id="parentid"></a> `parentId`? | `string` |
 | <a id="projectid"></a> `projectId`? | `string` |
 | <a id="sectionid"></a> `sectionId`? | `string` |
 
