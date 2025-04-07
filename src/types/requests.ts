@@ -44,13 +44,23 @@ export type AddTaskArgs = {
 export type GetTasksArgs = {
     projectId?: string
     sectionId?: string
+    parentId?: string
     label?: string
-    filter?: string
-    lang?: string
     ids?: string[]
     cursor?: string | null
     limit?: number
 }
+
+/**
+ * @see http://todoist.com/api/v1/docs#tag/Tasks/operation/get_tasks_by_filter_api_v1_tasks_filter_get
+ */
+export type GetTasksByFilterArgs = {
+    query: string
+    lang?: string
+    cursor?: string | null
+    limit?: number
+}
+
 /**
  * @see https://developer.todoist.com/rest/v2/#tasks
  */

@@ -559,6 +559,28 @@ A promise that resolves to an array of tasks.
 
 ***
 
+### getTasksByFilter()
+
+```ts
+getTasksByFilter(args: GetTasksByFilterArgs): Promise<GetTasksResponse>
+```
+
+Retrieves tasks filtered by a filter string.
+
+#### Parameters
+
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `args` | [`GetTasksByFilterArgs`](../type-aliases/GetTasksByFilterArgs.md) | Parameters for filtering tasks, including the query string and optional language. |
+
+#### Returns
+
+`Promise`\<[`GetTasksResponse`](../type-aliases/GetTasksResponse.md)\>
+
+A promise that resolves to a paginated response of tasks.
+
+***
+
 ### moveTasks()
 
 ```ts
