@@ -24,7 +24,7 @@ api.getTasks()
 
 ### Documentation
 
-For more detailed reference documentation, have a look at the [Todoist API v1 Documentation](https://todoist.com/api/v1).
+For more detailed reference documentation, have a look at the [Todoist API v1 Documentation](https://todoist.com/api/v1/docs).
 
 ### Migration Guide
 
