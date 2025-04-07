@@ -9,6 +9,7 @@ import {
     GetProjectCommentsArgs,
     GetTaskCommentsArgs,
     GetTasksArgs,
+    GetTasksByFilterArgs,
     UpdateCommentArgs,
     UpdateLabelArgs,
     UpdateProjectArgs,
@@ -37,6 +38,7 @@ import { getTaskFromQuickAddResponse } from './utils/taskConverters'
 import {
     getSyncBaseUri,
     ENDPOINT_REST_TASKS,
+    ENDPOINT_REST_TASKS_FILTER,
     ENDPOINT_REST_PROJECTS,
     ENDPOINT_SYNC_QUICK_ADD,
     ENDPOINT_REST_TASK_CLOSE,
@@ -148,6 +150,29 @@ export class TodoistApi {
             'GET',
             this.syncApiBase,
             ENDPOINT_REST_TASKS,
+            this.authToken,
+            args,
+        )
+
+        return {
+            results: validateTaskArray(results),
+            nextCursor,
+        }
+    }
+
+    /**
+     * Retrieves tasks filtered by a filter string.
+     *
+     * @param args - Parameters for filtering tasks, including the query string and optional language.
+     * @returns A promise that resolves to a paginated response of tasks.
+     */
+    async getTasksByFilter(args: GetTasksByFilterArgs): Promise<GetTasksResponse> {
+        const {
+            data: { results, nextCursor },
+        } = await request<GetTasksResponse>(
+            'GET',
+            this.syncApiBase,
+            ENDPOINT_REST_TASKS_FILTER,
             this.authToken,
             args,
         )
