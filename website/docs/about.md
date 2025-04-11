@@ -6,7 +6,7 @@ slug: /
 
 # Todoist API TypeScript Client
 
-This is the official TypeScript API client for the Todoist REST API.
+This is the official TypeScript SDK for the Todoist API.
 
 :::caution Version 4.0.0 - Major Update
 This version introduces breaking changes to align with Todoist's new v1 API.
