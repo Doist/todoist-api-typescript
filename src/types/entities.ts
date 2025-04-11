@@ -36,6 +36,34 @@ export const DeadlineSchema = z.object({
  */
 export interface Deadline extends z.infer<typeof DeadlineSchema> {}
 
+export const RawTaskSchema = z.object({
+    userId: z.string(),
+    id: z.string(),
+    projectId: z.string(),
+    sectionId: z.string().nullable(),
+    parentId: z.string().nullable(),
+    addedByUid: z.string(),
+    assignedByUid: z.string().nullable(),
+    responsibleUid: z.string().nullable(),
+    labels: z.array(z.string()),
+    deadline: DeadlineSchema.nullable(),
+    duration: DurationSchema.nullable(),
+    checked: z.boolean(),
+    isDeleted: z.boolean(),
+    addedAt: z.string(),
+    completedAt: z.string().nullable(),
+    updatedAt: z.string(),
+    due: DueDateSchema.nullable(),
+    priority: z.number().int(),
+    childOrder: z.number().int(),
+    content: z.string(),
+    description: z.string(),
+    dayOrder: z.number().int(),
+    isCollapsed: z.boolean(),
+})
+
+export interface RawTask extends z.infer<typeof RawTaskSchema> {}
+
 export const TaskSchema = z.object({
     id: z.string(),
     assignerId: z.string().nullable(),
@@ -62,7 +90,7 @@ export const TaskSchema = z.object({
  */
 export interface Task extends z.infer<typeof TaskSchema> {}
 
-export const ProjectSchema = z.object({
+export const RawProjectSchema = z.object({
     id: z.string(),
     canAssignTasks: z.boolean(),
     childOrder: z.number().int().nullable(),
@@ -82,6 +110,21 @@ export const ProjectSchema = z.object({
     inboxProject: z.boolean(),
     isCollapsed: z.boolean(),
     isShared: z.boolean(),
+})
+export interface RawProject extends z.infer<typeof RawProjectSchema> {}
+
+export const ProjectSchema = z.object({
+    id: z.string(),
+    parentId: z.string().nullable(),
+    order: z.number().int().nullable(),
+    color: z.string(),
+    name: z.string(),
+    isShared: z.boolean(),
+    isFavorite: z.boolean(),
+    isInboxProject: z.boolean(),
+    isTeamInbox: z.boolean(),
+    url: z.string(),
+    viewStyle: z.string(),
 })
 /**
  * Represents a project in Todoist.

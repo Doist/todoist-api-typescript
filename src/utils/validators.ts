@@ -1,6 +1,4 @@
 import {
-    TaskSchema,
-    ProjectSchema,
     SectionSchema,
     LabelSchema,
     CommentSchema,
@@ -11,9 +9,20 @@ import {
     type Label,
     type Comment,
     type User,
+    RawTaskSchema,
+    RawProjectSchema,
+    ProjectSchema,
+    TaskSchema,
 } from '../types/entities'
+import { getProjectFromRawProjectResponse } from './projectConverter'
+import { getTaskFromRawTaskResponse } from './taskConverters'
 
 export function validateTask(input: unknown): Task {
+    const rawTaskParse = RawTaskSchema.safeParse(input)
+    if (rawTaskParse.success) {
+        const task = getTaskFromRawTaskResponse(rawTaskParse.data)
+        return task
+    }
     return TaskSchema.parse(input)
 }
 
@@ -22,6 +31,11 @@ export function validateTaskArray(input: unknown[]): Task[] {
 }
 
 export function validateProject(input: unknown): Project {
+    const rawProjectParse = RawProjectSchema.safeParse(input)
+    if (rawProjectParse.success) {
+        const project = getProjectFromRawProjectResponse(rawProjectParse.data)
+        return project
+    }
     return ProjectSchema.parse(input)
 }
 
