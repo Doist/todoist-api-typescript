@@ -64,16 +64,24 @@ export interface Task extends z.infer<typeof TaskSchema> {}
 
 export const ProjectSchema = z.object({
     id: z.string(),
-    parentId: z.string().nullable(),
-    order: z.number().int().nullable(),
+    canAssignTasks: z.boolean(),
+    childOrder: z.number().int().nullable(),
     color: z.string(),
-    name: z.string(),
-    isShared: z.boolean(),
+    createdAt: z.string(),
+    isArchived: z.boolean(),
+    isDeleted: z.boolean(),
     isFavorite: z.boolean(),
-    isInboxProject: z.boolean(),
-    isTeamInbox: z.boolean(),
-    url: z.string(),
+    isFrozen: z.boolean(),
+    name: z.string(),
+    updatedAt: z.string(),
     viewStyle: z.string(),
+    defaultOrder: z.number().int().nullable(),
+    description: z.string(),
+    publicAccess: z.boolean(),
+    parentId: z.string().nullable(),
+    inboxProject: z.boolean(),
+    isCollapsed: z.boolean(),
+    isShared: z.boolean(),
 })
 /**
  * Represents a project in Todoist.
