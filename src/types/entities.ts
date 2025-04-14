@@ -36,6 +36,34 @@ export const DeadlineSchema = z.object({
  */
 export interface Deadline extends z.infer<typeof DeadlineSchema> {}
 
+export const RawTaskSchema = z.object({
+    userId: z.string(),
+    id: z.string(),
+    projectId: z.string(),
+    sectionId: z.string().nullable(),
+    parentId: z.string().nullable(),
+    addedByUid: z.string(),
+    assignedByUid: z.string().nullable(),
+    responsibleUid: z.string().nullable(),
+    labels: z.array(z.string()),
+    deadline: DeadlineSchema.nullable(),
+    duration: DurationSchema.nullable(),
+    checked: z.boolean(),
+    isDeleted: z.boolean(),
+    addedAt: z.string(),
+    completedAt: z.string().nullable(),
+    updatedAt: z.string(),
+    due: DueDateSchema.nullable(),
+    priority: z.number().int(),
+    childOrder: z.number().int(),
+    content: z.string(),
+    description: z.string(),
+    dayOrder: z.number().int(),
+    isCollapsed: z.boolean(),
+})
+
+export interface RawTask extends z.infer<typeof RawTaskSchema> {}
+
 export const TaskSchema = z.object({
     id: z.string(),
     assignerId: z.string().nullable(),
@@ -61,6 +89,29 @@ export const TaskSchema = z.object({
  * @see https://todoist.com/api/v1/docs#tag/Tasks
  */
 export interface Task extends z.infer<typeof TaskSchema> {}
+
+export const RawProjectSchema = z.object({
+    id: z.string(),
+    canAssignTasks: z.boolean(),
+    childOrder: z.number().int().nullable(),
+    color: z.string(),
+    createdAt: z.string(),
+    isArchived: z.boolean(),
+    isDeleted: z.boolean(),
+    isFavorite: z.boolean(),
+    isFrozen: z.boolean(),
+    name: z.string(),
+    updatedAt: z.string(),
+    viewStyle: z.string(),
+    defaultOrder: z.number().int().nullable(),
+    description: z.string(),
+    publicAccess: z.boolean(),
+    parentId: z.string().nullable().optional(),
+    inboxProject: z.boolean().optional(),
+    isCollapsed: z.boolean(),
+    isShared: z.boolean(),
+})
+export interface RawProject extends z.infer<typeof RawProjectSchema> {}
 
 export const ProjectSchema = z.object({
     id: z.string(),

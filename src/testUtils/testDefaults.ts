@@ -9,6 +9,8 @@ import {
     Attachment,
     Duration,
     Deadline,
+    RawTask,
+    RawProject,
 } from '../types'
 
 const DEFAULT_TASK_ID = '1234'
@@ -111,14 +113,30 @@ export const INVALID_TASK = {
     due: '2020-01-31',
 }
 
-export const TASK_WITH_OPTIONALS_AS_NULL: Task = {
-    ...DEFAULT_TASK,
-    due: null,
-    assigneeId: null,
-    assignerId: null,
-    parentId: null,
+export const TASK_WITH_OPTIONALS_AS_NULL: RawTask = {
+    userId: DEFAULT_CREATOR,
+    id: DEFAULT_TASK_ID,
+    projectId: DEFAULT_PROJECT_ID,
     sectionId: null,
+    parentId: null,
+    addedByUid: DEFAULT_CREATOR,
+    assignedByUid: null,
+    responsibleUid: null,
+    labels: [],
+    deadline: null,
     duration: null,
+    checked: false,
+    isDeleted: false,
+    addedAt: DEFAULT_DATE,
+    completedAt: null,
+    updatedAt: DEFAULT_DATE,
+    due: null,
+    priority: DEFAULT_TASK_PRIORITY,
+    childOrder: DEFAULT_ORDER,
+    content: DEFAULT_TASK_CONTENT,
+    description: DEFAULT_TASK_DESCRIPTION,
+    dayOrder: DEFAULT_ORDER,
+    isCollapsed: false,
 }
 
 export const DEFAULT_PROJECT: Project = {
@@ -268,4 +286,52 @@ export const RAW_COMMENT_WITH_OPTIONALS_AS_NULL_PROJECT: RawComment = {
 export const COMMENT_WITH_OPTIONALS_AS_NULL_PROJECT = {
     ...RAW_COMMENT_WITH_OPTIONALS_AS_NULL_PROJECT,
     taskId: undefined,
+}
+
+export const RAW_DEFAULT_TASK: RawTask = {
+    userId: DEFAULT_CREATOR,
+    id: DEFAULT_TASK_ID,
+    projectId: DEFAULT_PROJECT_ID,
+    sectionId: DEFAULT_SECTION_ID,
+    parentId: DEFAULT_PARENT_ID,
+    addedByUid: DEFAULT_CREATOR,
+    assignedByUid: DEFAULT_CREATOR,
+    responsibleUid: DEFAULT_ASSIGNEE,
+    labels: DEFAULT_LABELS,
+    deadline: DEFAULT_DEADLINE,
+    duration: DEFAULT_DURATION,
+    checked: false,
+    isDeleted: false,
+    addedAt: DEFAULT_DATE,
+    completedAt: null,
+    updatedAt: DEFAULT_DATE,
+    due: DEFAULT_DUE_DATE,
+    priority: DEFAULT_TASK_PRIORITY,
+    childOrder: DEFAULT_ORDER,
+    content: DEFAULT_TASK_CONTENT,
+    description: DEFAULT_TASK_DESCRIPTION,
+    dayOrder: DEFAULT_ORDER,
+    isCollapsed: false,
+}
+
+export const RAW_DEFAULT_PROJECT: RawProject = {
+    id: DEFAULT_PROJECT_ID,
+    canAssignTasks: true,
+    childOrder: DEFAULT_ORDER,
+    color: DEFAULT_ENTITY_COLOR,
+    createdAt: DEFAULT_DATE,
+    isArchived: false,
+    isDeleted: false,
+    isFavorite: false,
+    isFrozen: false,
+    name: DEFAULT_PROJECT_NAME,
+    updatedAt: DEFAULT_DATE,
+    viewStyle: DEFAULT_PROJECT_VIEW_STYLE,
+    defaultOrder: DEFAULT_ORDER,
+    description: '',
+    publicAccess: false,
+    parentId: DEFAULT_PROJECT_ID,
+    inboxProject: false,
+    isCollapsed: false,
+    isShared: false,
 }
