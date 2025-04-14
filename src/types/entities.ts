@@ -106,8 +106,8 @@ export const RawProjectSchema = z.object({
     defaultOrder: z.number().int().nullable(),
     description: z.string(),
     publicAccess: z.boolean(),
-    parentId: z.string().nullable(),
-    inboxProject: z.boolean(),
+    parentId: z.string().nullable().optional(),
+    inboxProject: z.boolean().optional(),
     isCollapsed: z.boolean(),
     isShared: z.boolean(),
 })
