@@ -63,5 +63,6 @@ const task = await api.addTask({
 -   `data:read_write` - Read and write access
 -   `data:delete` - Full access including delete
 -   `project:delete` - Can delete projects
+-   `backups:read` - Can read the user's list of backups without MFA
 
 📖 For detailed implementation steps and security considerations, consult the [Todoist API v1 Authorization Guide](https://todoist.com/api/v1/docs#tag/Authorization).
