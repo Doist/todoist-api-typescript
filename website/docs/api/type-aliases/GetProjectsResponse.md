@@ -14,7 +14,7 @@ Response from retrieving projects.
 | Name | Type |
 | ------ | ------ |
 | <a id="nextcursor"></a> `nextCursor` | `string` \| `null` |
-| <a id="results"></a> `results` | [`Project`](../interfaces/Project.md)[] |
+| <a id="results"></a> `results` | [`Project`](Project.md)[] |
 
 ## See
 
