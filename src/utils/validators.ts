@@ -9,20 +9,13 @@ import {
     type Label,
     type Comment,
     type User,
-    RawTaskSchema,
-    RawProjectSchema,
     ProjectSchema,
     TaskSchema,
+    type WorkspaceProject,
+    PersonalProject,
 } from '../types/entities'
-import { getProjectFromRawProjectResponse } from './projectConverter'
-import { getTaskFromRawTaskResponse } from './taskConverters'
 
 export function validateTask(input: unknown): Task {
-    const rawTaskParse = RawTaskSchema.safeParse(input)
-    if (rawTaskParse.success) {
-        const task = getTaskFromRawTaskResponse(rawTaskParse.data)
-        return task
-    }
     return TaskSchema.parse(input)
 }
 
@@ -30,12 +23,25 @@ export function validateTaskArray(input: unknown[]): Task[] {
     return input.map(validateTask)
 }
 
+/**
+ * Type guard to check if a project is a workspace project.
+ * @param project The project to check
+ * @returns True if the project is a workspace project
+ */
+export function isWorkspaceProject(project: Project): project is WorkspaceProject {
+    return 'workspaceId' in project
+}
+
+/**
+ * Type guard to check if a project is a personal project.
+ * @param project The project to check
+ * @returns True if the project is a personal project
+ */
+export function isPersonalProject(project: Project): project is PersonalProject {
+    return !isWorkspaceProject(project)
+}
+
 export function validateProject(input: unknown): Project {
-    const rawProjectParse = RawProjectSchema.safeParse(input)
-    if (rawProjectParse.success) {
-        const project = getProjectFromRawProjectResponse(rawProjectParse.data)
-        return project
-    }
     return ProjectSchema.parse(input)
 }
 
