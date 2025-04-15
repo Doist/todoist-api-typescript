@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { getProjectUrl, getTaskUrl } from '../utils/urlHelpers'
 
 export const DueDateSchema = z
     .object({
@@ -36,32 +37,39 @@ export const DeadlineSchema = z.object({
  */
 export interface Deadline extends z.infer<typeof DeadlineSchema> {}
 
-export const TaskSchema = z.object({
-    id: z.string(),
-    userId: z.string(),
-    projectId: z.string(),
-    sectionId: z.string().nullable(),
-    parentId: z.string().nullable(),
-    addedByUid: z.string().nullable(),
-    assignedByUid: z.string().nullable(),
-    responsibleUid: z.string().nullable(),
-    labels: z.array(z.string()),
-    deadline: DeadlineSchema.nullable(),
-    duration: DurationSchema.nullable(),
-    checked: z.boolean(),
-    isDeleted: z.boolean(),
-    addedAt: z.string().nullable(),
-    completedAt: z.string().nullable(),
-    updatedAt: z.string().nullable(),
-    due: DueDateSchema.nullable(),
-    priority: z.number().int(),
-    childOrder: z.number().int(),
-    content: z.string(),
-    description: z.string(),
-    noteCount: z.number().int(),
-    dayOrder: z.number().int(),
-    isCollapsed: z.boolean(),
-})
+export const TaskSchema = z
+    .object({
+        id: z.string(),
+        userId: z.string(),
+        projectId: z.string(),
+        sectionId: z.string().nullable(),
+        parentId: z.string().nullable(),
+        addedByUid: z.string().nullable(),
+        assignedByUid: z.string().nullable(),
+        responsibleUid: z.string().nullable(),
+        labels: z.array(z.string()),
+        deadline: DeadlineSchema.nullable(),
+        duration: DurationSchema.nullable(),
+        checked: z.boolean(),
+        isDeleted: z.boolean(),
+        addedAt: z.string().nullable(),
+        completedAt: z.string().nullable(),
+        updatedAt: z.string().nullable(),
+        due: DueDateSchema.nullable(),
+        priority: z.number().int(),
+        childOrder: z.number().int(),
+        content: z.string(),
+        description: z.string(),
+        noteCount: z.number().int(),
+        dayOrder: z.number().int(),
+        isCollapsed: z.boolean(),
+    })
+    .transform((data) => {
+        return {
+            ...data,
+            url: getTaskUrl(data.id, data.content),
+        }
+    })
 /**
  * Represents a task in Todoist.
  * @see https://todoist.com/api/v1/docs#tag/Tasks
@@ -97,6 +105,11 @@ export const BaseProjectSchema = z.object({
 export const PersonalProjectSchema = BaseProjectSchema.extend({
     parentId: z.string().nullable(),
     inboxProject: z.boolean(),
+}).transform((data) => {
+    return {
+        ...data,
+        url: getProjectUrl(data.id, data.name),
+    }
 })
 
 /**
@@ -110,6 +123,11 @@ export const WorkspaceProjectSchema = BaseProjectSchema.extend({
     role: z.string().nullable(),
     status: z.string(),
     workspaceId: z.string(),
+}).transform((data) => {
+    return {
+        ...data,
+        url: getProjectUrl(data.id, data.name),
+    }
 })
 
 /**

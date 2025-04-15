@@ -9,15 +9,16 @@ import {
     Deadline,
     RawComment,
 } from '../types'
+import { getProjectUrl, getTaskUrl } from '../utils/urlHelpers'
 
-const DEFAULT_TASK_ID = '1234'
-const DEFAULT_TASK_CONTENT = 'This is a task'
-const DEFAULT_TASK_DESCRIPTION = 'A description'
-const DEFAULT_TASK_PRIORITY = 1
-const DEFAULT_ORDER = 3
-const DEFAULT_PROJECT_ID = '123'
-const DEFAULT_PROJECT_NAME = 'This is a project'
-const DEFAULT_PROJECT_VIEW_STYLE = 'list'
+export const DEFAULT_TASK_ID = '1234'
+export const DEFAULT_TASK_CONTENT = 'This is a task'
+export const DEFAULT_TASK_DESCRIPTION = 'A description'
+export const DEFAULT_TASK_PRIORITY = 1
+export const DEFAULT_ORDER = 3
+export const DEFAULT_PROJECT_ID = '123'
+export const DEFAULT_PROJECT_NAME = 'This is a project'
+export const DEFAULT_PROJECT_VIEW_STYLE = 'list'
 const DEFAULT_LABEL_ID = '456'
 const DEFAULT_LABEL_NAME = 'This is a label'
 const DEFAULT_SECTION_ID = '456'
@@ -40,6 +41,10 @@ const DEFAULT_IS_ARCHIVED = false
 const DEFAULT_IS_DELETED = false
 const DEFAULT_IS_FROZEN = false
 const DEFAULT_IS_COLLAPSED = false
+
+// URL constants using the helper functions
+const DEFAULT_TASK_URL = getTaskUrl(DEFAULT_TASK_ID, DEFAULT_TASK_CONTENT)
+const DEFAULT_PROJECT_URL = getProjectUrl(DEFAULT_PROJECT_ID, DEFAULT_PROJECT_NAME)
 
 export const DEFAULT_AUTH_TOKEN = 'AToken'
 export const DEFAULT_REQUEST_ID = 'ARequestID'
@@ -89,6 +94,7 @@ export const DEFAULT_TASK: Task = {
     noteCount: DEFAULT_NOTE_COUNT,
     dayOrder: DEFAULT_ORDER,
     isCollapsed: DEFAULT_IS_COLLAPSED,
+    url: DEFAULT_TASK_URL,
 }
 
 export const INVALID_TASK = {
@@ -121,6 +127,7 @@ export const TASK_WITH_OPTIONALS_AS_NULL: Task = {
     dayOrder: DEFAULT_ORDER,
     isCollapsed: DEFAULT_IS_COLLAPSED,
     noteCount: DEFAULT_NOTE_COUNT,
+    url: DEFAULT_TASK_URL,
 }
 
 export const DEFAULT_PROJECT: Project = {
@@ -142,6 +149,7 @@ export const DEFAULT_PROJECT: Project = {
     defaultOrder: DEFAULT_ORDER,
     description: '',
     isCollapsed: DEFAULT_IS_COLLAPSED,
+    url: DEFAULT_PROJECT_URL,
 }
 
 export const INVALID_PROJECT = {

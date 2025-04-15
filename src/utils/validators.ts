@@ -12,7 +12,7 @@ import {
     ProjectSchema,
     TaskSchema,
     type WorkspaceProject,
-    PersonalProject,
+    type PersonalProject,
 } from '../types/entities'
 
 export function validateTask(input: unknown): Task {

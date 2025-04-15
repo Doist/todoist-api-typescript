@@ -5,6 +5,7 @@ import {
     DEFAULT_REQUEST_ID,
     DEFAULT_USER,
     PROJECT_WITH_OPTIONALS_AS_NULL,
+    DEFAULT_PROJECT_ID,
 } from './testUtils/testDefaults'
 import {
     getSyncBaseUri,
@@ -12,6 +13,7 @@ import {
     ENDPOINT_REST_PROJECT_COLLABORATORS,
 } from './consts/endpoints'
 import { setupRestClientMock } from './testUtils/mocks'
+import { getProjectUrl } from './utils/urlHelpers'
 
 function getTarget() {
     return new TodoistApi(DEFAULT_AUTH_TOKEN)
@@ -112,6 +114,11 @@ describe('TodoistApi project endpoints', () => {
 
     describe('updateProject', () => {
         const DEFAULT_UPDATE_PROJECT_ARGS = { name: 'a name' }
+        const DEFAULT_UPDATED_PROJECT_URL = getProjectUrl(
+            DEFAULT_PROJECT_ID,
+            DEFAULT_UPDATE_PROJECT_ARGS.name,
+        )
+
         test('calls post on restClient with expected parameters', async () => {
             const projectId = '123'
             const updateArgs = { name: 'a new name' }
@@ -132,7 +139,11 @@ describe('TodoistApi project endpoints', () => {
         })
 
         test('returns success result from rest client', async () => {
-            const returnedProject = { ...DEFAULT_PROJECT, ...DEFAULT_UPDATE_PROJECT_ARGS }
+            const returnedProject = {
+                ...DEFAULT_PROJECT,
+                ...DEFAULT_UPDATE_PROJECT_ARGS,
+                url: DEFAULT_UPDATED_PROJECT_URL,
+            }
             setupRestClientMock(returnedProject, 204)
             const api = getTarget()
 

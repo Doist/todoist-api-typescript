@@ -4,6 +4,7 @@ import {
     DEFAULT_REQUEST_ID,
     DEFAULT_TASK,
     TASK_WITH_OPTIONALS_AS_NULL,
+    DEFAULT_TASK_ID,
 } from './testUtils/testDefaults'
 import {
     getSyncBaseUri,
@@ -14,6 +15,7 @@ import {
     ENDPOINT_SYNC_QUICK_ADD,
 } from './consts/endpoints'
 import { setupRestClientMock } from './testUtils/mocks'
+import { getTaskUrl } from './utils/urlHelpers'
 
 function getTarget(baseUrl = 'https://api.todoist.com') {
     return new TodoistApi(DEFAULT_AUTH_TOKEN, baseUrl)
@@ -71,6 +73,10 @@ describe('TodoistApi task endpoints', () => {
 
     describe('updateTask', () => {
         const DEFAULT_UPDATE_TASK_ARGS = { content: 'some new content' }
+        const DEFAULT_UPDATED_TASK_URL = getTaskUrl(
+            DEFAULT_TASK_ID,
+            DEFAULT_UPDATE_TASK_ARGS.content,
+        )
 
         test('calls post on restClient with expected parameters', async () => {
             const taskId = '123'
@@ -91,7 +97,11 @@ describe('TodoistApi task endpoints', () => {
         })
 
         test('returns success result from rest client', async () => {
-            const returnedTask = { ...DEFAULT_TASK, ...DEFAULT_UPDATE_TASK_ARGS }
+            const returnedTask = {
+                ...DEFAULT_TASK,
+                ...DEFAULT_UPDATE_TASK_ARGS,
+                url: DEFAULT_UPDATED_TASK_URL,
+            }
             setupRestClientMock(returnedTask, 204)
             const api = getTarget()
 

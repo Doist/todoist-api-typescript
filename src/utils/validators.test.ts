@@ -204,7 +204,7 @@ describe('validators', () => {
             expect(result).toEqual([])
         })
 
-        test('validation passes for valid comment user', () => {
+        test('validation passes for valid user array', () => {
             const result = validateUserArray([DEFAULT_USER])
             expect(result).toEqual([DEFAULT_USER])
         })
