@@ -19,6 +19,7 @@ export type Permission =
     | 'data:read_write'
     | 'data:delete'
     | 'project:delete'
+    | 'backups:read'
 
 /**
  * Parameters required to exchange an authorization code for an access token.
