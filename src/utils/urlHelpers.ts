@@ -32,7 +32,7 @@ export function getProjectUrl(projectId: string, name?: string): string {
  * @param value The string to slugify.
  * @returns The slugified string.
  */
-export function slugify(value: string): string {
+function slugify(value: string): string {
     // Convert to ASCII
     let result = value.normalize('NFKD').replace(/[\u0300-\u036f]/g, '')
 
