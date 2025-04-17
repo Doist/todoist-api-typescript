@@ -1,4 +1,4 @@
-import { Project, Label, Section, Comment, Task } from './types/entities'
+import { PersonalProject, WorkspaceProject, Label, Section, Comment, Task } from './types/entities'
 import {
     AddCommentArgs,
     AddLabelArgs,
@@ -367,9 +367,9 @@ export class TodoistApi {
      * @param id - The unique identifier of the project.
      * @returns A promise that resolves to the requested project.
      */
-    async getProject(id: string): Promise<Project> {
+    async getProject(id: string): Promise<PersonalProject | WorkspaceProject> {
         z.string().parse(id)
-        const response = await request<Project>(
+        const response = await request<PersonalProject | WorkspaceProject>(
             'GET',
             this.syncApiBase,
             generatePath(ENDPOINT_REST_PROJECTS, id),
@@ -409,8 +409,11 @@ export class TodoistApi {
      * @param requestId - Optional unique identifier for idempotency.
      * @returns A promise that resolves to the created project.
      */
-    async addProject(args: AddProjectArgs, requestId?: string): Promise<Project> {
-        const response = await request<Project>(
+    async addProject(
+        args: AddProjectArgs,
+        requestId?: string,
+    ): Promise<PersonalProject | WorkspaceProject> {
+        const response = await request<PersonalProject | WorkspaceProject>(
             'POST',
             this.syncApiBase,
             ENDPOINT_REST_PROJECTS,
@@ -430,9 +433,13 @@ export class TodoistApi {
      * @param requestId - Optional unique identifier for idempotency.
      * @returns A promise that resolves to the updated project.
      */
-    async updateProject(id: string, args: UpdateProjectArgs, requestId?: string): Promise<Project> {
+    async updateProject(
+        id: string,
+        args: UpdateProjectArgs,
+        requestId?: string,
+    ): Promise<PersonalProject | WorkspaceProject> {
         z.string().parse(id)
-        const response = await request<Project>(
+        const response = await request<PersonalProject | WorkspaceProject>(
             'POST',
             this.syncApiBase,
             generatePath(ENDPOINT_REST_PROJECTS, id),

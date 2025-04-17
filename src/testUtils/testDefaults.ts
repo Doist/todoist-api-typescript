@@ -1,6 +1,5 @@
 import {
     Label,
-    Project,
     Section,
     Task,
     User,
@@ -8,6 +7,7 @@ import {
     Duration,
     Deadline,
     RawComment,
+    PersonalProject,
 } from '../types'
 import { getProjectUrl, getTaskUrl } from '../utils/urlHelpers'
 
@@ -130,7 +130,7 @@ export const TASK_WITH_OPTIONALS_AS_NULL: Task = {
     url: DEFAULT_TASK_URL,
 }
 
-export const DEFAULT_PROJECT: Project = {
+export const DEFAULT_PROJECT: PersonalProject = {
     id: DEFAULT_PROJECT_ID,
     name: DEFAULT_PROJECT_NAME,
     color: DEFAULT_ENTITY_COLOR,
@@ -157,7 +157,7 @@ export const INVALID_PROJECT = {
     name: 123,
 }
 
-export const PROJECT_WITH_OPTIONALS_AS_NULL: Project = {
+export const PROJECT_WITH_OPTIONALS_AS_NULL: PersonalProject = {
     ...DEFAULT_PROJECT,
     parentId: null,
 }

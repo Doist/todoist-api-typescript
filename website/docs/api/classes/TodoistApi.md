@@ -92,53 +92,8 @@ A promise that resolves to the created label.
 
 ```ts
 addProject(args: AddProjectArgs, requestId?: string): Promise<
-  | {
-  canAssignTasks: boolean;
-  childOrder: number;
-  color: string;
-  createdAt: null | string;
-  defaultOrder: number;
-  description: string;
-  id: string;
-  inboxProject: boolean;
-  isArchived: boolean;
-  isCollapsed: boolean;
-  isDeleted: boolean;
-  isFavorite: boolean;
-  isFrozen: boolean;
-  isShared: boolean;
-  name: string;
-  parentId: null | string;
-  updatedAt: null | string;
-  url: string;
-  viewStyle: string;
- }
-  | {
-  canAssignTasks: boolean;
-  childOrder: number;
-  collaboratorRoleDefault: string;
-  color: string;
-  createdAt: null | string;
-  defaultOrder: number;
-  description: string;
-  folderId: null | boolean;
-  id: string;
-  isArchived: boolean;
-  isCollapsed: boolean;
-  isDeleted: boolean;
-  isFavorite: boolean;
-  isFrozen: boolean;
-  isInviteOnly: null | boolean;
-  isLinkSharingEnabled: boolean;
-  isShared: boolean;
-  name: string;
-  role: null | string;
-  status: string;
-  updatedAt: null | string;
-  url: string;
-  viewStyle: string;
-  workspaceId: string;
-}>
+  | PersonalProject
+| WorkspaceProject>
 ```
 
 Creates a new project with the provided parameters.
@@ -153,53 +108,8 @@ Creates a new project with the provided parameters.
 #### Returns
 
 `Promise`\<
-  \| \{
-  `canAssignTasks`: `boolean`;
-  `childOrder`: `number`;
-  `color`: `string`;
-  `createdAt`: `null` \| `string`;
-  `defaultOrder`: `number`;
-  `description`: `string`;
-  `id`: `string`;
-  `inboxProject`: `boolean`;
-  `isArchived`: `boolean`;
-  `isCollapsed`: `boolean`;
-  `isDeleted`: `boolean`;
-  `isFavorite`: `boolean`;
-  `isFrozen`: `boolean`;
-  `isShared`: `boolean`;
-  `name`: `string`;
-  `parentId`: `null` \| `string`;
-  `updatedAt`: `null` \| `string`;
-  `url`: `string`;
-  `viewStyle`: `string`;
- \}
-  \| \{
-  `canAssignTasks`: `boolean`;
-  `childOrder`: `number`;
-  `collaboratorRoleDefault`: `string`;
-  `color`: `string`;
-  `createdAt`: `null` \| `string`;
-  `defaultOrder`: `number`;
-  `description`: `string`;
-  `folderId`: `null` \| `boolean`;
-  `id`: `string`;
-  `isArchived`: `boolean`;
-  `isCollapsed`: `boolean`;
-  `isDeleted`: `boolean`;
-  `isFavorite`: `boolean`;
-  `isFrozen`: `boolean`;
-  `isInviteOnly`: `null` \| `boolean`;
-  `isLinkSharingEnabled`: `boolean`;
-  `isShared`: `boolean`;
-  `name`: `string`;
-  `role`: `null` \| `string`;
-  `status`: `string`;
-  `updatedAt`: `null` \| `string`;
-  `url`: `string`;
-  `viewStyle`: `string`;
-  `workspaceId`: `string`;
- \}\>
+  \| [`PersonalProject`](../interfaces/PersonalProject.md)
+  \| [`WorkspaceProject`](../interfaces/WorkspaceProject.md)\>
 
 A promise that resolves to the created project.
 
@@ -483,53 +393,8 @@ A promise that resolves to an array of labels.
 
 ```ts
 getProject(id: string): Promise<
-  | {
-  canAssignTasks: boolean;
-  childOrder: number;
-  color: string;
-  createdAt: null | string;
-  defaultOrder: number;
-  description: string;
-  id: string;
-  inboxProject: boolean;
-  isArchived: boolean;
-  isCollapsed: boolean;
-  isDeleted: boolean;
-  isFavorite: boolean;
-  isFrozen: boolean;
-  isShared: boolean;
-  name: string;
-  parentId: null | string;
-  updatedAt: null | string;
-  url: string;
-  viewStyle: string;
- }
-  | {
-  canAssignTasks: boolean;
-  childOrder: number;
-  collaboratorRoleDefault: string;
-  color: string;
-  createdAt: null | string;
-  defaultOrder: number;
-  description: string;
-  folderId: null | boolean;
-  id: string;
-  isArchived: boolean;
-  isCollapsed: boolean;
-  isDeleted: boolean;
-  isFavorite: boolean;
-  isFrozen: boolean;
-  isInviteOnly: null | boolean;
-  isLinkSharingEnabled: boolean;
-  isShared: boolean;
-  name: string;
-  role: null | string;
-  status: string;
-  updatedAt: null | string;
-  url: string;
-  viewStyle: string;
-  workspaceId: string;
-}>
+  | PersonalProject
+| WorkspaceProject>
 ```
 
 Retrieves a project by its ID.
@@ -543,53 +408,8 @@ Retrieves a project by its ID.
 #### Returns
 
 `Promise`\<
-  \| \{
-  `canAssignTasks`: `boolean`;
-  `childOrder`: `number`;
-  `color`: `string`;
-  `createdAt`: `null` \| `string`;
-  `defaultOrder`: `number`;
-  `description`: `string`;
-  `id`: `string`;
-  `inboxProject`: `boolean`;
-  `isArchived`: `boolean`;
-  `isCollapsed`: `boolean`;
-  `isDeleted`: `boolean`;
-  `isFavorite`: `boolean`;
-  `isFrozen`: `boolean`;
-  `isShared`: `boolean`;
-  `name`: `string`;
-  `parentId`: `null` \| `string`;
-  `updatedAt`: `null` \| `string`;
-  `url`: `string`;
-  `viewStyle`: `string`;
- \}
-  \| \{
-  `canAssignTasks`: `boolean`;
-  `childOrder`: `number`;
-  `collaboratorRoleDefault`: `string`;
-  `color`: `string`;
-  `createdAt`: `null` \| `string`;
-  `defaultOrder`: `number`;
-  `description`: `string`;
-  `folderId`: `null` \| `boolean`;
-  `id`: `string`;
-  `isArchived`: `boolean`;
-  `isCollapsed`: `boolean`;
-  `isDeleted`: `boolean`;
-  `isFavorite`: `boolean`;
-  `isFrozen`: `boolean`;
-  `isInviteOnly`: `null` \| `boolean`;
-  `isLinkSharingEnabled`: `boolean`;
-  `isShared`: `boolean`;
-  `name`: `string`;
-  `role`: `null` \| `string`;
-  `status`: `string`;
-  `updatedAt`: `null` \| `string`;
-  `url`: `string`;
-  `viewStyle`: `string`;
-  `workspaceId`: `string`;
- \}\>
+  \| [`PersonalProject`](../interfaces/PersonalProject.md)
+  \| [`WorkspaceProject`](../interfaces/WorkspaceProject.md)\>
 
 A promise that resolves to the requested project.
 
@@ -949,53 +769,8 @@ updateProject(
    id: string, 
    args: UpdateProjectArgs, 
    requestId?: string): Promise<
-  | {
-  canAssignTasks: boolean;
-  childOrder: number;
-  color: string;
-  createdAt: null | string;
-  defaultOrder: number;
-  description: string;
-  id: string;
-  inboxProject: boolean;
-  isArchived: boolean;
-  isCollapsed: boolean;
-  isDeleted: boolean;
-  isFavorite: boolean;
-  isFrozen: boolean;
-  isShared: boolean;
-  name: string;
-  parentId: null | string;
-  updatedAt: null | string;
-  url: string;
-  viewStyle: string;
- }
-  | {
-  canAssignTasks: boolean;
-  childOrder: number;
-  collaboratorRoleDefault: string;
-  color: string;
-  createdAt: null | string;
-  defaultOrder: number;
-  description: string;
-  folderId: null | boolean;
-  id: string;
-  isArchived: boolean;
-  isCollapsed: boolean;
-  isDeleted: boolean;
-  isFavorite: boolean;
-  isFrozen: boolean;
-  isInviteOnly: null | boolean;
-  isLinkSharingEnabled: boolean;
-  isShared: boolean;
-  name: string;
-  role: null | string;
-  status: string;
-  updatedAt: null | string;
-  url: string;
-  viewStyle: string;
-  workspaceId: string;
-}>
+  | PersonalProject
+| WorkspaceProject>
 ```
 
 Updates an existing project by its ID with the provided parameters.
@@ -1011,53 +786,8 @@ Updates an existing project by its ID with the provided parameters.
 #### Returns
 
 `Promise`\<
-  \| \{
-  `canAssignTasks`: `boolean`;
-  `childOrder`: `number`;
-  `color`: `string`;
-  `createdAt`: `null` \| `string`;
-  `defaultOrder`: `number`;
-  `description`: `string`;
-  `id`: `string`;
-  `inboxProject`: `boolean`;
-  `isArchived`: `boolean`;
-  `isCollapsed`: `boolean`;
-  `isDeleted`: `boolean`;
-  `isFavorite`: `boolean`;
-  `isFrozen`: `boolean`;
-  `isShared`: `boolean`;
-  `name`: `string`;
-  `parentId`: `null` \| `string`;
-  `updatedAt`: `null` \| `string`;
-  `url`: `string`;
-  `viewStyle`: `string`;
- \}
-  \| \{
-  `canAssignTasks`: `boolean`;
-  `childOrder`: `number`;
-  `collaboratorRoleDefault`: `string`;
-  `color`: `string`;
-  `createdAt`: `null` \| `string`;
-  `defaultOrder`: `number`;
-  `description`: `string`;
-  `folderId`: `null` \| `boolean`;
-  `id`: `string`;
-  `isArchived`: `boolean`;
-  `isCollapsed`: `boolean`;
-  `isDeleted`: `boolean`;
-  `isFavorite`: `boolean`;
-  `isFrozen`: `boolean`;
-  `isInviteOnly`: `null` \| `boolean`;
-  `isLinkSharingEnabled`: `boolean`;
-  `isShared`: `boolean`;
-  `name`: `string`;
-  `role`: `null` \| `string`;
-  `status`: `string`;
-  `updatedAt`: `null` \| `string`;
-  `url`: `string`;
-  `viewStyle`: `string`;
-  `workspaceId`: `string`;
- \}\>
+  \| [`PersonalProject`](../interfaces/PersonalProject.md)
+  \| [`WorkspaceProject`](../interfaces/WorkspaceProject.md)\>
 
 A promise that resolves to the updated project.
 

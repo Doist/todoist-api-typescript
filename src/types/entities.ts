@@ -142,16 +142,6 @@ export interface PersonalProject extends z.infer<typeof PersonalProjectSchema> {
  */
 export interface WorkspaceProject extends z.infer<typeof WorkspaceProjectSchema> {}
 
-/**
- * Schema for validating either a personal project or a workspace project.
- */
-export const ProjectSchema = z.union([PersonalProjectSchema, WorkspaceProjectSchema])
-
-/**
- * Represents either a personal project or a workspace project in Todoist.
- */
-export type Project = z.infer<typeof ProjectSchema>
-
 // This allows us to accept any string during validation, but provide intellisense for the two possible values in request args
 /**
  * @see https://todoist.com/api/v1/docs#tag/Projects

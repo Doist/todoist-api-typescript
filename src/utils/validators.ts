@@ -3,14 +3,14 @@ import {
     LabelSchema,
     CommentSchema,
     UserSchema,
+    TaskSchema,
     type Task,
-    type Project,
     type Section,
     type Label,
     type Comment,
     type User,
-    ProjectSchema,
-    TaskSchema,
+    PersonalProjectSchema,
+    WorkspaceProjectSchema,
     type WorkspaceProject,
     type PersonalProject,
 } from '../types/entities'
@@ -28,7 +28,9 @@ export function validateTaskArray(input: unknown[]): Task[] {
  * @param project The project to check
  * @returns True if the project is a workspace project
  */
-export function isWorkspaceProject(project: Project): project is WorkspaceProject {
+export function isWorkspaceProject(
+    project: PersonalProject | WorkspaceProject,
+): project is WorkspaceProject {
     return 'workspaceId' in project
 }
 
@@ -37,15 +39,25 @@ export function isWorkspaceProject(project: Project): project is WorkspaceProjec
  * @param project The project to check
  * @returns True if the project is a personal project
  */
-export function isPersonalProject(project: Project): project is PersonalProject {
+export function isPersonalProject(
+    project: PersonalProject | WorkspaceProject,
+): project is PersonalProject {
     return !isWorkspaceProject(project)
 }
 
-export function validateProject(input: unknown): Project {
-    return ProjectSchema.parse(input)
+/**
+ * Validates and parses a project input.
+ * @param input The input to validate
+ * @returns A validated project (either PersonalProject or WorkspaceProject)
+ */
+export function validateProject(input: unknown): PersonalProject | WorkspaceProject {
+    if ('workspaceId' in (input as WorkspaceProject)) {
+        return WorkspaceProjectSchema.parse(input)
+    }
+    return PersonalProjectSchema.parse(input)
 }
 
-export function validateProjectArray(input: unknown[]): Project[] {
+export function validateProjectArray(input: unknown[]): (PersonalProject | WorkspaceProject)[] {
     return input.map(validateProject)
 }
 

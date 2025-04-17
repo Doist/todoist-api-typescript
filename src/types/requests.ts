@@ -3,11 +3,12 @@ import type {
     Comment,
     Duration,
     Label,
-    Project,
+    PersonalProject,
     ProjectViewStyle,
     Section,
     Task,
     User,
+    WorkspaceProject,
 } from './entities'
 
 /**
@@ -134,7 +135,7 @@ export type GetProjectsArgs = {
  * @see https://todoist.com/api/v1/docs#tag/Projects/operation/get_projects_api_v1_projects_get
  */
 export type GetProjectsResponse = {
-    results: Project[]
+    results: (PersonalProject | WorkspaceProject)[]
     nextCursor: string | null
 }
 
