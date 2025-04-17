@@ -1,26 +1,24 @@
 import {
     Label,
-    Project,
-    QuickAddTaskResponse,
     Section,
     Task,
     User,
-    RawComment,
     Attachment,
     Duration,
     Deadline,
-    RawTask,
-    RawProject,
+    RawComment,
+    PersonalProject,
 } from '../types'
+import { getProjectUrl, getTaskUrl } from '../utils/urlHelpers'
 
-const DEFAULT_TASK_ID = '1234'
-const DEFAULT_TASK_CONTENT = 'This is a task'
-const DEFAULT_TASK_DESCRIPTION = 'A description'
-const DEFAULT_TASK_PRIORITY = 1
-const DEFAULT_ORDER = 3
-const DEFAULT_PROJECT_ID = '123'
-const DEFAULT_PROJECT_NAME = 'This is a project'
-const DEFAULT_PROJECT_VIEW_STYLE = 'list'
+export const DEFAULT_TASK_ID = '1234'
+export const DEFAULT_TASK_CONTENT = 'This is a task'
+export const DEFAULT_TASK_DESCRIPTION = 'A description'
+export const DEFAULT_TASK_PRIORITY = 1
+export const DEFAULT_ORDER = 3
+export const DEFAULT_PROJECT_ID = '123'
+export const DEFAULT_PROJECT_NAME = 'This is a project'
+export const DEFAULT_PROJECT_VIEW_STYLE = 'list'
 const DEFAULT_LABEL_ID = '456'
 const DEFAULT_LABEL_NAME = 'This is a label'
 const DEFAULT_SECTION_ID = '456'
@@ -37,6 +35,16 @@ const DEFAULT_USER_EMAIL = 'atestuser@doist.com'
 const DEFAULT_COMMENT_ID = '4'
 const DEFAULT_COMMENT_CONTENT = 'A comment'
 const DEFAULT_COMMENT_REACTIONS = { '👍': ['1234', '5678'] }
+const DEFAULT_NOTE_COUNT = 0
+const DEFAULT_CAN_ASSIGN_TASKS = true
+const DEFAULT_IS_ARCHIVED = false
+const DEFAULT_IS_DELETED = false
+const DEFAULT_IS_FROZEN = false
+const DEFAULT_IS_COLLAPSED = false
+
+// URL constants using the helper functions
+const DEFAULT_TASK_URL = getTaskUrl(DEFAULT_TASK_ID, DEFAULT_TASK_CONTENT)
+const DEFAULT_PROJECT_URL = getProjectUrl(DEFAULT_PROJECT_ID, DEFAULT_PROJECT_NAME)
 
 export const DEFAULT_AUTH_TOKEN = 'AToken'
 export const DEFAULT_REQUEST_ID = 'ARequestID'
@@ -61,51 +69,32 @@ export const DEFAULT_DEADLINE: Deadline = {
     lang: 'en',
 }
 
-export const DEFAULT_QUICK_ADD_RESPONSE: QuickAddTaskResponse = {
-    id: DEFAULT_TASK_ID,
-    projectId: DEFAULT_PROJECT_ID,
-    content: DEFAULT_TASK_CONTENT,
-    description: DEFAULT_TASK_DESCRIPTION,
-    priority: DEFAULT_TASK_PRIORITY,
-    sectionId: DEFAULT_SECTION_ID,
-    parentId: DEFAULT_PARENT_ID,
-    childOrder: DEFAULT_ORDER,
-    labels: DEFAULT_LABELS,
-    responsibleUid: DEFAULT_ASSIGNEE,
-    checked: false,
-    addedAt: DEFAULT_DATE,
-    addedByUid: DEFAULT_CREATOR,
-    duration: DEFAULT_DURATION,
-    due: {
-        date: DEFAULT_DATE,
-        timezone: null,
-        string: 'a date string',
-        lang: 'en',
-        isRecurring: false,
-    },
-    deadline: DEFAULT_DEADLINE,
-    assignedByUid: DEFAULT_CREATOR,
-}
-
 export const DEFAULT_TASK: Task = {
     id: DEFAULT_TASK_ID,
-    order: DEFAULT_ORDER,
-    parentId: DEFAULT_PARENT_ID,
-    content: DEFAULT_TASK_CONTENT,
-    description: DEFAULT_TASK_DESCRIPTION,
+    userId: DEFAULT_CREATOR,
     projectId: DEFAULT_PROJECT_ID,
     sectionId: DEFAULT_SECTION_ID,
-    isCompleted: false,
+    parentId: DEFAULT_PARENT_ID,
+    addedByUid: DEFAULT_CREATOR,
+    assignedByUid: DEFAULT_CREATOR,
+    responsibleUid: DEFAULT_ASSIGNEE,
     labels: DEFAULT_LABELS,
-    priority: DEFAULT_TASK_PRIORITY,
-    createdAt: DEFAULT_DATE,
-    url: 'https://todoist.com/showTask?id=1234',
-    due: DEFAULT_DUE_DATE,
-    assignerId: DEFAULT_CREATOR,
-    assigneeId: DEFAULT_ASSIGNEE,
-    creatorId: DEFAULT_CREATOR,
-    duration: DEFAULT_DURATION,
     deadline: DEFAULT_DEADLINE,
+    duration: DEFAULT_DURATION,
+    checked: false,
+    isDeleted: DEFAULT_IS_DELETED,
+    addedAt: DEFAULT_DATE,
+    completedAt: null,
+    updatedAt: DEFAULT_DATE,
+    due: DEFAULT_DUE_DATE,
+    priority: DEFAULT_TASK_PRIORITY,
+    childOrder: DEFAULT_ORDER,
+    content: DEFAULT_TASK_CONTENT,
+    description: DEFAULT_TASK_DESCRIPTION,
+    noteCount: DEFAULT_NOTE_COUNT,
+    dayOrder: DEFAULT_ORDER,
+    isCollapsed: DEFAULT_IS_COLLAPSED,
+    url: DEFAULT_TASK_URL,
 }
 
 export const INVALID_TASK = {
@@ -113,7 +102,7 @@ export const INVALID_TASK = {
     due: '2020-01-31',
 }
 
-export const TASK_WITH_OPTIONALS_AS_NULL: RawTask = {
+export const TASK_WITH_OPTIONALS_AS_NULL: Task = {
     userId: DEFAULT_CREATOR,
     id: DEFAULT_TASK_ID,
     projectId: DEFAULT_PROJECT_ID,
@@ -126,7 +115,7 @@ export const TASK_WITH_OPTIONALS_AS_NULL: RawTask = {
     deadline: null,
     duration: null,
     checked: false,
-    isDeleted: false,
+    isDeleted: DEFAULT_IS_DELETED,
     addedAt: DEFAULT_DATE,
     completedAt: null,
     updatedAt: DEFAULT_DATE,
@@ -136,21 +125,31 @@ export const TASK_WITH_OPTIONALS_AS_NULL: RawTask = {
     content: DEFAULT_TASK_CONTENT,
     description: DEFAULT_TASK_DESCRIPTION,
     dayOrder: DEFAULT_ORDER,
-    isCollapsed: false,
+    isCollapsed: DEFAULT_IS_COLLAPSED,
+    noteCount: DEFAULT_NOTE_COUNT,
+    url: DEFAULT_TASK_URL,
 }
 
-export const DEFAULT_PROJECT: Project = {
+export const DEFAULT_PROJECT: PersonalProject = {
     id: DEFAULT_PROJECT_ID,
     name: DEFAULT_PROJECT_NAME,
     color: DEFAULT_ENTITY_COLOR,
-    order: DEFAULT_ORDER,
+    childOrder: DEFAULT_ORDER,
     parentId: DEFAULT_PROJECT_ID,
     isFavorite: false,
     isShared: false,
-    isInboxProject: false,
-    isTeamInbox: false,
+    inboxProject: false,
     viewStyle: DEFAULT_PROJECT_VIEW_STYLE,
-    url: 'https://todoist.com/showProject?id=123',
+    canAssignTasks: DEFAULT_CAN_ASSIGN_TASKS,
+    isArchived: DEFAULT_IS_ARCHIVED,
+    isDeleted: DEFAULT_IS_DELETED,
+    isFrozen: DEFAULT_IS_FROZEN,
+    createdAt: DEFAULT_DATE,
+    updatedAt: DEFAULT_DATE,
+    defaultOrder: DEFAULT_ORDER,
+    description: '',
+    isCollapsed: DEFAULT_IS_COLLAPSED,
+    url: DEFAULT_PROJECT_URL,
 }
 
 export const INVALID_PROJECT = {
@@ -158,7 +157,7 @@ export const INVALID_PROJECT = {
     name: 123,
 }
 
-export const PROJECT_WITH_OPTIONALS_AS_NULL: Project = {
+export const PROJECT_WITH_OPTIONALS_AS_NULL: PersonalProject = {
     ...DEFAULT_PROJECT,
     parentId: null,
 }
@@ -286,52 +285,4 @@ export const RAW_COMMENT_WITH_OPTIONALS_AS_NULL_PROJECT: RawComment = {
 export const COMMENT_WITH_OPTIONALS_AS_NULL_PROJECT = {
     ...RAW_COMMENT_WITH_OPTIONALS_AS_NULL_PROJECT,
     taskId: undefined,
-}
-
-export const RAW_DEFAULT_TASK: RawTask = {
-    userId: DEFAULT_CREATOR,
-    id: DEFAULT_TASK_ID,
-    projectId: DEFAULT_PROJECT_ID,
-    sectionId: DEFAULT_SECTION_ID,
-    parentId: DEFAULT_PARENT_ID,
-    addedByUid: DEFAULT_CREATOR,
-    assignedByUid: DEFAULT_CREATOR,
-    responsibleUid: DEFAULT_ASSIGNEE,
-    labels: DEFAULT_LABELS,
-    deadline: DEFAULT_DEADLINE,
-    duration: DEFAULT_DURATION,
-    checked: false,
-    isDeleted: false,
-    addedAt: DEFAULT_DATE,
-    completedAt: null,
-    updatedAt: DEFAULT_DATE,
-    due: DEFAULT_DUE_DATE,
-    priority: DEFAULT_TASK_PRIORITY,
-    childOrder: DEFAULT_ORDER,
-    content: DEFAULT_TASK_CONTENT,
-    description: DEFAULT_TASK_DESCRIPTION,
-    dayOrder: DEFAULT_ORDER,
-    isCollapsed: false,
-}
-
-export const RAW_DEFAULT_PROJECT: RawProject = {
-    id: DEFAULT_PROJECT_ID,
-    canAssignTasks: true,
-    childOrder: DEFAULT_ORDER,
-    color: DEFAULT_ENTITY_COLOR,
-    createdAt: DEFAULT_DATE,
-    isArchived: false,
-    isDeleted: false,
-    isFavorite: false,
-    isFrozen: false,
-    name: DEFAULT_PROJECT_NAME,
-    updatedAt: DEFAULT_DATE,
-    viewStyle: DEFAULT_PROJECT_VIEW_STYLE,
-    defaultOrder: DEFAULT_ORDER,
-    description: '',
-    publicAccess: false,
-    parentId: DEFAULT_PROJECT_ID,
-    inboxProject: false,
-    isCollapsed: false,
-    isShared: false,
 }

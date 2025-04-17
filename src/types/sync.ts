@@ -1,4 +1,4 @@
-import type { SyncTask } from './requests'
+import { Task } from './entities'
 
 export type Command = {
     type: string
@@ -20,6 +20,6 @@ export type SyncRequest = {
 }
 
 export type SyncResponse = {
-    items?: SyncTask[]
+    items?: Task[]
     sync_status?: Record<string, 'ok' | SyncError>
 }
