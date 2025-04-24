@@ -45,7 +45,7 @@ export function getTaskFromRawTaskResponse(responseData: RawTask): Task {
         isCompleted: responseData.checked,
         labels: responseData.labels,
         priority: responseData.priority,
-        creatorId: responseData.addedByUid,
+        creatorId: responseData.addedByUid ?? '',
         createdAt: responseData.addedAt,
         due: responseData.due,
         url: getTaskUrlFromTaskId(responseData.id),
