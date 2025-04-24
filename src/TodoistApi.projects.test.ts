@@ -2,9 +2,10 @@ import { TodoistApi } from '.'
 import {
     DEFAULT_AUTH_TOKEN,
     DEFAULT_PROJECT,
-    RAW_DEFAULT_PROJECT,
     DEFAULT_REQUEST_ID,
     DEFAULT_USER,
+    PROJECT_WITH_OPTIONALS_AS_NULL,
+    DEFAULT_PROJECT_ID,
 } from './testUtils/testDefaults'
 import {
     getSyncBaseUri,
@@ -12,6 +13,7 @@ import {
     ENDPOINT_REST_PROJECT_COLLABORATORS,
 } from './consts/endpoints'
 import { setupRestClientMock } from './testUtils/mocks'
+import { getProjectUrl } from './utils/urlHelpers'
 
 function getTarget() {
     return new TodoistApi(DEFAULT_AUTH_TOKEN)
@@ -21,7 +23,7 @@ describe('TodoistApi project endpoints', () => {
     describe('getProject', () => {
         test('calls get request with expected url', async () => {
             const projectId = '12'
-            const requestMock = setupRestClientMock(RAW_DEFAULT_PROJECT)
+            const requestMock = setupRestClientMock(DEFAULT_PROJECT)
             const api = getTarget()
 
             await api.getProject(projectId)
@@ -36,7 +38,7 @@ describe('TodoistApi project endpoints', () => {
         })
 
         test('returns result from rest client', async () => {
-            setupRestClientMock(RAW_DEFAULT_PROJECT)
+            setupRestClientMock(DEFAULT_PROJECT)
             const api = getTarget()
 
             const project = await api.getProject('123')
@@ -48,7 +50,7 @@ describe('TodoistApi project endpoints', () => {
     describe('getProjects', () => {
         test('calls get on projects endpoint', async () => {
             const requestMock = setupRestClientMock({
-                results: [RAW_DEFAULT_PROJECT],
+                results: [DEFAULT_PROJECT],
                 nextCursor: '123',
             })
             const api = getTarget()
@@ -67,13 +69,13 @@ describe('TodoistApi project endpoints', () => {
         })
 
         test('returns result from rest client', async () => {
-            const projects = [RAW_DEFAULT_PROJECT]
+            const projects = [DEFAULT_PROJECT, PROJECT_WITH_OPTIONALS_AS_NULL]
             setupRestClientMock({ results: projects, nextCursor: '123' })
             const api = getTarget()
 
             const { results, nextCursor } = await api.getProjects()
 
-            expect(results).toEqual([DEFAULT_PROJECT])
+            expect(results).toEqual(projects)
             expect(nextCursor).toBe('123')
         })
     })
@@ -84,7 +86,7 @@ describe('TodoistApi project endpoints', () => {
         }
 
         test('calls post on restClient with expected parameters', async () => {
-            const requestMock = setupRestClientMock(RAW_DEFAULT_PROJECT)
+            const requestMock = setupRestClientMock(DEFAULT_PROJECT)
             const api = getTarget()
 
             await api.addProject(DEFAULT_ADD_PROJECT_ARGS, DEFAULT_REQUEST_ID)
@@ -101,7 +103,7 @@ describe('TodoistApi project endpoints', () => {
         })
 
         test('returns result from rest client', async () => {
-            setupRestClientMock(RAW_DEFAULT_PROJECT)
+            setupRestClientMock(DEFAULT_PROJECT)
             const api = getTarget()
 
             const project = await api.addProject(DEFAULT_ADD_PROJECT_ARGS)
@@ -112,10 +114,15 @@ describe('TodoistApi project endpoints', () => {
 
     describe('updateProject', () => {
         const DEFAULT_UPDATE_PROJECT_ARGS = { name: 'a name' }
+        const DEFAULT_UPDATED_PROJECT_URL = getProjectUrl(
+            DEFAULT_PROJECT_ID,
+            DEFAULT_UPDATE_PROJECT_ARGS.name,
+        )
+
         test('calls post on restClient with expected parameters', async () => {
             const projectId = '123'
             const updateArgs = { name: 'a new name' }
-            const requestMock = setupRestClientMock(RAW_DEFAULT_PROJECT, 204)
+            const requestMock = setupRestClientMock(DEFAULT_PROJECT, 204)
             const api = getTarget()
 
             await api.updateProject(projectId, updateArgs, DEFAULT_REQUEST_ID)
@@ -132,20 +139,17 @@ describe('TodoistApi project endpoints', () => {
         })
 
         test('returns success result from rest client', async () => {
-            const RAW_DEFAULT_PROJECT_WITH_UPDATES = {
-                ...RAW_DEFAULT_PROJECT,
-                name: DEFAULT_UPDATE_PROJECT_ARGS.name,
+            const returnedProject = {
+                ...DEFAULT_PROJECT,
+                ...DEFAULT_UPDATE_PROJECT_ARGS,
+                url: DEFAULT_UPDATED_PROJECT_URL,
             }
-            setupRestClientMock(RAW_DEFAULT_PROJECT_WITH_UPDATES, 204)
+            setupRestClientMock(returnedProject, 204)
             const api = getTarget()
 
             const result = await api.updateProject('123', DEFAULT_UPDATE_PROJECT_ARGS)
 
-            const DEFAULT_PROJECT_WITH_UPDATES = {
-                ...DEFAULT_PROJECT,
-                name: DEFAULT_UPDATE_PROJECT_ARGS.name,
-            }
-            expect(result).toEqual(DEFAULT_PROJECT_WITH_UPDATES)
+            expect(result).toEqual(returnedProject)
         })
     })
 

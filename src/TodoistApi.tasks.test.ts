@@ -1,13 +1,10 @@
-import * as taskConverters from './utils/taskConverters'
 import { TodoistApi } from '.'
-import { Task } from './types'
 import {
     DEFAULT_AUTH_TOKEN,
-    DEFAULT_QUICK_ADD_RESPONSE,
     DEFAULT_REQUEST_ID,
     DEFAULT_TASK,
-    RAW_DEFAULT_TASK,
     TASK_WITH_OPTIONALS_AS_NULL,
+    DEFAULT_TASK_ID,
 } from './testUtils/testDefaults'
 import {
     getSyncBaseUri,
@@ -18,10 +15,7 @@ import {
     ENDPOINT_SYNC_QUICK_ADD,
 } from './consts/endpoints'
 import { setupRestClientMock } from './testUtils/mocks'
-
-function setupSyncTaskConverter(returnedTask: Task) {
-    return jest.spyOn(taskConverters, 'getTaskFromQuickAddResponse').mockReturnValue(returnedTask)
-}
+import { getTaskUrl } from './utils/urlHelpers'
 
 function getTarget(baseUrl = 'https://api.todoist.com') {
     return new TodoistApi(DEFAULT_AUTH_TOKEN, baseUrl)
@@ -34,7 +28,7 @@ describe('TodoistApi task endpoints', () => {
         }
 
         test('calls post on restClient with expected parameters', async () => {
-            const requestMock = setupRestClientMock(RAW_DEFAULT_TASK)
+            const requestMock = setupRestClientMock(DEFAULT_TASK)
             const api = getTarget()
 
             await api.addTask(DEFAULT_ADD_TASK_ARGS, DEFAULT_REQUEST_ID)
@@ -51,7 +45,7 @@ describe('TodoistApi task endpoints', () => {
         })
 
         test('calls post on restClient with expected parameters against staging', async () => {
-            const requestMock = setupRestClientMock(RAW_DEFAULT_TASK)
+            const requestMock = setupRestClientMock(DEFAULT_TASK)
             const api = getTarget('https://staging.todoist.com')
 
             await api.addTask(DEFAULT_ADD_TASK_ARGS, DEFAULT_REQUEST_ID)
@@ -68,7 +62,7 @@ describe('TodoistApi task endpoints', () => {
         })
 
         test('returns result from rest client', async () => {
-            setupRestClientMock(RAW_DEFAULT_TASK)
+            setupRestClientMock(DEFAULT_TASK)
             const api = getTarget()
 
             const task = await api.addTask(DEFAULT_ADD_TASK_ARGS)
@@ -79,10 +73,14 @@ describe('TodoistApi task endpoints', () => {
 
     describe('updateTask', () => {
         const DEFAULT_UPDATE_TASK_ARGS = { content: 'some new content' }
+        const DEFAULT_UPDATED_TASK_URL = getTaskUrl(
+            DEFAULT_TASK_ID,
+            DEFAULT_UPDATE_TASK_ARGS.content,
+        )
 
         test('calls post on restClient with expected parameters', async () => {
             const taskId = '123'
-            const requestMock = setupRestClientMock(RAW_DEFAULT_TASK, 204)
+            const requestMock = setupRestClientMock(DEFAULT_TASK, 204)
             const api = getTarget()
 
             await api.updateTask(taskId, DEFAULT_UPDATE_TASK_ARGS, DEFAULT_REQUEST_ID)
@@ -99,20 +97,17 @@ describe('TodoistApi task endpoints', () => {
         })
 
         test('returns success result from rest client', async () => {
-            const RAW_DEFAULT_TASK_WITH_UPDATES = {
-                ...RAW_DEFAULT_TASK,
-                content: DEFAULT_UPDATE_TASK_ARGS.content,
+            const returnedTask = {
+                ...DEFAULT_TASK,
+                ...DEFAULT_UPDATE_TASK_ARGS,
+                url: DEFAULT_UPDATED_TASK_URL,
             }
-            setupRestClientMock(RAW_DEFAULT_TASK_WITH_UPDATES, 204)
+            setupRestClientMock(returnedTask, 204)
             const api = getTarget()
 
             const response = await api.updateTask('123', DEFAULT_UPDATE_TASK_ARGS)
 
-            const DEFAULT_TASK_WITH_UPDATES = {
-                ...DEFAULT_TASK,
-                content: DEFAULT_UPDATE_TASK_ARGS.content,
-            }
-            expect(response).toEqual(DEFAULT_TASK_WITH_UPDATES)
+            expect(response).toEqual(returnedTask)
         })
     })
 
@@ -212,7 +207,7 @@ describe('TodoistApi task endpoints', () => {
         }
 
         test('calls sync endpoint with expected parameters', async () => {
-            const requestMock = setupRestClientMock(DEFAULT_QUICK_ADD_RESPONSE)
+            const requestMock = setupRestClientMock(DEFAULT_TASK)
             const api = getTarget()
 
             await api.quickAddTask(DEFAULT_QUICK_ADD_ARGS)
@@ -228,14 +223,9 @@ describe('TodoistApi task endpoints', () => {
         })
 
         test('calls task converter with response data and returns result', async () => {
-            setupRestClientMock(DEFAULT_QUICK_ADD_RESPONSE)
-            const taskConverter = setupSyncTaskConverter(DEFAULT_TASK)
+            setupRestClientMock(DEFAULT_TASK)
             const api = getTarget()
-
             const task = await api.quickAddTask(DEFAULT_QUICK_ADD_ARGS)
-
-            expect(taskConverter).toBeCalledTimes(1)
-            expect(taskConverter).toBeCalledWith(DEFAULT_QUICK_ADD_RESPONSE)
             expect(task).toEqual(DEFAULT_TASK)
         })
     })
@@ -243,7 +233,7 @@ describe('TodoistApi task endpoints', () => {
     describe('getTask', () => {
         test('calls get request with expected url', async () => {
             const taskId = '12'
-            const requestMock = setupRestClientMock(RAW_DEFAULT_TASK)
+            const requestMock = setupRestClientMock(DEFAULT_TASK)
             const api = getTarget()
 
             await api.getTask(taskId)
@@ -267,7 +257,7 @@ describe('TodoistApi task endpoints', () => {
 
         test('calls get on expected endpoint with args', async () => {
             const requestMock = setupRestClientMock({
-                results: [RAW_DEFAULT_TASK, TASK_WITH_OPTIONALS_AS_NULL],
+                results: [DEFAULT_TASK, TASK_WITH_OPTIONALS_AS_NULL],
                 nextCursor: '123',
             })
             const api = getTarget()
@@ -285,13 +275,13 @@ describe('TodoistApi task endpoints', () => {
         })
 
         test('returns result from rest client', async () => {
-            const tasks = [RAW_DEFAULT_TASK]
+            const tasks = [DEFAULT_TASK]
             setupRestClientMock({ results: tasks, nextCursor: '123' })
             const api = getTarget()
 
             const { results, nextCursor } = await api.getTasks(DEFAULT_GET_TASKS_ARGS)
 
-            expect(results).toEqual([DEFAULT_TASK])
+            expect(results).toEqual(tasks)
             expect(nextCursor).toBe('123')
         })
     })
@@ -305,10 +295,7 @@ describe('TodoistApi task endpoints', () => {
         }
 
         test('calls get request with expected url', async () => {
-            const requestMock = setupRestClientMock({
-                results: [RAW_DEFAULT_TASK],
-                nextCursor: null,
-            })
+            const requestMock = setupRestClientMock({ results: [DEFAULT_TASK], nextCursor: null })
             const api = getTarget()
 
             await api.getTasksByFilter(DEFAULT_GET_TASKS_BY_FILTER_ARGS)
@@ -324,7 +311,7 @@ describe('TodoistApi task endpoints', () => {
         })
 
         test('returns result from rest client', async () => {
-            setupRestClientMock({ results: [RAW_DEFAULT_TASK], nextCursor: null })
+            setupRestClientMock({ results: [DEFAULT_TASK], nextCursor: null })
             const api = getTarget()
 
             const response = await api.getTasksByFilter(DEFAULT_GET_TASKS_BY_FILTER_ARGS)
@@ -336,7 +323,7 @@ describe('TodoistApi task endpoints', () => {
         })
 
         test('validates task array in response', async () => {
-            const invalidTask = { ...RAW_DEFAULT_TASK, due: '2020-01-31' }
+            const invalidTask = { ...DEFAULT_TASK, due: '2020-01-31' }
             setupRestClientMock({ results: [invalidTask], nextCursor: null })
             const api = getTarget()
 

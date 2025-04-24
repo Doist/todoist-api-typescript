@@ -91,7 +91,9 @@ A promise that resolves to the created label.
 ### addProject()
 
 ```ts
-addProject(args: AddProjectArgs, requestId?: string): Promise<Project>
+addProject(args: AddProjectArgs, requestId?: string): Promise<
+  | PersonalProject
+| WorkspaceProject>
 ```
 
 Creates a new project with the provided parameters.
@@ -105,7 +107,9 @@ Creates a new project with the provided parameters.
 
 #### Returns
 
-`Promise`\<[`Project`](../interfaces/Project.md)\>
+`Promise`\<
+  \| [`PersonalProject`](../interfaces/PersonalProject.md)
+  \| [`WorkspaceProject`](../interfaces/WorkspaceProject.md)\>
 
 A promise that resolves to the created project.
 
@@ -388,7 +392,9 @@ A promise that resolves to an array of labels.
 ### getProject()
 
 ```ts
-getProject(id: string): Promise<Project>
+getProject(id: string): Promise<
+  | PersonalProject
+| WorkspaceProject>
 ```
 
 Retrieves a project by its ID.
@@ -401,7 +407,9 @@ Retrieves a project by its ID.
 
 #### Returns
 
-`Promise`\<[`Project`](../interfaces/Project.md)\>
+`Promise`\<
+  \| [`PersonalProject`](../interfaces/PersonalProject.md)
+  \| [`WorkspaceProject`](../interfaces/WorkspaceProject.md)\>
 
 A promise that resolves to the requested project.
 
@@ -760,7 +768,9 @@ A promise that resolves to the updated label.
 updateProject(
    id: string, 
    args: UpdateProjectArgs, 
-requestId?: string): Promise<Project>
+   requestId?: string): Promise<
+  | PersonalProject
+| WorkspaceProject>
 ```
 
 Updates an existing project by its ID with the provided parameters.
@@ -775,7 +785,9 @@ Updates an existing project by its ID with the provided parameters.
 
 #### Returns
 
-`Promise`\<[`Project`](../interfaces/Project.md)\>
+`Promise`\<
+  \| [`PersonalProject`](../interfaces/PersonalProject.md)
+  \| [`WorkspaceProject`](../interfaces/WorkspaceProject.md)\>
 
 A promise that resolves to the updated project.
 

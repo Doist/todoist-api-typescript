@@ -1,15 +1,14 @@
 import type { RequireAllOrNone, RequireOneOrNone, RequireExactlyOne } from 'type-fest'
 import type {
     Comment,
-    Deadline,
-    DueDate,
     Duration,
     Label,
-    Project,
+    PersonalProject,
     ProjectViewStyle,
     Section,
     Task,
     User,
+    WorkspaceProject,
 } from './entities'
 
 /**
@@ -111,31 +110,6 @@ export type QuickAddTaskArgs = {
  * Response from quick adding a task.
  * @see https://todoist.com/api/v1/docs#tag/Tasks/operation/quick_add_api_v1_tasks_quick_post
  */
-export type SyncTask = {
-    id: string
-    projectId: string
-    content: string
-    description: string
-    priority: number
-    sectionId: string | null
-    parentId: string | null
-    childOrder: number // order
-    labels: string[]
-    assignedByUid: string | null
-    responsibleUid: string | null
-    checked: boolean // completed
-    addedAt: string // created
-    addedByUid: string | null
-    duration: Duration | null
-    due: DueDate | null
-    deadline: Deadline | null
-}
-
-/**
- * Response from quick adding a task.
- * @see https://todoist.com/api/v1/docs#tag/Tasks/operation/quick_add_api_v1_tasks_quick_post
- */
-export type QuickAddTaskResponse = SyncTask
 
 /**
  * Arguments for moving a task.
@@ -161,7 +135,7 @@ export type GetProjectsArgs = {
  * @see https://todoist.com/api/v1/docs#tag/Projects/operation/get_projects_api_v1_projects_get
  */
 export type GetProjectsResponse = {
-    results: Project[]
+    results: (PersonalProject | WorkspaceProject)[]
     nextCursor: string | null
 }
 

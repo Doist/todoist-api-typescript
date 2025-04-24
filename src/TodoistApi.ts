@@ -1,5 +1,4 @@
-import { Project, Label, Section, Comment } from './types/entities'
-import type { RawProject, RawTask, Task } from './types/entities'
+import { PersonalProject, WorkspaceProject, Label, Section, Comment, Task } from './types/entities'
 import {
     AddCommentArgs,
     AddLabelArgs,
@@ -30,11 +29,9 @@ import {
     GetSectionsResponse,
     GetSharedLabelsResponse,
     GetCommentsResponse,
-    QuickAddTaskResponse,
     type MoveTaskArgs,
 } from './types/requests'
 import { request, isSuccess } from './restClient'
-import { getTaskFromQuickAddResponse, getTaskFromRawTaskResponse } from './utils/taskConverters'
 import {
     getSyncBaseUri,
     ENDPOINT_REST_TASKS,
@@ -70,7 +67,6 @@ import { z } from 'zod'
 import { v4 as uuidv4 } from 'uuid'
 import { SyncResponse, type Command, type SyncRequest } from './types/sync'
 import { TodoistRequestError } from './types'
-import { getProjectFromRawProjectResponse } from './utils/projectConverter'
 
 const MAX_COMMAND_COUNT = 100
 
@@ -130,15 +126,14 @@ export class TodoistApi {
      */
     async getTask(id: string): Promise<Task> {
         z.string().parse(id)
-        const response = await request<RawTask>(
+        const response = await request<Task>(
             'GET',
             this.syncApiBase,
             generatePath(ENDPOINT_REST_TASKS, id),
             this.authToken,
         )
 
-        const task = getTaskFromRawTaskResponse(response.data)
-        return validateTask(task)
+        return validateTask(response.data)
     }
 
     /**
@@ -149,13 +144,15 @@ export class TodoistApi {
      */
     async getTasks(args: GetTasksArgs = {}): Promise<GetTasksResponse> {
         const {
-            data: { results: rawResults, nextCursor },
-        } = await request<{
-            results: RawTask[]
-            nextCursor: string | null
-        }>('GET', this.syncApiBase, ENDPOINT_REST_TASKS, this.authToken, args)
+            data: { results, nextCursor },
+        } = await request<GetTasksResponse>(
+            'GET',
+            this.syncApiBase,
+            ENDPOINT_REST_TASKS,
+            this.authToken,
+            args,
+        )
 
-        const results = rawResults.map(getTaskFromRawTaskResponse)
         return {
             results: validateTaskArray(results),
             nextCursor,
@@ -170,13 +167,15 @@ export class TodoistApi {
      */
     async getTasksByFilter(args: GetTasksByFilterArgs): Promise<GetTasksResponse> {
         const {
-            data: { results: rawResults, nextCursor },
-        } = await request<{
-            results: RawTask[]
-            nextCursor: string | null
-        }>('GET', this.syncApiBase, ENDPOINT_REST_TASKS_FILTER, this.authToken, args)
+            data: { results, nextCursor },
+        } = await request<GetTasksResponse>(
+            'GET',
+            this.syncApiBase,
+            ENDPOINT_REST_TASKS_FILTER,
+            this.authToken,
+            args,
+        )
 
-        const results = rawResults.map(getTaskFromRawTaskResponse)
         return {
             results: validateTaskArray(results),
             nextCursor,
@@ -191,7 +190,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the created task.
      */
     async addTask(args: AddTaskArgs, requestId?: string): Promise<Task> {
-        const response = await request<RawTask>(
+        const response = await request<Task>(
             'POST',
             this.syncApiBase,
             ENDPOINT_REST_TASKS,
@@ -200,8 +199,7 @@ export class TodoistApi {
             requestId,
         )
 
-        const task = getTaskFromRawTaskResponse(response.data)
-        return validateTask(task)
+        return validateTask(response.data)
     }
 
     /**
@@ -211,7 +209,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the created task.
      */
     async quickAddTask(args: QuickAddTaskArgs): Promise<Task> {
-        const response = await request<QuickAddTaskResponse>(
+        const response = await request<Task>(
             'POST',
             this.syncApiBase,
             ENDPOINT_SYNC_QUICK_ADD,
@@ -219,9 +217,7 @@ export class TodoistApi {
             args,
         )
 
-        const task = getTaskFromQuickAddResponse(response.data)
-
-        return validateTask(task)
+        return validateTask(response.data)
     }
 
     /**
@@ -234,7 +230,7 @@ export class TodoistApi {
      */
     async updateTask(id: string, args: UpdateTaskArgs, requestId?: string): Promise<Task> {
         z.string().parse(id)
-        const response = await request<RawTask>(
+        const response = await request<Task>(
             'POST',
             this.syncApiBase,
             generatePath(ENDPOINT_REST_TASKS, id),
@@ -243,8 +239,7 @@ export class TodoistApi {
             requestId,
         )
 
-        const task = getTaskFromRawTaskResponse(response.data)
-        return validateTask(task)
+        return validateTask(response.data)
     }
 
     /**
@@ -303,9 +298,7 @@ export class TodoistApi {
             throw new TodoistRequestError('Tasks not found', 404)
         }
 
-        const tasks = syncTasks.map(getTaskFromQuickAddResponse)
-
-        return validateTaskArray(tasks)
+        return validateTaskArray(syncTasks)
     }
 
     /**
@@ -374,17 +367,16 @@ export class TodoistApi {
      * @param id - The unique identifier of the project.
      * @returns A promise that resolves to the requested project.
      */
-    async getProject(id: string): Promise<Project> {
+    async getProject(id: string): Promise<PersonalProject | WorkspaceProject> {
         z.string().parse(id)
-        const response = await request<RawProject>(
+        const response = await request<PersonalProject | WorkspaceProject>(
             'GET',
             this.syncApiBase,
             generatePath(ENDPOINT_REST_PROJECTS, id),
             this.authToken,
         )
 
-        const project = getProjectFromRawProjectResponse(response.data)
-        return validateProject(project)
+        return validateProject(response.data)
     }
 
     /**
@@ -395,13 +387,15 @@ export class TodoistApi {
      */
     async getProjects(args: GetProjectsArgs = {}): Promise<GetProjectsResponse> {
         const {
-            data: { results: rawResults, nextCursor },
-        } = await request<{
-            results: RawProject[]
-            nextCursor: string | null
-        }>('GET', this.syncApiBase, ENDPOINT_REST_PROJECTS, this.authToken, args)
+            data: { results, nextCursor },
+        } = await request<GetProjectsResponse>(
+            'GET',
+            this.syncApiBase,
+            ENDPOINT_REST_PROJECTS,
+            this.authToken,
+            args,
+        )
 
-        const results = rawResults.map(getProjectFromRawProjectResponse)
         return {
             results: validateProjectArray(results),
             nextCursor,
@@ -415,8 +409,11 @@ export class TodoistApi {
      * @param requestId - Optional unique identifier for idempotency.
      * @returns A promise that resolves to the created project.
      */
-    async addProject(args: AddProjectArgs, requestId?: string): Promise<Project> {
-        const response = await request<RawProject>(
+    async addProject(
+        args: AddProjectArgs,
+        requestId?: string,
+    ): Promise<PersonalProject | WorkspaceProject> {
+        const response = await request<PersonalProject | WorkspaceProject>(
             'POST',
             this.syncApiBase,
             ENDPOINT_REST_PROJECTS,
@@ -425,8 +422,7 @@ export class TodoistApi {
             requestId,
         )
 
-        const project = getProjectFromRawProjectResponse(response.data)
-        return validateProject(project)
+        return validateProject(response.data)
     }
 
     /**
@@ -437,9 +433,13 @@ export class TodoistApi {
      * @param requestId - Optional unique identifier for idempotency.
      * @returns A promise that resolves to the updated project.
      */
-    async updateProject(id: string, args: UpdateProjectArgs, requestId?: string): Promise<Project> {
+    async updateProject(
+        id: string,
+        args: UpdateProjectArgs,
+        requestId?: string,
+    ): Promise<PersonalProject | WorkspaceProject> {
         z.string().parse(id)
-        const response = await request<RawProject>(
+        const response = await request<PersonalProject | WorkspaceProject>(
             'POST',
             this.syncApiBase,
             generatePath(ENDPOINT_REST_PROJECTS, id),
@@ -448,8 +448,7 @@ export class TodoistApi {
             requestId,
         )
 
-        const project = getProjectFromRawProjectResponse(response.data)
-        return validateProject(project)
+        return validateProject(response.data)
     }
 
     /**

@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { getProjectUrl, getTaskUrl } from '../utils/urlHelpers'
 
 export const DueDateSchema = z
     .object({
@@ -36,101 +37,110 @@ export const DeadlineSchema = z.object({
  */
 export interface Deadline extends z.infer<typeof DeadlineSchema> {}
 
-export const RawTaskSchema = z.object({
-    userId: z.string(),
-    id: z.string(),
-    projectId: z.string(),
-    sectionId: z.string().nullable(),
-    parentId: z.string().nullable(),
-    addedByUid: z.string(),
-    assignedByUid: z.string().nullable(),
-    responsibleUid: z.string().nullable(),
-    labels: z.array(z.string()),
-    deadline: DeadlineSchema.nullable(),
-    duration: DurationSchema.nullable(),
-    checked: z.boolean(),
-    isDeleted: z.boolean(),
-    addedAt: z.string(),
-    completedAt: z.string().nullable(),
-    updatedAt: z.string(),
-    due: DueDateSchema.nullable(),
-    priority: z.number().int(),
-    childOrder: z.number().int(),
-    content: z.string(),
-    description: z.string(),
-    dayOrder: z.number().int(),
-    isCollapsed: z.boolean(),
-})
-
-export interface RawTask extends z.infer<typeof RawTaskSchema> {}
-
-export const TaskSchema = z.object({
-    id: z.string(),
-    assignerId: z.string().nullable(),
-    assigneeId: z.string().nullable(),
-    projectId: z.string(),
-    sectionId: z.string().nullable(),
-    parentId: z.string().nullable(),
-    order: z.number().int(),
-    content: z.string(),
-    description: z.string(),
-    isCompleted: z.boolean(),
-    labels: z.array(z.string()),
-    priority: z.number().int(),
-    creatorId: z.string(),
-    createdAt: z.string(),
-    due: DueDateSchema.nullable(),
-    url: z.string(),
-    duration: DurationSchema.nullable(),
-    deadline: DeadlineSchema.nullable(),
-})
+export const TaskSchema = z
+    .object({
+        id: z.string(),
+        userId: z.string(),
+        projectId: z.string(),
+        sectionId: z.string().nullable(),
+        parentId: z.string().nullable(),
+        addedByUid: z.string().nullable(),
+        assignedByUid: z.string().nullable(),
+        responsibleUid: z.string().nullable(),
+        labels: z.array(z.string()),
+        deadline: DeadlineSchema.nullable(),
+        duration: DurationSchema.nullable(),
+        checked: z.boolean(),
+        isDeleted: z.boolean(),
+        addedAt: z.string().nullable(),
+        completedAt: z.string().nullable(),
+        updatedAt: z.string().nullable(),
+        due: DueDateSchema.nullable(),
+        priority: z.number().int(),
+        childOrder: z.number().int(),
+        content: z.string(),
+        description: z.string(),
+        noteCount: z.number().int(),
+        dayOrder: z.number().int(),
+        isCollapsed: z.boolean(),
+    })
+    .transform((data) => {
+        return {
+            ...data,
+            url: getTaskUrl(data.id, data.content),
+        }
+    })
 /**
  * Represents a task in Todoist.
  * @see https://todoist.com/api/v1/docs#tag/Tasks
  */
 export interface Task extends z.infer<typeof TaskSchema> {}
 
-export const RawProjectSchema = z.object({
+/**
+ * Base schema for all project types in Todoist.
+ * Contains common fields shared between personal and workspace projects.
+ */
+export const BaseProjectSchema = z.object({
     id: z.string(),
     canAssignTasks: z.boolean(),
-    childOrder: z.number().int().nullable(),
+    childOrder: z.number().int(),
     color: z.string(),
-    createdAt: z.string(),
+    createdAt: z.string().nullable(),
     isArchived: z.boolean(),
     isDeleted: z.boolean(),
     isFavorite: z.boolean(),
     isFrozen: z.boolean(),
     name: z.string(),
-    updatedAt: z.string(),
+    updatedAt: z.string().nullable(),
     viewStyle: z.string(),
-    defaultOrder: z.number().int().nullable(),
+    defaultOrder: z.number().int(),
     description: z.string(),
-    publicAccess: z.boolean(),
-    parentId: z.string().nullable().optional(),
-    inboxProject: z.boolean().optional(),
     isCollapsed: z.boolean(),
     isShared: z.boolean(),
 })
-export interface RawProject extends z.infer<typeof RawProjectSchema> {}
 
-export const ProjectSchema = z.object({
-    id: z.string(),
-    parentId: z.string().nullable(),
-    order: z.number().int().nullable(),
-    color: z.string(),
-    name: z.string(),
-    isShared: z.boolean(),
-    isFavorite: z.boolean(),
-    isInboxProject: z.boolean(),
-    isTeamInbox: z.boolean(),
-    url: z.string(),
-    viewStyle: z.string(),
-})
 /**
- * Represents a project in Todoist.
+ * Schema for personal projects in Todoist.
+ */
+export const PersonalProjectSchema = BaseProjectSchema.extend({
+    parentId: z.string().nullable(),
+    inboxProject: z.boolean(),
+}).transform((data) => {
+    return {
+        ...data,
+        url: getProjectUrl(data.id, data.name),
+    }
+})
+
+/**
+ * Schema for workspace projects in Todoist.
+ */
+export const WorkspaceProjectSchema = BaseProjectSchema.extend({
+    collaboratorRoleDefault: z.string(),
+    folderId: z.boolean().nullable(),
+    isInviteOnly: z.boolean().nullable(),
+    isLinkSharingEnabled: z.boolean(),
+    role: z.string().nullable(),
+    status: z.string(),
+    workspaceId: z.string(),
+}).transform((data) => {
+    return {
+        ...data,
+        url: getProjectUrl(data.id, data.name),
+    }
+})
+
+/**
+ * Represents a personal project in Todoist.
  * @see https://todoist.com/api/v1/docs#tag/Projects
  */
-export interface Project extends z.infer<typeof ProjectSchema> {}
+export interface PersonalProject extends z.infer<typeof PersonalProjectSchema> {}
+
+/**
+ * Represents a workspace project in Todoist.
+ * @see https://todoist.com/api/v1/docs#tag/Projects
+ */
+export interface WorkspaceProject extends z.infer<typeof WorkspaceProjectSchema> {}
 
 // This allows us to accept any string during validation, but provide intellisense for the two possible values in request args
 /**
@@ -233,7 +243,6 @@ export const CommentSchema = RawCommentSchema.transform((data) => {
         taskId: itemId,
     }
 })
-
 /**
  * Represents a comment in Todoist.
  * @see https://todoist.com/api/v1/docs#tag/Comments
