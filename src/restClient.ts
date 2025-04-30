@@ -12,10 +12,12 @@ export function paramsSerializer(params: Record<string, unknown>) {
 
     Object.keys(params).forEach((key) => {
         const value = params[key]
-        if (Array.isArray(value)) {
-            qs.append(key, value.join(','))
-        } else {
-            qs.append(key, String(value))
+        if (value != null) {
+            if (Array.isArray(value)) {
+                qs.append(key, value.join(','))
+            } else {
+                qs.append(key, String(value))
+            }
         }
     })
 
