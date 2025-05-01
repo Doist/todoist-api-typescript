@@ -6,7 +6,8 @@ type Permission =
   | "data:read"
   | "data:read_write"
   | "data:delete"
-  | "project:delete";
+  | "project:delete"
+  | "backups:read";
 ```
 
 Permission scopes that can be requested during OAuth2 authorization.

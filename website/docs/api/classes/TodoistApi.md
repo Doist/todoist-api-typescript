@@ -55,7 +55,7 @@ Adds a comment to a task or project.
 | Parameter | Type | Description |
 | ------ | ------ | ------ |
 | `args` | [`AddCommentArgs`](../type-aliases/AddCommentArgs.md) | Parameters for creating the comment, such as content and the target task or project ID. |
-| `requestId`? | `string` | Optional unique identifier for idempotency. |
+| `requestId`? | `string` | Optional custom identifier for the request. |
 
 #### Returns
 
@@ -78,7 +78,7 @@ Adds a new label.
 | Parameter | Type | Description |
 | ------ | ------ | ------ |
 | `args` | [`AddLabelArgs`](../type-aliases/AddLabelArgs.md) | Label creation parameters such as name. |
-| `requestId`? | `string` | Optional unique identifier for idempotency. |
+| `requestId`? | `string` | Optional custom identifier for the request. |
 
 #### Returns
 
@@ -103,7 +103,7 @@ Creates a new project with the provided parameters.
 | Parameter | Type | Description |
 | ------ | ------ | ------ |
 | `args` | [`AddProjectArgs`](../type-aliases/AddProjectArgs.md) | Project creation parameters such as name or color. |
-| `requestId`? | `string` | Optional unique identifier for idempotency. |
+| `requestId`? | `string` | Optional custom identifier for the request. |
 
 #### Returns
 
@@ -128,7 +128,7 @@ Creates a new section within a project.
 | Parameter | Type | Description |
 | ------ | ------ | ------ |
 | `args` | [`AddSectionArgs`](../type-aliases/AddSectionArgs.md) | Section creation parameters such as name or project ID. |
-| `requestId`? | `string` | Optional unique identifier for idempotency. |
+| `requestId`? | `string` | Optional custom identifier for the request. |
 
 #### Returns
 
@@ -151,7 +151,7 @@ Creates a new task with the provided parameters.
 | Parameter | Type | Description |
 | ------ | ------ | ------ |
 | `args` | [`AddTaskArgs`](../type-aliases/AddTaskArgs.md) | Task creation parameters such as content, due date, or priority. |
-| `requestId`? | `string` | Optional unique identifier for idempotency. |
+| `requestId`? | `string` | Optional custom identifier for the request. |
 
 #### Returns
 
@@ -174,7 +174,7 @@ Closes (completes) a task by its ID.
 | Parameter | Type | Description |
 | ------ | ------ | ------ |
 | `id` | `string` | The unique identifier of the task to close. |
-| `requestId`? | `string` | Optional unique identifier for idempotency. |
+| `requestId`? | `string` | Optional custom identifier for the request. |
 
 #### Returns
 
@@ -197,7 +197,7 @@ Deletes a comment by its ID.
 | Parameter | Type | Description |
 | ------ | ------ | ------ |
 | `id` | `string` | The unique identifier of the comment to delete. |
-| `requestId`? | `string` | Optional unique identifier for idempotency. |
+| `requestId`? | `string` | Optional custom identifier for the request. |
 
 #### Returns
 
@@ -220,7 +220,7 @@ Deletes a label by its ID.
 | Parameter | Type | Description |
 | ------ | ------ | ------ |
 | `id` | `string` | The unique identifier of the label to delete. |
-| `requestId`? | `string` | Optional unique identifier for idempotency. |
+| `requestId`? | `string` | Optional custom identifier for the request. |
 
 #### Returns
 
@@ -243,7 +243,7 @@ Deletes a project by its ID.
 | Parameter | Type | Description |
 | ------ | ------ | ------ |
 | `id` | `string` | The unique identifier of the project to delete. |
-| `requestId`? | `string` | Optional unique identifier for idempotency. |
+| `requestId`? | `string` | Optional custom identifier for the request. |
 
 #### Returns
 
@@ -266,7 +266,7 @@ Deletes a section by its ID.
 | Parameter | Type | Description |
 | ------ | ------ | ------ |
 | `id` | `string` | The unique identifier of the section to delete. |
-| `requestId`? | `string` | Optional unique identifier for idempotency. |
+| `requestId`? | `string` | Optional custom identifier for the request. |
 
 #### Returns
 
@@ -289,7 +289,7 @@ Deletes a task by its ID.
 | Parameter | Type | Description |
 | ------ | ------ | ------ |
 | `id` | `string` | The unique identifier of the task to delete. |
-| `requestId`? | `string` | Optional unique identifier for idempotency. |
+| `requestId`? | `string` | Optional custom identifier for the request. |
 
 #### Returns
 
@@ -609,7 +609,7 @@ Moves existing tasks by their ID to either a different parent/section/project.
 | ------ | ------ | ------ |
 | `ids` | `string`[] | The unique identifier of the tasks to be moved. |
 | `args` | [`MoveTaskArgs`](../type-aliases/MoveTaskArgs.md) | The paramets that should contain only one of projectId, sectionId, or parentId |
-| `requestId`? | `string` | Optional unique identifier for idempotency. |
+| `requestId`? | `string` | Optional custom identifier for the request. |
 
 #### Returns
 
@@ -698,7 +698,7 @@ Reopens a previously closed (completed) task by its ID.
 | Parameter | Type | Description |
 | ------ | ------ | ------ |
 | `id` | `string` | The unique identifier of the task to reopen. |
-| `requestId`? | `string` | Optional unique identifier for idempotency. |
+| `requestId`? | `string` | Optional custom identifier for the request. |
 
 #### Returns
 
@@ -725,7 +725,7 @@ Updates an existing comment by its ID.
 | ------ | ------ | ------ |
 | `id` | `string` | The unique identifier of the comment to update. |
 | `args` | [`UpdateCommentArgs`](../type-aliases/UpdateCommentArgs.md) | Update parameters such as new content. |
-| `requestId`? | `string` | Optional unique identifier for idempotency. |
+| `requestId`? | `string` | Optional custom identifier for the request. |
 
 #### Returns
 
@@ -752,7 +752,7 @@ Updates an existing label by its ID.
 | ------ | ------ | ------ |
 | `id` | `string` | The unique identifier of the label to update. |
 | `args` | [`UpdateLabelArgs`](../type-aliases/UpdateLabelArgs.md) | Update parameters such as name or color. |
-| `requestId`? | `string` | Optional unique identifier for idempotency. |
+| `requestId`? | `string` | Optional custom identifier for the request. |
 
 #### Returns
 
@@ -781,7 +781,7 @@ Updates an existing project by its ID with the provided parameters.
 | ------ | ------ | ------ |
 | `id` | `string` | The unique identifier of the project to update. |
 | `args` | [`UpdateProjectArgs`](../type-aliases/UpdateProjectArgs.md) | Update parameters such as name or color. |
-| `requestId`? | `string` | Optional unique identifier for idempotency. |
+| `requestId`? | `string` | Optional custom identifier for the request. |
 
 #### Returns
 
@@ -810,7 +810,7 @@ Updates a section by its ID with the provided parameters.
 | ------ | ------ | ------ |
 | `id` | `string` | The unique identifier of the section to update. |
 | `args` | [`UpdateSectionArgs`](../type-aliases/UpdateSectionArgs.md) | Update parameters such as name or project ID. |
-| `requestId`? | `string` | Optional unique identifier for idempotency. |
+| `requestId`? | `string` | Optional custom identifier for the request. |
 
 #### Returns
 
@@ -837,7 +837,7 @@ Updates an existing task by its ID with the provided parameters.
 | ------ | ------ | ------ |
 | `id` | `string` | The unique identifier of the task to update. |
 | `args` | [`UpdateTaskArgs`](../type-aliases/UpdateTaskArgs.md) | Update parameters such as content, priority, or due date. |
-| `requestId`? | `string` | Optional unique identifier for idempotency. |
+| `requestId`? | `string` | Optional custom identifier for the request. |
 
 #### Returns
 

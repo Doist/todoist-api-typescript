@@ -186,7 +186,7 @@ export class TodoistApi {
      * Creates a new task with the provided parameters.
      *
      * @param args - Task creation parameters such as content, due date, or priority.
-     * @param requestId - Optional unique identifier for idempotency.
+     * @param requestId - Optional custom identifier for the request.
      * @returns A promise that resolves to the created task.
      */
     async addTask(args: AddTaskArgs, requestId?: string): Promise<Task> {
@@ -225,7 +225,7 @@ export class TodoistApi {
      *
      * @param id - The unique identifier of the task to update.
      * @param args - Update parameters such as content, priority, or due date.
-     * @param requestId - Optional unique identifier for idempotency.
+     * @param requestId - Optional custom identifier for the request.
      * @returns A promise that resolves to the updated task.
      */
     async updateTask(id: string, args: UpdateTaskArgs, requestId?: string): Promise<Task> {
@@ -247,7 +247,7 @@ export class TodoistApi {
      *
      * @param ids - The unique identifier of the tasks to be moved.
      * @param args - The paramets that should contain only one of projectId, sectionId, or parentId
-     * @param requestId - Optional unique identifier for idempotency.
+     * @param requestId - Optional custom identifier for the request.
      * @returns - A promise that resolves to an array of the updated tasks.
      */
     async moveTasks(ids: string[], args: MoveTaskArgs, requestId?: string): Promise<Task[]> {
@@ -305,7 +305,7 @@ export class TodoistApi {
      * Closes (completes) a task by its ID.
      *
      * @param id - The unique identifier of the task to close.
-     * @param requestId - Optional unique identifier for idempotency.
+     * @param requestId - Optional custom identifier for the request.
      * @returns A promise that resolves to `true` if successful.
      */
     async closeTask(id: string, requestId?: string): Promise<boolean> {
@@ -325,7 +325,7 @@ export class TodoistApi {
      * Reopens a previously closed (completed) task by its ID.
      *
      * @param id - The unique identifier of the task to reopen.
-     * @param requestId - Optional unique identifier for idempotency.
+     * @param requestId - Optional custom identifier for the request.
      * @returns A promise that resolves to `true` if successful.
      */
     async reopenTask(id: string, requestId?: string): Promise<boolean> {
@@ -345,7 +345,7 @@ export class TodoistApi {
      * Deletes a task by its ID.
      *
      * @param id - The unique identifier of the task to delete.
-     * @param requestId - Optional unique identifier for idempotency.
+     * @param requestId - Optional custom identifier for the request.
      * @returns A promise that resolves to `true` if successful.
      */
     async deleteTask(id: string, requestId?: string): Promise<boolean> {
@@ -406,7 +406,7 @@ export class TodoistApi {
      * Creates a new project with the provided parameters.
      *
      * @param args - Project creation parameters such as name or color.
-     * @param requestId - Optional unique identifier for idempotency.
+     * @param requestId - Optional custom identifier for the request.
      * @returns A promise that resolves to the created project.
      */
     async addProject(
@@ -430,7 +430,7 @@ export class TodoistApi {
      *
      * @param id - The unique identifier of the project to update.
      * @param args - Update parameters such as name or color.
-     * @param requestId - Optional unique identifier for idempotency.
+     * @param requestId - Optional custom identifier for the request.
      * @returns A promise that resolves to the updated project.
      */
     async updateProject(
@@ -455,7 +455,7 @@ export class TodoistApi {
      * Deletes a project by its ID.
      *
      * @param id - The unique identifier of the project to delete.
-     * @param requestId - Optional unique identifier for idempotency.
+     * @param requestId - Optional custom identifier for the request.
      * @returns A promise that resolves to `true` if successful.
      */
     async deleteProject(id: string, requestId?: string): Promise<boolean> {
@@ -544,7 +544,7 @@ export class TodoistApi {
      * Creates a new section within a project.
      *
      * @param args - Section creation parameters such as name or project ID.
-     * @param requestId - Optional unique identifier for idempotency.
+     * @param requestId - Optional custom identifier for the request.
      * @returns A promise that resolves to the created section.
      */
     async addSection(args: AddSectionArgs, requestId?: string): Promise<Section> {
@@ -565,7 +565,7 @@ export class TodoistApi {
      *
      * @param id - The unique identifier of the section to update.
      * @param args - Update parameters such as name or project ID.
-     * @param requestId - Optional unique identifier for idempotency.
+     * @param requestId - Optional custom identifier for the request.
      * @returns A promise that resolves to the updated section.
      */
     async updateSection(id: string, args: UpdateSectionArgs, requestId?: string): Promise<Section> {
@@ -585,7 +585,7 @@ export class TodoistApi {
      * Deletes a section by its ID.
      *
      * @param id - The unique identifier of the section to delete.
-     * @param requestId - Optional unique identifier for idempotency.
+     * @param requestId - Optional custom identifier for the request.
      * @returns A promise that resolves to `true` if successful.
      */
     async deleteSection(id: string, requestId?: string): Promise<boolean> {
@@ -646,7 +646,7 @@ export class TodoistApi {
      * Adds a new label.
      *
      * @param args - Label creation parameters such as name.
-     * @param requestId - Optional unique identifier for idempotency.
+     * @param requestId - Optional custom identifier for the request.
      * @returns A promise that resolves to the created label.
      */
     async addLabel(args: AddLabelArgs, requestId?: string): Promise<Label> {
@@ -667,7 +667,7 @@ export class TodoistApi {
      *
      * @param id - The unique identifier of the label to update.
      * @param args - Update parameters such as name or color.
-     * @param requestId - Optional unique identifier for idempotency.
+     * @param requestId - Optional custom identifier for the request.
      * @returns A promise that resolves to the updated label.
      */
     async updateLabel(id: string, args: UpdateLabelArgs, requestId?: string): Promise<Label> {
@@ -687,7 +687,7 @@ export class TodoistApi {
      * Deletes a label by its ID.
      *
      * @param id - The unique identifier of the label to delete.
-     * @param requestId - Optional unique identifier for idempotency.
+     * @param requestId - Optional custom identifier for the request.
      * @returns A promise that resolves to `true` if successful.
      */
     async deleteLabel(id: string, requestId?: string): Promise<boolean> {
@@ -806,7 +806,7 @@ export class TodoistApi {
      * Adds a comment to a task or project.
      *
      * @param args - Parameters for creating the comment, such as content and the target task or project ID.
-     * @param requestId - Optional unique identifier for idempotency.
+     * @param requestId - Optional custom identifier for the request.
      * @returns A promise that resolves to the created comment.
      */
     async addComment(args: AddCommentArgs, requestId?: string): Promise<Comment> {
@@ -827,7 +827,7 @@ export class TodoistApi {
      *
      * @param id - The unique identifier of the comment to update.
      * @param args - Update parameters such as new content.
-     * @param requestId - Optional unique identifier for idempotency.
+     * @param requestId - Optional custom identifier for the request.
      * @returns A promise that resolves to the updated comment.
      */
     async updateComment(id: string, args: UpdateCommentArgs, requestId?: string): Promise<Comment> {
@@ -847,7 +847,7 @@ export class TodoistApi {
      * Deletes a comment by its ID.
      *
      * @param id - The unique identifier of the comment to delete.
-     * @param requestId - Optional unique identifier for idempotency.
+     * @param requestId - Optional custom identifier for the request.
      * @returns A promise that resolves to `true` if successful.
      */
     async deleteComment(id: string, requestId?: string): Promise<boolean> {
