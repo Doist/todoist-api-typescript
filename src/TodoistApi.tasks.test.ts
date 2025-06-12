@@ -352,7 +352,7 @@ describe('TodoistApi task endpoints', () => {
             await api.moveTasks(TASK_IDS, DEFAULT_MOVE_TASKS_ARGS, DEFAULT_REQUEST_ID)
 
             expect(requestMock).toBeCalledTimes(1)
-            const [,,,, syncRequest] = requestMock.mock.calls[0]
+            const [, , , , syncRequest] = requestMock.mock.calls[0]
 
             expect(syncRequest.commands).toHaveLength(TASK_IDS.length)
             expect(syncRequest.resource_types).toEqual(['items'])
