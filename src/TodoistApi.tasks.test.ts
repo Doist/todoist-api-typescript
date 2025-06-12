@@ -330,4 +330,57 @@ describe('TodoistApi task endpoints', () => {
             await expect(api.getTasksByFilter(DEFAULT_GET_TASKS_BY_FILTER_ARGS)).rejects.toThrow()
         })
     })
+
+    describe('moveTasks', () => {
+        const DEFAULT_MOVE_TASKS_ARGS = {
+            projectId: '6c6vJQjh5HFrGV5f',
+        }
+        const TASK_IDS = ['6c5rGRV6Hx6wM7g4', '6c5rGV8q9mqc4Xh4', '6c5rGVhqv6qcGfX4']
+
+        test('calls sync endpoint with expected parameters', async () => {
+            const mockSyncResponse = {
+                sync_status: {},
+                items: [
+                    { ...DEFAULT_TASK, id: TASK_IDS[0] },
+                    { ...DEFAULT_TASK, id: TASK_IDS[1] },
+                    { ...DEFAULT_TASK, id: TASK_IDS[2] },
+                ],
+            }
+            const requestMock = setupRestClientMock(mockSyncResponse)
+            const api = getTarget()
+
+            await api.moveTasks(TASK_IDS, DEFAULT_MOVE_TASKS_ARGS, DEFAULT_REQUEST_ID)
+
+            expect(requestMock).toBeCalledTimes(1)
+            const [,,,, syncRequest] = requestMock.mock.calls[0]
+
+            expect(syncRequest.commands).toHaveLength(TASK_IDS.length)
+            expect(syncRequest.resource_types).toEqual(['items'])
+
+            syncRequest.commands.forEach((cmd: any, index: number) => {
+                expect(cmd.type).toBe('item_move')
+                expect(cmd.args.id).toBe(TASK_IDS[index])
+                expect(cmd.args.project_id).toBe(DEFAULT_MOVE_TASKS_ARGS.projectId)
+            })
+
+            const uuids = syncRequest.commands.map((cmd: any) => cmd.uuid)
+            const uniqueUuids = new Set(uuids)
+            expect(uniqueUuids.size).toBe(TASK_IDS.length)
+        })
+
+        test('returns result from sync client', async () => {
+            const movedTasks = TASK_IDS.map((id) => ({ ...DEFAULT_TASK, id }))
+            const mockSyncResponse = {
+                sync_status: {},
+                items: movedTasks,
+            }
+            setupRestClientMock(mockSyncResponse)
+            const api = getTarget()
+
+            const result = await api.moveTasks(TASK_IDS, DEFAULT_MOVE_TASKS_ARGS)
+
+            expect(result).toHaveLength(TASK_IDS.length)
+            expect(result.map((task) => task.id)).toEqual(TASK_IDS)
+        })
+    })
 })
