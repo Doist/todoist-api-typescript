@@ -1,6 +1,6 @@
 const BASE_URI = 'https://api.todoist.com'
 const TODOIST_URI = 'https://todoist.com'
-export const TODOIST_WEB_URI = 'https://app/todoist.com/app'
+export const TODOIST_WEB_URI = 'https://app.todoist.com/app'
 
 // The API version is not configurable, to ensure
 // compatibility between the API and the client.
