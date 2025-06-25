@@ -20,7 +20,7 @@ const WorkspaceProjectSchema: ZodEffects<ZodObject<extendShape<{
   viewStyle: ZodString;
  }, {
   collaboratorRoleDefault: ZodString;
-  folderId: ZodNullable<ZodBoolean>;
+  folderId: ZodNullable<ZodString>;
   isInviteOnly: ZodNullable<ZodBoolean>;
   isLinkSharingEnabled: ZodBoolean;
   role: ZodNullable<ZodString>;
@@ -34,7 +34,7 @@ const WorkspaceProjectSchema: ZodEffects<ZodObject<extendShape<{
   createdAt: null | string;
   defaultOrder: number;
   description: string;
-  folderId: null | boolean;
+  folderId: null | string;
   id: string;
   isArchived: boolean;
   isCollapsed: boolean;
@@ -58,7 +58,7 @@ const WorkspaceProjectSchema: ZodEffects<ZodObject<extendShape<{
   createdAt: null | string;
   defaultOrder: number;
   description: string;
-  folderId: null | boolean;
+  folderId: null | string;
   id: string;
   isArchived: boolean;
   isCollapsed: boolean;
@@ -82,7 +82,7 @@ const WorkspaceProjectSchema: ZodEffects<ZodObject<extendShape<{
   createdAt: null | string;
   defaultOrder: number;
   description: string;
-  folderId: null | boolean;
+  folderId: null | string;
   id: string;
   isArchived: boolean;
   isCollapsed: boolean;
@@ -107,7 +107,7 @@ const WorkspaceProjectSchema: ZodEffects<ZodObject<extendShape<{
   createdAt: null | string;
   defaultOrder: number;
   description: string;
-  folderId: null | boolean;
+  folderId: null | string;
   id: string;
   isArchived: boolean;
   isCollapsed: boolean;
