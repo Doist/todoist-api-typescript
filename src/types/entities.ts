@@ -117,7 +117,7 @@ export const PersonalProjectSchema = BaseProjectSchema.extend({
  */
 export const WorkspaceProjectSchema = BaseProjectSchema.extend({
     collaboratorRoleDefault: z.string(),
-    folderId: z.boolean().nullable(),
+    folderId: z.string().nullable(),
     isInviteOnly: z.boolean().nullable(),
     isLinkSharingEnabled: z.boolean(),
     role: z.string().nullable(),
