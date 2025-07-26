@@ -19,6 +19,10 @@ export function getAuthBaseUri(domainBase: string = TODOIST_URI): string {
 
 export const ENDPOINT_REST_TASKS = 'tasks'
 export const ENDPOINT_REST_TASKS_FILTER = ENDPOINT_REST_TASKS + '/filter'
+export const ENDPOINT_REST_TASKS_COMPLETED_BY_COMPLETION_DATE =
+    ENDPOINT_REST_TASKS + '/completed/by_completion_date'
+export const ENDPOINT_REST_TASKS_COMPLETED_BY_DUE_DATE =
+    ENDPOINT_REST_TASKS + '/completed/by_due_date'
 export const ENDPOINT_REST_PROJECTS = 'projects'
 export const ENDPOINT_REST_SECTIONS = 'sections'
 export const ENDPOINT_REST_LABELS = 'labels'
