@@ -64,10 +64,54 @@ export type GetTasksByFilterArgs = {
 }
 
 /**
+ * Arguments for retrieving completed tasks by completion date.
+ * @see https://todoist.com/api/v1/docs#tag/Tasks/operation/tasks_completed_by_completion_date_api_v1_tasks_completed_by_completion_date_get
+ */
+export type GetCompletedTasksByCompletionDateArgs = {
+    since: string
+    until: string
+    workspaceId?: string | null
+    projectId?: string | null
+    sectionId?: string | null
+    parentId?: string | null
+    filterQuery?: string | null
+    filterLang?: string | null
+    cursor?: string | null
+    limit?: number
+    publicKey?: string | null
+}
+
+/**
+ * Arguments for retrieving completed tasks by due date.
+ * @see https://todoist.com/api/v1/docs#tag/Tasks/operation/tasks_completed_by_due_date_api_v1_tasks_completed_by_due_date_get
+ */
+export type GetCompletedTasksByDueDateArgs = {
+    since: string
+    until: string
+    workspaceId?: string | null
+    projectId?: string | null
+    sectionId?: string | null
+    parentId?: string | null
+    filterQuery?: string | null
+    filterLang?: string | null
+    cursor?: string | null
+    limit?: number
+}
+
+/**
  * @see https://todoist.com/api/v1/docs#tag/Tasks/operation/get_tasks_api_v1_tasks_get
  */
 export type GetTasksResponse = {
     results: Task[]
+    nextCursor: string | null
+}
+
+/**
+ * @see https://todoist.com/api/v1/docs#tag/Tasks/operation/tasks_completed_by_due_date_api_v1_tasks_completed_by_due_date_get
+ * @see https://todoist.com/api/v1/docs#tag/Tasks/operation/tasks_completed_by_completion_date_api_v1_tasks_completed_by_completion_date_get
+ */
+export type GetCompletedTasksResponse = {
+    items: Task[]
     nextCursor: string | null
 }
 
