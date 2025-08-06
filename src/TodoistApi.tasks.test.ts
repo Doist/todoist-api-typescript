@@ -384,8 +384,8 @@ describe('TodoistApi task endpoints', () => {
             expect(result).toHaveLength(TASK_IDS.length)
             expect(result.map((task) => task.id)).toEqual(TASK_IDS)
         })
-    })  
-    
+    })
+
     describe('getCompletedTasksByCompletionDate', () => {
         const DEFAULT_GET_COMPLETED_TASKS_ARGS = {
             since: '2025-01-01T00:00:00Z',
