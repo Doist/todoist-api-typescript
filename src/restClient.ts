@@ -6,6 +6,7 @@ import { HttpMethod } from './types/http'
 import { v4 as uuidv4 } from 'uuid'
 import axiosRetry from 'axios-retry'
 import { API_BASE_URI } from './consts/endpoints'
+import { customCamelCase } from './utils/processing-helpers'
 
 export function paramsSerializer(params: Record<string, unknown>) {
     const qs = new URLSearchParams()
@@ -70,7 +71,11 @@ function getRequestConfiguration(baseURL: string, apiToken?: string, requestId?:
 
 function getAxiosClient(baseURL: string, apiToken?: string, requestId?: string) {
     const configuration = getRequestConfiguration(baseURL, apiToken, requestId)
-    const client = applyCaseMiddleware(Axios.create(configuration))
+    const client = applyCaseMiddleware(Axios.create(configuration), {
+        caseFunctions: {
+            camel: customCamelCase,
+        },
+    })
 
     axiosRetry(client, {
         retries: 3,

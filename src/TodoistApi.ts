@@ -30,12 +30,17 @@ import {
     GetSharedLabelsResponse,
     GetCommentsResponse,
     type MoveTaskArgs,
+    GetCompletedTasksByCompletionDateArgs,
+    GetCompletedTasksByDueDateArgs,
+    GetCompletedTasksResponse,
 } from './types/requests'
 import { request, isSuccess } from './restClient'
 import {
     getSyncBaseUri,
     ENDPOINT_REST_TASKS,
     ENDPOINT_REST_TASKS_FILTER,
+    ENDPOINT_REST_TASKS_COMPLETED_BY_COMPLETION_DATE,
+    ENDPOINT_REST_TASKS_COMPLETED_BY_DUE_DATE,
     ENDPOINT_REST_PROJECTS,
     ENDPOINT_SYNC_QUICK_ADD,
     ENDPOINT_REST_TASK_CLOSE,
@@ -178,6 +183,56 @@ export class TodoistApi {
 
         return {
             results: validateTaskArray(results),
+            nextCursor,
+        }
+    }
+
+    /**
+     * Retrieves completed tasks by completion date.
+     *
+     * @param args - Parameters for filtering, including required since, until.
+     * @returns A promise that resolves to a paginated response of completed tasks.
+     */
+    async getCompletedTasksByCompletionDate(
+        args: GetCompletedTasksByCompletionDateArgs,
+    ): Promise<GetCompletedTasksResponse> {
+        const {
+            data: { items, nextCursor },
+        } = await request<GetCompletedTasksResponse>(
+            'GET',
+            this.syncApiBase,
+            ENDPOINT_REST_TASKS_COMPLETED_BY_COMPLETION_DATE,
+            this.authToken,
+            args,
+        )
+
+        return {
+            items: validateTaskArray(items),
+            nextCursor,
+        }
+    }
+
+    /**
+     * Retrieves completed tasks by due date.
+     *
+     * @param args - Parameters for filtering, including required since, until.
+     * @returns A promise that resolves to a paginated response of completed tasks.
+     */
+    async getCompletedTasksByDueDate(
+        args: GetCompletedTasksByDueDateArgs,
+    ): Promise<GetCompletedTasksResponse> {
+        const {
+            data: { items, nextCursor },
+        } = await request<GetCompletedTasksResponse>(
+            'GET',
+            this.syncApiBase,
+            ENDPOINT_REST_TASKS_COMPLETED_BY_DUE_DATE,
+            this.authToken,
+            args,
+        )
+
+        return {
+            items: validateTaskArray(items),
             nextCursor,
         }
     }

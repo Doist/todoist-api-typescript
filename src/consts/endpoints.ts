@@ -1,6 +1,6 @@
 const BASE_URI = 'https://api.todoist.com'
 const TODOIST_URI = 'https://todoist.com'
-export const TODOIST_WEB_URI = 'https://app/todoist.com/app'
+export const TODOIST_WEB_URI = 'https://app.todoist.com/app'
 
 // The API version is not configurable, to ensure
 // compatibility between the API and the client.
@@ -19,6 +19,10 @@ export function getAuthBaseUri(domainBase: string = TODOIST_URI): string {
 
 export const ENDPOINT_REST_TASKS = 'tasks'
 export const ENDPOINT_REST_TASKS_FILTER = ENDPOINT_REST_TASKS + '/filter'
+export const ENDPOINT_REST_TASKS_COMPLETED_BY_COMPLETION_DATE =
+    ENDPOINT_REST_TASKS + '/completed/by_completion_date'
+export const ENDPOINT_REST_TASKS_COMPLETED_BY_DUE_DATE =
+    ENDPOINT_REST_TASKS + '/completed/by_due_date'
 export const ENDPOINT_REST_PROJECTS = 'projects'
 export const ENDPOINT_REST_SECTIONS = 'sections'
 export const ENDPOINT_REST_LABELS = 'labels'

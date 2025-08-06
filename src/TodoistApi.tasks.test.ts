@@ -12,6 +12,8 @@ import {
     ENDPOINT_REST_TASK_REOPEN,
     ENDPOINT_REST_TASKS,
     ENDPOINT_REST_TASKS_FILTER,
+    ENDPOINT_REST_TASKS_COMPLETED_BY_COMPLETION_DATE,
+    ENDPOINT_REST_TASKS_COMPLETED_BY_DUE_DATE,
     ENDPOINT_SYNC_QUICK_ADD,
 } from './consts/endpoints'
 import { setupRestClientMock } from './testUtils/mocks'
@@ -381,6 +383,104 @@ describe('TodoistApi task endpoints', () => {
 
             expect(result).toHaveLength(TASK_IDS.length)
             expect(result.map((task) => task.id)).toEqual(TASK_IDS)
+        })
+    })  
+    
+    describe('getCompletedTasksByCompletionDate', () => {
+        const DEFAULT_GET_COMPLETED_TASKS_ARGS = {
+            since: '2025-01-01T00:00:00Z',
+            until: '2025-12-31T23:59:59Z',
+            workspaceId: null,
+            cursor: null,
+            limit: 10,
+        }
+
+        test('calls get request with expected url', async () => {
+            const requestMock = setupRestClientMock({ items: [DEFAULT_TASK], nextCursor: null })
+            const api = getTarget()
+
+            await api.getCompletedTasksByCompletionDate(DEFAULT_GET_COMPLETED_TASKS_ARGS)
+
+            expect(requestMock).toBeCalledTimes(1)
+            expect(requestMock).toBeCalledWith(
+                'GET',
+                getSyncBaseUri(),
+                ENDPOINT_REST_TASKS_COMPLETED_BY_COMPLETION_DATE,
+                DEFAULT_AUTH_TOKEN,
+                DEFAULT_GET_COMPLETED_TASKS_ARGS,
+            )
+        })
+
+        test('returns result from rest client', async () => {
+            setupRestClientMock({ items: [DEFAULT_TASK], nextCursor: '123' })
+            const api = getTarget()
+
+            const response = await api.getCompletedTasksByCompletionDate(
+                DEFAULT_GET_COMPLETED_TASKS_ARGS,
+            )
+
+            expect(response).toEqual({
+                items: [DEFAULT_TASK],
+                nextCursor: '123',
+            })
+        })
+
+        test('validates task array in response', async () => {
+            const invalidTask = { ...DEFAULT_TASK, due: '2020-01-31' }
+            setupRestClientMock({ items: [invalidTask], nextCursor: null })
+            const api = getTarget()
+
+            await expect(
+                api.getCompletedTasksByCompletionDate(DEFAULT_GET_COMPLETED_TASKS_ARGS),
+            ).rejects.toThrow()
+        })
+    })
+
+    describe('getCompletedTasksByDueDate', () => {
+        const DEFAULT_GET_COMPLETED_TASKS_ARGS = {
+            since: '2025-01-01T00:00:00Z',
+            until: '2025-12-31T23:59:59Z',
+            workspaceId: null,
+            cursor: null,
+            limit: 10,
+        }
+
+        test('calls get request with expected url', async () => {
+            const requestMock = setupRestClientMock({ items: [DEFAULT_TASK], nextCursor: null })
+            const api = getTarget()
+
+            await api.getCompletedTasksByDueDate(DEFAULT_GET_COMPLETED_TASKS_ARGS)
+
+            expect(requestMock).toBeCalledTimes(1)
+            expect(requestMock).toBeCalledWith(
+                'GET',
+                getSyncBaseUri(),
+                ENDPOINT_REST_TASKS_COMPLETED_BY_DUE_DATE,
+                DEFAULT_AUTH_TOKEN,
+                DEFAULT_GET_COMPLETED_TASKS_ARGS,
+            )
+        })
+
+        test('returns result from rest client', async () => {
+            setupRestClientMock({ items: [DEFAULT_TASK], nextCursor: '456' })
+            const api = getTarget()
+
+            const response = await api.getCompletedTasksByDueDate(DEFAULT_GET_COMPLETED_TASKS_ARGS)
+
+            expect(response).toEqual({
+                items: [DEFAULT_TASK],
+                nextCursor: '456',
+            })
+        })
+
+        test('validates task array in response', async () => {
+            const invalidTask = { ...DEFAULT_TASK, due: '2020-01-31' }
+            setupRestClientMock({ items: [invalidTask], nextCursor: null })
+            const api = getTarget()
+
+            await expect(
+                api.getCompletedTasksByDueDate(DEFAULT_GET_COMPLETED_TASKS_ARGS),
+            ).rejects.toThrow()
         })
     })
 })
