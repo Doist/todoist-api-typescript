@@ -6,8 +6,7 @@ import { HttpMethod } from './types/http'
 import { v4 as uuidv4 } from 'uuid'
 import axiosRetry from 'axios-retry'
 import { API_BASE_URI } from './consts/endpoints'
-import emojiRegex from 'emoji-regex'
-import camelCase from 'camelcase'
+import { customCamelCase } from './utils/processing-helpers'
 
 export function paramsSerializer(params: Record<string, unknown>) {
     const qs = new URLSearchParams()
@@ -68,17 +67,6 @@ function getRequestConfiguration(baseURL: string, apiToken?: string, requestId?:
     const headers = { ...defaultHeaders, ...authHeader, ...requestIdHeader }
 
     return { baseURL, headers }
-}
-
-function isEmojiKey(key: string) {
-    const regex = emojiRegex()
-    return regex.test(key) && key.match(regex)?.[0] === key
-}
-
-function customCamelCase(input: string) {
-    // If the value is a solitary emoji string, return the key as-is
-    if (isEmojiKey(input)) return input
-    return camelCase(input)
 }
 
 function getAxiosClient(baseURL: string, apiToken?: string, requestId?: string) {
