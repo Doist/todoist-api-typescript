@@ -309,10 +309,9 @@ export class TodoistApi {
         if (ids.length > MAX_COMMAND_COUNT) {
             throw new TodoistRequestError(`Maximum number of items is ${MAX_COMMAND_COUNT}`, 400)
         }
-        const uuid = uuidv4()
         const commands: Command[] = ids.map((id) => ({
             type: 'item_move',
-            uuid,
+            uuid: uuidv4(),
             args: {
                 id,
                 ...(args.projectId && { project_id: args.projectId }),
