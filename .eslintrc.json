@@ -15,7 +15,9 @@
             "files": ["**/*.test.ts?(x)"],
             "rules": {
                 // Ref.: https://github.com/typescript-eslint/typescript-eslint/issues/1776#issuecomment-601758481
-                "@typescript-eslint/unbound-method": "off"
+                "@typescript-eslint/unbound-method": "off",
+                // Allow expect.any(), expect.objectContaining(), expect.arrayContaining() usage in test files
+                "@typescript-eslint/no-unsafe-assignment": "off"
             }
         }
     ]
