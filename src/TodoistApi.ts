@@ -526,6 +526,52 @@ export class TodoistApi {
     }
 
     /**
+     * Archives a project by its ID.
+     *
+     * @param id - The unique identifier of the project to archive.
+     * @param requestId - Optional custom identifier for the request.
+     * @returns A promise that resolves to the updated project.
+     */
+    async archiveProject(
+        id: string,
+        requestId?: string,
+    ): Promise<PersonalProject | WorkspaceProject> {
+        z.string().parse(id)
+        const response = await request<PersonalProject | WorkspaceProject>(
+            'POST',
+            this.syncApiBase,
+            generatePath(ENDPOINT_REST_PROJECTS, id, 'archive'),
+            this.authToken,
+            undefined,
+            requestId,
+        )
+        return validateProject(response.data)
+    }
+
+    /**
+     * Unarchives a project by its ID.
+     *
+     * @param id - The unique identifier of the project to unarchive.
+     * @param requestId - Optional custom identifier for the request.
+     * @returns A promise that resolves to the updated project.
+     */
+    async unarchiveProject(
+        id: string,
+        requestId?: string,
+    ): Promise<PersonalProject | WorkspaceProject> {
+        z.string().parse(id)
+        const response = await request<PersonalProject | WorkspaceProject>(
+            'POST',
+            this.syncApiBase,
+            generatePath(ENDPOINT_REST_PROJECTS, id, 'unarchive'),
+            this.authToken,
+            undefined,
+            requestId,
+        )
+        return validateProject(response.data)
+    }
+
+    /**
      * Retrieves a list of collaborators for a specific project.
      *
      * @param projectId - The unique identifier of the project.

@@ -213,4 +213,60 @@ describe('TodoistApi project endpoints', () => {
             expect(nextCursor).toBe('123')
         })
     })
+
+    describe('archiveProject', () => {
+        test('calls POST on archive endpoint with expected parameters', async () => {
+            const projectId = '123'
+            const requestMock = setupRestClientMock(DEFAULT_PROJECT)
+            const api = getTarget()
+
+            await api.archiveProject(projectId, DEFAULT_REQUEST_ID)
+
+            expect(requestMock).toBeCalledTimes(1)
+            expect(requestMock).toBeCalledWith(
+                'POST',
+                getSyncBaseUri(),
+                `${ENDPOINT_REST_PROJECTS}/${projectId}/archive`,
+                DEFAULT_AUTH_TOKEN,
+                undefined,
+                DEFAULT_REQUEST_ID,
+            )
+        })
+
+        test('returns result from rest client', async () => {
+            setupRestClientMock(DEFAULT_PROJECT)
+            const api = getTarget()
+
+            const project = await api.archiveProject('123')
+            expect(project).toEqual(DEFAULT_PROJECT)
+        })
+    })
+
+    describe('unarchiveProject', () => {
+        test('calls POST on unarchive endpoint with expected parameters', async () => {
+            const projectId = '123'
+            const requestMock = setupRestClientMock(DEFAULT_PROJECT)
+            const api = getTarget()
+
+            await api.unarchiveProject(projectId, DEFAULT_REQUEST_ID)
+
+            expect(requestMock).toBeCalledTimes(1)
+            expect(requestMock).toBeCalledWith(
+                'POST',
+                getSyncBaseUri(),
+                `${ENDPOINT_REST_PROJECTS}/${projectId}/unarchive`,
+                DEFAULT_AUTH_TOKEN,
+                undefined,
+                DEFAULT_REQUEST_ID,
+            )
+        })
+
+        test('returns result from rest client', async () => {
+            setupRestClientMock(DEFAULT_PROJECT)
+            const api = getTarget()
+
+            const project = await api.unarchiveProject('123')
+            expect(project).toEqual(DEFAULT_PROJECT)
+        })
+    })
 })
