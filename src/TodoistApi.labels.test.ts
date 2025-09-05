@@ -1,6 +1,12 @@
 import { TodoistApi } from '.'
 import { DEFAULT_AUTH_TOKEN, DEFAULT_LABEL, DEFAULT_REQUEST_ID } from './testUtils/testDefaults'
-import { getSyncBaseUri, ENDPOINT_REST_LABELS } from './consts/endpoints'
+import {
+    getSyncBaseUri,
+    ENDPOINT_REST_LABELS,
+    ENDPOINT_REST_LABELS_SHARED,
+    ENDPOINT_REST_LABELS_SHARED_RENAME,
+    ENDPOINT_REST_LABELS_SHARED_REMOVE,
+} from './consts/endpoints'
 import { setupRestClientMock } from './testUtils/mocks'
 
 function getTarget() {
@@ -184,7 +190,7 @@ describe('TodoistApi label endpoints', () => {
             expect(requestMock).toBeCalledWith(
                 'GET',
                 getSyncBaseUri(),
-                'labels/shared',
+                ENDPOINT_REST_LABELS_SHARED,
                 DEFAULT_AUTH_TOKEN,
                 { omitPersonal: true, limit: 10, cursor: 'abc' },
             )
@@ -213,7 +219,7 @@ describe('TodoistApi label endpoints', () => {
             expect(requestMock).toBeCalledWith(
                 'POST',
                 getSyncBaseUri(),
-                'labels/shared/rename',
+                ENDPOINT_REST_LABELS_SHARED_RENAME,
                 DEFAULT_AUTH_TOKEN,
                 args,
             )
@@ -242,7 +248,7 @@ describe('TodoistApi label endpoints', () => {
             expect(requestMock).toBeCalledWith(
                 'POST',
                 getSyncBaseUri(),
-                'labels/shared/remove',
+                ENDPOINT_REST_LABELS_SHARED_REMOVE,
                 DEFAULT_AUTH_TOKEN,
                 args,
             )
