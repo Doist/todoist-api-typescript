@@ -37,7 +37,7 @@
         "@doist/eslint-config": "11.1.0",
         "@doist/prettier-config": "4.0.0",
         "@types/jest": "30.0.0",
-        "@types/uuid": "9.0.7",
+        "@types/uuid": "10.0.0",
         "@typescript-eslint/eslint-plugin": "6.21.0",
         "@typescript-eslint/parser": "6.21.0",
         "eslint": "8.35.0",
