@@ -33,6 +33,8 @@ export const ENDPOINT_REST_COMMENTS = 'comments'
 export const ENDPOINT_REST_TASK_CLOSE = 'close'
 export const ENDPOINT_REST_TASK_REOPEN = 'reopen'
 export const ENDPOINT_REST_PROJECT_COLLABORATORS = 'collaborators'
+export const PROJECT_ARCHIVE = 'archive'
+export const PROJECT_UNARCHIVE = 'unarchive'
 
 export const ENDPOINT_SYNC_QUICK_ADD = ENDPOINT_REST_TASKS + '/quick'
 

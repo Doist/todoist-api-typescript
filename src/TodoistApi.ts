@@ -53,6 +53,8 @@ import {
     ENDPOINT_REST_LABELS_SHARED_RENAME,
     ENDPOINT_REST_LABELS_SHARED_REMOVE,
     ENDPOINT_SYNC,
+    PROJECT_ARCHIVE,
+    PROJECT_UNARCHIVE,
 } from './consts/endpoints'
 import {
     validateComment,
@@ -540,7 +542,7 @@ export class TodoistApi {
         const response = await request<PersonalProject | WorkspaceProject>(
             'POST',
             this.syncApiBase,
-            generatePath(ENDPOINT_REST_PROJECTS, id, 'archive'),
+            generatePath(ENDPOINT_REST_PROJECTS, id, PROJECT_ARCHIVE),
             this.authToken,
             undefined,
             requestId,
@@ -563,7 +565,7 @@ export class TodoistApi {
         const response = await request<PersonalProject | WorkspaceProject>(
             'POST',
             this.syncApiBase,
-            generatePath(ENDPOINT_REST_PROJECTS, id, 'unarchive'),
+            generatePath(ENDPOINT_REST_PROJECTS, id, PROJECT_UNARCHIVE),
             this.authToken,
             undefined,
             requestId,

@@ -11,6 +11,8 @@ import {
     getSyncBaseUri,
     ENDPOINT_REST_PROJECTS,
     ENDPOINT_REST_PROJECT_COLLABORATORS,
+    PROJECT_ARCHIVE,
+    PROJECT_UNARCHIVE,
 } from './consts/endpoints'
 import { setupRestClientMock } from './testUtils/mocks'
 import { getProjectUrl } from './utils/urlHelpers'
@@ -226,7 +228,7 @@ describe('TodoistApi project endpoints', () => {
             expect(requestMock).toBeCalledWith(
                 'POST',
                 getSyncBaseUri(),
-                `${ENDPOINT_REST_PROJECTS}/${projectId}/archive`,
+                `${ENDPOINT_REST_PROJECTS}/${projectId}/${PROJECT_ARCHIVE}`,
                 DEFAULT_AUTH_TOKEN,
                 undefined,
                 DEFAULT_REQUEST_ID,
@@ -254,7 +256,7 @@ describe('TodoistApi project endpoints', () => {
             expect(requestMock).toBeCalledWith(
                 'POST',
                 getSyncBaseUri(),
-                `${ENDPOINT_REST_PROJECTS}/${projectId}/unarchive`,
+                `${ENDPOINT_REST_PROJECTS}/${projectId}/${PROJECT_UNARCHIVE}`,
                 DEFAULT_AUTH_TOKEN,
                 undefined,
                 DEFAULT_REQUEST_ID,
