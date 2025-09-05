@@ -11,6 +11,8 @@ import {
     getSyncBaseUri,
     ENDPOINT_REST_PROJECTS,
     ENDPOINT_REST_PROJECT_COLLABORATORS,
+    PROJECT_ARCHIVE,
+    PROJECT_UNARCHIVE,
 } from './consts/endpoints'
 import { setupRestClientMock } from './testUtils/mocks'
 import { getProjectUrl } from './utils/urlHelpers'
@@ -211,6 +213,62 @@ describe('TodoistApi project endpoints', () => {
 
             expect(results).toEqual(users)
             expect(nextCursor).toBe('123')
+        })
+    })
+
+    describe('archiveProject', () => {
+        test('calls POST on archive endpoint with expected parameters', async () => {
+            const projectId = '123'
+            const requestMock = setupRestClientMock(DEFAULT_PROJECT)
+            const api = getTarget()
+
+            await api.archiveProject(projectId, DEFAULT_REQUEST_ID)
+
+            expect(requestMock).toBeCalledTimes(1)
+            expect(requestMock).toBeCalledWith(
+                'POST',
+                getSyncBaseUri(),
+                `${ENDPOINT_REST_PROJECTS}/${projectId}/${PROJECT_ARCHIVE}`,
+                DEFAULT_AUTH_TOKEN,
+                undefined,
+                DEFAULT_REQUEST_ID,
+            )
+        })
+
+        test('returns result from rest client', async () => {
+            setupRestClientMock(DEFAULT_PROJECT)
+            const api = getTarget()
+
+            const project = await api.archiveProject('123')
+            expect(project).toEqual(DEFAULT_PROJECT)
+        })
+    })
+
+    describe('unarchiveProject', () => {
+        test('calls POST on unarchive endpoint with expected parameters', async () => {
+            const projectId = '123'
+            const requestMock = setupRestClientMock(DEFAULT_PROJECT)
+            const api = getTarget()
+
+            await api.unarchiveProject(projectId, DEFAULT_REQUEST_ID)
+
+            expect(requestMock).toBeCalledTimes(1)
+            expect(requestMock).toBeCalledWith(
+                'POST',
+                getSyncBaseUri(),
+                `${ENDPOINT_REST_PROJECTS}/${projectId}/${PROJECT_UNARCHIVE}`,
+                DEFAULT_AUTH_TOKEN,
+                undefined,
+                DEFAULT_REQUEST_ID,
+            )
+        })
+
+        test('returns result from rest client', async () => {
+            setupRestClientMock(DEFAULT_PROJECT)
+            const api = getTarget()
+
+            const project = await api.unarchiveProject('123')
+            expect(project).toEqual(DEFAULT_PROJECT)
         })
     })
 })

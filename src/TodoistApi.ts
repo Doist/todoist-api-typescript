@@ -53,6 +53,8 @@ import {
     ENDPOINT_REST_LABELS_SHARED_RENAME,
     ENDPOINT_REST_LABELS_SHARED_REMOVE,
     ENDPOINT_SYNC,
+    PROJECT_ARCHIVE,
+    PROJECT_UNARCHIVE,
 } from './consts/endpoints'
 import {
     validateComment,
@@ -523,6 +525,52 @@ export class TodoistApi {
             requestId,
         )
         return isSuccess(response)
+    }
+
+    /**
+     * Archives a project by its ID.
+     *
+     * @param id - The unique identifier of the project to archive.
+     * @param requestId - Optional custom identifier for the request.
+     * @returns A promise that resolves to the updated project.
+     */
+    async archiveProject(
+        id: string,
+        requestId?: string,
+    ): Promise<PersonalProject | WorkspaceProject> {
+        z.string().parse(id)
+        const response = await request<PersonalProject | WorkspaceProject>(
+            'POST',
+            this.syncApiBase,
+            generatePath(ENDPOINT_REST_PROJECTS, id, PROJECT_ARCHIVE),
+            this.authToken,
+            undefined,
+            requestId,
+        )
+        return validateProject(response.data)
+    }
+
+    /**
+     * Unarchives a project by its ID.
+     *
+     * @param id - The unique identifier of the project to unarchive.
+     * @param requestId - Optional custom identifier for the request.
+     * @returns A promise that resolves to the updated project.
+     */
+    async unarchiveProject(
+        id: string,
+        requestId?: string,
+    ): Promise<PersonalProject | WorkspaceProject> {
+        z.string().parse(id)
+        const response = await request<PersonalProject | WorkspaceProject>(
+            'POST',
+            this.syncApiBase,
+            generatePath(ENDPOINT_REST_PROJECTS, id, PROJECT_UNARCHIVE),
+            this.authToken,
+            undefined,
+            requestId,
+        )
+        return validateProject(response.data)
     }
 
     /**
