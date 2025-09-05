@@ -28,7 +28,7 @@
         "axios-case-converter": "^1.0.0",
         "axios-retry": "^3.1.9",
         "camelcase": "6.3.0",
-        "emoji-regex": "10.4.0",
+        "emoji-regex": "10.5.0",
         "ts-custom-error": "^3.2.0",
         "uuid": "^9.0.0",
         "zod": "^3.24.1"
