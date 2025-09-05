@@ -16,7 +16,7 @@ export const DueDateSchema = z
  * Represents a due date for a task.
  * @see https://todoist.com/api/v1/docs#tag/Tasks/operation/get_tasks_api_v1_tasks_get
  */
-export interface DueDate extends z.infer<typeof DueDateSchema> {}
+export type DueDate = z.infer<typeof DueDateSchema>
 
 export const DurationSchema = z.object({
     amount: z.number().positive('Value should be greater than zero'),
@@ -26,7 +26,7 @@ export const DurationSchema = z.object({
  * Represents a duration for a task deadline.
  * @see https://todoist.com/api/v1/docs#tag/Tasks
  */
-export interface Duration extends z.infer<typeof DurationSchema> {}
+export type Duration = z.infer<typeof DurationSchema>
 
 export const DeadlineSchema = z.object({
     date: z.string(),
@@ -35,7 +35,7 @@ export const DeadlineSchema = z.object({
 /**
  * Represents a task deadline.
  */
-export interface Deadline extends z.infer<typeof DeadlineSchema> {}
+export type Deadline = z.infer<typeof DeadlineSchema>
 
 export const TaskSchema = z
     .object({
@@ -74,7 +74,7 @@ export const TaskSchema = z
  * Represents a task in Todoist.
  * @see https://todoist.com/api/v1/docs#tag/Tasks
  */
-export interface Task extends z.infer<typeof TaskSchema> {}
+export type Task = z.infer<typeof TaskSchema>
 
 /**
  * Base schema for all project types in Todoist.
@@ -134,13 +134,13 @@ export const WorkspaceProjectSchema = BaseProjectSchema.extend({
  * Represents a personal project in Todoist.
  * @see https://todoist.com/api/v1/docs#tag/Projects
  */
-export interface PersonalProject extends z.infer<typeof PersonalProjectSchema> {}
+export type PersonalProject = z.infer<typeof PersonalProjectSchema>
 
 /**
  * Represents a workspace project in Todoist.
  * @see https://todoist.com/api/v1/docs#tag/Projects
  */
-export interface WorkspaceProject extends z.infer<typeof WorkspaceProjectSchema> {}
+export type WorkspaceProject = z.infer<typeof WorkspaceProjectSchema>
 
 // This allows us to accept any string during validation, but provide intellisense for the two possible values in request args
 /**
@@ -165,7 +165,7 @@ export const SectionSchema = z.object({
  * Represents a section in a Todoist project.
  * @see https://todoist.com/api/v1/docs#tag/Sections
  */
-export interface Section extends z.infer<typeof SectionSchema> {}
+export type Section = z.infer<typeof SectionSchema>
 
 export const LabelSchema = z.object({
     id: z.string(),
@@ -178,7 +178,7 @@ export const LabelSchema = z.object({
  * Represents a label in Todoist.
  * @see https://todoist.com/api/v1/docs#tag/Labels
  */
-export interface Label extends z.infer<typeof LabelSchema> {}
+export type Label = z.infer<typeof LabelSchema>
 
 export const AttachmentSchema = z
     .object({
@@ -201,7 +201,7 @@ export const AttachmentSchema = z
  * Represents a file attachment in a comment.
  * @see https://todoist.com/api/v1/docs#tag/Sync/Comments/File-Attachments
  */
-export interface Attachment extends z.infer<typeof AttachmentSchema> {}
+export type Attachment = z.infer<typeof AttachmentSchema>
 
 export const RawCommentSchema = z
     .object({
@@ -233,7 +233,7 @@ export const RawCommentSchema = z
  * Represents a raw comment response from the API.
  * @see https://todoist.com/api/v1/docs#tag/Comments
  */
-export interface RawComment extends z.infer<typeof RawCommentSchema> {}
+export type RawComment = z.infer<typeof RawCommentSchema>
 
 export const CommentSchema = RawCommentSchema.transform((data) => {
     const { itemId, ...rest } = data
@@ -247,7 +247,7 @@ export const CommentSchema = RawCommentSchema.transform((data) => {
  * Represents a comment in Todoist.
  * @see https://todoist.com/api/v1/docs#tag/Comments
  */
-export interface Comment extends z.infer<typeof CommentSchema> {}
+export type Comment = z.infer<typeof CommentSchema>
 
 export const UserSchema = z.object({
     id: z.string(),
@@ -258,7 +258,7 @@ export const UserSchema = z.object({
  * Represents a user in Todoist.
  * @see https://todoist.com/api/v1/docs#tag/User
  */
-export interface User extends z.infer<typeof UserSchema> {}
+export type User = z.infer<typeof UserSchema>
 
 export const ColorSchema = z.object({
     /** @deprecated No longer used */
@@ -280,4 +280,4 @@ export const ColorSchema = z.object({
  * Represents a color in Todoist.
  * @see https://todoist.com/api/v1/docs#tag/Colors
  */
-export interface Color extends z.infer<typeof ColorSchema> {}
+export type Color = z.infer<typeof ColorSchema>
