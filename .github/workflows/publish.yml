@@ -17,7 +17,7 @@ jobs:
             - run: sed -i "/@doist/d" ./.nvmrc
 
             - name: Configure doist package repository
-              uses: actions/setup-node@v3
+              uses: actions/setup-node@v4
               with:
                   node-version-file: .nvmrc
                   scope: '@doist'
@@ -32,7 +32,7 @@ jobs:
                   NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
 
             # Publish to GitHub package registry
-            - uses: actions/setup-node@v3
+            - uses: actions/setup-node@v4
               with:
                   node-version-file: .nvmrc
                   scope: '@doist'
