@@ -27,7 +27,7 @@
         "axios": "^1.0.0",
         "axios-case-converter": "^1.0.0",
         "axios-retry": "^4.0.0",
-        "camelcase": "6.3.0",
+        "camelcase": "8.0.0",
         "emoji-regex": "10.5.0",
         "ts-custom-error": "^3.2.0",
         "uuid": "^11.0.0",
