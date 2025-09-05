@@ -22,8 +22,8 @@ describe('TodoistApi label endpoints', () => {
 
             await api.getLabel(labelId)
 
-            expect(requestMock).toBeCalledTimes(1)
-            expect(requestMock).toBeCalledWith(
+            expect(requestMock).toHaveBeenCalledTimes(1)
+            expect(requestMock).toHaveBeenCalledWith(
                 'GET',
                 getSyncBaseUri(),
                 `${ENDPOINT_REST_LABELS}/${labelId}`,
@@ -51,8 +51,8 @@ describe('TodoistApi label endpoints', () => {
 
             await api.getLabels({ limit: 10, cursor: '0' })
 
-            expect(requestMock).toBeCalledTimes(1)
-            expect(requestMock).toBeCalledWith(
+            expect(requestMock).toHaveBeenCalledTimes(1)
+            expect(requestMock).toHaveBeenCalledWith(
                 'GET',
                 getSyncBaseUri(),
                 ENDPOINT_REST_LABELS,
@@ -90,8 +90,8 @@ describe('TodoistApi label endpoints', () => {
 
             await api.addLabel(DEFAULT_ADD_LABEL_ARGS, DEFAULT_REQUEST_ID)
 
-            expect(requestMock).toBeCalledTimes(1)
-            expect(requestMock).toBeCalledWith(
+            expect(requestMock).toHaveBeenCalledTimes(1)
+            expect(requestMock).toHaveBeenCalledWith(
                 'POST',
                 getSyncBaseUri(),
                 ENDPOINT_REST_LABELS,
@@ -123,8 +123,8 @@ describe('TodoistApi label endpoints', () => {
 
             await api.updateLabel(labelId, DEFAULT_UPDATE_LABEL_ARGS, DEFAULT_REQUEST_ID)
 
-            expect(requestMock).toBeCalledTimes(1)
-            expect(requestMock).toBeCalledWith(
+            expect(requestMock).toHaveBeenCalledTimes(1)
+            expect(requestMock).toHaveBeenCalledWith(
                 'POST',
                 getSyncBaseUri(),
                 `${ENDPOINT_REST_LABELS}/${labelId}`,
@@ -153,8 +153,8 @@ describe('TodoistApi label endpoints', () => {
 
             await api.deleteLabel(labelId, DEFAULT_REQUEST_ID)
 
-            expect(requestMock).toBeCalledTimes(1)
-            expect(requestMock).toBeCalledWith(
+            expect(requestMock).toHaveBeenCalledTimes(1)
+            expect(requestMock).toHaveBeenCalledWith(
                 'DELETE',
                 getSyncBaseUri(),
                 `${ENDPOINT_REST_LABELS}/${labelId}`,
@@ -186,8 +186,8 @@ describe('TodoistApi label endpoints', () => {
                 cursor: 'abc',
             })
 
-            expect(requestMock).toBeCalledTimes(1)
-            expect(requestMock).toBeCalledWith(
+            expect(requestMock).toHaveBeenCalledTimes(1)
+            expect(requestMock).toHaveBeenCalledWith(
                 'GET',
                 getSyncBaseUri(),
                 ENDPOINT_REST_LABELS_SHARED,
@@ -215,8 +215,8 @@ describe('TodoistApi label endpoints', () => {
 
             await api.renameSharedLabel(args)
 
-            expect(requestMock).toBeCalledTimes(1)
-            expect(requestMock).toBeCalledWith(
+            expect(requestMock).toHaveBeenCalledTimes(1)
+            expect(requestMock).toHaveBeenCalledWith(
                 'POST',
                 getSyncBaseUri(),
                 ENDPOINT_REST_LABELS_SHARED_RENAME,
@@ -244,8 +244,8 @@ describe('TodoistApi label endpoints', () => {
 
             await api.removeSharedLabel(args)
 
-            expect(requestMock).toBeCalledTimes(1)
-            expect(requestMock).toBeCalledWith(
+            expect(requestMock).toHaveBeenCalledTimes(1)
+            expect(requestMock).toHaveBeenCalledWith(
                 'POST',
                 getSyncBaseUri(),
                 ENDPOINT_REST_LABELS_SHARED_REMOVE,

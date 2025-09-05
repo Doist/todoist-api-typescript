@@ -16,8 +16,8 @@ describe('TodoistApi section endpoints', () => {
 
             await api.getSection(sectionId)
 
-            expect(requestMock).toBeCalledTimes(1)
-            expect(requestMock).toBeCalledWith(
+            expect(requestMock).toHaveBeenCalledTimes(1)
+            expect(requestMock).toHaveBeenCalledWith(
                 'GET',
                 getSyncBaseUri(),
                 `${ENDPOINT_REST_SECTIONS}/${sectionId}`,
@@ -47,8 +47,8 @@ describe('TodoistApi section endpoints', () => {
             const args = { projectId, limit: 10, cursor: '0' }
             await api.getSections(args)
 
-            expect(requestMock).toBeCalledTimes(1)
-            expect(requestMock).toBeCalledWith(
+            expect(requestMock).toHaveBeenCalledTimes(1)
+            expect(requestMock).toHaveBeenCalledWith(
                 'GET',
                 getSyncBaseUri(),
                 ENDPOINT_REST_SECTIONS,
@@ -81,8 +81,8 @@ describe('TodoistApi section endpoints', () => {
 
             await api.addSection(DEFAULT_ADD_SECTION_ARGS, DEFAULT_REQUEST_ID)
 
-            expect(requestMock).toBeCalledTimes(1)
-            expect(requestMock).toBeCalledWith(
+            expect(requestMock).toHaveBeenCalledTimes(1)
+            expect(requestMock).toHaveBeenCalledWith(
                 'POST',
                 getSyncBaseUri(),
                 ENDPOINT_REST_SECTIONS,
@@ -112,8 +112,8 @@ describe('TodoistApi section endpoints', () => {
 
             await api.updateSection(sectionId, DEFAULT_UPDATE_SECTION_ARGS, DEFAULT_REQUEST_ID)
 
-            expect(requestMock).toBeCalledTimes(1)
-            expect(requestMock).toBeCalledWith(
+            expect(requestMock).toHaveBeenCalledTimes(1)
+            expect(requestMock).toHaveBeenCalledWith(
                 'POST',
                 getSyncBaseUri(),
                 `${ENDPOINT_REST_SECTIONS}/${sectionId}`,
@@ -142,8 +142,8 @@ describe('TodoistApi section endpoints', () => {
 
             await api.deleteSection(sectionId, DEFAULT_REQUEST_ID)
 
-            expect(requestMock).toBeCalledTimes(1)
-            expect(requestMock).toBeCalledWith(
+            expect(requestMock).toHaveBeenCalledTimes(1)
+            expect(requestMock).toHaveBeenCalledWith(
                 'DELETE',
                 getSyncBaseUri(),
                 `${ENDPOINT_REST_SECTIONS}/${sectionId}`,

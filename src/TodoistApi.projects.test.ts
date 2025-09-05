@@ -30,8 +30,8 @@ describe('TodoistApi project endpoints', () => {
 
             await api.getProject(projectId)
 
-            expect(requestMock).toBeCalledTimes(1)
-            expect(requestMock).toBeCalledWith(
+            expect(requestMock).toHaveBeenCalledTimes(1)
+            expect(requestMock).toHaveBeenCalledWith(
                 'GET',
                 getSyncBaseUri(),
                 `${ENDPOINT_REST_PROJECTS}/${projectId}`,
@@ -60,8 +60,8 @@ describe('TodoistApi project endpoints', () => {
             const args = { limit: 10, cursor: '0' }
             await api.getProjects(args)
 
-            expect(requestMock).toBeCalledTimes(1)
-            expect(requestMock).toBeCalledWith(
+            expect(requestMock).toHaveBeenCalledTimes(1)
+            expect(requestMock).toHaveBeenCalledWith(
                 'GET',
                 getSyncBaseUri(),
                 ENDPOINT_REST_PROJECTS,
@@ -93,8 +93,8 @@ describe('TodoistApi project endpoints', () => {
 
             await api.addProject(DEFAULT_ADD_PROJECT_ARGS, DEFAULT_REQUEST_ID)
 
-            expect(requestMock).toBeCalledTimes(1)
-            expect(requestMock).toBeCalledWith(
+            expect(requestMock).toHaveBeenCalledTimes(1)
+            expect(requestMock).toHaveBeenCalledWith(
                 'POST',
                 getSyncBaseUri(),
                 ENDPOINT_REST_PROJECTS,
@@ -129,8 +129,8 @@ describe('TodoistApi project endpoints', () => {
 
             await api.updateProject(projectId, updateArgs, DEFAULT_REQUEST_ID)
 
-            expect(requestMock).toBeCalledTimes(1)
-            expect(requestMock).toBeCalledWith(
+            expect(requestMock).toHaveBeenCalledTimes(1)
+            expect(requestMock).toHaveBeenCalledWith(
                 'POST',
                 getSyncBaseUri(),
                 `${ENDPOINT_REST_PROJECTS}/${projectId}`,
@@ -163,8 +163,8 @@ describe('TodoistApi project endpoints', () => {
 
             await api.deleteProject(projectId, DEFAULT_REQUEST_ID)
 
-            expect(requestMock).toBeCalledTimes(1)
-            expect(requestMock).toBeCalledWith(
+            expect(requestMock).toHaveBeenCalledTimes(1)
+            expect(requestMock).toHaveBeenCalledWith(
                 'DELETE',
                 getSyncBaseUri(),
                 `${ENDPOINT_REST_PROJECTS}/${projectId}`,
@@ -195,8 +195,8 @@ describe('TodoistApi project endpoints', () => {
             const args = { limit: 10, cursor: '0' }
             await api.getProjectCollaborators(projectId, args)
 
-            expect(requestMock).toBeCalledTimes(1)
-            expect(requestMock).toBeCalledWith(
+            expect(requestMock).toHaveBeenCalledTimes(1)
+            expect(requestMock).toHaveBeenCalledWith(
                 'GET',
                 getSyncBaseUri(),
                 `${ENDPOINT_REST_PROJECTS}/${projectId}/${ENDPOINT_REST_PROJECT_COLLABORATORS}`,
@@ -224,8 +224,8 @@ describe('TodoistApi project endpoints', () => {
 
             await api.archiveProject(projectId, DEFAULT_REQUEST_ID)
 
-            expect(requestMock).toBeCalledTimes(1)
-            expect(requestMock).toBeCalledWith(
+            expect(requestMock).toHaveBeenCalledTimes(1)
+            expect(requestMock).toHaveBeenCalledWith(
                 'POST',
                 getSyncBaseUri(),
                 `${ENDPOINT_REST_PROJECTS}/${projectId}/${PROJECT_ARCHIVE}`,
@@ -252,8 +252,8 @@ describe('TodoistApi project endpoints', () => {
 
             await api.unarchiveProject(projectId, DEFAULT_REQUEST_ID)
 
-            expect(requestMock).toBeCalledTimes(1)
-            expect(requestMock).toBeCalledWith(
+            expect(requestMock).toHaveBeenCalledTimes(1)
+            expect(requestMock).toHaveBeenCalledWith(
                 'POST',
                 getSyncBaseUri(),
                 `${ENDPOINT_REST_PROJECTS}/${projectId}/${PROJECT_UNARCHIVE}`,
