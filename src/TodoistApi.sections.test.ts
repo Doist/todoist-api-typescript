@@ -33,7 +33,6 @@ describe('TodoistApi section endpoints', () => {
             const section = await api.getSection('123')
 
             expect(section).toEqual(DEFAULT_SECTION)
-            // Check section URL property
             expect(section.url).toBe(getSectionUrl(section.id, section.name))
         })
     })
