@@ -35,8 +35,8 @@ describe('TodoistApi task endpoints', () => {
 
             await api.addTask(DEFAULT_ADD_TASK_ARGS, DEFAULT_REQUEST_ID)
 
-            expect(requestMock).toBeCalledTimes(1)
-            expect(requestMock).toBeCalledWith(
+            expect(requestMock).toHaveBeenCalledTimes(1)
+            expect(requestMock).toHaveBeenCalledWith(
                 'POST',
                 getSyncBaseUri(),
                 ENDPOINT_REST_TASKS,
@@ -52,8 +52,8 @@ describe('TodoistApi task endpoints', () => {
 
             await api.addTask(DEFAULT_ADD_TASK_ARGS, DEFAULT_REQUEST_ID)
 
-            expect(requestMock).toBeCalledTimes(1)
-            expect(requestMock).toBeCalledWith(
+            expect(requestMock).toHaveBeenCalledTimes(1)
+            expect(requestMock).toHaveBeenCalledWith(
                 'POST',
                 getSyncBaseUri('https://staging.todoist.com'),
                 ENDPOINT_REST_TASKS,
@@ -87,8 +87,8 @@ describe('TodoistApi task endpoints', () => {
 
             await api.updateTask(taskId, DEFAULT_UPDATE_TASK_ARGS, DEFAULT_REQUEST_ID)
 
-            expect(requestMock).toBeCalledTimes(1)
-            expect(requestMock).toBeCalledWith(
+            expect(requestMock).toHaveBeenCalledTimes(1)
+            expect(requestMock).toHaveBeenCalledWith(
                 'POST',
                 getSyncBaseUri(),
                 `${ENDPOINT_REST_TASKS}/${taskId}`,
@@ -121,8 +121,8 @@ describe('TodoistApi task endpoints', () => {
 
             await api.closeTask(taskId, DEFAULT_REQUEST_ID)
 
-            expect(requestMock).toBeCalledTimes(1)
-            expect(requestMock).toBeCalledWith(
+            expect(requestMock).toHaveBeenCalledTimes(1)
+            expect(requestMock).toHaveBeenCalledWith(
                 'POST',
                 getSyncBaseUri(),
                 `${ENDPOINT_REST_TASKS}/${taskId}/${ENDPOINT_REST_TASK_CLOSE}`,
@@ -150,8 +150,8 @@ describe('TodoistApi task endpoints', () => {
 
             await api.reopenTask(taskId, DEFAULT_REQUEST_ID)
 
-            expect(requestMock).toBeCalledTimes(1)
-            expect(requestMock).toBeCalledWith(
+            expect(requestMock).toHaveBeenCalledTimes(1)
+            expect(requestMock).toHaveBeenCalledWith(
                 'POST',
                 getSyncBaseUri(),
                 `${ENDPOINT_REST_TASKS}/${taskId}/${ENDPOINT_REST_TASK_REOPEN}`,
@@ -179,8 +179,8 @@ describe('TodoistApi task endpoints', () => {
 
             await api.deleteTask(taskId, DEFAULT_REQUEST_ID)
 
-            expect(requestMock).toBeCalledTimes(1)
-            expect(requestMock).toBeCalledWith(
+            expect(requestMock).toHaveBeenCalledTimes(1)
+            expect(requestMock).toHaveBeenCalledWith(
                 'DELETE',
                 getSyncBaseUri(),
                 `${ENDPOINT_REST_TASKS}/${taskId}`,
@@ -214,8 +214,8 @@ describe('TodoistApi task endpoints', () => {
 
             await api.quickAddTask(DEFAULT_QUICK_ADD_ARGS)
 
-            expect(requestMock).toBeCalledTimes(1)
-            expect(requestMock).toBeCalledWith(
+            expect(requestMock).toHaveBeenCalledTimes(1)
+            expect(requestMock).toHaveBeenCalledWith(
                 'POST',
                 getSyncBaseUri(),
                 ENDPOINT_SYNC_QUICK_ADD,
@@ -240,8 +240,8 @@ describe('TodoistApi task endpoints', () => {
 
             await api.getTask(taskId)
 
-            expect(requestMock).toBeCalledTimes(1)
-            expect(requestMock).toBeCalledWith(
+            expect(requestMock).toHaveBeenCalledTimes(1)
+            expect(requestMock).toHaveBeenCalledWith(
                 'GET',
                 getSyncBaseUri(),
                 `${ENDPOINT_REST_TASKS}/${taskId}`,
@@ -266,8 +266,8 @@ describe('TodoistApi task endpoints', () => {
 
             await api.getTasks(DEFAULT_GET_TASKS_ARGS)
 
-            expect(requestMock).toBeCalledTimes(1)
-            expect(requestMock).toBeCalledWith(
+            expect(requestMock).toHaveBeenCalledTimes(1)
+            expect(requestMock).toHaveBeenCalledWith(
                 'GET',
                 getSyncBaseUri(),
                 ENDPOINT_REST_TASKS,
@@ -302,8 +302,8 @@ describe('TodoistApi task endpoints', () => {
 
             await api.getTasksByFilter(DEFAULT_GET_TASKS_BY_FILTER_ARGS)
 
-            expect(requestMock).toBeCalledTimes(1)
-            expect(requestMock).toBeCalledWith(
+            expect(requestMock).toHaveBeenCalledTimes(1)
+            expect(requestMock).toHaveBeenCalledWith(
                 'GET',
                 getSyncBaseUri(),
                 ENDPOINT_REST_TASKS_FILTER,
@@ -348,8 +348,8 @@ describe('TodoistApi task endpoints', () => {
 
             await api.getCompletedTasksByCompletionDate(DEFAULT_GET_COMPLETED_TASKS_ARGS)
 
-            expect(requestMock).toBeCalledTimes(1)
-            expect(requestMock).toBeCalledWith(
+            expect(requestMock).toHaveBeenCalledTimes(1)
+            expect(requestMock).toHaveBeenCalledWith(
                 'GET',
                 getSyncBaseUri(),
                 ENDPOINT_REST_TASKS_COMPLETED_BY_COMPLETION_DATE,
@@ -398,8 +398,8 @@ describe('TodoistApi task endpoints', () => {
 
             await api.getCompletedTasksByDueDate(DEFAULT_GET_COMPLETED_TASKS_ARGS)
 
-            expect(requestMock).toBeCalledTimes(1)
-            expect(requestMock).toBeCalledWith(
+            expect(requestMock).toHaveBeenCalledTimes(1)
+            expect(requestMock).toHaveBeenCalledWith(
                 'GET',
                 getSyncBaseUri(),
                 ENDPOINT_REST_TASKS_COMPLETED_BY_DUE_DATE,

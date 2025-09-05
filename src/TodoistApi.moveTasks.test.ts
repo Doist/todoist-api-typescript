@@ -27,7 +27,7 @@ describe('TodoistApi moveTasks', () => {
         const result = await api.moveTasks(TASK_IDS, { projectId: '999' }, DEFAULT_REQUEST_ID)
 
         // Verify API call structure
-        expect(requestMock).toBeCalledWith(
+        expect(requestMock).toHaveBeenCalledWith(
             'POST',
             getSyncBaseUri(),
             ENDPOINT_SYNC,

@@ -30,8 +30,8 @@ describe('TodoistApi comment endpoints', () => {
 
             await api.getComments(getCommentsArgs)
 
-            expect(requestMock).toBeCalledTimes(1)
-            expect(requestMock).toBeCalledWith(
+            expect(requestMock).toHaveBeenCalledTimes(1)
+            expect(requestMock).toHaveBeenCalledWith(
                 'GET',
                 getSyncBaseUri(),
                 ENDPOINT_REST_COMMENTS,
@@ -71,8 +71,8 @@ describe('TodoistApi comment endpoints', () => {
 
             await api.getComment(commentId)
 
-            expect(requestMock).toBeCalledTimes(1)
-            expect(requestMock).toBeCalledWith(
+            expect(requestMock).toHaveBeenCalledTimes(1)
+            expect(requestMock).toHaveBeenCalledWith(
                 'GET',
                 getSyncBaseUri(),
                 `${ENDPOINT_REST_COMMENTS}/${commentId}`,
@@ -102,8 +102,8 @@ describe('TodoistApi comment endpoints', () => {
 
             await api.addComment(addCommentArgs, DEFAULT_REQUEST_ID)
 
-            expect(requestMock).toBeCalledTimes(1)
-            expect(requestMock).toBeCalledWith(
+            expect(requestMock).toHaveBeenCalledTimes(1)
+            expect(requestMock).toHaveBeenCalledWith(
                 'POST',
                 getSyncBaseUri(),
                 ENDPOINT_REST_COMMENTS,
@@ -135,8 +135,8 @@ describe('TodoistApi comment endpoints', () => {
 
             await api.updateComment(taskId, updateCommentArgs, DEFAULT_REQUEST_ID)
 
-            expect(requestMock).toBeCalledTimes(1)
-            expect(requestMock).toBeCalledWith(
+            expect(requestMock).toHaveBeenCalledTimes(1)
+            expect(requestMock).toHaveBeenCalledWith(
                 'POST',
                 getSyncBaseUri(),
                 `${ENDPOINT_REST_COMMENTS}/${taskId}`,
@@ -166,8 +166,8 @@ describe('TodoistApi comment endpoints', () => {
 
             await api.deleteComment(taskId, DEFAULT_REQUEST_ID)
 
-            expect(requestMock).toBeCalledTimes(1)
-            expect(requestMock).toBeCalledWith(
+            expect(requestMock).toHaveBeenCalledTimes(1)
+            expect(requestMock).toHaveBeenCalledWith(
                 'DELETE',
                 getSyncBaseUri(),
                 `${ENDPOINT_REST_COMMENTS}/${taskId}`,

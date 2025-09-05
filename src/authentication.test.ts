@@ -76,8 +76,8 @@ describe('authentication', () => {
 
             await getAuthToken(defaultAuthRequest)
 
-            expect(requestMock).toBeCalledTimes(1)
-            expect(requestMock).toBeCalledWith(
+            expect(requestMock).toHaveBeenCalledTimes(1)
+            expect(requestMock).toHaveBeenCalledWith(
                 'POST',
                 'https://todoist.com/oauth/',
                 'access_token',
@@ -142,8 +142,8 @@ describe('authentication', () => {
 
             const isSuccess = await revokeAuthToken(revokeTokenRequest)
 
-            expect(requestMock).toBeCalledTimes(1)
-            expect(requestMock).toBeCalledWith(
+            expect(requestMock).toHaveBeenCalledTimes(1)
+            expect(requestMock).toHaveBeenCalledWith(
                 'POST',
                 getSyncBaseUri(),
                 'access_tokens/revoke',

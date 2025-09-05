@@ -82,8 +82,8 @@ describe('restClient', () => {
     test('request creates axios client with default headers', async () => {
         await request('GET', DEFAULT_BASE_URI, DEFAULT_ENDPOINT)
 
-        expect(axiosMock.create).toBeCalledTimes(1)
-        expect(axiosMock.create).toBeCalledWith({
+        expect(axiosMock.create).toHaveBeenCalledTimes(1)
+        expect(axiosMock.create).toHaveBeenCalledWith({
             baseURL: DEFAULT_BASE_URI,
             headers: DEFAULT_HEADERS,
         })
@@ -92,8 +92,8 @@ describe('restClient', () => {
     test('request adds authorization header to config if token is passed', async () => {
         await request('GET', DEFAULT_BASE_URI, DEFAULT_ENDPOINT, DEFAULT_AUTH_TOKEN)
 
-        expect(axiosMock.create).toBeCalledTimes(1)
-        expect(axiosMock.create).toBeCalledWith({
+        expect(axiosMock.create).toHaveBeenCalledTimes(1)
+        expect(axiosMock.create).toHaveBeenCalledWith({
             baseURL: DEFAULT_BASE_URI,
             headers: AUTHORIZATION_HEADERS,
         })
@@ -109,8 +109,8 @@ describe('restClient', () => {
             DEFAULT_REQUEST_ID,
         )
 
-        expect(axiosMock.create).toBeCalledTimes(1)
-        expect(axiosMock.create).toBeCalledWith({
+        expect(axiosMock.create).toHaveBeenCalledTimes(1)
+        expect(axiosMock.create).toHaveBeenCalledWith({
             baseURL: DEFAULT_BASE_URI,
             headers: HEADERS_WITH_REQUEST_ID,
         })
@@ -119,8 +119,8 @@ describe('restClient', () => {
     test('get calls axios with expected endpoint', async () => {
         await request('GET', DEFAULT_BASE_URI, DEFAULT_ENDPOINT, DEFAULT_AUTH_TOKEN)
 
-        expect(axiosMock.get).toBeCalledTimes(1)
-        expect(axiosMock.get).toBeCalledWith(DEFAULT_ENDPOINT, {
+        expect(axiosMock.get).toHaveBeenCalledTimes(1)
+        expect(axiosMock.get).toHaveBeenCalledWith(DEFAULT_ENDPOINT, {
             params: undefined,
             paramsSerializer: {
                 serialize: paramsSerializer,
@@ -137,8 +137,8 @@ describe('restClient', () => {
             DEFAULT_PAYLOAD,
         )
 
-        expect(axiosMock.get).toBeCalledTimes(1)
-        expect(axiosMock.get).toBeCalledWith(DEFAULT_ENDPOINT, {
+        expect(axiosMock.get).toHaveBeenCalledTimes(1)
+        expect(axiosMock.get).toHaveBeenCalledWith(DEFAULT_ENDPOINT, {
             params: DEFAULT_PAYLOAD,
             paramsSerializer: {
                 serialize: paramsSerializer,
@@ -149,7 +149,7 @@ describe('restClient', () => {
     test('get returns response from axios', async () => {
         const result = await request('GET', DEFAULT_BASE_URI, DEFAULT_ENDPOINT, DEFAULT_AUTH_TOKEN)
 
-        expect(axiosMock.get).toBeCalledTimes(1)
+        expect(axiosMock.get).toHaveBeenCalledTimes(1)
         expect(result).toEqual(DEFAULT_RESPONSE)
     })
 
@@ -162,8 +162,8 @@ describe('restClient', () => {
             DEFAULT_PAYLOAD,
         )
 
-        expect(axiosMock.post).toBeCalledTimes(1)
-        expect(axiosMock.post).toBeCalledWith(DEFAULT_ENDPOINT, DEFAULT_PAYLOAD)
+        expect(axiosMock.post).toHaveBeenCalledTimes(1)
+        expect(axiosMock.post).toHaveBeenCalledWith(DEFAULT_ENDPOINT, DEFAULT_PAYLOAD)
     })
 
     test('post sends expected endpoint and payload to axios when sync commands are used', async () => {
@@ -177,8 +177,8 @@ describe('restClient', () => {
             true,
         )
 
-        expect(axiosMock.post).toBeCalledTimes(1)
-        expect(axiosMock.post).toBeCalledWith(DEFAULT_ENDPOINT, '{"someKey":"someValue"}')
+        expect(axiosMock.post).toHaveBeenCalledTimes(1)
+        expect(axiosMock.post).toHaveBeenCalledWith(DEFAULT_ENDPOINT, '{"someKey":"someValue"}')
     })
 
     test('post returns response from axios', async () => {
@@ -190,7 +190,7 @@ describe('restClient', () => {
             DEFAULT_PAYLOAD,
         )
 
-        expect(axiosMock.post).toBeCalledTimes(1)
+        expect(axiosMock.post).toHaveBeenCalledTimes(1)
         expect(result).toEqual(DEFAULT_RESPONSE)
     })
 
@@ -203,7 +203,7 @@ describe('restClient', () => {
             DEFAULT_PAYLOAD,
         )
 
-        expect(axiosMock.create).toBeCalledWith({
+        expect(axiosMock.create).toHaveBeenCalledWith({
             baseURL: DEFAULT_BASE_URI,
             headers: { ...AUTHORIZATION_HEADERS, 'X-Request-Id': RANDOM_ID },
         })
@@ -213,7 +213,7 @@ describe('restClient', () => {
         const syncUrl = new URL(API_BASE_URI, DEFAULT_BASE_URI).toString()
         await request('POST', syncUrl, DEFAULT_ENDPOINT, DEFAULT_AUTH_TOKEN, DEFAULT_PAYLOAD)
 
-        expect(axiosMock.create).toBeCalledWith({
+        expect(axiosMock.create).toHaveBeenCalledWith({
             baseURL: syncUrl,
             headers: { ...AUTHORIZATION_HEADERS },
         })
@@ -222,8 +222,8 @@ describe('restClient', () => {
     test('delete calls axios with expected endpoint', async () => {
         await request('DELETE', DEFAULT_BASE_URI, DEFAULT_ENDPOINT, DEFAULT_AUTH_TOKEN)
 
-        expect(axiosMock.delete).toBeCalledTimes(1)
-        expect(axiosMock.delete).toBeCalledWith(DEFAULT_ENDPOINT)
+        expect(axiosMock.delete).toHaveBeenCalledTimes(1)
+        expect(axiosMock.delete).toHaveBeenCalledWith(DEFAULT_ENDPOINT)
     })
 
     test('request throws TodoistRequestError on axios error with expected values', async () => {
