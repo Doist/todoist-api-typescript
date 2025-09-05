@@ -1,6 +1,12 @@
 import { TodoistApi } from '.'
 import { DEFAULT_AUTH_TOKEN, DEFAULT_LABEL, DEFAULT_REQUEST_ID } from './testUtils/testDefaults'
-import { getSyncBaseUri, ENDPOINT_REST_LABELS } from './consts/endpoints'
+import {
+    getSyncBaseUri,
+    ENDPOINT_REST_LABELS,
+    ENDPOINT_REST_LABELS_SHARED,
+    ENDPOINT_REST_LABELS_SHARED_RENAME,
+    ENDPOINT_REST_LABELS_SHARED_REMOVE,
+} from './consts/endpoints'
 import { setupRestClientMock } from './testUtils/mocks'
 
 function getTarget() {
@@ -165,6 +171,97 @@ describe('TodoistApi label endpoints', () => {
             const result = await api.deleteLabel('123')
 
             expect(result).toEqual(true)
+        })
+    })
+
+    describe('getSharedLabels', () => {
+        test('calls getSharedLabels with expected parameters', async () => {
+            const mockResponse = { results: ['shared1', 'shared2'], nextCursor: 'abc' }
+            const requestMock = setupRestClientMock(mockResponse)
+            const api = getTarget()
+
+            await api.getSharedLabels({
+                omitPersonal: true,
+                limit: 10,
+                cursor: 'abc',
+            })
+
+            expect(requestMock).toBeCalledTimes(1)
+            expect(requestMock).toBeCalledWith(
+                'GET',
+                getSyncBaseUri(),
+                ENDPOINT_REST_LABELS_SHARED,
+                DEFAULT_AUTH_TOKEN,
+                { omitPersonal: true, limit: 10, cursor: 'abc' },
+            )
+        })
+
+        test('returns result from rest client', async () => {
+            const mockResponse = { results: ['shared1', 'shared2'], nextCursor: 'abc' }
+            setupRestClientMock(mockResponse)
+            const api = getTarget()
+
+            const result = await api.getSharedLabels()
+
+            expect(result).toEqual(mockResponse)
+        })
+    })
+
+    describe('renameSharedLabel', () => {
+        test('calls renameSharedLabel with expected parameters', async () => {
+            const args = { name: 'old', newName: 'new' }
+            const requestMock = setupRestClientMock(null)
+            const api = getTarget()
+
+            await api.renameSharedLabel(args)
+
+            expect(requestMock).toBeCalledTimes(1)
+            expect(requestMock).toBeCalledWith(
+                'POST',
+                getSyncBaseUri(),
+                ENDPOINT_REST_LABELS_SHARED_RENAME,
+                DEFAULT_AUTH_TOKEN,
+                args,
+            )
+        })
+
+        test('returns success result from rest client', async () => {
+            const args = { name: 'old', newName: 'new' }
+            setupRestClientMock(null)
+            const api = getTarget()
+
+            const result = await api.renameSharedLabel(args)
+
+            expect(result).toBe(true)
+        })
+    })
+
+    describe('removeSharedLabel', () => {
+        test('calls removeSharedLabel with expected parameters', async () => {
+            const args = { name: 'toremove' }
+            const requestMock = setupRestClientMock(null)
+            const api = getTarget()
+
+            await api.removeSharedLabel(args)
+
+            expect(requestMock).toBeCalledTimes(1)
+            expect(requestMock).toBeCalledWith(
+                'POST',
+                getSyncBaseUri(),
+                ENDPOINT_REST_LABELS_SHARED_REMOVE,
+                DEFAULT_AUTH_TOKEN,
+                args,
+            )
+        })
+
+        test('returns success result from rest client', async () => {
+            const args = { name: 'toremove' }
+            setupRestClientMock(null)
+            const api = getTarget()
+
+            const result = await api.removeSharedLabel(args)
+
+            expect(result).toBe(true)
         })
     })
 })
