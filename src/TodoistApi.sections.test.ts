@@ -2,6 +2,7 @@ import { TodoistApi } from '.'
 import { DEFAULT_AUTH_TOKEN, DEFAULT_REQUEST_ID, DEFAULT_SECTION } from './testUtils/testDefaults'
 import { getSyncBaseUri, ENDPOINT_REST_SECTIONS } from './consts/endpoints'
 import { setupRestClientMock } from './testUtils/mocks'
+import { getSectionUrl } from './utils/urlHelpers'
 
 function getTarget() {
     return new TodoistApi(DEFAULT_AUTH_TOKEN)
@@ -32,6 +33,8 @@ describe('TodoistApi section endpoints', () => {
             const section = await api.getSection('123')
 
             expect(section).toEqual(DEFAULT_SECTION)
+            // Check section URL property
+            expect(section.url).toBe(getSectionUrl(section.id, section.name))
         })
     })
 
@@ -124,7 +127,12 @@ describe('TodoistApi section endpoints', () => {
         })
 
         test('returns success result from rest client', async () => {
-            const returnedSection = { ...DEFAULT_SECTION, ...DEFAULT_UPDATE_SECTION_ARGS }
+            const returnedSection = {
+                ...DEFAULT_SECTION,
+                ...DEFAULT_UPDATE_SECTION_ARGS,
+                id: '123',
+                url: getSectionUrl('123', 'a new name'),
+            }
             setupRestClientMock(returnedSection, 204)
             const api = getTarget()
 
