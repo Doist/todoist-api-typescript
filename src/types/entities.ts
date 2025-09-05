@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { getProjectUrl, getTaskUrl } from '../utils/urlHelpers'
+import { getProjectUrl, getTaskUrl, getSectionUrl } from '../utils/urlHelpers'
 
 export const DueDateSchema = z
     .object({
@@ -148,19 +148,26 @@ export type WorkspaceProject = z.infer<typeof WorkspaceProjectSchema>
  */
 export type ProjectViewStyle = 'list' | 'board' | 'calendar'
 
-export const SectionSchema = z.object({
-    id: z.string(),
-    userId: z.string(),
-    projectId: z.string(),
-    addedAt: z.string(),
-    updatedAt: z.string(),
-    archivedAt: z.string().nullable(),
-    name: z.string(),
-    sectionOrder: z.number().int(),
-    isArchived: z.boolean(),
-    isDeleted: z.boolean(),
-    isCollapsed: z.boolean(),
-})
+export const SectionSchema = z
+    .object({
+        id: z.string(),
+        userId: z.string(),
+        projectId: z.string(),
+        addedAt: z.string(),
+        updatedAt: z.string(),
+        archivedAt: z.string().nullable(),
+        name: z.string(),
+        sectionOrder: z.number().int(),
+        isArchived: z.boolean(),
+        isDeleted: z.boolean(),
+        isCollapsed: z.boolean(),
+    })
+    .transform((data) => {
+        return {
+            ...data,
+            url: getSectionUrl(data.id, data.name),
+        }
+    })
 /**
  * Represents a section in a Todoist project.
  * @see https://todoist.com/api/v1/docs#tag/Sections

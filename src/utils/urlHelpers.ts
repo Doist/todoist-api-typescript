@@ -27,6 +27,19 @@ export function getProjectUrl(projectId: string, name?: string): string {
 }
 
 /**
+ * Generate the URL for a given section.
+ *
+ * @param sectionId The ID of the section.
+ * @param name The name of the section.
+ * @returns The URL string for the section view.
+ */
+export function getSectionUrl(sectionId: string, name?: string): string {
+    const slug = name ? slugify(name) : undefined
+    const path = slug ? `${slug}-${sectionId}` : sectionId
+    return `${TODOIST_WEB_URI}/section/${path}`
+}
+
+/**
  * Slugify function borrowed from Django.
  *
  * @param value The string to slugify.

@@ -9,7 +9,7 @@ import {
     RawComment,
     PersonalProject,
 } from '../types'
-import { getProjectUrl, getTaskUrl } from '../utils/urlHelpers'
+import { getProjectUrl, getTaskUrl, getSectionUrl } from '../utils/urlHelpers'
 
 export const DEFAULT_TASK_ID = '1234'
 export const DEFAULT_TASK_CONTENT = 'This is a task'
@@ -45,6 +45,7 @@ const DEFAULT_IS_COLLAPSED = false
 // URL constants using the helper functions
 const DEFAULT_TASK_URL = getTaskUrl(DEFAULT_TASK_ID, DEFAULT_TASK_CONTENT)
 const DEFAULT_PROJECT_URL = getProjectUrl(DEFAULT_PROJECT_ID, DEFAULT_PROJECT_NAME)
+const DEFAULT_SECTION_URL = getSectionUrl(DEFAULT_SECTION_ID, DEFAULT_SECTION_NAME)
 
 export const DEFAULT_AUTH_TOKEN = 'AToken'
 export const DEFAULT_REQUEST_ID = 'ARequestID'
@@ -174,6 +175,7 @@ export const DEFAULT_SECTION: Section = {
     isArchived: false,
     isDeleted: false,
     isCollapsed: false,
+    url: DEFAULT_SECTION_URL,
 }
 
 export const INVALID_SECTION = {
