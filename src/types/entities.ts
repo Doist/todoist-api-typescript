@@ -104,7 +104,7 @@ export const BaseProjectSchema = z.object({
  */
 export const PersonalProjectSchema = BaseProjectSchema.extend({
     parentId: z.string().nullable(),
-    inboxProject: z.boolean(),
+    inboxProject: z.boolean().optional().default(false),
 }).transform((data) => {
     return {
         ...data,

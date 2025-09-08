@@ -270,5 +270,37 @@ describe('TodoistApi project endpoints', () => {
             const project = await api.unarchiveProject('123')
             expect(project).toEqual(DEFAULT_PROJECT)
         })
+
+        describe('getArchivedProjects', () => {
+            test('calls get on archived projects endpoint', async () => {
+                const requestMock = setupRestClientMock({
+                    results: [DEFAULT_PROJECT],
+                    nextCursor: 'abc',
+                })
+                const api = getTarget()
+
+                const args = { limit: 10, cursor: '0' }
+                await api.getArchivedProjects(args)
+
+                expect(requestMock).toHaveBeenCalledTimes(1)
+                expect(requestMock).toHaveBeenCalledWith(
+                    'GET',
+                    getSyncBaseUri(),
+                    'projects/archived',
+                    DEFAULT_AUTH_TOKEN,
+                    args,
+                )
+            })
+
+            test('returns result from rest client', async () => {
+                const projects = [DEFAULT_PROJECT, PROJECT_WITH_OPTIONALS_AS_NULL]
+                setupRestClientMock({ results: projects, nextCursor: 'abc' })
+                const api = getTarget()
+
+                const { results, nextCursor } = await api.getArchivedProjects()
+                expect(results).toEqual(projects)
+                expect(nextCursor).toBe('abc')
+            })
+        })
     })
 })
