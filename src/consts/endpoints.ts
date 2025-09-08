@@ -23,7 +23,6 @@ export const ENDPOINT_REST_TASKS_COMPLETED_BY_COMPLETION_DATE =
     ENDPOINT_REST_TASKS + '/completed/by_completion_date'
 export const ENDPOINT_REST_TASKS_COMPLETED_BY_DUE_DATE =
     ENDPOINT_REST_TASKS + '/completed/by_due_date'
-export const ENDPOINT_REST_PROJECTS = 'projects'
 export const ENDPOINT_REST_SECTIONS = 'sections'
 export const ENDPOINT_REST_LABELS = 'labels'
 export const ENDPOINT_REST_LABELS_SHARED = ENDPOINT_REST_LABELS + '/shared'
@@ -32,6 +31,8 @@ export const ENDPOINT_REST_LABELS_SHARED_REMOVE = ENDPOINT_REST_LABELS_SHARED + 
 export const ENDPOINT_REST_COMMENTS = 'comments'
 export const ENDPOINT_REST_TASK_CLOSE = 'close'
 export const ENDPOINT_REST_TASK_REOPEN = 'reopen'
+export const ENDPOINT_REST_PROJECTS = 'projects'
+export const ENDPOINT_REST_PROJECTS_ARCHIVED = ENDPOINT_REST_PROJECTS + '/archived'
 export const ENDPOINT_REST_PROJECT_COLLABORATORS = 'collaborators'
 export const PROJECT_ARCHIVE = 'archive'
 export const PROJECT_UNARCHIVE = 'unarchive'

@@ -184,6 +184,24 @@ export type GetProjectsResponse = {
 }
 
 /**
+ * Arguments for retrieving archived projects.
+ * @see https://todoist.com/api/v1/docs#tag/Projects/operation/get_archived_projects_api_v1_projects_archived_get
+ */
+export type GetArchivedProjectsArgs = {
+    cursor?: string | null
+    limit?: number
+}
+
+/**
+ * Response from retrieving archived projects.
+ * @see https://todoist.com/api/v1/docs#tag/Projects/operation/get_archived_projects_api_v1_projects_archived_get
+ */
+export type GetArchivedProjectsResponse = {
+    results: (PersonalProject | WorkspaceProject)[]
+    nextCursor: string | null
+}
+
+/**
  * Arguments for creating a new project.
  * @see https://todoist.com/api/v1/docs#tag/Projects/operation/create_project_api_v1_projects_post
  */

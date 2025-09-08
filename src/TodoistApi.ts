@@ -33,6 +33,8 @@ import {
     GetCompletedTasksByCompletionDateArgs,
     GetCompletedTasksByDueDateArgs,
     GetCompletedTasksResponse,
+    GetArchivedProjectsArgs,
+    GetArchivedProjectsResponse,
 } from './types/requests'
 import { request, isSuccess } from './restClient'
 import {
@@ -55,6 +57,7 @@ import {
     ENDPOINT_SYNC,
     PROJECT_ARCHIVE,
     PROJECT_UNARCHIVE,
+    ENDPOINT_REST_PROJECTS_ARCHIVED,
 } from './consts/endpoints'
 import {
     validateComment,
@@ -448,6 +451,31 @@ export class TodoistApi {
             'GET',
             this.syncApiBase,
             ENDPOINT_REST_PROJECTS,
+            this.authToken,
+            args,
+        )
+
+        return {
+            results: validateProjectArray(results),
+            nextCursor,
+        }
+    }
+
+    /**
+     * Retrieves all archived projects with optional filters.
+     *
+     * @param args - Optional filters for retrieving archived projects.
+     * @returns A promise that resolves to an array of archived projects.
+     */
+    async getArchivedProjects(
+        args: GetArchivedProjectsArgs = {},
+    ): Promise<GetArchivedProjectsResponse> {
+        const {
+            data: { results, nextCursor },
+        } = await request<GetArchivedProjectsResponse>(
+            'GET',
+            this.syncApiBase,
+            ENDPOINT_REST_PROJECTS_ARCHIVED,
             this.authToken,
             args,
         )
