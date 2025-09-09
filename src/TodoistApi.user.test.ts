@@ -10,29 +10,35 @@ function getTarget(baseUrl = 'https://api.todoist.com') {
 const DEFAULT_CURRENT_USER_RESPONSE = {
     id: '123456789',
     email: 'test.user@example.com',
-    full_name: 'Test User',
-    avatar_big: 'https://example.com/avatars/test_user_big.jpg',
-    avatar_medium: 'https://example.com/avatars/test_user_medium.jpg',
-    avatar_s640: 'https://example.com/avatars/test_user_s640.jpg',
-    avatar_small: 'https://example.com/avatars/test_user_small.jpg',
-    business_account_id: null,
-    is_premium: true,
-    date_format: 0,
-    time_format: 0,
-    weekly_goal: 100,
-    daily_goal: 10,
-    completed_count: 102920,
-    completed_today: 12,
+    fullName: 'Test User',
+    avatarBig: 'https://example.com/avatars/test_user_big.jpg',
+    avatarMedium: 'https://example.com/avatars/test_user_medium.jpg',
+    avatarS640: 'https://example.com/avatars/test_user_s640.jpg',
+    avatarSmall: 'https://example.com/avatars/test_user_small.jpg',
+    businessAccountId: null,
+    isPremium: true,
+    dateFormat: 0,
+    timeFormat: 0,
+    weeklyGoal: 100,
+    dailyGoal: 10,
+    completedCount: 102920,
+    completedToday: 12,
     karma: 86394.0,
-    karma_trend: 'up',
+    karmaTrend: 'up',
     lang: 'en',
-    next_week: 1,
-    start_day: 1,
-    start_page: 'project?id=test_project_123',
-    timezone: 'Europe/Madrid',
-    inbox_project_id: 'test_project_123',
-    days_off: [6, 7],
-    weekend_start_day: 6,
+    nextWeek: 1,
+    startDay: 1,
+    startPage: 'project?id=test_project_123',
+    tzInfo: {
+        gmtString: '+02:00',
+        hours: 2,
+        isDst: 1,
+        minutes: 0,
+        timezone: 'Europe/Madrid',
+    },
+    inboxProjectId: 'test_project_123',
+    daysOff: [6, 7],
+    weekendStartDay: 6,
 }
 
 describe('TodoistApi user endpoints', () => {
@@ -71,7 +77,7 @@ describe('TodoistApi user endpoints', () => {
         test('handles user with null business account id', async () => {
             const responseWithNullBusinessAccount = {
                 ...DEFAULT_CURRENT_USER_RESPONSE,
-                business_account_id: null,
+                businessAccountId: null,
             }
             setupRestClientMock(responseWithNullBusinessAccount)
             const api = getTarget()
@@ -84,10 +90,10 @@ describe('TodoistApi user endpoints', () => {
         test('handles user with null avatar fields', async () => {
             const responseWithNullAvatars = {
                 ...DEFAULT_CURRENT_USER_RESPONSE,
-                avatar_big: null,
-                avatar_medium: null,
-                avatar_s640: null,
-                avatar_small: null,
+                avatarBig: null,
+                avatarMedium: null,
+                avatarS640: null,
+                avatarSmall: null,
             }
             setupRestClientMock(responseWithNullAvatars)
             const api = getTarget()
@@ -98,6 +104,22 @@ describe('TodoistApi user endpoints', () => {
             expect(actual.avatarMedium).toBeNull()
             expect(actual.avatarS640).toBeNull()
             expect(actual.avatarSmall).toBeNull()
+        })
+
+        test('handles user with tzInfo field', async () => {
+            setupRestClientMock(DEFAULT_CURRENT_USER_RESPONSE)
+            const api = getTarget()
+
+            const actual = await api.getUser()
+
+            expect(actual.tzInfo).toEqual({
+                gmtString: '+02:00',
+                hours: 2,
+                isDst: 1,
+                minutes: 0,
+                timezone: 'Europe/Madrid',
+            })
+            expect(actual.tzInfo.timezone).toBe('Europe/Madrid')
         })
     })
 })
