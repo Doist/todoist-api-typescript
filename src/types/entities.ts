@@ -262,10 +262,71 @@ export const UserSchema = z.object({
     email: z.string(),
 })
 /**
- * Represents a user in Todoist.
+ * Represents a user in Todoist (simplified for collaborators).
  * @see https://todoist.com/api/v1/docs#tag/User
  */
 export type User = z.infer<typeof UserSchema>
+
+export const CurrentUserSchema = z
+    .object({
+        id: z.string(),
+        email: z.string(),
+        full_name: z.string(),
+        avatar_big: z.string().nullable(),
+        avatar_medium: z.string().nullable(),
+        avatar_s640: z.string().nullable(),
+        avatar_small: z.string().nullable(),
+        business_account_id: z.string().nullable(),
+        is_premium: z.boolean(),
+        date_format: z.number().int(),
+        time_format: z.number().int(),
+        weekly_goal: z.number().int(),
+        daily_goal: z.number().int(),
+        completed_count: z.number().int(),
+        completed_today: z.number().int(),
+        karma: z.number(),
+        karma_trend: z.string(),
+        lang: z.string(),
+        next_week: z.number().int(),
+        start_day: z.number().int(),
+        start_page: z.string(),
+        timezone: z.string(),
+        inbox_project_id: z.string(),
+        days_off: z.array(z.number().int()),
+        weekend_start_day: z.number().int(),
+    })
+    .transform((data) => ({
+        id: data.id,
+        email: data.email,
+        fullName: data.full_name,
+        avatarBig: data.avatar_big,
+        avatarMedium: data.avatar_medium,
+        avatarS640: data.avatar_s640,
+        avatarSmall: data.avatar_small,
+        businessAccountId: data.business_account_id,
+        isPremium: data.is_premium,
+        dateFormat: data.date_format,
+        timeFormat: data.time_format,
+        weeklyGoal: data.weekly_goal,
+        dailyGoal: data.daily_goal,
+        completedCount: data.completed_count,
+        completedToday: data.completed_today,
+        karma: data.karma,
+        karmaTrend: data.karma_trend,
+        lang: data.lang,
+        nextWeek: data.next_week,
+        startDay: data.start_day,
+        startPage: data.start_page,
+        timezone: data.timezone,
+        inboxProjectId: data.inbox_project_id,
+        daysOff: data.days_off,
+        weekendStartDay: data.weekend_start_day,
+    }))
+/**
+ * Represents the current authenticated user with detailed information.
+ * @see https://todoist.com/api/v1/docs#tag/User
+ */
+export type CurrentUser = z.infer<typeof CurrentUserSchema>
 
 export const ColorSchema = z.object({
     /** @deprecated No longer used */

@@ -1,4 +1,12 @@
-import { PersonalProject, WorkspaceProject, Label, Section, Comment, Task } from './types/entities'
+import {
+    PersonalProject,
+    WorkspaceProject,
+    Label,
+    Section,
+    Comment,
+    Task,
+    CurrentUser,
+} from './types/entities'
 import {
     AddCommentArgs,
     AddLabelArgs,
@@ -58,10 +66,12 @@ import {
     PROJECT_ARCHIVE,
     PROJECT_UNARCHIVE,
     ENDPOINT_REST_PROJECTS_ARCHIVED,
+    ENDPOINT_REST_USER,
 } from './consts/endpoints'
 import {
     validateComment,
     validateCommentArray,
+    validateCurrentUser,
     validateLabel,
     validateLabelArray,
     validateProject,
@@ -126,6 +136,22 @@ export class TodoistApi {
     ) {
         this.authToken = authToken
         this.syncApiBase = getSyncBaseUri(baseUrl)
+    }
+
+    /**
+     * Retrieves information about the authenticated user.
+     *
+     * @returns A promise that resolves to the current user's information.
+     */
+    async getUser(): Promise<CurrentUser> {
+        const response = await request<CurrentUser>(
+            'GET',
+            this.syncApiBase,
+            ENDPOINT_REST_USER,
+            this.authToken,
+        )
+
+        return validateCurrentUser(response.data)
     }
 
     /**
