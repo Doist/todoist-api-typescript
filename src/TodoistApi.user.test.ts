@@ -7,7 +7,7 @@ function getTarget(baseUrl = 'https://api.todoist.com') {
     return new TodoistApi(DEFAULT_AUTH_TOKEN, baseUrl)
 }
 
-const DEFAULT_CURRENT_USER_RESPONSE = {
+const DEFAULT_CURRENT_USER_RESPONSE: CurrentUser = {
     id: '123456789',
     email: 'test.user@example.com',
     fullName: 'Test User',
