@@ -1,4 +1,4 @@
-import { TodoistApi } from '.'
+import { TodoistApi, type CurrentUser } from '.'
 import { DEFAULT_AUTH_TOKEN } from './testUtils/testDefaults'
 import { getSyncBaseUri, ENDPOINT_REST_USER } from './consts/endpoints'
 import { setupRestClientMock } from './testUtils/mocks'
