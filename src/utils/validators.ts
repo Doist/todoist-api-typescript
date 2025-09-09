@@ -3,12 +3,14 @@ import {
     LabelSchema,
     CommentSchema,
     UserSchema,
+    CurrentUserSchema,
     TaskSchema,
     type Task,
     type Section,
     type Label,
     type Comment,
     type User,
+    type CurrentUser,
     PersonalProjectSchema,
     WorkspaceProjectSchema,
     type WorkspaceProject,
@@ -91,4 +93,8 @@ export function validateUser(input: unknown): User {
 
 export function validateUserArray(input: unknown[]): User[] {
     return input.map(validateUser)
+}
+
+export function validateCurrentUser(input: unknown): CurrentUser {
+    return CurrentUserSchema.parse(input)
 }

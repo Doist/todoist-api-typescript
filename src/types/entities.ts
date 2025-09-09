@@ -262,10 +262,51 @@ export const UserSchema = z.object({
     email: z.string(),
 })
 /**
- * Represents a user in Todoist.
+ * Represents a user in Todoist (simplified for collaborators).
  * @see https://todoist.com/api/v1/docs#tag/User
  */
 export type User = z.infer<typeof UserSchema>
+
+export const TimezoneInfoSchema = z.object({
+    gmtString: z.string(),
+    hours: z.number().int(),
+    isDst: z.number().int(),
+    minutes: z.number().int(),
+    timezone: z.string(),
+})
+
+export const CurrentUserSchema = z.object({
+    id: z.string(),
+    email: z.string(),
+    fullName: z.string(),
+    avatarBig: z.string().nullable(),
+    avatarMedium: z.string().nullable(),
+    avatarS640: z.string().nullable(),
+    avatarSmall: z.string().nullable(),
+    businessAccountId: z.string().nullable(),
+    isPremium: z.boolean(),
+    dateFormat: z.number().int(),
+    timeFormat: z.number().int(),
+    weeklyGoal: z.number().int(),
+    dailyGoal: z.number().int(),
+    completedCount: z.number().int(),
+    completedToday: z.number().int(),
+    karma: z.number(),
+    karmaTrend: z.string(),
+    lang: z.string(),
+    nextWeek: z.number().int(),
+    startDay: z.number().int(),
+    startPage: z.string(),
+    tzInfo: TimezoneInfoSchema,
+    inboxProjectId: z.string(),
+    daysOff: z.array(z.number().int()),
+    weekendStartDay: z.number().int(),
+})
+/**
+ * Represents the current authenticated user with detailed information.
+ * @see https://todoist.com/api/v1/docs#tag/User
+ */
+export type CurrentUser = z.infer<typeof CurrentUserSchema>
 
 export const ColorSchema = z.object({
     /** @deprecated No longer used */
