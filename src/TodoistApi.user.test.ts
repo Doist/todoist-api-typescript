@@ -2,7 +2,6 @@ import { TodoistApi } from '.'
 import { DEFAULT_AUTH_TOKEN } from './testUtils/testDefaults'
 import { getSyncBaseUri, ENDPOINT_REST_USER } from './consts/endpoints'
 import { setupRestClientMock } from './testUtils/mocks'
-import { CurrentUser } from './types/entities'
 
 function getTarget(baseUrl = 'https://api.todoist.com') {
     return new TodoistApi(DEFAULT_AUTH_TOKEN, baseUrl)
