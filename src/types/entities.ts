@@ -308,6 +308,101 @@ export const CurrentUserSchema = z.object({
  */
 export type CurrentUser = z.infer<typeof CurrentUserSchema>
 
+export const ProductivityStatsSchema = z.object({
+    completedCount: z.number(),
+    daysItems: z.array(
+        z.object({
+            date: z.string(),
+            items: z.array(
+                z.object({
+                    completed: z.number(),
+                    id: z.string(),
+                }),
+            ),
+            totalCompleted: z.number(),
+        }),
+    ),
+    goals: z.object({
+        currentDailyStreak: z.object({
+            count: z.number(),
+            end: z.string(),
+            start: z.string(),
+        }),
+        currentWeeklyStreak: z.object({
+            count: z.number(),
+            end: z.string(),
+            start: z.string(),
+        }),
+        dailyGoal: z.number(),
+        ignoreDays: z.array(z.number()),
+        karmaDisabled: z.number(),
+        lastDailyStreak: z.object({
+            count: z.number(),
+            end: z.string(),
+            start: z.string(),
+        }),
+        lastWeeklyStreak: z.object({
+            count: z.number(),
+            end: z.string(),
+            start: z.string(),
+        }),
+        maxDailyStreak: z.object({
+            count: z.number(),
+            end: z.string(),
+            start: z.string(),
+        }),
+        maxWeeklyStreak: z.object({
+            count: z.number(),
+            end: z.string(),
+            start: z.string(),
+        }),
+        user: z.string(),
+        userId: z.string(),
+        vacationMode: z.number(),
+        weeklyGoal: z.number(),
+    }),
+    karma: z.number(),
+    karmaGraphData: z.array(
+        z.object({
+            date: z.string(),
+            karmaAvg: z.number(),
+        }),
+    ),
+    karmaLastUpdate: z.number(),
+    karmaTrend: z.string(),
+    karmaUpdateReasons: z.array(
+        z.object({
+            negativeKarma: z.number(),
+            negativeKarmaReasons: z.array(z.any()),
+            newKarma: z.number(),
+            positiveKarma: z.number(),
+            positiveKarmaReasons: z.array(z.any()),
+            time: z.string(),
+        }),
+    ),
+    projectColors: z.record(z.string(), z.string()),
+    weekItems: z.array(
+        z.object({
+            from: z.string(),
+            items: z.array(
+                z.object({
+                    completed: z.number(),
+                    id: z.string(),
+                }),
+            ),
+            to: z.string(),
+            totalCompleted: z.number(),
+        }),
+    ),
+})
+
+/**
+ * Represents the Productivity stats for the authenticated user.
+ * @see https://developer.todoist.com/api/v1/#tag/User/operation/get_productivity_stats_api_v1_tasks_completed_stats_get
+ */
+
+export type ProductivityStats = z.infer<typeof ProductivityStatsSchema>
+
 export const ColorSchema = z.object({
     /** @deprecated No longer used */
     id: z.number(),
