@@ -308,54 +308,48 @@ export const CurrentUserSchema = z.object({
  */
 export type CurrentUser = z.infer<typeof CurrentUserSchema>
 
+const StreakSchema = z.object({
+    count: z.number(),
+    start: z.string(),
+    end: z.string(),
+})
+
+const CompletedItemSchema = z.object({
+    id: z.string(),
+    completed: z.number(),
+})
+
+const ItemsWithDateSchema = z.object({
+    items: z.array(CompletedItemSchema),
+    totalCompleted: z.number(),
+})
+
+const KarmaUpdateSchema = z.object({
+    time: z.string(),
+    newKarma: z.number(),
+    positiveKarma: z.number(),
+    negativeKarma: z.number(),
+    positiveKarmaReasons: z.array(z.any()),
+    negativeKarmaReasons: z.array(z.any()),
+})
+
 export const ProductivityStatsSchema = z.object({
     completedCount: z.number(),
     daysItems: z.array(
-        z.object({
+        ItemsWithDateSchema.extend({
             date: z.string(),
-            items: z.array(
-                z.object({
-                    completed: z.number(),
-                    id: z.string(),
-                }),
-            ),
-            totalCompleted: z.number(),
         }),
     ),
     goals: z.object({
-        currentDailyStreak: z.object({
-            count: z.number(),
-            end: z.string(),
-            start: z.string(),
-        }),
-        currentWeeklyStreak: z.object({
-            count: z.number(),
-            end: z.string(),
-            start: z.string(),
-        }),
+        currentDailyStreak: StreakSchema,
+        currentWeeklyStreak: StreakSchema,
         dailyGoal: z.number(),
         ignoreDays: z.array(z.number()),
         karmaDisabled: z.number(),
-        lastDailyStreak: z.object({
-            count: z.number(),
-            end: z.string(),
-            start: z.string(),
-        }),
-        lastWeeklyStreak: z.object({
-            count: z.number(),
-            end: z.string(),
-            start: z.string(),
-        }),
-        maxDailyStreak: z.object({
-            count: z.number(),
-            end: z.string(),
-            start: z.string(),
-        }),
-        maxWeeklyStreak: z.object({
-            count: z.number(),
-            end: z.string(),
-            start: z.string(),
-        }),
+        lastDailyStreak: StreakSchema,
+        lastWeeklyStreak: StreakSchema,
+        maxDailyStreak: StreakSchema,
+        maxWeeklyStreak: StreakSchema,
         user: z.string(),
         userId: z.string(),
         vacationMode: z.number(),
@@ -370,28 +364,12 @@ export const ProductivityStatsSchema = z.object({
     ),
     karmaLastUpdate: z.number(),
     karmaTrend: z.string(),
-    karmaUpdateReasons: z.array(
-        z.object({
-            negativeKarma: z.number(),
-            negativeKarmaReasons: z.array(z.any()),
-            newKarma: z.number(),
-            positiveKarma: z.number(),
-            positiveKarmaReasons: z.array(z.any()),
-            time: z.string(),
-        }),
-    ),
+    karmaUpdateReasons: z.array(KarmaUpdateSchema),
     projectColors: z.record(z.string(), z.string()),
     weekItems: z.array(
-        z.object({
+        ItemsWithDateSchema.extend({
             from: z.string(),
-            items: z.array(
-                z.object({
-                    completed: z.number(),
-                    id: z.string(),
-                }),
-            ),
             to: z.string(),
-            totalCompleted: z.number(),
         }),
     ),
 })
@@ -400,7 +378,6 @@ export const ProductivityStatsSchema = z.object({
  * Represents the Productivity stats for the authenticated user.
  * @see https://developer.todoist.com/api/v1/#tag/User/operation/get_productivity_stats_api_v1_tasks_completed_stats_get
  */
-
 export type ProductivityStats = z.infer<typeof ProductivityStatsSchema>
 
 export const ColorSchema = z.object({
