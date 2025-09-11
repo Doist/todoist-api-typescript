@@ -11,10 +11,12 @@ import {
     type Comment,
     type User,
     type CurrentUser,
+    type ProductivityStats,
     PersonalProjectSchema,
     WorkspaceProjectSchema,
     type WorkspaceProject,
     type PersonalProject,
+    ProductivityStatsSchema,
 } from '../types/entities'
 
 export function validateTask(input: unknown): Task {
@@ -93,6 +95,10 @@ export function validateUser(input: unknown): User {
 
 export function validateUserArray(input: unknown[]): User[] {
     return input.map(validateUser)
+}
+
+export function validateProductivityStats(input: unknown): ProductivityStats {
+    return ProductivityStatsSchema.parse(input)
 }
 
 export function validateCurrentUser(input: unknown): CurrentUser {

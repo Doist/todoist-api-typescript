@@ -6,6 +6,7 @@ import {
     Comment,
     Task,
     CurrentUser,
+    ProductivityStats,
 } from './types/entities'
 import {
     AddCommentArgs,
@@ -67,6 +68,7 @@ import {
     PROJECT_UNARCHIVE,
     ENDPOINT_REST_PROJECTS_ARCHIVED,
     ENDPOINT_REST_USER,
+    ENDPOINT_REST_PRODUCTIVITY,
 } from './consts/endpoints'
 import {
     validateComment,
@@ -81,6 +83,7 @@ import {
     validateTask,
     validateTaskArray,
     validateUserArray,
+    validateProductivityStats,
 } from './utils/validators'
 import { z } from 'zod'
 
@@ -1017,5 +1020,19 @@ export class TodoistApi {
             requestId,
         )
         return isSuccess(response)
+    }
+    /**
+     * Retrieves productivity stats for the authenticated user.
+     *
+     * @returns A promise that resolves to the productivity stats.
+     */
+    async getProductivityStats(): Promise<ProductivityStats> {
+        const response = await request<ProductivityStats>(
+            'GET',
+            this.syncApiBase,
+            ENDPOINT_REST_PRODUCTIVITY,
+            this.authToken,
+        )
+        return validateProductivityStats(response.data)
     }
 }
