@@ -14,6 +14,7 @@ import {
     ENDPOINT_REST_TASKS_FILTER,
     ENDPOINT_REST_TASKS_COMPLETED_BY_COMPLETION_DATE,
     ENDPOINT_REST_TASKS_COMPLETED_BY_DUE_DATE,
+    ENDPOINT_REST_TASKS_COMPLETED_SEARCH,
     ENDPOINT_SYNC_QUICK_ADD,
 } from './consts/endpoints'
 import { setupRestClientMock } from './testUtils/mocks'
@@ -427,6 +428,52 @@ describe('TodoistApi task endpoints', () => {
 
             await expect(
                 api.getCompletedTasksByDueDate(DEFAULT_GET_COMPLETED_TASKS_ARGS),
+            ).rejects.toThrow()
+        })
+    })
+
+    describe('searchCompletedTasks', () => {
+        const DEFAULT_SEARCH_COMPLETED_TASKS_ARGS = {
+            query: 'buy milk',
+            cursor: null,
+            limit: 10,
+        }
+
+        test('calls get request with expected url', async () => {
+            const requestMock = setupRestClientMock({ items: [DEFAULT_TASK], nextCursor: null })
+            const api = getTarget()
+
+            await api.searchCompletedTasks(DEFAULT_SEARCH_COMPLETED_TASKS_ARGS)
+
+            expect(requestMock).toHaveBeenCalledTimes(1)
+            expect(requestMock).toHaveBeenCalledWith(
+                'GET',
+                getSyncBaseUri(),
+                ENDPOINT_REST_TASKS_COMPLETED_SEARCH,
+                DEFAULT_AUTH_TOKEN,
+                DEFAULT_SEARCH_COMPLETED_TASKS_ARGS,
+            )
+        })
+
+        test('returns result from rest client', async () => {
+            setupRestClientMock({ items: [DEFAULT_TASK], nextCursor: '789' })
+            const api = getTarget()
+
+            const response = await api.searchCompletedTasks(DEFAULT_SEARCH_COMPLETED_TASKS_ARGS)
+
+            expect(response).toEqual({
+                items: [DEFAULT_TASK],
+                nextCursor: '789',
+            })
+        })
+
+        test('validates task array in response', async () => {
+            const invalidTask = { ...DEFAULT_TASK, due: '2020-01-31' }
+            setupRestClientMock({ items: [invalidTask], nextCursor: null })
+            const api = getTarget()
+
+            await expect(
+                api.searchCompletedTasks(DEFAULT_SEARCH_COMPLETED_TASKS_ARGS),
             ).rejects.toThrow()
         })
     })
