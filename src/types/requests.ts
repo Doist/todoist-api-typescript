@@ -99,6 +99,15 @@ export type GetCompletedTasksByDueDateArgs = {
 }
 
 /**
+ * Arguments for searching completed tasks.
+ */
+export type SearchCompletedTasksArgs = {
+    query: string
+    cursor?: string | null
+    limit?: number
+}
+
+/**
  * @see https://todoist.com/api/v1/docs#tag/Tasks/operation/get_tasks_api_v1_tasks_get
  */
 export type GetTasksResponse = {

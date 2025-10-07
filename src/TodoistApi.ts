@@ -44,6 +44,7 @@ import {
     GetCompletedTasksResponse,
     GetArchivedProjectsArgs,
     GetArchivedProjectsResponse,
+    SearchCompletedTasksArgs,
 } from './types/requests'
 import { request, isSuccess } from './restClient'
 import {
@@ -52,6 +53,7 @@ import {
     ENDPOINT_REST_TASKS_FILTER,
     ENDPOINT_REST_TASKS_COMPLETED_BY_COMPLETION_DATE,
     ENDPOINT_REST_TASKS_COMPLETED_BY_DUE_DATE,
+    ENDPOINT_REST_TASKS_COMPLETED_SEARCH,
     ENDPOINT_REST_PROJECTS,
     ENDPOINT_SYNC_QUICK_ADD,
     ENDPOINT_REST_TASK_CLOSE,
@@ -261,6 +263,29 @@ export class TodoistApi {
             'GET',
             this.syncApiBase,
             ENDPOINT_REST_TASKS_COMPLETED_BY_DUE_DATE,
+            this.authToken,
+            args,
+        )
+
+        return {
+            items: validateTaskArray(items),
+            nextCursor,
+        }
+    }
+
+    /**
+     * Searches completed tasks by query string.
+     *
+     * @param args - Parameters for searching, including the query string.
+     * @returns A promise that resolves to a paginated response of completed tasks.
+     */
+    async searchCompletedTasks(args: SearchCompletedTasksArgs): Promise<GetCompletedTasksResponse> {
+        const {
+            data: { items, nextCursor },
+        } = await request<GetCompletedTasksResponse>(
+            'GET',
+            this.syncApiBase,
+            ENDPOINT_REST_TASKS_COMPLETED_SEARCH,
             this.authToken,
             args,
         )
