@@ -7,3 +7,4 @@ scratch.ts
 
 .vscode/
 .DS_Store
+.claude/settings.local.json

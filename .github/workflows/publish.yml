@@ -13,9 +13,6 @@ jobs:
             - name: Git checkout
               uses: actions/checkout@v4
 
-            # Remove any registry configurations from .nvmrc
-            - run: sed -i "/@doist/d" ./.nvmrc
-
             - name: Configure doist package repository
               uses: actions/setup-node@v4
               with:
