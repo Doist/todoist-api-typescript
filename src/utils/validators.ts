@@ -17,6 +17,8 @@ import {
     type WorkspaceProject,
     type PersonalProject,
     ProductivityStatsSchema,
+    ActivityEventSchema,
+    type ActivityEvent,
 } from '../types/entities'
 
 export function validateTask(input: unknown): Task {
@@ -103,4 +105,12 @@ export function validateProductivityStats(input: unknown): ProductivityStats {
 
 export function validateCurrentUser(input: unknown): CurrentUser {
     return CurrentUserSchema.parse(input)
+}
+
+export function validateActivityEvent(input: unknown): ActivityEvent {
+    return ActivityEventSchema.parse(input)
+}
+
+export function validateActivityEventArray(input: unknown[]): ActivityEvent[] {
+    return input.map(validateActivityEvent)
 }

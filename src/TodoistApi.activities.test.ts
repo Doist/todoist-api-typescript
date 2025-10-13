@@ -1,0 +1,165 @@
+import { TodoistApi, type ActivityEvent } from '.'
+import { DEFAULT_AUTH_TOKEN } from './testUtils/testDefaults'
+import { getSyncBaseUri, ENDPOINT_REST_ACTIVITIES } from './consts/endpoints'
+import { setupRestClientMock } from './testUtils/mocks'
+
+function getTarget(baseUrl = 'https://api.todoist.com') {
+    return new TodoistApi(DEFAULT_AUTH_TOKEN, baseUrl)
+}
+
+const DEFAULT_ACTIVITY_RESPONSE: ActivityEvent[] = [
+    {
+        id: '1',
+        objectType: 'item',
+        objectId: '123456',
+        eventType: 'added',
+        eventDate: '2025-01-10T10:00:00Z',
+        parentProjectId: '789',
+        parentItemId: null,
+        initiatorId: 'user123',
+        extraData: {
+            content: 'Test task',
+            client: 'web',
+        },
+    },
+    {
+        id: '2',
+        objectType: 'project',
+        objectId: '789',
+        eventType: 'updated',
+        eventDate: '2025-01-10T11:00:00Z',
+        parentProjectId: null,
+        parentItemId: null,
+        initiatorId: 'user123',
+        extraData: {
+            name: 'Updated Project',
+            last_name: 'Old Project',
+        },
+    },
+]
+
+const ACTIVITY_WITH_UNKNOWN_FIELDS: ActivityEvent[] = [
+    {
+        id: '3',
+        objectType: 'future_type',
+        objectId: '999',
+        eventType: 'new_event_type',
+        eventDate: '2025-01-10T12:00:00Z',
+        parentProjectId: null,
+        parentItemId: null,
+        initiatorId: null,
+        extraData: {
+            future_field: 'some value',
+            another_unknown: 123,
+        },
+        unknownField1: 'should not crash',
+        unknownField2: { nested: 'object' },
+    } as ActivityEvent,
+]
+
+describe('TodoistApi activity endpoints', () => {
+    describe('getActivityLogs', () => {
+        test('calls get on restClient with expected parameters', async () => {
+            const requestMock = setupRestClientMock({
+                results: DEFAULT_ACTIVITY_RESPONSE,
+                nextCursor: null,
+            })
+            const api = getTarget()
+
+            await api.getActivityLogs()
+
+            expect(requestMock).toHaveBeenCalledTimes(1)
+            expect(requestMock).toHaveBeenCalledWith(
+                'GET',
+                getSyncBaseUri(),
+                ENDPOINT_REST_ACTIVITIES,
+                DEFAULT_AUTH_TOKEN,
+                {},
+            )
+        })
+
+        test('returns activity events from response', async () => {
+            setupRestClientMock({
+                results: DEFAULT_ACTIVITY_RESPONSE,
+                nextCursor: null,
+            })
+            const api = getTarget()
+
+            const result = await api.getActivityLogs()
+
+            expect(result.results).toHaveLength(2)
+            expect(result.results[0].objectType).toBe('item')
+            expect(result.results[0].eventType).toBe('added')
+            expect(result.nextCursor).toBeNull()
+        })
+
+        test('handles pagination with cursor and limit', async () => {
+            const requestMock = setupRestClientMock({
+                results: DEFAULT_ACTIVITY_RESPONSE,
+                nextCursor: 'next_cursor_token',
+            })
+            const api = getTarget()
+
+            const result = await api.getActivityLogs({
+                cursor: 'prev_cursor',
+                limit: 10,
+            })
+
+            expect(requestMock).toHaveBeenCalledWith(
+                'GET',
+                getSyncBaseUri(),
+                ENDPOINT_REST_ACTIVITIES,
+                DEFAULT_AUTH_TOKEN,
+                {
+                    cursor: 'prev_cursor',
+                    limit: 10,
+                },
+            )
+            expect(result.nextCursor).toBe('next_cursor_token')
+        })
+
+        test('handles filter parameters', async () => {
+            const requestMock = setupRestClientMock({
+                results: DEFAULT_ACTIVITY_RESPONSE,
+                nextCursor: null,
+            })
+            const api = getTarget()
+
+            await api.getActivityLogs({
+                objectType: 'item',
+                eventType: 'completed',
+                parentProjectId: '789',
+            })
+
+            expect(requestMock).toHaveBeenCalledWith(
+                'GET',
+                getSyncBaseUri(),
+                ENDPOINT_REST_ACTIVITIES,
+                DEFAULT_AUTH_TOKEN,
+                {
+                    objectType: 'item',
+                    eventType: 'completed',
+                    parentProjectId: '789',
+                },
+            )
+        })
+
+        test('handles unknown event types and fields without crashing', async () => {
+            setupRestClientMock({
+                results: ACTIVITY_WITH_UNKNOWN_FIELDS,
+                nextCursor: null,
+            })
+            const api = getTarget()
+
+            const result = await api.getActivityLogs()
+
+            expect(result.results).toHaveLength(1)
+            expect(result.results[0].objectType).toBe('future_type')
+            expect(result.results[0].eventType).toBe('new_event_type')
+            expect(result.results[0].extraData).toEqual({
+                future_field: 'some value',
+                another_unknown: 123,
+            })
+        })
+    })
+})

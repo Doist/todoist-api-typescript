@@ -1,5 +1,6 @@
 import type { RequireAllOrNone, RequireOneOrNone, RequireExactlyOne } from 'type-fest'
 import type {
+    ActivityEvent,
     Comment,
     Duration,
     Label,
@@ -429,4 +430,34 @@ export type AddCommentArgs = {
  */
 export type UpdateCommentArgs = {
     content: string
+}
+
+/**
+ * Arguments for retrieving activity logs.
+ */
+export type GetActivityLogsArgs = {
+    objectType?: string
+    eventType?: string
+    objectId?: string
+    parentProjectId?: string
+    parentItemId?: string
+    includeParentObject?: boolean
+    includeChildObjects?: boolean
+    initiatorId?: string
+    initiatorIdNull?: boolean | null
+    ensureLastState?: boolean
+    annotateNotes?: boolean
+    annotateParents?: boolean
+    since?: string
+    until?: string
+    cursor?: string | null
+    limit?: number
+}
+
+/**
+ * Response from retrieving activity logs.
+ */
+export type GetActivityLogsResponse = {
+    results: ActivityEvent[]
+    nextCursor: string | null
 }
