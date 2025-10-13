@@ -401,3 +401,52 @@ export const ColorSchema = z.object({
  * @see https://todoist.com/api/v1/docs#tag/Colors
  */
 export type Color = z.infer<typeof ColorSchema>
+
+/**
+ * Type hints for known object types. Accepts any string for forward compatibility.
+ */
+export type ActivityObjectType = 'item' | 'note' | 'project' | (string & Record<string, never>)
+
+/**
+ * Type hints for known event types. Accepts any string for forward compatibility.
+ */
+export type ActivityEventType =
+    | 'added'
+    | 'updated'
+    | 'deleted'
+    | 'completed'
+    | 'uncompleted'
+    | 'archived'
+    | 'unarchived'
+    | 'shared'
+    | 'left'
+    | (string & Record<string, never>)
+
+/**
+ * Flexible object containing event-specific data.
+ * Uses z.record to accept any properties for forward compatibility.
+ */
+export const ActivityEventExtraDataSchema = z.record(z.string(), z.any()).nullable()
+export type ActivityEventExtraData = z.infer<typeof ActivityEventExtraDataSchema>
+
+/**
+ * Activity log event schema. Accepts unknown fields for forward compatibility.
+ */
+export const ActivityEventSchema = z
+    .object({
+        objectType: z.string(),
+        objectId: z.string(),
+        eventType: z.string(),
+        eventDate: z.string(),
+        id: z.string().nullable(),
+        parentProjectId: z.string().nullable(),
+        parentItemId: z.string().nullable(),
+        initiatorId: z.string().nullable(),
+        extraData: ActivityEventExtraDataSchema,
+    })
+    .catchall(z.any())
+
+/**
+ * Represents an activity log event in Todoist.
+ */
+export type ActivityEvent = z.infer<typeof ActivityEventSchema>

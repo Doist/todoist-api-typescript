@@ -45,6 +45,8 @@ import {
     GetArchivedProjectsArgs,
     GetArchivedProjectsResponse,
     SearchCompletedTasksArgs,
+    GetActivityLogsArgs,
+    GetActivityLogsResponse,
 } from './types/requests'
 import { request, isSuccess } from './restClient'
 import {
@@ -71,6 +73,7 @@ import {
     ENDPOINT_REST_PROJECTS_ARCHIVED,
     ENDPOINT_REST_USER,
     ENDPOINT_REST_PRODUCTIVITY,
+    ENDPOINT_REST_ACTIVITIES,
 } from './consts/endpoints'
 import {
     validateComment,
@@ -86,6 +89,7 @@ import {
     validateTaskArray,
     validateUserArray,
     validateProductivityStats,
+    validateActivityEventArray,
 } from './utils/validators'
 import { z } from 'zod'
 
@@ -1059,5 +1063,28 @@ export class TodoistApi {
             this.authToken,
         )
         return validateProductivityStats(response.data)
+    }
+
+    /**
+     * Retrieves activity logs with optional filters.
+     *
+     * @param args - Optional filter parameters for activity logs.
+     * @returns A promise that resolves to a paginated response of activity events.
+     */
+    async getActivityLogs(args: GetActivityLogsArgs = {}): Promise<GetActivityLogsResponse> {
+        const {
+            data: { results, nextCursor },
+        } = await request<GetActivityLogsResponse>(
+            'GET',
+            this.syncApiBase,
+            ENDPOINT_REST_ACTIVITIES,
+            this.authToken,
+            args,
+        )
+
+        return {
+            results: validateActivityEventArray(results),
+            nextCursor,
+        }
     }
 }
