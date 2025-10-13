@@ -405,7 +405,7 @@ export type Color = z.infer<typeof ColorSchema>
 /**
  * Type hints for known object types. Accepts any string for forward compatibility.
  */
-export type ActivityObjectType = 'item' | 'note' | 'project' | (string & {})
+export type ActivityObjectType = 'item' | 'note' | 'project' | (string & Record<string, never>)
 
 /**
  * Type hints for known event types. Accepts any string for forward compatibility.
@@ -420,7 +420,7 @@ export type ActivityEventType =
     | 'unarchived'
     | 'shared'
     | 'left'
-    | (string & {})
+    | (string & Record<string, never>)
 
 /**
  * Flexible object containing event-specific data.

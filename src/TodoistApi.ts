@@ -7,7 +7,6 @@ import {
     Task,
     CurrentUser,
     ProductivityStats,
-    ActivityEvent,
 } from './types/entities'
 import {
     AddCommentArgs,
