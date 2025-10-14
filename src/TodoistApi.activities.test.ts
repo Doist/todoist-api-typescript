@@ -161,5 +161,83 @@ describe('TodoistApi activity endpoints', () => {
                 another_unknown: 123,
             })
         })
+
+        test('converts Date objects to YYYY-MM-DD strings', async () => {
+            const requestMock = setupRestClientMock({
+                results: DEFAULT_ACTIVITY_RESPONSE,
+                nextCursor: null,
+            })
+            const api = getTarget()
+
+            const sinceDate = new Date('2025-01-15T10:30:00Z')
+            const untilDate = new Date('2025-01-20T15:45:00Z')
+
+            await api.getActivityLogs({
+                since: sinceDate,
+                until: untilDate,
+            })
+
+            expect(requestMock).toHaveBeenCalledWith(
+                'GET',
+                getSyncBaseUri(),
+                ENDPOINT_REST_ACTIVITIES,
+                DEFAULT_AUTH_TOKEN,
+                {
+                    since: '2025-01-15',
+                    until: '2025-01-20',
+                },
+            )
+        })
+
+        test('leaves string dates as-is for backward compatibility', async () => {
+            const requestMock = setupRestClientMock({
+                results: DEFAULT_ACTIVITY_RESPONSE,
+                nextCursor: null,
+            })
+            const api = getTarget()
+
+            await api.getActivityLogs({
+                since: '2025-01-15',
+                until: '2025-01-20',
+            })
+
+            expect(requestMock).toHaveBeenCalledWith(
+                'GET',
+                getSyncBaseUri(),
+                ENDPOINT_REST_ACTIVITIES,
+                DEFAULT_AUTH_TOKEN,
+                {
+                    since: '2025-01-15',
+                    until: '2025-01-20',
+                },
+            )
+        })
+
+        test('converts Date objects with correct timezone handling', async () => {
+            const requestMock = setupRestClientMock({
+                results: DEFAULT_ACTIVITY_RESPONSE,
+                nextCursor: null,
+            })
+            const api = getTarget()
+
+            // Test with a date that has time components
+            const sinceDate = new Date(2025, 0, 15, 23, 59, 59) // January 15, 2025, 23:59:59 local time
+
+            await api.getActivityLogs({
+                since: sinceDate,
+            })
+
+            const expectedSince = `${sinceDate.getFullYear()}-01-15`
+
+            expect(requestMock).toHaveBeenCalledWith(
+                'GET',
+                getSyncBaseUri(),
+                ENDPOINT_REST_ACTIVITIES,
+                DEFAULT_AUTH_TOKEN,
+                {
+                    since: expectedSince,
+                },
+            )
+        })
     })
 })

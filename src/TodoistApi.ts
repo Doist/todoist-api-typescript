@@ -91,6 +91,7 @@ import {
     validateProductivityStats,
     validateActivityEventArray,
 } from './utils/validators'
+import { formatDateToYYYYMMDD } from './utils/urlHelpers'
 import { z } from 'zod'
 
 import { v4 as uuidv4 } from 'uuid'
@@ -1072,6 +1073,13 @@ export class TodoistApi {
      * @returns A promise that resolves to a paginated response of activity events.
      */
     async getActivityLogs(args: GetActivityLogsArgs = {}): Promise<GetActivityLogsResponse> {
+        // Convert Date objects to YYYY-MM-DD strings
+        const processedArgs = {
+            ...args,
+            ...(args.since instanceof Date && { since: formatDateToYYYYMMDD(args.since) }),
+            ...(args.until instanceof Date && { until: formatDateToYYYYMMDD(args.until) }),
+        }
+
         const {
             data: { results, nextCursor },
         } = await request<GetActivityLogsResponse>(
@@ -1079,7 +1087,7 @@ export class TodoistApi {
             this.syncApiBase,
             ENDPOINT_REST_ACTIVITIES,
             this.authToken,
-            args,
+            processedArgs,
         )
 
         return {

@@ -435,7 +435,7 @@ export type UpdateCommentArgs = {
 /**
  * Arguments for retrieving activity logs.
  */
-export type GetActivityLogsArgs = {
+type GetActivityLogsArgsBase = {
     objectType?: string
     eventType?: string
     objectId?: string
@@ -448,11 +448,25 @@ export type GetActivityLogsArgs = {
     ensureLastState?: boolean
     annotateNotes?: boolean
     annotateParents?: boolean
-    since?: string
-    until?: string
     cursor?: string | null
     limit?: number
 }
+
+type GetActivityLogsArgsWithDate = GetActivityLogsArgsBase & {
+    since?: Date
+    until?: Date
+}
+
+/**
+ * @deprecated String dates (YYYY-MM-DD format) are deprecated. Use Date objects instead.
+ * This type will be removed in the next major version.
+ */
+type GetActivityLogsArgsWithString = GetActivityLogsArgsBase & {
+    since?: string
+    until?: string
+}
+
+export type GetActivityLogsArgs = GetActivityLogsArgsWithDate | GetActivityLogsArgsWithString
 
 /**
  * Response from retrieving activity logs.
