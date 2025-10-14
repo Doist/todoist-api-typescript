@@ -92,6 +92,7 @@ import {
     validateActivityEventArray,
 } from './utils/validators'
 import { formatDateToYYYYMMDD } from './utils/urlHelpers'
+import { normalizeObjectTypeForApi, denormalizeObjectTypeFromApi } from './utils/activity-helpers'
 import { z } from 'zod'
 
 import { v4 as uuidv4 } from 'uuid'
@@ -1073,11 +1074,12 @@ export class TodoistApi {
      * @returns A promise that resolves to a paginated response of activity events.
      */
     async getActivityLogs(args: GetActivityLogsArgs = {}): Promise<GetActivityLogsResponse> {
-        // Convert Date objects to YYYY-MM-DD strings
+        // Convert Date objects to YYYY-MM-DD strings and modern object types to legacy API types
         const processedArgs = {
             ...args,
             ...(args.since instanceof Date && { since: formatDateToYYYYMMDD(args.since) }),
             ...(args.until instanceof Date && { until: formatDateToYYYYMMDD(args.until) }),
+            ...(args.objectType && { objectType: normalizeObjectTypeForApi(args.objectType) }),
         }
 
         const {
@@ -1087,11 +1089,20 @@ export class TodoistApi {
             this.syncApiBase,
             ENDPOINT_REST_ACTIVITIES,
             this.authToken,
-            processedArgs,
+            processedArgs as Record<string, unknown>,
         )
 
+        // Convert legacy API object types back to modern SDK types
+        const normalizedResults = results.map((event) => {
+            const normalizedType = denormalizeObjectTypeFromApi(event.objectType)
+            return {
+                ...event,
+                objectType: normalizedType || event.objectType,
+            }
+        }) as unknown[]
+
         return {
-            results: validateActivityEventArray(results),
+            results: validateActivityEventArray(normalizedResults),
             nextCursor,
         }
     }

@@ -1,6 +1,8 @@
 import type { RequireAllOrNone, RequireOneOrNone, RequireExactlyOne } from 'type-fest'
 import type {
     ActivityEvent,
+    ActivityEventType,
+    ActivityObjectType,
     Comment,
     Duration,
     Label,
@@ -436,24 +438,75 @@ export type UpdateCommentArgs = {
  * Arguments for retrieving activity logs.
  */
 type GetActivityLogsArgsBase = {
-    objectType?: string
-    eventType?: string
+    /**
+     * Type of object to filter by (e.g., 'task', 'comment', 'project').
+     * Accepts both modern naming ('task', 'comment') and legacy naming ('item', 'note').
+     */
+    objectType?: ActivityObjectType
+    /**
+     * Type of event to filter by (e.g., 'added', 'updated', 'deleted', 'completed', 'uncompleted', 'archived', 'unarchived', 'shared', 'left').
+     */
+    eventType?: ActivityEventType
+    /**
+     * Filter by the ID of a specific object.
+     */
     objectId?: string
+    /**
+     * Filter events by parent project ID.
+     */
     parentProjectId?: string
+    /**
+     * Filter events by parent task ID.
+     */
     parentItemId?: string
+    /**
+     * When true, includes the parent object data in the response.
+     */
     includeParentObject?: boolean
+    /**
+     * When true, includes child object data in the response.
+     */
     includeChildObjects?: boolean
+    /**
+     * Filter by the user ID who initiated the event.
+     */
     initiatorId?: string
+    /**
+     * When true, filters for events with no initiator (system-generated events).
+     * When false, filters for events with an initiator.
+     * When null or undefined, no filtering on initiator is applied.
+     */
     initiatorIdNull?: boolean | null
+    /**
+     * When true, ensures the last state of objects is included in the response.
+     */
     ensureLastState?: boolean
+    /**
+     * When true, includes comment annotations in the response.
+     */
     annotateNotes?: boolean
+    /**
+     * When true, includes parent object annotations in the response.
+     */
     annotateParents?: boolean
+    /**
+     * Pagination cursor for retrieving the next page of results.
+     */
     cursor?: string | null
+    /**
+     * Maximum number of results to return per page.
+     */
     limit?: number
 }
 
 type GetActivityLogsArgsWithDate = GetActivityLogsArgsBase & {
+    /**
+     * Start date for filtering events (inclusive).
+     */
     since?: Date
+    /**
+     * End date for filtering events (inclusive).
+     */
     until?: Date
 }
 
@@ -462,7 +515,15 @@ type GetActivityLogsArgsWithDate = GetActivityLogsArgsBase & {
  * This type will be removed in the next major version.
  */
 type GetActivityLogsArgsWithString = GetActivityLogsArgsBase & {
+    /**
+     * Start date for filtering events in YYYY-MM-DD format (inclusive).
+     * @deprecated Use Date object instead. String format will be removed in the next major version.
+     */
     since?: string
+    /**
+     * End date for filtering events in YYYY-MM-DD format (inclusive).
+     * @deprecated Use Date object instead. String format will be removed in the next major version.
+     */
     until?: string
 }
 

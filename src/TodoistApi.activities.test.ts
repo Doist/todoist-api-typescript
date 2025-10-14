@@ -88,7 +88,7 @@ describe('TodoistApi activity endpoints', () => {
             const result = await api.getActivityLogs()
 
             expect(result.results).toHaveLength(2)
-            expect(result.results[0].objectType).toBe('item')
+            expect(result.results[0].objectType).toBe('task') // Converted from 'item' to 'task'
             expect(result.results[0].eventType).toBe('added')
             expect(result.nextCursor).toBeNull()
         })
@@ -236,6 +236,188 @@ describe('TodoistApi activity endpoints', () => {
                 DEFAULT_AUTH_TOKEN,
                 {
                     since: expectedSince,
+                },
+            )
+        })
+
+        test('converts modern objectType "task" to legacy "item" in API request', async () => {
+            const requestMock = setupRestClientMock({
+                results: DEFAULT_ACTIVITY_RESPONSE,
+                nextCursor: null,
+            })
+            const api = getTarget()
+
+            await api.getActivityLogs({
+                objectType: 'task',
+            })
+
+            expect(requestMock).toHaveBeenCalledWith(
+                'GET',
+                getSyncBaseUri(),
+                ENDPOINT_REST_ACTIVITIES,
+                DEFAULT_AUTH_TOKEN,
+                {
+                    objectType: 'item',
+                },
+            )
+        })
+
+        test('converts modern objectType "comment" to legacy "note" in API request', async () => {
+            const requestMock = setupRestClientMock({
+                results: DEFAULT_ACTIVITY_RESPONSE,
+                nextCursor: null,
+            })
+            const api = getTarget()
+
+            await api.getActivityLogs({
+                objectType: 'comment',
+            })
+
+            expect(requestMock).toHaveBeenCalledWith(
+                'GET',
+                getSyncBaseUri(),
+                ENDPOINT_REST_ACTIVITIES,
+                DEFAULT_AUTH_TOKEN,
+                {
+                    objectType: 'note',
+                },
+            )
+        })
+
+        test('leaves project objectType unchanged', async () => {
+            const requestMock = setupRestClientMock({
+                results: DEFAULT_ACTIVITY_RESPONSE,
+                nextCursor: null,
+            })
+            const api = getTarget()
+
+            await api.getActivityLogs({
+                objectType: 'project',
+            })
+
+            expect(requestMock).toHaveBeenCalledWith(
+                'GET',
+                getSyncBaseUri(),
+                ENDPOINT_REST_ACTIVITIES,
+                DEFAULT_AUTH_TOKEN,
+                {
+                    objectType: 'project',
+                },
+            )
+        })
+
+        test('converts legacy "item" to modern "task" in response', async () => {
+            setupRestClientMock({
+                results: [
+                    {
+                        id: '1',
+                        objectType: 'item',
+                        objectId: '123',
+                        eventType: 'added',
+                        eventDate: '2025-01-10T10:00:00Z',
+                        parentProjectId: null,
+                        parentItemId: null,
+                        initiatorId: 'user123',
+                        extraData: {},
+                    },
+                ],
+                nextCursor: null,
+            })
+            const api = getTarget()
+
+            const result = await api.getActivityLogs()
+
+            expect(result.results[0].objectType).toBe('task')
+        })
+
+        test('converts legacy "note" to modern "comment" in response', async () => {
+            setupRestClientMock({
+                results: [
+                    {
+                        id: '1',
+                        objectType: 'note',
+                        objectId: '456',
+                        eventType: 'added',
+                        eventDate: '2025-01-10T10:00:00Z',
+                        parentProjectId: null,
+                        parentItemId: null,
+                        initiatorId: 'user123',
+                        extraData: {},
+                    },
+                ],
+                nextCursor: null,
+            })
+            const api = getTarget()
+
+            const result = await api.getActivityLogs()
+
+            expect(result.results[0].objectType).toBe('comment')
+        })
+
+        test('leaves project objectType unchanged in response', async () => {
+            setupRestClientMock({
+                results: [
+                    {
+                        id: '1',
+                        objectType: 'project',
+                        objectId: '789',
+                        eventType: 'updated',
+                        eventDate: '2025-01-10T10:00:00Z',
+                        parentProjectId: null,
+                        parentItemId: null,
+                        initiatorId: 'user123',
+                        extraData: {},
+                    },
+                ],
+                nextCursor: null,
+            })
+            const api = getTarget()
+
+            const result = await api.getActivityLogs()
+
+            expect(result.results[0].objectType).toBe('project')
+        })
+
+        test('supports backward compatibility with legacy "item" in request', async () => {
+            const requestMock = setupRestClientMock({
+                results: DEFAULT_ACTIVITY_RESPONSE,
+                nextCursor: null,
+            })
+            const api = getTarget()
+
+            await api.getActivityLogs({
+                objectType: 'item',
+            })
+
+            expect(requestMock).toHaveBeenCalledWith(
+                'GET',
+                getSyncBaseUri(),
+                ENDPOINT_REST_ACTIVITIES,
+                DEFAULT_AUTH_TOKEN,
+                {
+                    objectType: 'item',
+                },
+            )
+        })
+
+        test('supports backward compatibility with legacy "note" in request', async () => {
+            const requestMock = setupRestClientMock({
+                results: DEFAULT_ACTIVITY_RESPONSE,
+                nextCursor: null,
+            })
+            const api = getTarget()
+
+            await api.getActivityLogs({
+                objectType: 'note',
+            })
+
+            expect(requestMock).toHaveBeenCalledWith(
+                'GET',
+                getSyncBaseUri(),
+                ENDPOINT_REST_ACTIVITIES,
+                DEFAULT_AUTH_TOKEN,
+                {
+                    objectType: 'note',
                 },
             )
         })

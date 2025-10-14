@@ -403,9 +403,28 @@ export const ColorSchema = z.object({
 export type Color = z.infer<typeof ColorSchema>
 
 /**
- * Type hints for known object types. Accepts any string for forward compatibility.
+ * @deprecated Use 'task' instead. This will be removed in the next major version.
  */
-export type ActivityObjectType = 'item' | 'note' | 'project' | (string & Record<string, never>)
+type DeprecatedItem = 'item'
+
+/**
+ * @deprecated Use 'comment' instead. This will be removed in the next major version.
+ */
+type DeprecatedNote = 'note'
+
+/**
+ * Type hints for known object types. Accepts any string for forward compatibility.
+ * Supports both modern naming ('task', 'comment') and legacy naming ('item', 'note').
+ *
+ * **Note**: The legacy values 'item' and 'note' are deprecated. Use 'task' and 'comment' instead.
+ */
+export type ActivityObjectType =
+    | 'task'
+    | 'comment'
+    | 'project'
+    | DeprecatedItem
+    | DeprecatedNote
+    | (string & Record<string, never>)
 
 /**
  * Type hints for known event types. Accepts any string for forward compatibility.
