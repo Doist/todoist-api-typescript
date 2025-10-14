@@ -1,3 +1,3 @@
 export * from './colors'
 export * from './sanitization'
-export * from './urlHelpers'
+export { getTaskUrl, getProjectUrl, getSectionUrl } from './urlHelpers'
