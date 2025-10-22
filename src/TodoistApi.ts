@@ -60,6 +60,7 @@ import {
     ENDPOINT_SYNC_QUICK_ADD,
     ENDPOINT_REST_TASK_CLOSE,
     ENDPOINT_REST_TASK_REOPEN,
+    ENDPOINT_REST_TASK_MOVE,
     ENDPOINT_REST_LABELS,
     ENDPOINT_REST_PROJECT_COLLABORATORS,
     ENDPOINT_REST_SECTIONS,
@@ -369,6 +370,7 @@ export class TodoistApi {
      * @param args - The paramets that should contain only one of projectId, sectionId, or parentId
      * @param requestId - Optional custom identifier for the request.
      * @returns - A promise that resolves to an array of the updated tasks.
+     * @deprecated Use `moveTask` for single task operations. This method uses the Sync API and may be removed in a future version.
      */
     async moveTasks(ids: string[], args: MoveTaskArgs, requestId?: string): Promise<Task[]> {
         if (ids.length > MAX_COMMAND_COUNT) {
@@ -418,6 +420,32 @@ export class TodoistApi {
         }
 
         return validateTaskArray(syncTasks)
+    }
+
+    /**
+     * Moves a task by its ID to either a different parent/section/project.
+     *
+     * @param id - The unique identifier of the task to be moved.
+     * @param args - The parameters that should contain exactly one of projectId, sectionId, or parentId
+     * @param requestId - Optional custom identifier for the request.
+     * @returns A promise that resolves to the updated task.
+     */
+    async moveTask(id: string, args: MoveTaskArgs, requestId?: string): Promise<Task> {
+        z.string().parse(id)
+        const response = await request<Task>(
+            'POST',
+            this.syncApiBase,
+            generatePath(ENDPOINT_REST_TASKS, id, ENDPOINT_REST_TASK_MOVE),
+            this.authToken,
+            {
+                ...(args.projectId && { project_id: args.projectId }),
+                ...(args.sectionId && { section_id: args.sectionId }),
+                ...(args.parentId && { parent_id: args.parentId }),
+            },
+            requestId,
+        )
+
+        return validateTask(response.data)
     }
 
     /**
