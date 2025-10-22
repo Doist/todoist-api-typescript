@@ -30,14 +30,13 @@
         "camelcase": "6.3.0",
         "emoji-regex": "10.5.0",
         "ts-custom-error": "^3.2.0",
-        "uuid": "^11.0.0",
+        "uuid": "11.1.0",
         "zod": "4.1.5"
     },
     "devDependencies": {
         "@doist/eslint-config": "11.1.0",
         "@doist/prettier-config": "4.0.0",
         "@types/jest": "30.0.0",
-        "@types/uuid": "10.0.0",
         "@typescript-eslint/eslint-plugin": "6.21.0",
         "@typescript-eslint/parser": "6.21.0",
         "eslint": "8.35.0",
