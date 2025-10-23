@@ -457,7 +457,7 @@ export const ActivityEventSchema = z
         objectId: z.string(),
         eventType: z.string(),
         eventDate: z.string(),
-        id: z.string().nullable(),
+        id: z.union([z.string(), z.number()]).transform(val => val?.toString() ?? null).nullable(),
         parentProjectId: z.string().nullable(),
         parentItemId: z.string().nullable(),
         initiatorId: z.string().nullable(),
