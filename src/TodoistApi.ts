@@ -99,8 +99,8 @@ import {
 } from './utils/validators'
 import { formatDateToYYYYMMDD } from './utils/urlHelpers'
 import FormData from 'form-data'
-import * as fs from 'fs'
-import * as path from 'path'
+import { createReadStream } from 'fs'
+import { basename } from 'path'
 import axios from 'axios'
 import { normalizeObjectTypeForApi, denormalizeObjectTypeFromApi } from './utils/activity-helpers'
 import { z } from 'zod'
@@ -1188,8 +1188,8 @@ export class TodoistApi {
         if (typeof args.file === 'string') {
             // File path - create read stream
             const filePath = args.file
-            const fileName = args.fileName || path.basename(filePath)
-            form.append('file', fs.createReadStream(filePath), fileName)
+            const fileName = args.fileName || basename(filePath)
+            form.append('file', createReadStream(filePath), fileName)
         } else if (Buffer.isBuffer(args.file)) {
             // Buffer - require fileName
             if (!args.fileName) {
