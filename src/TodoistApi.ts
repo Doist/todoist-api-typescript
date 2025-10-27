@@ -1,4 +1,5 @@
 import {
+    Attachment,
     PersonalProject,
     WorkspaceProject,
     Label,
@@ -47,6 +48,8 @@ import {
     SearchCompletedTasksArgs,
     GetActivityLogsArgs,
     GetActivityLogsResponse,
+    UploadFileArgs,
+    DeleteUploadArgs,
 } from './types/requests'
 import { request, isSuccess } from './restClient'
 import {
@@ -75,8 +78,10 @@ import {
     ENDPOINT_REST_USER,
     ENDPOINT_REST_PRODUCTIVITY,
     ENDPOINT_REST_ACTIVITIES,
+    ENDPOINT_REST_UPLOADS,
 } from './consts/endpoints'
 import {
+    validateAttachment,
     validateComment,
     validateCommentArray,
     validateCurrentUser,
@@ -93,6 +98,10 @@ import {
     validateActivityEventArray,
 } from './utils/validators'
 import { formatDateToYYYYMMDD } from './utils/urlHelpers'
+import FormData from 'form-data'
+import { createReadStream } from 'fs'
+import { basename } from 'path'
+import axios from 'axios'
 import { normalizeObjectTypeForApi, denormalizeObjectTypeFromApi } from './utils/activity-helpers'
 import { z } from 'zod'
 
@@ -1133,5 +1142,115 @@ export class TodoistApi {
             results: validateActivityEventArray(normalizedResults),
             nextCursor,
         }
+    }
+
+    /**
+     * Uploads a file and returns attachment metadata.
+     * This creates an upload record that can be referenced in tasks or comments.
+     *
+     * @param args - Upload parameters including file content, filename, and optional project ID.
+     * @param requestId - Optional custom identifier for the request.
+     * @returns A promise that resolves to the uploaded file's attachment metadata.
+     *
+     * @example
+     * ```typescript
+     * // Upload from a file path
+     * const upload = await api.uploadFile({
+     *   file: '/path/to/document.pdf',
+     *   projectId: '12345'
+     * })
+     *
+     * // Upload from a Buffer
+     * const buffer = fs.readFileSync('/path/to/document.pdf')
+     * const upload = await api.uploadFile({
+     *   file: buffer,
+     *   fileName: 'document.pdf',  // Required for Buffer/Stream
+     *   projectId: '12345'
+     * })
+     *
+     * // Use the returned fileUrl in a comment
+     * await api.addComment({
+     *   content: 'See attached document',
+     *   taskId: '67890',
+     *   attachment: {
+     *     fileUrl: upload.fileUrl,
+     *     fileName: upload.fileName,
+     *     fileType: upload.fileType,
+     *     resourceType: upload.resourceType
+     *   }
+     * })
+     * ```
+     */
+    async uploadFile(args: UploadFileArgs, requestId?: string): Promise<Attachment> {
+        const form = new FormData()
+
+        // Determine file type and add to form data
+        if (typeof args.file === 'string') {
+            // File path - create read stream
+            const filePath = args.file
+            const fileName = args.fileName || basename(filePath)
+            form.append('file', createReadStream(filePath), fileName)
+        } else if (Buffer.isBuffer(args.file)) {
+            // Buffer - require fileName
+            if (!args.fileName) {
+                throw new Error('fileName is required when uploading from a Buffer')
+            }
+            form.append('file', args.file, args.fileName)
+        } else {
+            // Stream - require fileName
+            if (!args.fileName) {
+                throw new Error('fileName is required when uploading from a stream')
+            }
+            form.append('file', args.file, args.fileName)
+        }
+
+        // Add optional project_id as a form field
+        if (args.projectId) {
+            form.append('project_id', args.projectId)
+        }
+
+        // Build the full URL
+        const url = `${this.syncApiBase}${ENDPOINT_REST_UPLOADS}`
+
+        // Prepare headers
+        const headers: Record<string, string> = {
+            Authorization: `Bearer ${this.authToken}`,
+            ...form.getHeaders(),
+        }
+
+        if (requestId) {
+            headers['X-Request-Id'] = requestId
+        }
+
+        // Make the request using axios directly
+        const response = await axios.post<Attachment>(url, form, { headers })
+
+        return validateAttachment(response.data)
+    }
+
+    /**
+     * Deletes an uploaded file by its URL.
+     *
+     * @param args - The file URL to delete.
+     * @param requestId - Optional custom identifier for the request.
+     * @returns A promise that resolves to `true` if deletion was successful.
+     *
+     * @example
+     * ```typescript
+     * await api.deleteUpload({
+     *   fileUrl: 'https://cdn.todoist.com/...'
+     * })
+     * ```
+     */
+    async deleteUpload(args: DeleteUploadArgs, requestId?: string): Promise<boolean> {
+        const response = await request(
+            'DELETE',
+            this.syncApiBase,
+            ENDPOINT_REST_UPLOADS,
+            this.authToken,
+            args,
+            requestId,
+        )
+        return isSuccess(response)
     }
 }
