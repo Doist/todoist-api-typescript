@@ -31,7 +31,7 @@
         "emoji-regex": "10.5.0",
         "ts-custom-error": "^3.2.0",
         "uuid": "11.1.0",
-        "zod": "4.1.5"
+        "zod": "4.1.12"
     },
     "devDependencies": {
         "@doist/eslint-config": "11.1.0",
