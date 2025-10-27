@@ -1,10 +1,12 @@
 import {
+    AttachmentSchema,
     SectionSchema,
     LabelSchema,
     CommentSchema,
     UserSchema,
     CurrentUserSchema,
     TaskSchema,
+    type Attachment,
     type Task,
     type Section,
     type Label,
@@ -113,4 +115,8 @@ export function validateActivityEvent(input: unknown): ActivityEvent {
 
 export function validateActivityEventArray(input: unknown[]): ActivityEvent[] {
     return input.map(validateActivityEvent)
+}
+
+export function validateAttachment(input: unknown): Attachment {
+    return AttachmentSchema.parse(input)
 }

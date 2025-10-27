@@ -29,6 +29,7 @@
         "axios-retry": "^4.0.0",
         "camelcase": "6.3.0",
         "emoji-regex": "10.6.0",
+        "form-data": "4.0.4",
         "ts-custom-error": "^3.2.0",
         "uuid": "11.1.0",
         "zod": "4.1.12"

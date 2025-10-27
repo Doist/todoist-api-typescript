@@ -536,3 +536,37 @@ export type GetActivityLogsResponse = {
     results: ActivityEvent[]
     nextCursor: string | null
 }
+
+/**
+ * Arguments for uploading a file.
+ * @see https://todoist.com/api/v1/docs#tag/Uploads/operation/upload_file_api_v1_uploads_post
+ */
+export type UploadFileArgs = {
+    /**
+     * The file content to upload. Can be:
+     * - Buffer: File content as a Buffer (requires fileName)
+     * - ReadableStream: File content as a stream (requires fileName)
+     * - string: Path to a file on the filesystem (fileName is optional, will be inferred from path)
+     */
+    file: Buffer | NodeJS.ReadableStream | string
+    /**
+     * The name of the file. Required for Buffer and Stream inputs.
+     * Optional for file path strings (will be inferred from the path if not provided).
+     */
+    fileName?: string
+    /**
+     * The project ID to associate the upload with.
+     */
+    projectId?: string | null
+}
+
+/**
+ * Arguments for deleting an uploaded file.
+ * @see https://todoist.com/api/v1/docs#tag/Uploads/operation/delete_upload_api_v1_uploads_delete
+ */
+export type DeleteUploadArgs = {
+    /**
+     * The URL of the file to delete.
+     */
+    fileUrl: string
+}

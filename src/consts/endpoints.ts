@@ -39,6 +39,7 @@ export const ENDPOINT_REST_PROJECT_COLLABORATORS = 'collaborators'
 export const ENDPOINT_REST_USER = 'user'
 export const ENDPOINT_REST_PRODUCTIVITY = ENDPOINT_REST_TASKS + '/completed/stats'
 export const ENDPOINT_REST_ACTIVITIES = 'activities'
+export const ENDPOINT_REST_UPLOADS = 'uploads'
 export const PROJECT_ARCHIVE = 'archive'
 export const PROJECT_UNARCHIVE = 'unarchive'
 
