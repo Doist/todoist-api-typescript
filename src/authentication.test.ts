@@ -1,4 +1,10 @@
-import { getAuthorizationUrl, getAuthToken, revokeAuthToken, Permission } from './authentication'
+import {
+    getAuthorizationUrl,
+    getAuthToken,
+    revokeAuthToken,
+    revokeToken,
+    Permission,
+} from './authentication'
 import { setupRestClientMock } from './testUtils/mocks'
 import { assertInstance } from './testUtils/asserts'
 import { TodoistRequestError } from './types'
@@ -151,6 +157,56 @@ describe('authentication', () => {
                 revokeTokenRequest,
             )
             expect(isSuccess).toEqual(true)
+        })
+    })
+
+    describe('revokeToken', () => {
+        const revokeTokenRequest = {
+            clientId: 'SomeId',
+            clientSecret: 'ASecret',
+            token: 'AToken',
+        }
+
+        test('calls request with RFC 7009 compliant parameters', async () => {
+            const requestMock = setupRestClientMock(undefined, 200)
+
+            const isSuccess = await revokeToken(revokeTokenRequest)
+
+            expect(requestMock).toHaveBeenCalledTimes(1)
+
+            // Verify the correct endpoint is called
+            const callArgs = requestMock.mock.calls[0] as unknown[]
+            expect(callArgs[0]).toEqual('POST')
+            expect(callArgs[1]).toEqual(getSyncBaseUri())
+            expect(callArgs[2]).toEqual('revoke')
+
+            // Verify no API token is passed (should be undefined)
+            expect(callArgs[3]).toBeUndefined()
+
+            // Verify request body contains only token and token_type_hint
+            expect(callArgs[4]).toEqual({
+                token: 'AToken',
+                token_type_hint: 'access_token',
+            })
+
+            // Verify Basic Auth header is present
+            const customHeaders = callArgs[7] as Record<string, string> | undefined
+            expect(customHeaders).toBeDefined()
+            expect(customHeaders?.Authorization).toMatch(/^Basic /)
+
+            // Verify Basic Auth is correctly encoded (base64 of "SomeId:ASecret")
+            const expectedAuth = Buffer.from('SomeId:ASecret').toString('base64')
+            expect(customHeaders?.Authorization).toEqual(`Basic ${expectedAuth}`)
+
+            expect(isSuccess).toEqual(true)
+        })
+
+        test('returns true when revocation succeeds', async () => {
+            setupRestClientMock(undefined, 200)
+
+            const result = await revokeToken(revokeTokenRequest)
+
+            expect(result).toBe(true)
         })
     })
 })
