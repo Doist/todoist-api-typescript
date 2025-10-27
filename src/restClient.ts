@@ -61,16 +61,26 @@ function getTodoistRequestError(
     return requestError
 }
 
-function getRequestConfiguration(baseURL: string, apiToken?: string, requestId?: string) {
+function getRequestConfiguration(
+    baseURL: string,
+    apiToken?: string,
+    requestId?: string,
+    customHeaders?: Record<string, string>,
+) {
     const authHeader = apiToken ? { Authorization: getAuthHeader(apiToken) } : undefined
     const requestIdHeader = requestId ? { 'X-Request-Id': requestId } : undefined
-    const headers = { ...defaultHeaders, ...authHeader, ...requestIdHeader }
+    const headers = { ...defaultHeaders, ...authHeader, ...requestIdHeader, ...customHeaders }
 
     return { baseURL, headers }
 }
 
-function getAxiosClient(baseURL: string, apiToken?: string, requestId?: string) {
-    const configuration = getRequestConfiguration(baseURL, apiToken, requestId)
+function getAxiosClient(
+    baseURL: string,
+    apiToken?: string,
+    requestId?: string,
+    customHeaders?: Record<string, string>,
+) {
+    const configuration = getRequestConfiguration(baseURL, apiToken, requestId, customHeaders)
     const client = applyCaseMiddleware(Axios.create(configuration), {
         caseFunctions: {
             camel: customCamelCase,
@@ -98,6 +108,7 @@ export async function request<T>(
     payload?: Record<string, unknown>,
     requestId?: string,
     hasSyncCommands?: boolean,
+    customHeaders?: Record<string, string>,
 ): Promise<AxiosResponse<T>> {
     // axios loses the original stack when returning errors, for the sake of better reporting
     // we capture it here and reapply it to any thrown errors.
@@ -110,7 +121,7 @@ export async function request<T>(
             requestId = uuidv4()
         }
 
-        const axiosClient = getAxiosClient(baseUri, apiToken, requestId)
+        const axiosClient = getAxiosClient(baseUri, apiToken, requestId, customHeaders)
 
         switch (httpMethod) {
             case 'GET':

@@ -7,6 +7,7 @@ import {
     ENDPOINT_AUTHORIZATION,
     ENDPOINT_GET_TOKEN,
     ENDPOINT_REVOKE_TOKEN,
+    ENDPOINT_REVOKE,
 } from './consts/endpoints'
 
 /**
@@ -47,6 +48,27 @@ export type RevokeAuthTokenRequestArgs = {
     clientId: string
     clientSecret: string
     accessToken: string
+}
+
+/**
+ * Parameters required to revoke a token using RFC 7009 compliant endpoint.
+ * @see https://todoist.com/api/v1/docs#tag/Authorization
+ */
+export type RevokeTokenRequestArgs = {
+    clientId: string
+    clientSecret: string
+    token: string
+}
+
+/**
+ * Creates a Basic Authentication header value from client credentials.
+ * @param clientId - The OAuth client ID
+ * @param clientSecret - The OAuth client secret
+ * @returns The Basic Auth header value (without the 'Basic ' prefix)
+ */
+function createBasicAuthHeader(clientId: string, clientSecret: string): string {
+    const credentials = `${clientId}:${clientSecret}`
+    return Buffer.from(credentials).toString('base64')
 }
 
 /**
@@ -148,6 +170,7 @@ export async function getAuthToken(
  * })
  * ```
  *
+ * @deprecated Use {@link revokeToken} instead. This function uses a legacy endpoint that will be removed in a future version. The new function uses the RFC 7009 compliant endpoint.
  * @returns True if revocation was successful
  * @see https://todoist.com/api/v1/docs#tag/Authorization/operation/revoke_access_token_api_api_v1_access_tokens_delete
  */
@@ -161,6 +184,57 @@ export async function revokeAuthToken(
         ENDPOINT_REVOKE_TOKEN,
         undefined,
         args,
+    )
+
+    return isSuccess(response)
+}
+
+/**
+ * Revokes a token using the RFC 7009 OAuth 2.0 Token Revocation standard.
+ *
+ * This function uses HTTP Basic Authentication with client credentials and follows
+ * the RFC 7009 specification for token revocation.
+ *
+ * @example
+ * ```typescript
+ * await revokeToken({
+ *   clientId: 'your-client-id',
+ *   clientSecret: 'your-client-secret',
+ *   token: 'access-token-to-revoke'
+ * })
+ * ```
+ *
+ * @returns True if revocation was successful
+ * @see https://datatracker.ietf.org/doc/html/rfc7009
+ * @see https://todoist.com/api/v1/docs#tag/Authorization
+ */
+export async function revokeToken(
+    args: RevokeTokenRequestArgs,
+    baseUrl?: string,
+): Promise<boolean> {
+    const { clientId, clientSecret, token } = args
+
+    // Create Basic Auth header as per RFC 7009
+    const basicAuth = createBasicAuthHeader(clientId, clientSecret)
+    const customHeaders = {
+        Authorization: `Basic ${basicAuth}`,
+    }
+
+    // Request body only contains the token and optional token_type_hint
+    const requestBody = {
+        token,
+        token_type_hint: 'access_token',
+    }
+
+    const response = await request(
+        'POST',
+        getSyncBaseUri(baseUrl),
+        ENDPOINT_REVOKE,
+        undefined,
+        requestBody,
+        undefined,
+        false,
+        customHeaders,
     )
 
     return isSuccess(response)
