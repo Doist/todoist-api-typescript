@@ -95,26 +95,25 @@ describe('TodoistApi uploads', () => {
             expect(mockedAxios.post).toHaveBeenCalledTimes(1)
         })
 
-        test('throws error when Buffer provided without fileName', async () => {
+        test.each([
+            {
+                description: 'Buffer',
+                file: Buffer.from('test file content'),
+                expectedError: 'fileName is required when uploading from a Buffer',
+            },
+            {
+                description: 'stream',
+                file: new Readable(),
+                expectedError: 'fileName is required when uploading from a stream',
+            },
+        ])('throws error when $description provided without fileName', async ({ file, expectedError }) => {
             const api = new TodoistApi('token')
-            const buffer = Buffer.from('test file content')
 
             await expect(
                 api.uploadFile({
-                    file: buffer,
+                    file,
                 }),
-            ).rejects.toThrow('fileName is required when uploading from a Buffer')
-        })
-
-        test('throws error when stream provided without fileName', async () => {
-            const api = new TodoistApi('token')
-            const mockStream = new Readable()
-
-            await expect(
-                api.uploadFile({
-                    file: mockStream,
-                }),
-            ).rejects.toThrow('fileName is required when uploading from a stream')
+            ).rejects.toThrow(expectedError)
         })
 
         test('uploads file with requestId', async () => {
