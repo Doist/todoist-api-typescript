@@ -175,7 +175,7 @@ describe('authentication', () => {
             expect(requestMock).toHaveBeenCalledTimes(1)
 
             // Verify the correct endpoint is called
-            const callArgs = requestMock.mock.calls[0]
+            const callArgs = requestMock.mock.calls[0] as unknown[]
             expect(callArgs[0]).toEqual('POST')
             expect(callArgs[1]).toEqual(getSyncBaseUri())
             expect(callArgs[2]).toEqual('revoke')
@@ -190,7 +190,7 @@ describe('authentication', () => {
             })
 
             // Verify Basic Auth header is present
-            const customHeaders = callArgs[7]
+            const customHeaders = callArgs[7] as Record<string, string> | undefined
             expect(customHeaders).toBeDefined()
             expect(customHeaders?.Authorization).toMatch(/^Basic /)
 
