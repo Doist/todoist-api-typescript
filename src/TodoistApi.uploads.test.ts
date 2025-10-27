@@ -45,7 +45,7 @@ describe('TodoistApi uploads', () => {
             })
 
             expect(mockedAxios.post).toHaveBeenCalledTimes(1)
-            const [url, formData, config] = mockedAxios.post.mock.calls[0]
+            const [url, , config] = mockedAxios.post.mock.calls[0]
 
             expect(url).toBe(`${getSyncBaseUri()}uploads`)
             expect(config?.headers?.Authorization).toBe('Bearer token')
