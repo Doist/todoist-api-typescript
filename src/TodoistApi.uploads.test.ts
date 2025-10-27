@@ -106,15 +106,18 @@ describe('TodoistApi uploads', () => {
                 file: new Readable(),
                 expectedError: 'fileName is required when uploading from a stream',
             },
-        ])('throws error when $description provided without fileName', async ({ file, expectedError }) => {
-            const api = new TodoistApi('token')
+        ])(
+            'throws error when $description provided without fileName',
+            async ({ file, expectedError }) => {
+                const api = new TodoistApi('token')
 
-            await expect(
-                api.uploadFile({
-                    file,
-                }),
-            ).rejects.toThrow(expectedError)
-        })
+                await expect(
+                    api.uploadFile({
+                        file,
+                    }),
+                ).rejects.toThrow(expectedError)
+            },
+        )
 
         test('uploads file with requestId', async () => {
             const api = new TodoistApi('token')
