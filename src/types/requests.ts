@@ -570,3 +570,149 @@ export type DeleteUploadArgs = {
      */
     fileUrl: string
 }
+
+// Workspace-related types
+
+/**
+ * Arguments for getting workspace invitations.
+ */
+export type GetWorkspaceInvitationsArgs = {
+    /**
+     * The workspace ID to get invitations for.
+     */
+    workspaceId: number
+}
+
+/**
+ * Arguments for deleting a workspace invitation.
+ */
+export type DeleteWorkspaceInvitationArgs = {
+    /**
+     * The workspace ID.
+     */
+    workspaceId: number
+    /**
+     * The email address of the invitation to delete.
+     */
+    userEmail: string
+}
+
+/**
+ * Arguments for accepting/rejecting a workspace invitation.
+ */
+export type WorkspaceInvitationActionArgs = {
+    /**
+     * The invitation code from the email.
+     */
+    inviteCode: string
+}
+
+/**
+ * Arguments for joining a workspace.
+ */
+export type JoinWorkspaceArgs = {
+    /**
+     * Optional invitation code/link to join via.
+     */
+    inviteCode?: string | null
+    /**
+     * Optional workspace ID to join via domain auto-join.
+     */
+    workspaceId?: number | null
+}
+
+/**
+ * Arguments for uploading/updating workspace logo.
+ */
+export type WorkspaceLogoArgs = {
+    /**
+     * The workspace ID.
+     */
+    workspaceId: number
+    /**
+     * The image file to upload (Buffer, Stream, or file path).
+     */
+    file?: Buffer | NodeJS.ReadableStream | string
+    /**
+     * The file name (required for Buffer/Stream uploads).
+     */
+    fileName?: string
+    /**
+     * Whether to delete the logo instead of updating it.
+     */
+    delete?: boolean
+}
+
+/**
+ * Arguments for getting workspace plan details.
+ */
+export type GetWorkspacePlanDetailsArgs = {
+    /**
+     * The workspace ID.
+     */
+    workspaceId: number
+}
+
+/**
+ * Arguments for getting workspace users (paginated).
+ */
+export type GetWorkspaceUsersArgs = {
+    /**
+     * Optional workspace ID. If not provided, returns users for all workspaces.
+     */
+    workspaceId?: number | null
+    /**
+     * Cursor for pagination.
+     */
+    cursor?: string | null
+    /**
+     * Maximum number of users to return (default: 100).
+     */
+    limit?: number
+}
+
+/**
+ * Arguments for getting workspace projects (paginated).
+ */
+export type GetWorkspaceProjectsArgs = {
+    /**
+     * The workspace ID.
+     */
+    workspaceId: number
+    /**
+     * Cursor for pagination.
+     */
+    cursor?: string | null
+    /**
+     * Maximum number of projects to return (default: 100).
+     */
+    limit?: number
+}
+
+/**
+ * Paginated response for workspace users.
+ */
+export type GetWorkspaceUsersResponse = {
+    /**
+     * Whether there are more users available.
+     */
+    hasMore: boolean
+    /**
+     * Cursor for the next page of results.
+     */
+    nextCursor?: string
+    /**
+     * Array of workspace users.
+     */
+    workspaceUsers: import('./entities').WorkspaceUser[]
+}
+
+/**
+ * Response type for workspace invitations endpoints.
+ */
+export type WorkspaceInvitationsResponse = string[]
+
+/**
+ * Response type for workspace logo upload.
+ */
+export type WorkspaceLogoResponse = Record<string, unknown> | null
