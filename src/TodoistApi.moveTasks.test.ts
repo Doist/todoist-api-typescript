@@ -49,9 +49,11 @@ describe('TodoistApi moveTasks', () => {
         expect(result).toEqual(MOVED_TASKS)
 
         // Critical: Verify unique UUIDs (see https://github.com/Doist/todoist-api-typescript/issues/310)
-        const sentRequest = (
-            requestMock.mock.calls[0][0] as { payload: { commands: Array<{ uuid: string }> } }
-        ).payload
+        expect(requestMock).toHaveBeenCalledTimes(1)
+        const mockCall = requestMock.mock.calls[0] as [
+            { payload: { commands: Array<{ uuid: string }> } },
+        ]
+        const sentRequest = mockCall[0].payload
         const uuids = sentRequest.commands.map((cmd) => cmd.uuid)
         const uniqueUuids = new Set(uuids)
         expect(uniqueUuids.size).toBe(TASK_IDS.length) // All UUIDs must be different
@@ -66,11 +68,11 @@ describe('TodoistApi moveTasks', () => {
 
         await api.moveTasks(['123'], { sectionId: '888' })
 
-        const sentRequest = (
-            requestMock.mock.calls[0][0] as {
-                payload: { commands: Array<{ args: Record<string, unknown> }> }
-            }
-        ).payload
+        expect(requestMock).toHaveBeenCalledTimes(1)
+        const mockCall = requestMock.mock.calls[0] as [
+            { payload: { commands: Array<{ args: Record<string, unknown> }> } },
+        ]
+        const sentRequest = mockCall[0].payload
         expect(sentRequest.commands[0].args).toEqual({
             id: '123',
             section_id: '888',
@@ -86,11 +88,11 @@ describe('TodoistApi moveTasks', () => {
 
         await api.moveTasks(['123'], { parentId: '777' })
 
-        const sentRequest = (
-            requestMock.mock.calls[0][0] as {
-                payload: { commands: Array<{ args: Record<string, unknown> }> }
-            }
-        ).payload
+        expect(requestMock).toHaveBeenCalledTimes(1)
+        const mockCall = requestMock.mock.calls[0] as [
+            { payload: { commands: Array<{ args: Record<string, unknown> }> } },
+        ]
+        const sentRequest = mockCall[0].payload
         expect(sentRequest.commands[0].args).toEqual({
             id: '123',
             parent_id: '777',

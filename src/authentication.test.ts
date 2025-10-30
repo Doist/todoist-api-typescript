@@ -175,14 +175,18 @@ describe('authentication', () => {
             expect(requestMock).toHaveBeenCalledTimes(1)
 
             // Verify the correct endpoint is called
-            const callArgs = requestMock.mock.calls[0][0] as {
-                httpMethod: string
-                baseUri: string
-                relativePath: string
-                apiToken?: string
-                payload: Record<string, unknown>
-                customHeaders?: Record<string, string>
-            }
+            expect(requestMock).toHaveBeenCalledTimes(1)
+            const mockCall = requestMock.mock.calls[0] as [
+                {
+                    httpMethod: string
+                    baseUri: string
+                    relativePath: string
+                    apiToken?: string
+                    payload: Record<string, unknown>
+                    customHeaders?: Record<string, string>
+                },
+            ]
+            const callArgs = mockCall[0]
             expect(callArgs.httpMethod).toEqual('POST')
             expect(callArgs.baseUri).toEqual(getSyncBaseUri())
             expect(callArgs.relativePath).toEqual('revoke')
