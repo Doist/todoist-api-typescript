@@ -51,7 +51,7 @@ Example scratch.ts file:
 
 ```
 /* eslint-disable no-console */
-import { TodoistApi } from './TodoistApi'
+import { TodoistApi } from './todoist-api'
 
 const token = 'YOURTOKEN'
 const api = new TodoistApi(token)

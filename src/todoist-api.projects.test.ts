@@ -6,7 +6,7 @@ import {
     DEFAULT_USER,
     PROJECT_WITH_OPTIONALS_AS_NULL,
     DEFAULT_PROJECT_ID,
-} from './testUtils/testDefaults'
+} from './test-utils/test-defaults'
 import {
     getSyncBaseUri,
     ENDPOINT_REST_PROJECTS,
@@ -14,8 +14,8 @@ import {
     PROJECT_ARCHIVE,
     PROJECT_UNARCHIVE,
 } from './consts/endpoints'
-import { setupRestClientMock } from './testUtils/mocks'
-import { getProjectUrl } from './utils/urlHelpers'
+import { setupRestClientMock } from './test-utils/mocks'
+import { getProjectUrl } from './utils/url-helpers'
 
 function getTarget() {
     return new TodoistApi(DEFAULT_AUTH_TOKEN)

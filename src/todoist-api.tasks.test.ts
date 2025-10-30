@@ -5,7 +5,7 @@ import {
     DEFAULT_TASK,
     TASK_WITH_OPTIONALS_AS_NULL,
     DEFAULT_TASK_ID,
-} from './testUtils/testDefaults'
+} from './test-utils/test-defaults'
 import {
     getSyncBaseUri,
     ENDPOINT_REST_TASK_CLOSE,
@@ -17,8 +17,8 @@ import {
     ENDPOINT_REST_TASKS_COMPLETED_SEARCH,
     ENDPOINT_SYNC_QUICK_ADD,
 } from './consts/endpoints'
-import { setupRestClientMock } from './testUtils/mocks'
-import { getTaskUrl } from './utils/urlHelpers'
+import { setupRestClientMock } from './test-utils/mocks'
+import { getTaskUrl } from './utils/url-helpers'
 
 function getTarget(baseUrl = 'https://api.todoist.com') {
     return new TodoistApi(DEFAULT_AUTH_TOKEN, baseUrl)

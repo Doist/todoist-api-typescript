@@ -10,9 +10,9 @@ import {
     RAW_COMMENT_WITH_ATTACHMENT_WITH_OPTIONALS_AS_NULL,
     RAW_COMMENT_WITH_OPTIONALS_AS_NULL_PROJECT,
     RAW_COMMENT_WITH_OPTIONALS_AS_NULL_TASK,
-} from './testUtils/testDefaults'
+} from './test-utils/test-defaults'
 import { getSyncBaseUri, ENDPOINT_REST_COMMENTS } from './consts/endpoints'
-import { setupRestClientMock } from './testUtils/mocks'
+import { setupRestClientMock } from './test-utils/mocks'
 
 function getTarget() {
     return new TodoistApi(DEFAULT_AUTH_TOKEN)

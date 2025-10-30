@@ -1,10 +1,10 @@
-import { TodoistApi } from './TodoistApi'
-import { setupRestClientMock } from './testUtils/mocks'
+import { TodoistApi } from './todoist-api'
+import { setupRestClientMock } from './test-utils/mocks'
 import { getSyncBaseUri } from './consts/endpoints'
-import { uploadMultipartFile } from './utils/multipartUpload'
+import { uploadMultipartFile } from './utils/multipart-upload'
 
 // Mock the multipart upload helper
-jest.mock('./utils/multipartUpload')
+jest.mock('./utils/multipart-upload')
 const mockedUploadMultipartFile = uploadMultipartFile as jest.MockedFunction<
     typeof uploadMultipartFile
 >

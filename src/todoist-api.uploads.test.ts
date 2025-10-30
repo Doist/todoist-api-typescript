@@ -1,5 +1,5 @@
-import { TodoistApi } from './TodoistApi'
-import { setupRestClientMock } from './testUtils/mocks'
+import { TodoistApi } from './todoist-api'
+import { setupRestClientMock } from './test-utils/mocks'
 import { getSyncBaseUri } from './consts/endpoints'
 import axios from 'axios'
 import * as fs from 'fs'

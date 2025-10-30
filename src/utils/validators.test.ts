@@ -13,7 +13,7 @@ import {
     DEFAULT_USER,
     INVALID_USER,
     DEFAULT_RAW_COMMENT,
-} from '../testUtils/testDefaults'
+} from '../test-utils/test-defaults'
 import {
     validateTask,
     validateTaskArray,

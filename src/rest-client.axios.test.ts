@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { paramsSerializer } from './restClient'
+import { paramsSerializer } from './rest-client'
 
 const DEFAULT_BASE_URI = 'https://api.todoist.com/rest/v2/tasks'
 

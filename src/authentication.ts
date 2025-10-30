@@ -1,4 +1,4 @@
-import { request, isSuccess } from './restClient'
+import { request, isSuccess } from './rest-client'
 import { v4 as uuid } from 'uuid'
 import { TodoistRequestError } from './types'
 import {

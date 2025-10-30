@@ -1,4 +1,4 @@
-import { formatDateToYYYYMMDD, getTaskUrl, getProjectUrl, getSectionUrl } from './urlHelpers'
+import { formatDateToYYYYMMDD, getTaskUrl, getProjectUrl, getSectionUrl } from './url-helpers'
 
 describe('formatDateToYYYYMMDD', () => {
     test('formats Date object to YYYY-MM-DD string', () => {
