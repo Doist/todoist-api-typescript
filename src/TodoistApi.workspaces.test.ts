@@ -5,7 +5,9 @@ import { uploadMultipartFile } from './utils/multipartUpload'
 
 // Mock the multipart upload helper
 jest.mock('./utils/multipartUpload')
-const mockedUploadMultipartFile = uploadMultipartFile as jest.MockedFunction<typeof uploadMultipartFile>
+const mockedUploadMultipartFile = uploadMultipartFile as jest.MockedFunction<
+    typeof uploadMultipartFile
+>
 
 describe('TodoistApi workspaces', () => {
     const api = new TodoistApi('token')
@@ -78,7 +80,7 @@ describe('TodoistApi workspaces', () => {
             const requestMock = setupRestClientMock([])
             const requestId = 'admin-request'
 
-            await api.getAllWorkspaceInvitations(requestId)
+            await api.getAllWorkspaceInvitations({}, requestId)
 
             expect(requestMock).toHaveBeenCalledWith(
                 'GET',
@@ -495,15 +497,14 @@ describe('TodoistApi workspaces', () => {
                     limit: 25,
                 },
             )
-            expect(result.projects).toEqual(mockProjects)
+            expect(result.results).toEqual(mockProjects)
         })
     })
 
     describe('getWorkspaceArchivedProjects', () => {
         const mockResponse = {
-            projects: [],
-            hasMore: false,
-            nextCursor: undefined,
+            results: [],
+            nextCursor: null,
         }
 
         test('gets workspace archived projects', async () => {
@@ -524,7 +525,7 @@ describe('TodoistApi workspaces', () => {
                 undefined,
                 {},
             )
-            expect(result.projects).toEqual([])
+            expect(result.results).toEqual([])
         })
     })
 })

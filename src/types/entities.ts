@@ -512,8 +512,8 @@ export type WorkspaceInvitation = z.infer<typeof WorkspaceInvitationSchema>
 
 export const PlanPriceSchema = z.object({
     currency: z.string(),
-    amount: z.number(),
-    interval: z.string(),
+    amount: z.union([z.number(), z.string()]),
+    interval: z.string().optional(),
 })
 
 /**
@@ -522,10 +522,10 @@ export const PlanPriceSchema = z.object({
 export type PlanPrice = z.infer<typeof PlanPriceSchema>
 
 export const FormattedPriceListingSchema = z.object({
-    currency: z.string(),
-    amount: z.number(),
-    interval: z.string(),
-    formatted: z.string(),
+    currency: z.string().optional(),
+    amount: z.number().optional(),
+    interval: z.string().optional(),
+    formatted: z.string().optional(),
 })
 
 /**
@@ -555,3 +555,16 @@ export const WorkspacePlanDetailsSchema = z.object({
  * Represents workspace plan and billing details.
  */
 export type WorkspacePlanDetails = z.infer<typeof WorkspacePlanDetailsSchema>
+
+export const JoinWorkspaceResultSchema = z.object({
+    custom_sorting_applied: z.boolean(),
+    project_sort_preference: z.string(),
+    role: WorkspaceRoleSchema,
+    user_id: z.string(),
+    workspace_id: z.string(),
+})
+
+/**
+ * Result returned when successfully joining a workspace.
+ */
+export type JoinWorkspaceResult = z.infer<typeof JoinWorkspaceResultSchema>

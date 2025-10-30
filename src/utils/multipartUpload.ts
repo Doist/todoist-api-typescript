@@ -4,6 +4,30 @@ import { basename } from 'path'
 import axios, { type AxiosResponse } from 'axios'
 
 /**
+ * Helper function to determine content-type from filename extension.
+ * @param fileName - The filename to analyze
+ * @returns The appropriate MIME type
+ */
+function getContentTypeFromFileName(fileName: string): string {
+    const extension = fileName.toLowerCase().split('.').pop()
+    switch (extension) {
+        case 'png':
+            return 'image/png'
+        case 'jpg':
+        case 'jpeg':
+            return 'image/jpeg'
+        case 'gif':
+            return 'image/gif'
+        case 'webp':
+            return 'image/webp'
+        case 'svg':
+            return 'image/svg+xml'
+        default:
+            return 'application/octet-stream'
+    }
+}
+
+/**
  * Uploads a file using multipart/form-data.
  *
  * This is a shared utility for uploading files to Todoist endpoints that require
@@ -58,13 +82,20 @@ export async function uploadMultipartFile<T>(
         // File path - create read stream
         const filePath = file
         const resolvedFileName = fileName || basename(filePath)
+
         form.append('file', createReadStream(filePath), resolvedFileName)
     } else if (Buffer.isBuffer(file)) {
         // Buffer - require fileName
         if (!fileName) {
             throw new Error('fileName is required when uploading from a Buffer')
         }
-        form.append('file', file, fileName)
+        // Detect content-type from filename extension
+        const contentType = getContentTypeFromFileName(fileName)
+
+        form.append('file', file, {
+            filename: fileName,
+            contentType: contentType,
+        })
     } else {
         // Stream - require fileName
         if (!fileName) {

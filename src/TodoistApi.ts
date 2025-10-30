@@ -11,6 +11,7 @@ import {
     WorkspaceUser,
     WorkspaceInvitation,
     WorkspacePlanDetails,
+    JoinWorkspaceResult,
 } from './types/entities'
 import {
     AddCommentArgs,
@@ -63,6 +64,7 @@ import {
     GetWorkspaceUsersResponse,
     GetWorkspaceProjectsArgs,
     WorkspaceInvitationsResponse,
+    AllWorkspaceInvitationsResponse,
     WorkspaceLogoResponse,
 } from './types/requests'
 import { request, isSuccess } from './restClient'
@@ -121,10 +123,11 @@ import {
     validateUserArray,
     validateProductivityStats,
     validateActivityEventArray,
-    validateWorkspaceUser,
     validateWorkspaceUserArray,
     validateWorkspaceInvitation,
+    validateWorkspaceInvitationArray,
     validateWorkspacePlanDetails,
+    validateJoinWorkspaceResult,
 } from './utils/validators'
 import { formatDateToYYYYMMDD } from './utils/urlHelpers'
 import { uploadMultipartFile } from './utils/multipartUpload'
@@ -1270,11 +1273,10 @@ export class TodoistApi {
             this.syncApiBase,
             ENDPOINT_WORKSPACE_INVITATIONS,
             this.authToken,
-            undefined,
+            { workspace_id: args.workspaceId },
             requestId,
             false,
             undefined,
-            { workspace_id: args.workspaceId },
         )
 
         return response.data
@@ -1286,17 +1288,25 @@ export class TodoistApi {
      * @param requestId - Optional request ID for idempotency.
      * @returns Array of email addresses with pending invitations.
      */
-    async getAllWorkspaceInvitations(requestId?: string): Promise<WorkspaceInvitationsResponse> {
-        const response = await request<WorkspaceInvitationsResponse>(
+    async getAllWorkspaceInvitations(
+        args: { workspaceId?: number } = {},
+        requestId?: string,
+    ): Promise<AllWorkspaceInvitationsResponse> {
+        const queryParams: Record<string, string | number> = {}
+        if (args.workspaceId) {
+            queryParams.workspace_id = args.workspaceId
+        }
+
+        const response = await request<AllWorkspaceInvitationsResponse>(
             'GET',
             this.syncApiBase,
             ENDPOINT_WORKSPACE_INVITATIONS_ALL,
             this.authToken,
-            undefined,
+            queryParams,
             requestId,
         )
 
-        return response.data
+        return validateWorkspaceInvitationArray(response.data)
     }
 
     /**
@@ -1378,8 +1388,8 @@ export class TodoistApi {
      * @param requestId - Optional request ID for idempotency.
      * @returns Workspace user information.
      */
-    async joinWorkspace(args: JoinWorkspaceArgs, requestId?: string): Promise<WorkspaceUser> {
-        const response = await request<WorkspaceUser>(
+    async joinWorkspace(args: JoinWorkspaceArgs, requestId?: string): Promise<JoinWorkspaceResult> {
+        const response = await request<JoinWorkspaceResult>(
             'POST',
             this.syncApiBase,
             ENDPOINT_WORKSPACE_JOIN,
@@ -1391,7 +1401,7 @@ export class TodoistApi {
             requestId,
         )
 
-        return validateWorkspaceUser(response.data)
+        return validateJoinWorkspaceResult(response.data)
     }
 
     /**
@@ -1424,6 +1434,11 @@ export class TodoistApi {
 
         if (!args.file) {
             throw new Error('file is required when not deleting logo')
+        }
+
+        // Validate buffer is not empty if it's a Buffer
+        if (Buffer.isBuffer(args.file) && args.file.length === 0) {
+            throw new Error('Cannot upload empty image file')
         }
 
         const additionalFields: Record<string, string | number | boolean> = {
@@ -1459,11 +1474,10 @@ export class TodoistApi {
             this.syncApiBase,
             ENDPOINT_WORKSPACE_PLAN_DETAILS,
             this.authToken,
-            undefined,
+            { workspace_id: args.workspaceId },
             requestId,
             false,
             undefined,
-            { workspace_id: args.workspaceId },
         )
 
         return validateWorkspacePlanDetails(response.data)
@@ -1500,17 +1514,16 @@ export class TodoistApi {
             this.syncApiBase,
             ENDPOINT_WORKSPACE_USERS,
             this.authToken,
-            undefined,
+            queryParams,
             requestId,
             false,
             undefined,
-            queryParams,
         )
 
         return {
-            hasMore: response.data.has_more,
+            hasMore: response.data.has_more || false,
             nextCursor: response.data.next_cursor,
-            workspaceUsers: validateWorkspaceUserArray(response.data.workspace_users),
+            workspaceUsers: validateWorkspaceUserArray(response.data.workspace_users || []),
         }
     }
 
@@ -1538,15 +1551,14 @@ export class TodoistApi {
             this.syncApiBase,
             ENDPOINT_WORKSPACE_PROJECTS_ACTIVE(args.workspaceId),
             this.authToken,
-            undefined,
+            queryParams,
             requestId,
             false,
             undefined,
-            queryParams,
         )
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-        const validatedProjects = response.data.projects?.map((project: unknown) =>
+        const validatedProjects = response.data.results?.map((project: unknown) =>
             validateProject(project),
         )
 
@@ -1554,7 +1566,7 @@ export class TodoistApi {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             ...response.data,
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            projects: validatedProjects || [],
+            results: validatedProjects || [],
         } as GetProjectsResponse
     }
 
@@ -1582,15 +1594,14 @@ export class TodoistApi {
             this.syncApiBase,
             ENDPOINT_WORKSPACE_PROJECTS_ARCHIVED(args.workspaceId),
             this.authToken,
-            undefined,
+            queryParams,
             requestId,
             false,
             undefined,
-            queryParams,
         )
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-        const validatedProjects = response.data.projects?.map((project: unknown) =>
+        const validatedProjects = response.data.results?.map((project: unknown) =>
             validateProject(project),
         )
 
@@ -1598,7 +1609,7 @@ export class TodoistApi {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             ...response.data,
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            projects: validatedProjects || [],
+            results: validatedProjects || [],
         } as GetProjectsResponse
     }
 }

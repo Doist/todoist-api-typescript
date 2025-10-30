@@ -41,7 +41,7 @@ describe('uploadMultipartFile', () => {
             expect(mockedAxios.post).toHaveBeenCalledTimes(1)
             expect(result).toEqual(mockResponse.data)
 
-            const [url, formData, config] = mockedAxios.post.mock.calls[0]
+            const [url, , config] = mockedAxios.post.mock.calls[0]
             expect(url).toBe(`${baseUrl}${endpoint}`)
             expect(config?.headers?.Authorization).toBe('Bearer test-token')
             expect(config?.headers?.['X-Request-Id']).toBe('req-123')
@@ -125,13 +125,29 @@ describe('uploadMultipartFile', () => {
         test('filters out null and undefined values', async () => {
             const buffer = Buffer.from('test')
 
-            await uploadMultipartFile(baseUrl, authToken, endpoint, buffer, 'test.pdf', {
+            const additionalFields: Record<string, string | number | boolean> = {
                 field1: 'value1',
-                field2: null,
-                field3: undefined,
                 field4: 0,
                 field5: false,
-            })
+            }
+            // Add fields that might be null/undefined conditionally
+            const field2Value = null
+            const field3Value = undefined
+            if (field2Value !== null && field2Value !== undefined) {
+                additionalFields.field2 = field2Value
+            }
+            if (field3Value !== null && field3Value !== undefined) {
+                additionalFields.field3 = field3Value
+            }
+
+            await uploadMultipartFile(
+                baseUrl,
+                authToken,
+                endpoint,
+                buffer,
+                'test.pdf',
+                additionalFields,
+            )
 
             expect(mockedAxios.post).toHaveBeenCalledTimes(1)
             // We can't easily test FormData contents, but we verified the method doesn't throw

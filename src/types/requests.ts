@@ -708,9 +708,14 @@ export type GetWorkspaceUsersResponse = {
 }
 
 /**
- * Response type for workspace invitations endpoints.
+ * Response type for workspace invitations endpoint (simple email list).
  */
 export type WorkspaceInvitationsResponse = string[]
+
+/**
+ * Response type for all workspace invitations endpoint (detailed objects).
+ */
+export type AllWorkspaceInvitationsResponse = import('./entities').WorkspaceInvitation[]
 
 /**
  * Response type for workspace logo upload.
