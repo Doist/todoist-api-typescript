@@ -51,3 +51,30 @@ export const ENDPOINT_AUTHORIZATION = 'authorize'
 export const ENDPOINT_GET_TOKEN = 'access_token'
 export const ENDPOINT_REVOKE_TOKEN = 'access_tokens/revoke'
 export const ENDPOINT_REVOKE = 'revoke'
+
+// Workspace endpoints
+export const ENDPOINT_WORKSPACE_INVITATIONS = 'workspaces/invitations'
+export const ENDPOINT_WORKSPACE_INVITATIONS_ALL = 'workspaces/invitations/all'
+export const ENDPOINT_WORKSPACE_INVITATIONS_DELETE = 'workspaces/invitations/delete'
+export const ENDPOINT_WORKSPACE_JOIN = 'workspaces/join'
+export const ENDPOINT_WORKSPACE_LOGO = 'workspaces/logo'
+export const ENDPOINT_WORKSPACE_PLAN_DETAILS = 'workspaces/plan_details'
+export const ENDPOINT_WORKSPACE_USERS = 'workspaces/users'
+
+// Workspace invitation actions (require invite_code parameter)
+export function getWorkspaceInvitationAcceptEndpoint(inviteCode: string): string {
+    return `workspaces/invitations/${inviteCode}/accept`
+}
+
+export function getWorkspaceInvitationRejectEndpoint(inviteCode: string): string {
+    return `workspaces/invitations/${inviteCode}/reject`
+}
+
+// Workspace projects (require workspace_id parameter)
+export function getWorkspaceActiveProjectsEndpoint(workspaceId: number): string {
+    return `workspaces/${workspaceId}/projects/active`
+}
+
+export function getWorkspaceArchivedProjectsEndpoint(workspaceId: number): string {
+    return `workspaces/${workspaceId}/projects/archived`
+}

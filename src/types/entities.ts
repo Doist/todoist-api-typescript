@@ -472,3 +472,104 @@ export const ActivityEventSchema = z
  * Represents an activity log event in Todoist.
  */
 export type ActivityEvent = z.infer<typeof ActivityEventSchema>
+
+/**
+ * Available workspace roles.
+ */
+export const WORKSPACE_ROLES = ['ADMIN', 'MEMBER', 'GUEST'] as const
+
+/**
+ * Role of a user within a workspace.
+ */
+export type WorkspaceRole = (typeof WORKSPACE_ROLES)[number]
+
+export const WorkspaceRoleSchema = z.enum(WORKSPACE_ROLES)
+
+export const WorkspaceUserSchema = z.object({
+    userId: z.string(),
+    workspaceId: z.string(),
+    userEmail: z.string(),
+    fullName: z.string(),
+    timezone: z.string(),
+    role: WorkspaceRoleSchema,
+    imageId: z.string().nullable(),
+    isDeleted: z.boolean().default(false),
+})
+
+/**
+ * Represents a user within a workspace (MemberView from API).
+ */
+export type WorkspaceUser = z.infer<typeof WorkspaceUserSchema>
+
+export const WorkspaceInvitationSchema = z.object({
+    id: z.string().default('0'),
+    inviterId: z.string(),
+    userEmail: z.string(),
+    workspaceId: z.string(),
+    role: WorkspaceRoleSchema,
+    isExistingUser: z.boolean(),
+})
+
+/**
+ * Represents a workspace invitation.
+ */
+export type WorkspaceInvitation = z.infer<typeof WorkspaceInvitationSchema>
+
+export const PlanPriceSchema = z.object({
+    currency: z.string(),
+    amount: z.union([z.number(), z.string()]),
+    interval: z.string().optional(),
+})
+
+/**
+ * Plan pricing information.
+ */
+export type PlanPrice = z.infer<typeof PlanPriceSchema>
+
+export const FormattedPriceListingSchema = z.object({
+    currency: z.string().optional(),
+    amount: z.number().optional(),
+    interval: z.string().optional(),
+    formatted: z.string().optional(),
+})
+
+/**
+ * Formatted price listing for workspace plans.
+ */
+export type FormattedPriceListing = z.infer<typeof FormattedPriceListingSchema>
+
+export const WorkspacePlanDetailsSchema = z.object({
+    currentMemberCount: z.number(),
+    currentPlan: z.enum(['Business', 'Starter']),
+    currentPlanStatus: z.enum(['Active', 'Downgraded', 'Cancelled', 'NeverSubscribed']),
+    downgradeAt: z.string().nullable(),
+    currentActiveProjects: z.number(),
+    maximumActiveProjects: z.number(),
+    priceList: z.array(FormattedPriceListingSchema),
+    workspaceId: z.number(),
+    isTrialing: z.boolean(),
+    trialEndsAt: z.string().nullable(),
+    cancelAtPeriodEnd: z.boolean(),
+    hasTrialed: z.boolean(),
+    planPrice: PlanPriceSchema.nullable(),
+    hasBillingPortal: z.boolean(),
+    hasBillingPortalSwitchToAnnual: z.boolean(),
+})
+
+/**
+ * Represents workspace plan and billing details.
+ */
+export type WorkspacePlanDetails = z.infer<typeof WorkspacePlanDetailsSchema>
+
+export const JoinWorkspaceResultSchema = z.object({
+    custom_sorting_applied: z.boolean(),
+    project_sort_preference: z.string(),
+    role: WorkspaceRoleSchema,
+    user_id: z.string(),
+    workspace_id: z.string(),
+})
+
+/**
+ * Result returned when successfully joining a workspace.
+ */
+export type JoinWorkspaceResult = z.infer<typeof JoinWorkspaceResultSchema>

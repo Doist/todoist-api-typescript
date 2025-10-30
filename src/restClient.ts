@@ -136,6 +136,11 @@ export async function request<T>(
                     relativePath,
                     hasSyncCommands ? JSON.stringify(payload) : payload,
                 )
+            case 'PUT':
+                return await axiosClient.put<T>(
+                    relativePath,
+                    hasSyncCommands ? JSON.stringify(payload) : payload,
+                )
             case 'DELETE':
                 return await axiosClient.delete<T>(relativePath)
         }

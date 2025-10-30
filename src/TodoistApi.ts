@@ -8,6 +8,10 @@ import {
     Task,
     CurrentUser,
     ProductivityStats,
+    WorkspaceUser,
+    WorkspaceInvitation,
+    WorkspacePlanDetails,
+    JoinWorkspaceResult,
 } from './types/entities'
 import {
     AddCommentArgs,
@@ -50,6 +54,18 @@ import {
     GetActivityLogsResponse,
     UploadFileArgs,
     DeleteUploadArgs,
+    GetWorkspaceInvitationsArgs,
+    DeleteWorkspaceInvitationArgs,
+    WorkspaceInvitationActionArgs,
+    JoinWorkspaceArgs,
+    WorkspaceLogoArgs,
+    GetWorkspacePlanDetailsArgs,
+    GetWorkspaceUsersArgs,
+    GetWorkspaceUsersResponse,
+    GetWorkspaceProjectsArgs,
+    WorkspaceInvitationsResponse,
+    AllWorkspaceInvitationsResponse,
+    WorkspaceLogoResponse,
 } from './types/requests'
 import { request, isSuccess } from './restClient'
 import {
@@ -79,6 +95,17 @@ import {
     ENDPOINT_REST_PRODUCTIVITY,
     ENDPOINT_REST_ACTIVITIES,
     ENDPOINT_REST_UPLOADS,
+    ENDPOINT_WORKSPACE_INVITATIONS,
+    ENDPOINT_WORKSPACE_INVITATIONS_ALL,
+    ENDPOINT_WORKSPACE_INVITATIONS_DELETE,
+    getWorkspaceInvitationAcceptEndpoint,
+    getWorkspaceInvitationRejectEndpoint,
+    ENDPOINT_WORKSPACE_JOIN,
+    ENDPOINT_WORKSPACE_LOGO,
+    ENDPOINT_WORKSPACE_PLAN_DETAILS,
+    ENDPOINT_WORKSPACE_USERS,
+    getWorkspaceActiveProjectsEndpoint,
+    getWorkspaceArchivedProjectsEndpoint,
 } from './consts/endpoints'
 import {
     validateAttachment,
@@ -96,12 +123,14 @@ import {
     validateUserArray,
     validateProductivityStats,
     validateActivityEventArray,
+    validateWorkspaceUserArray,
+    validateWorkspaceInvitation,
+    validateWorkspaceInvitationArray,
+    validateWorkspacePlanDetails,
+    validateJoinWorkspaceResult,
 } from './utils/validators'
 import { formatDateToYYYYMMDD } from './utils/urlHelpers'
-import FormData from 'form-data'
-import { createReadStream } from 'fs'
-import { basename } from 'path'
-import axios from 'axios'
+import { uploadMultipartFile } from './utils/multipartUpload'
 import { normalizeObjectTypeForApi, denormalizeObjectTypeFromApi } from './utils/activity-helpers'
 import { z } from 'zod'
 
@@ -1182,50 +1211,22 @@ export class TodoistApi {
      * ```
      */
     async uploadFile(args: UploadFileArgs, requestId?: string): Promise<Attachment> {
-        const form = new FormData()
-
-        // Determine file type and add to form data
-        if (typeof args.file === 'string') {
-            // File path - create read stream
-            const filePath = args.file
-            const fileName = args.fileName || basename(filePath)
-            form.append('file', createReadStream(filePath), fileName)
-        } else if (Buffer.isBuffer(args.file)) {
-            // Buffer - require fileName
-            if (!args.fileName) {
-                throw new Error('fileName is required when uploading from a Buffer')
-            }
-            form.append('file', args.file, args.fileName)
-        } else {
-            // Stream - require fileName
-            if (!args.fileName) {
-                throw new Error('fileName is required when uploading from a stream')
-            }
-            form.append('file', args.file, args.fileName)
-        }
-
-        // Add optional project_id as a form field
+        const additionalFields: Record<string, string | number | boolean> = {}
         if (args.projectId) {
-            form.append('project_id', args.projectId)
+            additionalFields.project_id = args.projectId
         }
 
-        // Build the full URL
-        const url = `${this.syncApiBase}${ENDPOINT_REST_UPLOADS}`
+        const data = await uploadMultipartFile<Attachment>(
+            this.syncApiBase,
+            this.authToken,
+            ENDPOINT_REST_UPLOADS,
+            args.file,
+            args.fileName,
+            additionalFields,
+            requestId,
+        )
 
-        // Prepare headers
-        const headers: Record<string, string> = {
-            Authorization: `Bearer ${this.authToken}`,
-            ...form.getHeaders(),
-        }
-
-        if (requestId) {
-            headers['X-Request-Id'] = requestId
-        }
-
-        // Make the request using axios directly
-        const response = await axios.post<Attachment>(url, form, { headers })
-
-        return validateAttachment(response.data)
+        return validateAttachment(data)
     }
 
     /**
@@ -1252,5 +1253,399 @@ export class TodoistApi {
             requestId,
         )
         return isSuccess(response)
+    }
+
+    /* Workspace methods */
+
+    /**
+     * Gets pending invitations for a workspace.
+     *
+     * @param args - Arguments including workspace ID.
+     * @param requestId - Optional request ID for idempotency.
+     * @returns Array of email addresses with pending invitations.
+     */
+    async getWorkspaceInvitations(
+        args: GetWorkspaceInvitationsArgs,
+        requestId?: string,
+    ): Promise<WorkspaceInvitationsResponse> {
+        const response = requestId
+            ? await request<WorkspaceInvitationsResponse>(
+                  'GET',
+                  this.syncApiBase,
+                  ENDPOINT_WORKSPACE_INVITATIONS,
+                  this.authToken,
+                  { workspace_id: args.workspaceId },
+                  requestId,
+              )
+            : await request<WorkspaceInvitationsResponse>(
+                  'GET',
+                  this.syncApiBase,
+                  ENDPOINT_WORKSPACE_INVITATIONS,
+                  this.authToken,
+                  { workspace_id: args.workspaceId },
+              )
+
+        return response.data
+    }
+
+    /**
+     * Gets all workspace invitations (admin only).
+     *
+     * @param requestId - Optional request ID for idempotency.
+     * @returns Array of email addresses with pending invitations.
+     */
+    async getAllWorkspaceInvitations(
+        args: { workspaceId?: number } = {},
+        requestId?: string,
+    ): Promise<AllWorkspaceInvitationsResponse> {
+        const queryParams: Record<string, string | number> = {}
+        if (args.workspaceId) {
+            queryParams.workspace_id = args.workspaceId
+        }
+
+        const response = requestId
+            ? await request<AllWorkspaceInvitationsResponse>(
+                  'GET',
+                  this.syncApiBase,
+                  ENDPOINT_WORKSPACE_INVITATIONS_ALL,
+                  this.authToken,
+                  queryParams,
+                  requestId,
+              )
+            : await request<AllWorkspaceInvitationsResponse>(
+                  'GET',
+                  this.syncApiBase,
+                  ENDPOINT_WORKSPACE_INVITATIONS_ALL,
+                  this.authToken,
+                  queryParams,
+              )
+
+        return validateWorkspaceInvitationArray(response.data)
+    }
+
+    /**
+     * Deletes a workspace invitation (admin only).
+     *
+     * @param args - Arguments including workspace ID and user email.
+     * @param requestId - Optional request ID for idempotency.
+     * @returns The deleted invitation.
+     */
+    async deleteWorkspaceInvitation(
+        args: DeleteWorkspaceInvitationArgs,
+        requestId?: string,
+    ): Promise<WorkspaceInvitation> {
+        const response = await request<WorkspaceInvitation>(
+            'POST',
+            this.syncApiBase,
+            ENDPOINT_WORKSPACE_INVITATIONS_DELETE,
+            this.authToken,
+            {
+                workspace_id: args.workspaceId,
+                user_email: args.userEmail,
+            },
+            requestId,
+        )
+
+        return validateWorkspaceInvitation(response.data)
+    }
+
+    /**
+     * Accepts a workspace invitation.
+     *
+     * @param args - Arguments including invite code.
+     * @param requestId - Optional request ID for idempotency.
+     * @returns The accepted invitation.
+     */
+    async acceptWorkspaceInvitation(
+        args: WorkspaceInvitationActionArgs,
+        requestId?: string,
+    ): Promise<WorkspaceInvitation> {
+        const response = await request<WorkspaceInvitation>(
+            'PUT',
+            this.syncApiBase,
+            getWorkspaceInvitationAcceptEndpoint(args.inviteCode),
+            this.authToken,
+            undefined,
+            requestId,
+        )
+
+        return validateWorkspaceInvitation(response.data)
+    }
+
+    /**
+     * Rejects a workspace invitation.
+     *
+     * @param args - Arguments including invite code.
+     * @param requestId - Optional request ID for idempotency.
+     * @returns The rejected invitation.
+     */
+    async rejectWorkspaceInvitation(
+        args: WorkspaceInvitationActionArgs,
+        requestId?: string,
+    ): Promise<WorkspaceInvitation> {
+        const response = await request<WorkspaceInvitation>(
+            'PUT',
+            this.syncApiBase,
+            getWorkspaceInvitationRejectEndpoint(args.inviteCode),
+            this.authToken,
+            undefined,
+            requestId,
+        )
+
+        return validateWorkspaceInvitation(response.data)
+    }
+
+    /**
+     * Joins a workspace via invitation link or domain auto-join.
+     *
+     * @param args - Arguments including invite code or workspace ID.
+     * @param requestId - Optional request ID for idempotency.
+     * @returns Workspace user information.
+     */
+    async joinWorkspace(args: JoinWorkspaceArgs, requestId?: string): Promise<JoinWorkspaceResult> {
+        const response = await request<JoinWorkspaceResult>(
+            'POST',
+            this.syncApiBase,
+            ENDPOINT_WORKSPACE_JOIN,
+            this.authToken,
+            {
+                invite_code: args.inviteCode,
+                workspace_id: args.workspaceId,
+            },
+            requestId,
+        )
+
+        return validateJoinWorkspaceResult(response.data)
+    }
+
+    /**
+     * Uploads or updates a workspace logo.
+     *
+     * @param args - Arguments including workspace ID, file, and options.
+     * @param requestId - Optional request ID for idempotency.
+     * @returns Logo information or null if deleted.
+     */
+    async uploadWorkspaceLogo(
+        args: WorkspaceLogoArgs,
+        requestId?: string,
+    ): Promise<WorkspaceLogoResponse> {
+        if (args.delete) {
+            // Delete logo
+            const data = await uploadMultipartFile<WorkspaceLogoResponse>(
+                this.syncApiBase,
+                this.authToken,
+                ENDPOINT_WORKSPACE_LOGO,
+                Buffer.alloc(0), // Empty buffer for delete
+                'delete',
+                {
+                    workspace_id: args.workspaceId,
+                    delete: true,
+                },
+                requestId,
+            )
+            return data
+        }
+
+        if (!args.file) {
+            throw new Error('file is required when not deleting logo')
+        }
+
+        // Validate buffer is not empty if it's a Buffer
+        if (Buffer.isBuffer(args.file) && args.file.length === 0) {
+            throw new Error('Cannot upload empty image file')
+        }
+
+        const additionalFields: Record<string, string | number | boolean> = {
+            workspace_id: args.workspaceId,
+        }
+
+        const data = await uploadMultipartFile<WorkspaceLogoResponse>(
+            this.syncApiBase,
+            this.authToken,
+            ENDPOINT_WORKSPACE_LOGO,
+            args.file,
+            args.fileName,
+            additionalFields,
+            requestId,
+        )
+
+        return data
+    }
+
+    /**
+     * Gets workspace plan and billing details.
+     *
+     * @param args - Arguments including workspace ID.
+     * @param requestId - Optional request ID for idempotency.
+     * @returns Workspace plan details.
+     */
+    async getWorkspacePlanDetails(
+        args: GetWorkspacePlanDetailsArgs,
+        requestId?: string,
+    ): Promise<WorkspacePlanDetails> {
+        const response = requestId
+            ? await request<WorkspacePlanDetails>(
+                  'GET',
+                  this.syncApiBase,
+                  ENDPOINT_WORKSPACE_PLAN_DETAILS,
+                  this.authToken,
+                  { workspace_id: args.workspaceId },
+                  requestId,
+              )
+            : await request<WorkspacePlanDetails>(
+                  'GET',
+                  this.syncApiBase,
+                  ENDPOINT_WORKSPACE_PLAN_DETAILS,
+                  this.authToken,
+                  { workspace_id: args.workspaceId },
+              )
+
+        return validateWorkspacePlanDetails(response.data)
+    }
+
+    /**
+     * Gets workspace users with pagination.
+     *
+     * @param args - Arguments including optional workspace ID, cursor, and limit.
+     * @param requestId - Optional request ID for idempotency.
+     * @returns Paginated list of workspace users.
+     */
+    async getWorkspaceUsers(
+        args: GetWorkspaceUsersArgs = {},
+        requestId?: string,
+    ): Promise<GetWorkspaceUsersResponse> {
+        const queryParams: Record<string, string | number> = {}
+        if (args.workspaceId !== undefined && args.workspaceId !== null) {
+            queryParams.workspace_id = args.workspaceId
+        }
+        if (args.cursor) {
+            queryParams.cursor = args.cursor
+        }
+        if (args.limit) {
+            queryParams.limit = args.limit
+        }
+
+        const response = requestId
+            ? await request<{
+                  has_more: boolean
+                  next_cursor?: string
+                  workspace_users: WorkspaceUser[]
+              }>(
+                  'GET',
+                  this.syncApiBase,
+                  ENDPOINT_WORKSPACE_USERS,
+                  this.authToken,
+                  queryParams,
+                  requestId,
+              )
+            : await request<{
+                  has_more: boolean
+                  next_cursor?: string
+                  workspace_users: WorkspaceUser[]
+              }>('GET', this.syncApiBase, ENDPOINT_WORKSPACE_USERS, this.authToken, queryParams)
+
+        return {
+            hasMore: response.data.has_more || false,
+            nextCursor: response.data.next_cursor,
+            workspaceUsers: validateWorkspaceUserArray(response.data.workspace_users || []),
+        }
+    }
+
+    /**
+     * Gets active projects in a workspace with pagination.
+     *
+     * @param args - Arguments including workspace ID, cursor, and limit.
+     * @param requestId - Optional request ID for idempotency.
+     * @returns Paginated list of active workspace projects.
+     */
+    async getWorkspaceActiveProjects(
+        args: GetWorkspaceProjectsArgs,
+        requestId?: string,
+    ): Promise<GetProjectsResponse> {
+        const queryParams: Record<string, string | number> = {}
+        if (args.cursor) {
+            queryParams.cursor = args.cursor
+        }
+        if (args.limit) {
+            queryParams.limit = args.limit
+        }
+
+        const response = requestId
+            ? await request<GetProjectsResponse>(
+                  'GET',
+                  this.syncApiBase,
+                  getWorkspaceActiveProjectsEndpoint(args.workspaceId),
+                  this.authToken,
+                  queryParams,
+                  requestId,
+              )
+            : await request<GetProjectsResponse>(
+                  'GET',
+                  this.syncApiBase,
+                  getWorkspaceActiveProjectsEndpoint(args.workspaceId),
+                  this.authToken,
+                  queryParams,
+              )
+
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+        const validatedProjects = response.data.results?.map((project: unknown) =>
+            validateProject(project),
+        )
+
+        return {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            ...response.data,
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            results: validatedProjects || [],
+        } as GetProjectsResponse
+    }
+
+    /**
+     * Gets archived projects in a workspace with pagination.
+     *
+     * @param args - Arguments including workspace ID, cursor, and limit.
+     * @param requestId - Optional request ID for idempotency.
+     * @returns Paginated list of archived workspace projects.
+     */
+    async getWorkspaceArchivedProjects(
+        args: GetWorkspaceProjectsArgs,
+        requestId?: string,
+    ): Promise<GetProjectsResponse> {
+        const queryParams: Record<string, string | number> = {}
+        if (args.cursor) {
+            queryParams.cursor = args.cursor
+        }
+        if (args.limit) {
+            queryParams.limit = args.limit
+        }
+
+        const response = requestId
+            ? await request<GetProjectsResponse>(
+                  'GET',
+                  this.syncApiBase,
+                  getWorkspaceArchivedProjectsEndpoint(args.workspaceId),
+                  this.authToken,
+                  queryParams,
+                  requestId,
+              )
+            : await request<GetProjectsResponse>(
+                  'GET',
+                  this.syncApiBase,
+                  getWorkspaceArchivedProjectsEndpoint(args.workspaceId),
+                  this.authToken,
+                  queryParams,
+              )
+
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+        const validatedProjects = response.data.results?.map((project: unknown) =>
+            validateProject(project),
+        )
+
+        return {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            ...response.data,
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            results: validatedProjects || [],
+        } as GetProjectsResponse
     }
 }

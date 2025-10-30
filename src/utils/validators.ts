@@ -21,6 +21,14 @@ import {
     ProductivityStatsSchema,
     ActivityEventSchema,
     type ActivityEvent,
+    WorkspaceUserSchema,
+    type WorkspaceUser,
+    WorkspaceInvitationSchema,
+    type WorkspaceInvitation,
+    WorkspacePlanDetailsSchema,
+    type WorkspacePlanDetails,
+    JoinWorkspaceResultSchema,
+    type JoinWorkspaceResult,
 } from '../types/entities'
 
 export function validateTask(input: unknown): Task {
@@ -119,4 +127,31 @@ export function validateActivityEventArray(input: unknown[]): ActivityEvent[] {
 
 export function validateAttachment(input: unknown): Attachment {
     return AttachmentSchema.parse(input)
+}
+
+export function validateWorkspaceUser(input: unknown): WorkspaceUser {
+    return WorkspaceUserSchema.parse(input)
+}
+
+export function validateWorkspaceUserArray(input: unknown): WorkspaceUser[] {
+    if (!Array.isArray(input)) {
+        throw new Error(`Expected array for workspace users, got ${typeof input}`)
+    }
+    return input.map(validateWorkspaceUser)
+}
+
+export function validateWorkspaceInvitation(input: unknown): WorkspaceInvitation {
+    return WorkspaceInvitationSchema.parse(input)
+}
+
+export function validateWorkspaceInvitationArray(input: unknown[]): WorkspaceInvitation[] {
+    return input.map(validateWorkspaceInvitation)
+}
+
+export function validateWorkspacePlanDetails(input: unknown): WorkspacePlanDetails {
+    return WorkspacePlanDetailsSchema.parse(input)
+}
+
+export function validateJoinWorkspaceResult(input: unknown): JoinWorkspaceResult {
+    return JoinWorkspaceResultSchema.parse(input)
 }
