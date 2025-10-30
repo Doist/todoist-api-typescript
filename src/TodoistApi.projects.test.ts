@@ -31,12 +31,12 @@ describe('TodoistApi project endpoints', () => {
             await api.getProject(projectId)
 
             expect(requestMock).toHaveBeenCalledTimes(1)
-            expect(requestMock).toHaveBeenCalledWith(
-                'GET',
-                getSyncBaseUri(),
-                `${ENDPOINT_REST_PROJECTS}/${projectId}`,
-                DEFAULT_AUTH_TOKEN,
-            )
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'GET',
+                baseUri: getSyncBaseUri(),
+                relativePath: `${ENDPOINT_REST_PROJECTS}/${projectId}`,
+                apiToken: DEFAULT_AUTH_TOKEN,
+            })
         })
 
         test('returns result from rest client', async () => {
@@ -61,13 +61,13 @@ describe('TodoistApi project endpoints', () => {
             await api.getProjects(args)
 
             expect(requestMock).toHaveBeenCalledTimes(1)
-            expect(requestMock).toHaveBeenCalledWith(
-                'GET',
-                getSyncBaseUri(),
-                ENDPOINT_REST_PROJECTS,
-                DEFAULT_AUTH_TOKEN,
-                args,
-            )
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'GET',
+                baseUri: getSyncBaseUri(),
+                relativePath: ENDPOINT_REST_PROJECTS,
+                apiToken: DEFAULT_AUTH_TOKEN,
+                payload: args,
+            })
         })
 
         test('returns result from rest client', async () => {
@@ -94,14 +94,14 @@ describe('TodoistApi project endpoints', () => {
             await api.addProject(DEFAULT_ADD_PROJECT_ARGS, DEFAULT_REQUEST_ID)
 
             expect(requestMock).toHaveBeenCalledTimes(1)
-            expect(requestMock).toHaveBeenCalledWith(
-                'POST',
-                getSyncBaseUri(),
-                ENDPOINT_REST_PROJECTS,
-                DEFAULT_AUTH_TOKEN,
-                DEFAULT_ADD_PROJECT_ARGS,
-                DEFAULT_REQUEST_ID,
-            )
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'POST',
+                baseUri: getSyncBaseUri(),
+                relativePath: ENDPOINT_REST_PROJECTS,
+                apiToken: DEFAULT_AUTH_TOKEN,
+                payload: DEFAULT_ADD_PROJECT_ARGS,
+                requestId: DEFAULT_REQUEST_ID,
+            })
         })
 
         test('returns result from rest client', async () => {
@@ -130,14 +130,14 @@ describe('TodoistApi project endpoints', () => {
             await api.updateProject(projectId, updateArgs, DEFAULT_REQUEST_ID)
 
             expect(requestMock).toHaveBeenCalledTimes(1)
-            expect(requestMock).toHaveBeenCalledWith(
-                'POST',
-                getSyncBaseUri(),
-                `${ENDPOINT_REST_PROJECTS}/${projectId}`,
-                DEFAULT_AUTH_TOKEN,
-                updateArgs,
-                DEFAULT_REQUEST_ID,
-            )
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'POST',
+                baseUri: getSyncBaseUri(),
+                relativePath: `${ENDPOINT_REST_PROJECTS}/${projectId}`,
+                apiToken: DEFAULT_AUTH_TOKEN,
+                payload: updateArgs,
+                requestId: DEFAULT_REQUEST_ID,
+            })
         })
 
         test('returns success result from rest client', async () => {
@@ -164,14 +164,14 @@ describe('TodoistApi project endpoints', () => {
             await api.deleteProject(projectId, DEFAULT_REQUEST_ID)
 
             expect(requestMock).toHaveBeenCalledTimes(1)
-            expect(requestMock).toHaveBeenCalledWith(
-                'DELETE',
-                getSyncBaseUri(),
-                `${ENDPOINT_REST_PROJECTS}/${projectId}`,
-                DEFAULT_AUTH_TOKEN,
-                undefined,
-                DEFAULT_REQUEST_ID,
-            )
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'DELETE',
+                baseUri: getSyncBaseUri(),
+                relativePath: `${ENDPOINT_REST_PROJECTS}/${projectId}`,
+                apiToken: DEFAULT_AUTH_TOKEN,
+                payload: undefined,
+                requestId: DEFAULT_REQUEST_ID,
+            })
         })
 
         test('returns success result from rest client', async () => {
@@ -196,13 +196,13 @@ describe('TodoistApi project endpoints', () => {
             await api.getProjectCollaborators(projectId, args)
 
             expect(requestMock).toHaveBeenCalledTimes(1)
-            expect(requestMock).toHaveBeenCalledWith(
-                'GET',
-                getSyncBaseUri(),
-                `${ENDPOINT_REST_PROJECTS}/${projectId}/${ENDPOINT_REST_PROJECT_COLLABORATORS}`,
-                DEFAULT_AUTH_TOKEN,
-                args,
-            )
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'GET',
+                baseUri: getSyncBaseUri(),
+                relativePath: `${ENDPOINT_REST_PROJECTS}/${projectId}/${ENDPOINT_REST_PROJECT_COLLABORATORS}`,
+                apiToken: DEFAULT_AUTH_TOKEN,
+                payload: args,
+            })
         })
 
         test('returns result from rest client', async () => {
@@ -225,14 +225,14 @@ describe('TodoistApi project endpoints', () => {
             await api.archiveProject(projectId, DEFAULT_REQUEST_ID)
 
             expect(requestMock).toHaveBeenCalledTimes(1)
-            expect(requestMock).toHaveBeenCalledWith(
-                'POST',
-                getSyncBaseUri(),
-                `${ENDPOINT_REST_PROJECTS}/${projectId}/${PROJECT_ARCHIVE}`,
-                DEFAULT_AUTH_TOKEN,
-                undefined,
-                DEFAULT_REQUEST_ID,
-            )
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'POST',
+                baseUri: getSyncBaseUri(),
+                relativePath: `${ENDPOINT_REST_PROJECTS}/${projectId}/${PROJECT_ARCHIVE}`,
+                apiToken: DEFAULT_AUTH_TOKEN,
+                payload: undefined,
+                requestId: DEFAULT_REQUEST_ID,
+            })
         })
 
         test('returns result from rest client', async () => {
@@ -253,14 +253,14 @@ describe('TodoistApi project endpoints', () => {
             await api.unarchiveProject(projectId, DEFAULT_REQUEST_ID)
 
             expect(requestMock).toHaveBeenCalledTimes(1)
-            expect(requestMock).toHaveBeenCalledWith(
-                'POST',
-                getSyncBaseUri(),
-                `${ENDPOINT_REST_PROJECTS}/${projectId}/${PROJECT_UNARCHIVE}`,
-                DEFAULT_AUTH_TOKEN,
-                undefined,
-                DEFAULT_REQUEST_ID,
-            )
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'POST',
+                baseUri: getSyncBaseUri(),
+                relativePath: `${ENDPOINT_REST_PROJECTS}/${projectId}/${PROJECT_UNARCHIVE}`,
+                apiToken: DEFAULT_AUTH_TOKEN,
+                payload: undefined,
+                requestId: DEFAULT_REQUEST_ID,
+            })
         })
 
         test('returns result from rest client', async () => {
@@ -283,13 +283,13 @@ describe('TodoistApi project endpoints', () => {
                 await api.getArchivedProjects(args)
 
                 expect(requestMock).toHaveBeenCalledTimes(1)
-                expect(requestMock).toHaveBeenCalledWith(
-                    'GET',
-                    getSyncBaseUri(),
-                    'projects/archived',
-                    DEFAULT_AUTH_TOKEN,
-                    args,
-                )
+                expect(requestMock).toHaveBeenCalledWith({
+                    httpMethod: 'GET',
+                    baseUri: getSyncBaseUri(),
+                    relativePath: 'projects/archived',
+                    apiToken: DEFAULT_AUTH_TOKEN,
+                    payload: args,
+                })
             })
 
             test('returns result from rest client', async () => {

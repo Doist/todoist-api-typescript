@@ -160,16 +160,16 @@ describe('TodoistApi uploads', () => {
             })
 
             expect(requestMock).toHaveBeenCalledTimes(1)
-            expect(requestMock).toHaveBeenCalledWith(
-                'DELETE',
-                getSyncBaseUri(),
-                'uploads',
-                'token',
-                {
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'DELETE',
+                baseUri: getSyncBaseUri(),
+                relativePath: 'uploads',
+                apiToken: 'token',
+                payload: {
                     fileUrl: 'https://cdn.todoist.com/uploads/test-file.pdf',
                 },
-                undefined,
-            )
+                requestId: undefined,
+            })
             expect(result).toBe(true)
         })
 
@@ -186,16 +186,16 @@ describe('TodoistApi uploads', () => {
             )
 
             expect(requestMock).toHaveBeenCalledTimes(1)
-            expect(requestMock).toHaveBeenCalledWith(
-                'DELETE',
-                getSyncBaseUri(),
-                'uploads',
-                'token',
-                {
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'DELETE',
+                baseUri: getSyncBaseUri(),
+                relativePath: 'uploads',
+                apiToken: 'token',
+                payload: {
                     fileUrl: 'https://cdn.todoist.com/uploads/test-file.pdf',
                 },
-                requestId,
-            )
+                requestId: requestId,
+            })
             expect(result).toBe(true)
         })
     })

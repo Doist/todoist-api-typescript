@@ -139,13 +139,13 @@ export async function getAuthToken(
     args: AuthTokenRequestArgs,
     baseUrl?: string,
 ): Promise<AuthTokenResponse> {
-    const response = await request<AuthTokenResponse>(
-        'POST',
-        getAuthBaseUri(baseUrl),
-        ENDPOINT_GET_TOKEN,
-        undefined,
-        args,
-    )
+    const response = await request<AuthTokenResponse>({
+        httpMethod: 'POST',
+        baseUri: getAuthBaseUri(baseUrl),
+        relativePath: ENDPOINT_GET_TOKEN,
+        apiToken: undefined,
+        payload: args,
+    })
 
     if (response.status !== 200 || !response.data?.accessToken) {
         throw new TodoistRequestError(
@@ -178,13 +178,13 @@ export async function revokeAuthToken(
     args: RevokeAuthTokenRequestArgs,
     baseUrl?: string,
 ): Promise<boolean> {
-    const response = await request(
-        'POST',
-        getSyncBaseUri(baseUrl),
-        ENDPOINT_REVOKE_TOKEN,
-        undefined,
-        args,
-    )
+    const response = await request({
+        httpMethod: 'POST',
+        baseUri: getSyncBaseUri(baseUrl),
+        relativePath: ENDPOINT_REVOKE_TOKEN,
+        apiToken: undefined,
+        payload: args,
+    })
 
     return isSuccess(response)
 }
@@ -226,16 +226,16 @@ export async function revokeToken(
         token_type_hint: 'access_token',
     }
 
-    const response = await request(
-        'POST',
-        getSyncBaseUri(baseUrl),
-        ENDPOINT_REVOKE,
-        undefined,
-        requestBody,
-        undefined,
-        false,
-        customHeaders,
-    )
+    const response = await request({
+        httpMethod: 'POST',
+        baseUri: getSyncBaseUri(baseUrl),
+        relativePath: ENDPOINT_REVOKE,
+        apiToken: undefined,
+        payload: requestBody,
+        requestId: undefined,
+        hasSyncCommands: false,
+        customHeaders: customHeaders,
+    })
 
     return isSuccess(response)
 }

@@ -3,6 +3,16 @@ import { createReadStream } from 'fs'
 import { basename } from 'path'
 import axios, { type AxiosResponse } from 'axios'
 
+type UploadMultipartFileArgs = {
+    baseUrl: string
+    authToken: string
+    endpoint: string
+    file: Buffer | NodeJS.ReadableStream | string
+    fileName?: string
+    additionalFields: Record<string, string | number | boolean>
+    requestId?: string
+}
+
 /**
  * Helper function to determine content-type from filename extension.
  * @param fileName - The filename to analyze
@@ -66,15 +76,8 @@ function getContentTypeFromFileName(fileName: string): string {
  * )
  * ```
  */
-export async function uploadMultipartFile<T>(
-    baseUrl: string,
-    authToken: string,
-    endpoint: string,
-    file: Buffer | NodeJS.ReadableStream | string,
-    fileName: string | undefined,
-    additionalFields: Record<string, string | number | boolean>,
-    requestId?: string,
-): Promise<T> {
+export async function uploadMultipartFile<T>(args: UploadMultipartFileArgs): Promise<T> {
+    const { baseUrl, authToken, endpoint, file, fileName, additionalFields, requestId } = args
     const form = new FormData()
 
     // Determine file type and add to form data

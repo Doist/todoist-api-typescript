@@ -83,13 +83,13 @@ describe('authentication', () => {
             await getAuthToken(defaultAuthRequest)
 
             expect(requestMock).toHaveBeenCalledTimes(1)
-            expect(requestMock).toHaveBeenCalledWith(
-                'POST',
-                'https://todoist.com/oauth/',
-                'access_token',
-                undefined,
-                defaultAuthRequest,
-            )
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'POST',
+                baseUri: 'https://todoist.com/oauth/',
+                relativePath: 'access_token',
+                apiToken: undefined,
+                payload: defaultAuthRequest,
+            })
         })
 
         test('returns values from successful request', async () => {
@@ -149,13 +149,13 @@ describe('authentication', () => {
             const isSuccess = await revokeAuthToken(revokeTokenRequest)
 
             expect(requestMock).toHaveBeenCalledTimes(1)
-            expect(requestMock).toHaveBeenCalledWith(
-                'POST',
-                getSyncBaseUri(),
-                'access_tokens/revoke',
-                undefined,
-                revokeTokenRequest,
-            )
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'POST',
+                baseUri: getSyncBaseUri(),
+                relativePath: 'access_tokens/revoke',
+                apiToken: undefined,
+                payload: revokeTokenRequest,
+            })
             expect(isSuccess).toEqual(true)
         })
     })
@@ -175,22 +175,33 @@ describe('authentication', () => {
             expect(requestMock).toHaveBeenCalledTimes(1)
 
             // Verify the correct endpoint is called
-            const callArgs = requestMock.mock.calls[0] as unknown[]
-            expect(callArgs[0]).toEqual('POST')
-            expect(callArgs[1]).toEqual(getSyncBaseUri())
-            expect(callArgs[2]).toEqual('revoke')
+            expect(requestMock).toHaveBeenCalledTimes(1)
+            const mockCall = requestMock.mock.calls[0] as [
+                {
+                    httpMethod: string
+                    baseUri: string
+                    relativePath: string
+                    apiToken?: string
+                    payload: Record<string, unknown>
+                    customHeaders?: Record<string, string>
+                },
+            ]
+            const callArgs = mockCall[0]
+            expect(callArgs.httpMethod).toEqual('POST')
+            expect(callArgs.baseUri).toEqual(getSyncBaseUri())
+            expect(callArgs.relativePath).toEqual('revoke')
 
             // Verify no API token is passed (should be undefined)
-            expect(callArgs[3]).toBeUndefined()
+            expect(callArgs.apiToken).toBeUndefined()
 
             // Verify request body contains only token and token_type_hint
-            expect(callArgs[4]).toEqual({
+            expect(callArgs.payload).toEqual({
                 token: 'AToken',
                 token_type_hint: 'access_token',
             })
 
             // Verify Basic Auth header is present
-            const customHeaders = callArgs[7] as Record<string, string> | undefined
+            const customHeaders = callArgs.customHeaders
             expect(customHeaders).toBeDefined()
             expect(customHeaders?.Authorization).toMatch(/^Basic /)
 

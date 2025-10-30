@@ -27,12 +27,12 @@ describe('TodoistApi moveTasks', () => {
         const result = await api.moveTasks(TASK_IDS, { projectId: '999' }, DEFAULT_REQUEST_ID)
 
         // Verify API call structure
-        expect(requestMock).toHaveBeenCalledWith(
-            'POST',
-            getSyncBaseUri(),
-            ENDPOINT_SYNC,
-            DEFAULT_AUTH_TOKEN,
-            expect.objectContaining({
+        expect(requestMock).toHaveBeenCalledWith({
+            httpMethod: 'POST',
+            baseUri: getSyncBaseUri(),
+            relativePath: ENDPOINT_SYNC,
+            apiToken: DEFAULT_AUTH_TOKEN,
+            payload: expect.objectContaining({
                 commands: expect.arrayContaining([
                     expect.objectContaining({
                         type: 'item_move',
@@ -41,17 +41,19 @@ describe('TodoistApi moveTasks', () => {
                 ]),
                 resource_types: ['items'],
             }),
-            DEFAULT_REQUEST_ID,
-            true,
-        )
+            requestId: DEFAULT_REQUEST_ID,
+            hasSyncCommands: true,
+        })
 
         // Verify return value
         expect(result).toEqual(MOVED_TASKS)
 
         // Critical: Verify unique UUIDs (see https://github.com/Doist/todoist-api-typescript/issues/310)
-        const sentRequest = (requestMock.mock.calls[0] as unknown[])[4] as {
-            commands: Array<{ uuid: string }>
-        }
+        expect(requestMock).toHaveBeenCalledTimes(1)
+        const mockCall = requestMock.mock.calls[0] as [
+            { payload: { commands: Array<{ uuid: string }> } },
+        ]
+        const sentRequest = mockCall[0].payload
         const uuids = sentRequest.commands.map((cmd) => cmd.uuid)
         const uniqueUuids = new Set(uuids)
         expect(uniqueUuids.size).toBe(TASK_IDS.length) // All UUIDs must be different
@@ -66,15 +68,11 @@ describe('TodoistApi moveTasks', () => {
 
         await api.moveTasks(['123'], { sectionId: '888' })
 
-        const sentRequest = (
-            requestMock.mock.calls[0] as [
-                string,
-                string,
-                string,
-                string,
-                { commands: Array<{ args: Record<string, unknown> }> },
-            ]
-        )[4]
+        expect(requestMock).toHaveBeenCalledTimes(1)
+        const mockCall = requestMock.mock.calls[0] as [
+            { payload: { commands: Array<{ args: Record<string, unknown> }> } },
+        ]
+        const sentRequest = mockCall[0].payload
         expect(sentRequest.commands[0].args).toEqual({
             id: '123',
             section_id: '888',
@@ -90,15 +88,11 @@ describe('TodoistApi moveTasks', () => {
 
         await api.moveTasks(['123'], { parentId: '777' })
 
-        const sentRequest = (
-            requestMock.mock.calls[0] as [
-                string,
-                string,
-                string,
-                string,
-                { commands: Array<{ args: Record<string, unknown> }> },
-            ]
-        )[4]
+        expect(requestMock).toHaveBeenCalledTimes(1)
+        const mockCall = requestMock.mock.calls[0] as [
+            { payload: { commands: Array<{ args: Record<string, unknown> }> } },
+        ]
+        const sentRequest = mockCall[0].payload
         expect(sentRequest.commands[0].args).toEqual({
             id: '123',
             parent_id: '777',

@@ -27,15 +27,15 @@ describe('uploadMultipartFile', () => {
             const mockStream = new Readable()
             mockedFs.createReadStream.mockReturnValue(mockStream as fs.ReadStream)
 
-            const result = await uploadMultipartFile(
-                baseUrl,
-                authToken,
-                endpoint,
-                '/path/to/document.pdf',
-                undefined,
-                { project_id: '123' },
-                'req-123',
-            )
+            const result = await uploadMultipartFile({
+                baseUrl: baseUrl,
+                authToken: authToken,
+                endpoint: endpoint,
+                file: '/path/to/document.pdf',
+                fileName: undefined,
+                additionalFields: { project_id: '123' },
+                requestId: 'req-123',
+            })
 
             expect(mockedFs.createReadStream).toHaveBeenCalledWith('/path/to/document.pdf')
             expect(mockedAxios.post).toHaveBeenCalledTimes(1)
@@ -51,14 +51,14 @@ describe('uploadMultipartFile', () => {
             const mockStream = new Readable()
             mockedFs.createReadStream.mockReturnValue(mockStream as fs.ReadStream)
 
-            await uploadMultipartFile(
-                baseUrl,
-                authToken,
-                endpoint,
-                '/path/to/document.pdf',
-                'custom-name.pdf',
-                {},
-            )
+            await uploadMultipartFile({
+                baseUrl: baseUrl,
+                authToken: authToken,
+                endpoint: endpoint,
+                file: '/path/to/document.pdf',
+                fileName: 'custom-name.pdf',
+                additionalFields: {},
+            })
 
             expect(mockedFs.createReadStream).toHaveBeenCalledWith('/path/to/document.pdf')
             expect(mockedAxios.post).toHaveBeenCalledTimes(1)
@@ -69,14 +69,14 @@ describe('uploadMultipartFile', () => {
         test('uploads file from Buffer with fileName', async () => {
             const buffer = Buffer.from('test file content')
 
-            const result = await uploadMultipartFile(
-                baseUrl,
-                authToken,
-                endpoint,
-                buffer,
-                'test-file.pdf',
-                { workspace_id: 456 },
-            )
+            const result = await uploadMultipartFile({
+                baseUrl: baseUrl,
+                authToken: authToken,
+                endpoint: endpoint,
+                file: buffer,
+                fileName: 'test-file.pdf',
+                additionalFields: { workspace_id: 456 },
+            })
 
             expect(mockedAxios.post).toHaveBeenCalledTimes(1)
             expect(result).toEqual(mockResponse.data)
@@ -90,7 +90,14 @@ describe('uploadMultipartFile', () => {
             const buffer = Buffer.from('test file content')
 
             await expect(
-                uploadMultipartFile(baseUrl, authToken, endpoint, buffer, undefined, {}),
+                uploadMultipartFile({
+                    baseUrl: baseUrl,
+                    authToken: authToken,
+                    endpoint: endpoint,
+                    file: buffer,
+                    fileName: undefined,
+                    additionalFields: {},
+                }),
             ).rejects.toThrow('fileName is required when uploading from a Buffer')
         })
     })
@@ -99,14 +106,14 @@ describe('uploadMultipartFile', () => {
         test('uploads file from stream with fileName', async () => {
             const mockStream = new Readable()
 
-            const result = await uploadMultipartFile(
-                baseUrl,
-                authToken,
-                endpoint,
-                mockStream,
-                'stream-file.pdf',
-                { delete: true },
-            )
+            const result = await uploadMultipartFile({
+                baseUrl: baseUrl,
+                authToken: authToken,
+                endpoint: endpoint,
+                file: mockStream,
+                fileName: 'stream-file.pdf',
+                additionalFields: { delete: true },
+            })
 
             expect(mockedAxios.post).toHaveBeenCalledTimes(1)
             expect(result).toEqual(mockResponse.data)
@@ -116,7 +123,14 @@ describe('uploadMultipartFile', () => {
             const mockStream = new Readable()
 
             await expect(
-                uploadMultipartFile(baseUrl, authToken, endpoint, mockStream, undefined, {}),
+                uploadMultipartFile({
+                    baseUrl: baseUrl,
+                    authToken: authToken,
+                    endpoint: endpoint,
+                    file: mockStream,
+                    fileName: undefined,
+                    additionalFields: {},
+                }),
             ).rejects.toThrow('fileName is required when uploading from a stream')
         })
     })
@@ -140,14 +154,14 @@ describe('uploadMultipartFile', () => {
                 additionalFields.field3 = field3Value
             }
 
-            await uploadMultipartFile(
-                baseUrl,
-                authToken,
-                endpoint,
-                buffer,
-                'test.pdf',
-                additionalFields,
-            )
+            await uploadMultipartFile({
+                baseUrl: baseUrl,
+                authToken: authToken,
+                endpoint: endpoint,
+                file: buffer,
+                fileName: 'test.pdf',
+                additionalFields: additionalFields,
+            })
 
             expect(mockedAxios.post).toHaveBeenCalledTimes(1)
             // We can't easily test FormData contents, but we verified the method doesn't throw
@@ -156,7 +170,14 @@ describe('uploadMultipartFile', () => {
         test('handles empty additional fields', async () => {
             const buffer = Buffer.from('test')
 
-            await uploadMultipartFile(baseUrl, authToken, endpoint, buffer, 'test.pdf', {})
+            await uploadMultipartFile({
+                baseUrl: baseUrl,
+                authToken: authToken,
+                endpoint: endpoint,
+                file: buffer,
+                fileName: 'test.pdf',
+                additionalFields: {},
+            })
 
             expect(mockedAxios.post).toHaveBeenCalledTimes(1)
         })
@@ -166,7 +187,14 @@ describe('uploadMultipartFile', () => {
         test('includes FormData headers', async () => {
             const buffer = Buffer.from('test')
 
-            await uploadMultipartFile(baseUrl, authToken, endpoint, buffer, 'test.pdf', {})
+            await uploadMultipartFile({
+                baseUrl: baseUrl,
+                authToken: authToken,
+                endpoint: endpoint,
+                file: buffer,
+                fileName: 'test.pdf',
+                additionalFields: {},
+            })
 
             const [, , config] = mockedAxios.post.mock.calls[0]
             expect(config?.headers?.Authorization).toBe('Bearer test-token')
@@ -176,7 +204,14 @@ describe('uploadMultipartFile', () => {
         test('omits X-Request-Id when not provided', async () => {
             const buffer = Buffer.from('test')
 
-            await uploadMultipartFile(baseUrl, authToken, endpoint, buffer, 'test.pdf', {})
+            await uploadMultipartFile({
+                baseUrl: baseUrl,
+                authToken: authToken,
+                endpoint: endpoint,
+                file: buffer,
+                fileName: 'test.pdf',
+                additionalFields: {},
+            })
 
             const [, , config] = mockedAxios.post.mock.calls[0]
             expect(config?.headers?.['X-Request-Id']).toBeUndefined()
