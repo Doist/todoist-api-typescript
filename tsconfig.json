@@ -1,7 +1,8 @@
 {
     "compilerOptions": {
-        "target": "es5",
-        "lib": ["dom", "esnext"],
+        "target": "es2017",
+        "lib": ["dom", "es2017"],
+        "module": "commonjs",
         "allowJs": true,
         "skipLibCheck": true,
         "declaration": true,

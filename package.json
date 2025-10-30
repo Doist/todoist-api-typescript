@@ -9,6 +9,9 @@
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "sideEffects": false,
+    "engines": {
+        "node": ">=8.0.0"
+    },
     "scripts": {
         "clean": "rimraf dist",
         "format-check": "npx prettier --check \"./**/*.{ts,tsx,json,md,yml,babelrc,html}\"",
