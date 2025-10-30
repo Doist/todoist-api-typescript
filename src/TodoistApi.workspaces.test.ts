@@ -28,10 +28,6 @@ describe('TodoistApi workspaces', () => {
                 getSyncBaseUri(),
                 'workspaces/invitations',
                 'token',
-                undefined,
-                undefined,
-                false,
-                undefined,
                 { workspace_id: 123 },
             )
             expect(result).toEqual(mockResponse)
@@ -49,18 +45,22 @@ describe('TodoistApi workspaces', () => {
                 getSyncBaseUri(),
                 'workspaces/invitations',
                 'token',
-                undefined,
-                requestId,
-                false,
-                undefined,
                 { workspace_id: 456 },
+                requestId,
             )
         })
     })
 
     describe('getAllWorkspaceInvitations', () => {
         test('gets all workspace invitations', async () => {
-            const mockResponse = ['admin@example.com']
+            const mockResponse = [{
+                id: '1',
+                inviterId: '123',
+                userEmail: 'admin@example.com',
+                workspaceId: '456',
+                role: 'ADMIN' as const,
+                isExistingUser: true,
+            }]
             const requestMock = setupRestClientMock(mockResponse)
 
             const result = await api.getAllWorkspaceInvitations()
@@ -70,8 +70,7 @@ describe('TodoistApi workspaces', () => {
                 getSyncBaseUri(),
                 'workspaces/invitations/all',
                 'token',
-                undefined,
-                undefined,
+                {},
             )
             expect(result).toEqual(mockResponse)
         })
@@ -87,7 +86,7 @@ describe('TodoistApi workspaces', () => {
                 getSyncBaseUri(),
                 'workspaces/invitations/all',
                 'token',
-                undefined,
+                {},
                 requestId,
             )
         })
@@ -181,19 +180,16 @@ describe('TodoistApi workspaces', () => {
     })
 
     describe('joinWorkspace', () => {
-        const mockWorkspaceUser = {
-            userId: '123',
-            workspaceId: '456',
-            userEmail: 'user@example.com',
-            fullName: 'Test User',
-            timezone: 'UTC',
+        const mockJoinResult = {
+            custom_sorting_applied: true,
+            project_sort_preference: 'alphabetical',
             role: 'MEMBER' as const,
-            imageId: null,
-            isDeleted: false,
+            user_id: '123',
+            workspace_id: '456',
         }
 
         test('joins workspace via invite code', async () => {
-            const requestMock = setupRestClientMock(mockWorkspaceUser)
+            const requestMock = setupRestClientMock(mockJoinResult)
 
             const result = await api.joinWorkspace({ inviteCode: 'invite123' })
 
@@ -208,11 +204,11 @@ describe('TodoistApi workspaces', () => {
                 },
                 undefined,
             )
-            expect(result).toEqual(mockWorkspaceUser)
+            expect(result).toEqual(mockJoinResult)
         })
 
         test('joins workspace via workspace ID', async () => {
-            const requestMock = setupRestClientMock(mockWorkspaceUser)
+            const requestMock = setupRestClientMock(mockJoinResult)
 
             const result = await api.joinWorkspace({ workspaceId: 789 })
 
@@ -227,7 +223,7 @@ describe('TodoistApi workspaces', () => {
                 },
                 undefined,
             )
-            expect(result).toEqual(mockWorkspaceUser)
+            expect(result).toEqual(mockJoinResult)
         })
     })
 
@@ -335,10 +331,6 @@ describe('TodoistApi workspaces', () => {
                 getSyncBaseUri(),
                 'workspaces/plan_details',
                 'token',
-                undefined,
-                undefined,
-                false,
-                undefined,
                 { workspace_id: 123 },
             )
             expect(result).toEqual(mockPlanDetails)
@@ -385,10 +377,6 @@ describe('TodoistApi workspaces', () => {
                 getSyncBaseUri(),
                 'workspaces/users',
                 'token',
-                undefined,
-                undefined,
-                false,
-                undefined,
                 {},
             )
             expect(result).toEqual({
@@ -412,10 +400,6 @@ describe('TodoistApi workspaces', () => {
                 getSyncBaseUri(),
                 'workspaces/users',
                 'token',
-                undefined,
-                undefined,
-                false,
-                undefined,
                 {
                     workspace_id: 456,
                     cursor: 'cursor123',
@@ -434,10 +418,6 @@ describe('TodoistApi workspaces', () => {
                 getSyncBaseUri(),
                 'workspaces/users',
                 'token',
-                undefined,
-                undefined,
-                false,
-                undefined,
                 {},
             )
         })
@@ -469,8 +449,7 @@ describe('TodoistApi workspaces', () => {
         ]
 
         const mockResponse = {
-            projects: mockProjects,
-            hasMore: true,
+            results: mockProjects,
             nextCursor: 'next123',
         }
 
@@ -488,10 +467,6 @@ describe('TodoistApi workspaces', () => {
                 getSyncBaseUri(),
                 'workspaces/123/projects/active',
                 'token',
-                undefined,
-                undefined,
-                false,
-                undefined,
                 {
                     cursor: 'cursor456',
                     limit: 25,
@@ -519,10 +494,6 @@ describe('TodoistApi workspaces', () => {
                 getSyncBaseUri(),
                 'workspaces/789/projects/archived',
                 'token',
-                undefined,
-                undefined,
-                false,
-                undefined,
                 {},
             )
             expect(result.results).toEqual([])
