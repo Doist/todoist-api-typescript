@@ -474,11 +474,16 @@ export const ActivityEventSchema = z
 export type ActivityEvent = z.infer<typeof ActivityEventSchema>
 
 /**
+ * Available workspace roles.
+ */
+export const WORKSPACE_ROLES = ['ADMIN', 'MEMBER', 'GUEST'] as const
+
+/**
  * Role of a user within a workspace.
  */
-export type WorkspaceRole = 'ADMIN' | 'MEMBER' | 'GUEST'
+export type WorkspaceRole = (typeof WORKSPACE_ROLES)[number]
 
-export const WorkspaceRoleSchema = z.enum(['ADMIN', 'MEMBER', 'GUEST'])
+export const WorkspaceRoleSchema = z.enum(WORKSPACE_ROLES)
 
 export const WorkspaceUserSchema = z.object({
     userId: z.string(),
