@@ -104,12 +104,12 @@ describe('TodoistApi user endpoints', () => {
             await api.getUser()
 
             expect(requestMock).toHaveBeenCalledTimes(1)
-            expect(requestMock).toHaveBeenCalledWith(
-                'GET',
-                getSyncBaseUri(),
-                ENDPOINT_REST_USER,
-                DEFAULT_AUTH_TOKEN,
-            )
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'GET',
+                baseUri: getSyncBaseUri(),
+                relativePath: ENDPOINT_REST_USER,
+                apiToken: DEFAULT_AUTH_TOKEN,
+            })
         })
 
         test('calls get on restClient with expected parameters against staging', async () => {
@@ -120,12 +120,12 @@ describe('TodoistApi user endpoints', () => {
             await api.getUser()
 
             expect(requestMock).toHaveBeenCalledTimes(1)
-            expect(requestMock).toHaveBeenCalledWith(
-                'GET',
-                getSyncBaseUri(stagingBaseUrl),
-                ENDPOINT_REST_USER,
-                DEFAULT_AUTH_TOKEN,
-            )
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'GET',
+                baseUri: getSyncBaseUri(stagingBaseUrl),
+                relativePath: ENDPOINT_REST_USER,
+                apiToken: DEFAULT_AUTH_TOKEN,
+            })
         })
 
         test('handles user with null business account id', async () => {
@@ -183,12 +183,12 @@ describe('TodoistApi user endpoints', () => {
             const api = getTarget()
             await api.getProductivityStats()
             expect(requestMock).toHaveBeenCalledTimes(1)
-            expect(requestMock).toHaveBeenCalledWith(
-                'GET',
-                getSyncBaseUri(),
-                ENDPOINT_REST_PRODUCTIVITY,
-                DEFAULT_AUTH_TOKEN,
-            )
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'GET',
+                baseUri: getSyncBaseUri(),
+                relativePath: ENDPOINT_REST_PRODUCTIVITY,
+                apiToken: DEFAULT_AUTH_TOKEN,
+            })
         })
 
         test('returns result from rest client', async () => {

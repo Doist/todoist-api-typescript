@@ -8,6 +8,36 @@ import axiosRetry from 'axios-retry'
 import { API_BASE_URI } from './consts/endpoints'
 import { customCamelCase } from './utils/processing-helpers'
 
+type GetTodoistRequestErrorArgs = {
+    error: Error | AxiosError
+    originalStack?: Error
+}
+
+type GetRequestConfigurationArgs = {
+    baseURL: string
+    apiToken?: string
+    requestId?: string
+    customHeaders?: Record<string, string>
+}
+
+type GetAxiosClientArgs = {
+    baseURL: string
+    apiToken?: string
+    requestId?: string
+    customHeaders?: Record<string, string>
+}
+
+type RequestArgs = {
+    httpMethod: HttpMethod
+    baseUri: string
+    relativePath: string
+    apiToken?: string
+    payload?: Record<string, unknown>
+    requestId?: string
+    hasSyncCommands?: boolean
+    customHeaders?: Record<string, string>
+}
+
 export function paramsSerializer(params: Record<string, unknown>) {
     const qs = new URLSearchParams()
 
@@ -45,10 +75,8 @@ function isAxiosError(error: unknown): error is AxiosError {
     return Boolean((error as AxiosError)?.isAxiosError)
 }
 
-function getTodoistRequestError(
-    error: Error | AxiosError,
-    originalStack?: Error,
-): TodoistRequestError {
+function getTodoistRequestError(args: GetTodoistRequestErrorArgs): TodoistRequestError {
+    const { error, originalStack } = args
     const requestError = new TodoistRequestError(error.message)
 
     requestError.stack = isAxiosError(error) && originalStack ? originalStack.stack : error.stack
@@ -61,12 +89,8 @@ function getTodoistRequestError(
     return requestError
 }
 
-function getRequestConfiguration(
-    baseURL: string,
-    apiToken?: string,
-    requestId?: string,
-    customHeaders?: Record<string, string>,
-) {
+function getRequestConfiguration(args: GetRequestConfigurationArgs) {
+    const { baseURL, apiToken, requestId, customHeaders } = args
     const authHeader = apiToken ? { Authorization: getAuthHeader(apiToken) } : undefined
     const requestIdHeader = requestId ? { 'X-Request-Id': requestId } : undefined
     const headers = { ...defaultHeaders, ...authHeader, ...requestIdHeader, ...customHeaders }
@@ -74,13 +98,9 @@ function getRequestConfiguration(
     return { baseURL, headers }
 }
 
-function getAxiosClient(
-    baseURL: string,
-    apiToken?: string,
-    requestId?: string,
-    customHeaders?: Record<string, string>,
-) {
-    const configuration = getRequestConfiguration(baseURL, apiToken, requestId, customHeaders)
+function getAxiosClient(args: GetAxiosClientArgs) {
+    const { baseURL, apiToken, requestId, customHeaders } = args
+    const configuration = getRequestConfiguration({ baseURL, apiToken, requestId, customHeaders })
     const client = applyCaseMiddleware(Axios.create(configuration), {
         caseFunctions: {
             camel: customCamelCase,
@@ -100,28 +120,31 @@ export function isSuccess(response: AxiosResponse): boolean {
     return response.status >= 200 && response.status < 300
 }
 
-export async function request<T>(
-    httpMethod: HttpMethod,
-    baseUri: string,
-    relativePath: string,
-    apiToken?: string,
-    payload?: Record<string, unknown>,
-    requestId?: string,
-    hasSyncCommands?: boolean,
-    customHeaders?: Record<string, string>,
-): Promise<AxiosResponse<T>> {
+export async function request<T>(args: RequestArgs): Promise<AxiosResponse<T>> {
+    const {
+        httpMethod,
+        baseUri,
+        relativePath,
+        apiToken,
+        payload,
+        requestId: initialRequestId,
+        hasSyncCommands,
+        customHeaders,
+    } = args
+
     // axios loses the original stack when returning errors, for the sake of better reporting
     // we capture it here and reapply it to any thrown errors.
     // Ref: https://github.com/axios/axios/issues/2387
     const originalStack = new Error()
 
     try {
+        let requestId = initialRequestId
         // Sync api don't allow a request id in the CORS
         if (httpMethod === 'POST' && !requestId && !baseUri.includes(API_BASE_URI)) {
             requestId = uuidv4()
         }
 
-        const axiosClient = getAxiosClient(baseUri, apiToken, requestId, customHeaders)
+        const axiosClient = getAxiosClient({ baseURL: baseUri, apiToken, requestId, customHeaders })
 
         switch (httpMethod) {
             case 'GET':
@@ -149,6 +172,6 @@ export async function request<T>(
             throw new Error('An unknown error occurred during the request')
         }
 
-        throw getTodoistRequestError(error, originalStack)
+        throw getTodoistRequestError({ error, originalStack })
     }
 }

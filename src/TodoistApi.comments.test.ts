@@ -31,13 +31,13 @@ describe('TodoistApi comment endpoints', () => {
             await api.getComments(getCommentsArgs)
 
             expect(requestMock).toHaveBeenCalledTimes(1)
-            expect(requestMock).toHaveBeenCalledWith(
-                'GET',
-                getSyncBaseUri(),
-                ENDPOINT_REST_COMMENTS,
-                DEFAULT_AUTH_TOKEN,
-                getCommentsArgs,
-            )
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'GET',
+                baseUri: getSyncBaseUri(),
+                relativePath: ENDPOINT_REST_COMMENTS,
+                apiToken: DEFAULT_AUTH_TOKEN,
+                payload: getCommentsArgs,
+            })
         })
 
         test('returns result from rest client', async () => {
@@ -72,12 +72,12 @@ describe('TodoistApi comment endpoints', () => {
             await api.getComment(commentId)
 
             expect(requestMock).toHaveBeenCalledTimes(1)
-            expect(requestMock).toHaveBeenCalledWith(
-                'GET',
-                getSyncBaseUri(),
-                `${ENDPOINT_REST_COMMENTS}/${commentId}`,
-                DEFAULT_AUTH_TOKEN,
-            )
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'GET',
+                baseUri: getSyncBaseUri(),
+                relativePath: `${ENDPOINT_REST_COMMENTS}/${commentId}`,
+                apiToken: DEFAULT_AUTH_TOKEN,
+            })
         })
 
         test('returns result from rest client', async () => {
@@ -103,14 +103,14 @@ describe('TodoistApi comment endpoints', () => {
             await api.addComment(addCommentArgs, DEFAULT_REQUEST_ID)
 
             expect(requestMock).toHaveBeenCalledTimes(1)
-            expect(requestMock).toHaveBeenCalledWith(
-                'POST',
-                getSyncBaseUri(),
-                ENDPOINT_REST_COMMENTS,
-                DEFAULT_AUTH_TOKEN,
-                addCommentArgs,
-                DEFAULT_REQUEST_ID,
-            )
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'POST',
+                baseUri: getSyncBaseUri(),
+                relativePath: ENDPOINT_REST_COMMENTS,
+                apiToken: DEFAULT_AUTH_TOKEN,
+                payload: addCommentArgs,
+                requestId: DEFAULT_REQUEST_ID,
+            })
         })
 
         test('returns result from rest client', async () => {
@@ -136,14 +136,14 @@ describe('TodoistApi comment endpoints', () => {
             await api.updateComment(taskId, updateCommentArgs, DEFAULT_REQUEST_ID)
 
             expect(requestMock).toHaveBeenCalledTimes(1)
-            expect(requestMock).toHaveBeenCalledWith(
-                'POST',
-                getSyncBaseUri(),
-                `${ENDPOINT_REST_COMMENTS}/${taskId}`,
-                DEFAULT_AUTH_TOKEN,
-                updateCommentArgs,
-                DEFAULT_REQUEST_ID,
-            )
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'POST',
+                baseUri: getSyncBaseUri(),
+                relativePath: `${ENDPOINT_REST_COMMENTS}/${taskId}`,
+                apiToken: DEFAULT_AUTH_TOKEN,
+                payload: updateCommentArgs,
+                requestId: DEFAULT_REQUEST_ID,
+            })
         })
 
         test('returns success result from rest client', async () => {
@@ -167,14 +167,14 @@ describe('TodoistApi comment endpoints', () => {
             await api.deleteComment(taskId, DEFAULT_REQUEST_ID)
 
             expect(requestMock).toHaveBeenCalledTimes(1)
-            expect(requestMock).toHaveBeenCalledWith(
-                'DELETE',
-                getSyncBaseUri(),
-                `${ENDPOINT_REST_COMMENTS}/${taskId}`,
-                DEFAULT_AUTH_TOKEN,
-                undefined,
-                DEFAULT_REQUEST_ID,
-            )
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'DELETE',
+                baseUri: getSyncBaseUri(),
+                relativePath: `${ENDPOINT_REST_COMMENTS}/${taskId}`,
+                apiToken: DEFAULT_AUTH_TOKEN,
+                payload: undefined,
+                requestId: DEFAULT_REQUEST_ID,
+            })
         })
 
         test('returns success result from rest client', async () => {

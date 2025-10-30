@@ -18,12 +18,12 @@ describe('TodoistApi section endpoints', () => {
             await api.getSection(sectionId)
 
             expect(requestMock).toHaveBeenCalledTimes(1)
-            expect(requestMock).toHaveBeenCalledWith(
-                'GET',
-                getSyncBaseUri(),
-                `${ENDPOINT_REST_SECTIONS}/${sectionId}`,
-                DEFAULT_AUTH_TOKEN,
-            )
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'GET',
+                baseUri: getSyncBaseUri(),
+                relativePath: `${ENDPOINT_REST_SECTIONS}/${sectionId}`,
+                apiToken: DEFAULT_AUTH_TOKEN,
+            })
         })
 
         test('returns result from rest client', async () => {
@@ -50,13 +50,13 @@ describe('TodoistApi section endpoints', () => {
             await api.getSections(args)
 
             expect(requestMock).toHaveBeenCalledTimes(1)
-            expect(requestMock).toHaveBeenCalledWith(
-                'GET',
-                getSyncBaseUri(),
-                ENDPOINT_REST_SECTIONS,
-                DEFAULT_AUTH_TOKEN,
-                args,
-            )
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'GET',
+                baseUri: getSyncBaseUri(),
+                relativePath: ENDPOINT_REST_SECTIONS,
+                apiToken: DEFAULT_AUTH_TOKEN,
+                payload: args,
+            })
         })
 
         test('returns result from rest client', async () => {
@@ -84,14 +84,14 @@ describe('TodoistApi section endpoints', () => {
             await api.addSection(DEFAULT_ADD_SECTION_ARGS, DEFAULT_REQUEST_ID)
 
             expect(requestMock).toHaveBeenCalledTimes(1)
-            expect(requestMock).toHaveBeenCalledWith(
-                'POST',
-                getSyncBaseUri(),
-                ENDPOINT_REST_SECTIONS,
-                DEFAULT_AUTH_TOKEN,
-                DEFAULT_ADD_SECTION_ARGS,
-                DEFAULT_REQUEST_ID,
-            )
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'POST',
+                baseUri: getSyncBaseUri(),
+                relativePath: ENDPOINT_REST_SECTIONS,
+                apiToken: DEFAULT_AUTH_TOKEN,
+                payload: DEFAULT_ADD_SECTION_ARGS,
+                requestId: DEFAULT_REQUEST_ID,
+            })
         })
 
         test('returns result from rest client', async () => {
@@ -115,14 +115,14 @@ describe('TodoistApi section endpoints', () => {
             await api.updateSection(sectionId, DEFAULT_UPDATE_SECTION_ARGS, DEFAULT_REQUEST_ID)
 
             expect(requestMock).toHaveBeenCalledTimes(1)
-            expect(requestMock).toHaveBeenCalledWith(
-                'POST',
-                getSyncBaseUri(),
-                `${ENDPOINT_REST_SECTIONS}/${sectionId}`,
-                DEFAULT_AUTH_TOKEN,
-                DEFAULT_UPDATE_SECTION_ARGS,
-                DEFAULT_REQUEST_ID,
-            )
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'POST',
+                baseUri: getSyncBaseUri(),
+                relativePath: `${ENDPOINT_REST_SECTIONS}/${sectionId}`,
+                apiToken: DEFAULT_AUTH_TOKEN,
+                payload: DEFAULT_UPDATE_SECTION_ARGS,
+                requestId: DEFAULT_REQUEST_ID,
+            })
         })
 
         test('returns success result from rest client', async () => {
@@ -150,14 +150,14 @@ describe('TodoistApi section endpoints', () => {
             await api.deleteSection(sectionId, DEFAULT_REQUEST_ID)
 
             expect(requestMock).toHaveBeenCalledTimes(1)
-            expect(requestMock).toHaveBeenCalledWith(
-                'DELETE',
-                getSyncBaseUri(),
-                `${ENDPOINT_REST_SECTIONS}/${sectionId}`,
-                DEFAULT_AUTH_TOKEN,
-                undefined,
-                DEFAULT_REQUEST_ID,
-            )
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'DELETE',
+                baseUri: getSyncBaseUri(),
+                relativePath: `${ENDPOINT_REST_SECTIONS}/${sectionId}`,
+                apiToken: DEFAULT_AUTH_TOKEN,
+                payload: undefined,
+                requestId: DEFAULT_REQUEST_ID,
+            })
         })
 
         test('returns success result from rest client', async () => {

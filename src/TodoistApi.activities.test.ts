@@ -69,13 +69,13 @@ describe('TodoistApi activity endpoints', () => {
             await api.getActivityLogs()
 
             expect(requestMock).toHaveBeenCalledTimes(1)
-            expect(requestMock).toHaveBeenCalledWith(
-                'GET',
-                getSyncBaseUri(),
-                ENDPOINT_REST_ACTIVITIES,
-                DEFAULT_AUTH_TOKEN,
-                {},
-            )
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'GET',
+                baseUri: getSyncBaseUri(),
+                relativePath: ENDPOINT_REST_ACTIVITIES,
+                apiToken: DEFAULT_AUTH_TOKEN,
+                payload: {},
+            })
         })
 
         test('returns activity events from response', async () => {
@@ -105,16 +105,16 @@ describe('TodoistApi activity endpoints', () => {
                 limit: 10,
             })
 
-            expect(requestMock).toHaveBeenCalledWith(
-                'GET',
-                getSyncBaseUri(),
-                ENDPOINT_REST_ACTIVITIES,
-                DEFAULT_AUTH_TOKEN,
-                {
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'GET',
+                baseUri: getSyncBaseUri(),
+                relativePath: ENDPOINT_REST_ACTIVITIES,
+                apiToken: DEFAULT_AUTH_TOKEN,
+                payload: {
                     cursor: 'prev_cursor',
                     limit: 10,
                 },
-            )
+            })
             expect(result.nextCursor).toBe('next_cursor_token')
         })
 
@@ -131,17 +131,17 @@ describe('TodoistApi activity endpoints', () => {
                 parentProjectId: '789',
             })
 
-            expect(requestMock).toHaveBeenCalledWith(
-                'GET',
-                getSyncBaseUri(),
-                ENDPOINT_REST_ACTIVITIES,
-                DEFAULT_AUTH_TOKEN,
-                {
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'GET',
+                baseUri: getSyncBaseUri(),
+                relativePath: ENDPOINT_REST_ACTIVITIES,
+                apiToken: DEFAULT_AUTH_TOKEN,
+                payload: {
                     objectType: 'item',
                     eventType: 'completed',
                     parentProjectId: '789',
                 },
-            )
+            })
         })
 
         test('handles unknown event types and fields without crashing', async () => {
@@ -177,16 +177,16 @@ describe('TodoistApi activity endpoints', () => {
                 until: untilDate,
             })
 
-            expect(requestMock).toHaveBeenCalledWith(
-                'GET',
-                getSyncBaseUri(),
-                ENDPOINT_REST_ACTIVITIES,
-                DEFAULT_AUTH_TOKEN,
-                {
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'GET',
+                baseUri: getSyncBaseUri(),
+                relativePath: ENDPOINT_REST_ACTIVITIES,
+                apiToken: DEFAULT_AUTH_TOKEN,
+                payload: {
                     since: '2025-01-15',
                     until: '2025-01-20',
                 },
-            )
+            })
         })
 
         test('leaves string dates as-is for backward compatibility', async () => {
@@ -201,16 +201,16 @@ describe('TodoistApi activity endpoints', () => {
                 until: '2025-01-20',
             })
 
-            expect(requestMock).toHaveBeenCalledWith(
-                'GET',
-                getSyncBaseUri(),
-                ENDPOINT_REST_ACTIVITIES,
-                DEFAULT_AUTH_TOKEN,
-                {
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'GET',
+                baseUri: getSyncBaseUri(),
+                relativePath: ENDPOINT_REST_ACTIVITIES,
+                apiToken: DEFAULT_AUTH_TOKEN,
+                payload: {
                     since: '2025-01-15',
                     until: '2025-01-20',
                 },
-            )
+            })
         })
 
         test('converts Date objects with correct timezone handling', async () => {
@@ -229,15 +229,15 @@ describe('TodoistApi activity endpoints', () => {
 
             const expectedSince = `${sinceDate.getFullYear()}-01-15`
 
-            expect(requestMock).toHaveBeenCalledWith(
-                'GET',
-                getSyncBaseUri(),
-                ENDPOINT_REST_ACTIVITIES,
-                DEFAULT_AUTH_TOKEN,
-                {
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'GET',
+                baseUri: getSyncBaseUri(),
+                relativePath: ENDPOINT_REST_ACTIVITIES,
+                apiToken: DEFAULT_AUTH_TOKEN,
+                payload: {
                     since: expectedSince,
                 },
-            )
+            })
         })
 
         test('converts modern objectType "task" to legacy "item" in API request', async () => {
@@ -251,15 +251,15 @@ describe('TodoistApi activity endpoints', () => {
                 objectType: 'task',
             })
 
-            expect(requestMock).toHaveBeenCalledWith(
-                'GET',
-                getSyncBaseUri(),
-                ENDPOINT_REST_ACTIVITIES,
-                DEFAULT_AUTH_TOKEN,
-                {
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'GET',
+                baseUri: getSyncBaseUri(),
+                relativePath: ENDPOINT_REST_ACTIVITIES,
+                apiToken: DEFAULT_AUTH_TOKEN,
+                payload: {
                     objectType: 'item',
                 },
-            )
+            })
         })
 
         test('converts modern objectType "comment" to legacy "note" in API request', async () => {
@@ -273,15 +273,15 @@ describe('TodoistApi activity endpoints', () => {
                 objectType: 'comment',
             })
 
-            expect(requestMock).toHaveBeenCalledWith(
-                'GET',
-                getSyncBaseUri(),
-                ENDPOINT_REST_ACTIVITIES,
-                DEFAULT_AUTH_TOKEN,
-                {
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'GET',
+                baseUri: getSyncBaseUri(),
+                relativePath: ENDPOINT_REST_ACTIVITIES,
+                apiToken: DEFAULT_AUTH_TOKEN,
+                payload: {
                     objectType: 'note',
                 },
-            )
+            })
         })
 
         test('leaves project objectType unchanged', async () => {
@@ -295,15 +295,15 @@ describe('TodoistApi activity endpoints', () => {
                 objectType: 'project',
             })
 
-            expect(requestMock).toHaveBeenCalledWith(
-                'GET',
-                getSyncBaseUri(),
-                ENDPOINT_REST_ACTIVITIES,
-                DEFAULT_AUTH_TOKEN,
-                {
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'GET',
+                baseUri: getSyncBaseUri(),
+                relativePath: ENDPOINT_REST_ACTIVITIES,
+                apiToken: DEFAULT_AUTH_TOKEN,
+                payload: {
                     objectType: 'project',
                 },
-            )
+            })
         })
 
         test('converts legacy "item" to modern "task" in response', async () => {
@@ -389,15 +389,15 @@ describe('TodoistApi activity endpoints', () => {
                 objectType: 'item',
             })
 
-            expect(requestMock).toHaveBeenCalledWith(
-                'GET',
-                getSyncBaseUri(),
-                ENDPOINT_REST_ACTIVITIES,
-                DEFAULT_AUTH_TOKEN,
-                {
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'GET',
+                baseUri: getSyncBaseUri(),
+                relativePath: ENDPOINT_REST_ACTIVITIES,
+                apiToken: DEFAULT_AUTH_TOKEN,
+                payload: {
                     objectType: 'item',
                 },
-            )
+            })
         })
 
         test('supports backward compatibility with legacy "note" in request', async () => {
@@ -411,15 +411,15 @@ describe('TodoistApi activity endpoints', () => {
                 objectType: 'note',
             })
 
-            expect(requestMock).toHaveBeenCalledWith(
-                'GET',
-                getSyncBaseUri(),
-                ENDPOINT_REST_ACTIVITIES,
-                DEFAULT_AUTH_TOKEN,
-                {
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'GET',
+                baseUri: getSyncBaseUri(),
+                relativePath: ENDPOINT_REST_ACTIVITIES,
+                apiToken: DEFAULT_AUTH_TOKEN,
+                payload: {
                     objectType: 'note',
                 },
-            )
+            })
         })
     })
 })

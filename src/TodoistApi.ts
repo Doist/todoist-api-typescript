@@ -194,12 +194,12 @@ export class TodoistApi {
      * @returns A promise that resolves to the current user's information.
      */
     async getUser(): Promise<CurrentUser> {
-        const response = await request<CurrentUser>(
-            'GET',
-            this.syncApiBase,
-            ENDPOINT_REST_USER,
-            this.authToken,
-        )
+        const response = await request<CurrentUser>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_REST_USER,
+            apiToken: this.authToken,
+        })
 
         return validateCurrentUser(response.data)
     }
@@ -212,12 +212,12 @@ export class TodoistApi {
      */
     async getTask(id: string): Promise<Task> {
         z.string().parse(id)
-        const response = await request<Task>(
-            'GET',
-            this.syncApiBase,
-            generatePath(ENDPOINT_REST_TASKS, id),
-            this.authToken,
-        )
+        const response = await request<Task>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: generatePath(ENDPOINT_REST_TASKS, id),
+            apiToken: this.authToken,
+        })
 
         return validateTask(response.data)
     }
@@ -231,13 +231,13 @@ export class TodoistApi {
     async getTasks(args: GetTasksArgs = {}): Promise<GetTasksResponse> {
         const {
             data: { results, nextCursor },
-        } = await request<GetTasksResponse>(
-            'GET',
-            this.syncApiBase,
-            ENDPOINT_REST_TASKS,
-            this.authToken,
-            args,
-        )
+        } = await request<GetTasksResponse>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_REST_TASKS,
+            apiToken: this.authToken,
+            payload: args,
+        })
 
         return {
             results: validateTaskArray(results),
@@ -254,13 +254,13 @@ export class TodoistApi {
     async getTasksByFilter(args: GetTasksByFilterArgs): Promise<GetTasksResponse> {
         const {
             data: { results, nextCursor },
-        } = await request<GetTasksResponse>(
-            'GET',
-            this.syncApiBase,
-            ENDPOINT_REST_TASKS_FILTER,
-            this.authToken,
-            args,
-        )
+        } = await request<GetTasksResponse>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_REST_TASKS_FILTER,
+            apiToken: this.authToken,
+            payload: args,
+        })
 
         return {
             results: validateTaskArray(results),
@@ -279,13 +279,13 @@ export class TodoistApi {
     ): Promise<GetCompletedTasksResponse> {
         const {
             data: { items, nextCursor },
-        } = await request<GetCompletedTasksResponse>(
-            'GET',
-            this.syncApiBase,
-            ENDPOINT_REST_TASKS_COMPLETED_BY_COMPLETION_DATE,
-            this.authToken,
-            args,
-        )
+        } = await request<GetCompletedTasksResponse>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_REST_TASKS_COMPLETED_BY_COMPLETION_DATE,
+            apiToken: this.authToken,
+            payload: args,
+        })
 
         return {
             items: validateTaskArray(items),
@@ -304,13 +304,13 @@ export class TodoistApi {
     ): Promise<GetCompletedTasksResponse> {
         const {
             data: { items, nextCursor },
-        } = await request<GetCompletedTasksResponse>(
-            'GET',
-            this.syncApiBase,
-            ENDPOINT_REST_TASKS_COMPLETED_BY_DUE_DATE,
-            this.authToken,
-            args,
-        )
+        } = await request<GetCompletedTasksResponse>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_REST_TASKS_COMPLETED_BY_DUE_DATE,
+            apiToken: this.authToken,
+            payload: args,
+        })
 
         return {
             items: validateTaskArray(items),
@@ -327,13 +327,13 @@ export class TodoistApi {
     async searchCompletedTasks(args: SearchCompletedTasksArgs): Promise<GetCompletedTasksResponse> {
         const {
             data: { items, nextCursor },
-        } = await request<GetCompletedTasksResponse>(
-            'GET',
-            this.syncApiBase,
-            ENDPOINT_REST_TASKS_COMPLETED_SEARCH,
-            this.authToken,
-            args,
-        )
+        } = await request<GetCompletedTasksResponse>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_REST_TASKS_COMPLETED_SEARCH,
+            apiToken: this.authToken,
+            payload: args,
+        })
 
         return {
             items: validateTaskArray(items),
@@ -349,14 +349,14 @@ export class TodoistApi {
      * @returns A promise that resolves to the created task.
      */
     async addTask(args: AddTaskArgs, requestId?: string): Promise<Task> {
-        const response = await request<Task>(
-            'POST',
-            this.syncApiBase,
-            ENDPOINT_REST_TASKS,
-            this.authToken,
-            args,
-            requestId,
-        )
+        const response = await request<Task>({
+            httpMethod: 'POST',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_REST_TASKS,
+            apiToken: this.authToken,
+            payload: args,
+            requestId: requestId,
+        })
 
         return validateTask(response.data)
     }
@@ -368,13 +368,13 @@ export class TodoistApi {
      * @returns A promise that resolves to the created task.
      */
     async quickAddTask(args: QuickAddTaskArgs): Promise<Task> {
-        const response = await request<Task>(
-            'POST',
-            this.syncApiBase,
-            ENDPOINT_SYNC_QUICK_ADD,
-            this.authToken,
-            args,
-        )
+        const response = await request<Task>({
+            httpMethod: 'POST',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_SYNC_QUICK_ADD,
+            apiToken: this.authToken,
+            payload: args,
+        })
 
         return validateTask(response.data)
     }
@@ -389,14 +389,14 @@ export class TodoistApi {
      */
     async updateTask(id: string, args: UpdateTaskArgs, requestId?: string): Promise<Task> {
         z.string().parse(id)
-        const response = await request<Task>(
-            'POST',
-            this.syncApiBase,
-            generatePath(ENDPOINT_REST_TASKS, id),
-            this.authToken,
-            args,
-            requestId,
-        )
+        const response = await request<Task>({
+            httpMethod: 'POST',
+            baseUri: this.syncApiBase,
+            relativePath: generatePath(ENDPOINT_REST_TASKS, id),
+            apiToken: this.authToken,
+            payload: args,
+            requestId: requestId,
+        })
 
         return validateTask(response.data)
     }
@@ -430,15 +430,15 @@ export class TodoistApi {
             resource_types: ['items'],
         }
 
-        const response = await request<SyncResponse>(
-            'POST',
-            this.syncApiBase,
-            ENDPOINT_SYNC,
-            this.authToken,
-            syncRequest,
-            requestId,
-            /*hasSyncCommands: */ true,
-        )
+        const response = await request<SyncResponse>({
+            httpMethod: 'POST',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_SYNC,
+            apiToken: this.authToken,
+            payload: syncRequest,
+            requestId: requestId,
+            hasSyncCommands: true,
+        })
 
         if (response.data.sync_status) {
             Object.entries(response.data.sync_status).forEach(([_, value]) => {
@@ -470,18 +470,18 @@ export class TodoistApi {
      */
     async moveTask(id: string, args: MoveTaskArgs, requestId?: string): Promise<Task> {
         z.string().parse(id)
-        const response = await request<Task>(
-            'POST',
-            this.syncApiBase,
-            generatePath(ENDPOINT_REST_TASKS, id, ENDPOINT_REST_TASK_MOVE),
-            this.authToken,
-            {
+        const response = await request<Task>({
+            httpMethod: 'POST',
+            baseUri: this.syncApiBase,
+            relativePath: generatePath(ENDPOINT_REST_TASKS, id, ENDPOINT_REST_TASK_MOVE),
+            apiToken: this.authToken,
+            payload: {
                 ...(args.projectId && { project_id: args.projectId }),
                 ...(args.sectionId && { section_id: args.sectionId }),
                 ...(args.parentId && { parent_id: args.parentId }),
             },
-            requestId,
-        )
+            requestId: requestId,
+        })
 
         return validateTask(response.data)
     }
@@ -495,14 +495,13 @@ export class TodoistApi {
      */
     async closeTask(id: string, requestId?: string): Promise<boolean> {
         z.string().parse(id)
-        const response = await request(
-            'POST',
-            this.syncApiBase,
-            generatePath(ENDPOINT_REST_TASKS, id, ENDPOINT_REST_TASK_CLOSE),
-            this.authToken,
-            undefined,
-            requestId,
-        )
+        const response = await request({
+            httpMethod: 'POST',
+            baseUri: this.syncApiBase,
+            relativePath: generatePath(ENDPOINT_REST_TASKS, id, ENDPOINT_REST_TASK_CLOSE),
+            apiToken: this.authToken,
+            requestId: requestId,
+        })
         return isSuccess(response)
     }
 
@@ -515,14 +514,13 @@ export class TodoistApi {
      */
     async reopenTask(id: string, requestId?: string): Promise<boolean> {
         z.string().parse(id)
-        const response = await request(
-            'POST',
-            this.syncApiBase,
-            generatePath(ENDPOINT_REST_TASKS, id, ENDPOINT_REST_TASK_REOPEN),
-            this.authToken,
-            undefined,
-            requestId,
-        )
+        const response = await request({
+            httpMethod: 'POST',
+            baseUri: this.syncApiBase,
+            relativePath: generatePath(ENDPOINT_REST_TASKS, id, ENDPOINT_REST_TASK_REOPEN),
+            apiToken: this.authToken,
+            requestId: requestId,
+        })
         return isSuccess(response)
     }
 
@@ -535,14 +533,13 @@ export class TodoistApi {
      */
     async deleteTask(id: string, requestId?: string): Promise<boolean> {
         z.string().parse(id)
-        const response = await request(
-            'DELETE',
-            this.syncApiBase,
-            generatePath(ENDPOINT_REST_TASKS, id),
-            this.authToken,
-            undefined,
-            requestId,
-        )
+        const response = await request({
+            httpMethod: 'DELETE',
+            baseUri: this.syncApiBase,
+            relativePath: generatePath(ENDPOINT_REST_TASKS, id),
+            apiToken: this.authToken,
+            requestId: requestId,
+        })
         return isSuccess(response)
     }
 
@@ -554,12 +551,12 @@ export class TodoistApi {
      */
     async getProject(id: string): Promise<PersonalProject | WorkspaceProject> {
         z.string().parse(id)
-        const response = await request<PersonalProject | WorkspaceProject>(
-            'GET',
-            this.syncApiBase,
-            generatePath(ENDPOINT_REST_PROJECTS, id),
-            this.authToken,
-        )
+        const response = await request<PersonalProject | WorkspaceProject>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: generatePath(ENDPOINT_REST_PROJECTS, id),
+            apiToken: this.authToken,
+        })
 
         return validateProject(response.data)
     }
@@ -573,13 +570,13 @@ export class TodoistApi {
     async getProjects(args: GetProjectsArgs = {}): Promise<GetProjectsResponse> {
         const {
             data: { results, nextCursor },
-        } = await request<GetProjectsResponse>(
-            'GET',
-            this.syncApiBase,
-            ENDPOINT_REST_PROJECTS,
-            this.authToken,
-            args,
-        )
+        } = await request<GetProjectsResponse>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_REST_PROJECTS,
+            apiToken: this.authToken,
+            payload: args,
+        })
 
         return {
             results: validateProjectArray(results),
@@ -598,13 +595,13 @@ export class TodoistApi {
     ): Promise<GetArchivedProjectsResponse> {
         const {
             data: { results, nextCursor },
-        } = await request<GetArchivedProjectsResponse>(
-            'GET',
-            this.syncApiBase,
-            ENDPOINT_REST_PROJECTS_ARCHIVED,
-            this.authToken,
-            args,
-        )
+        } = await request<GetArchivedProjectsResponse>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_REST_PROJECTS_ARCHIVED,
+            apiToken: this.authToken,
+            payload: args,
+        })
 
         return {
             results: validateProjectArray(results),
@@ -623,14 +620,14 @@ export class TodoistApi {
         args: AddProjectArgs,
         requestId?: string,
     ): Promise<PersonalProject | WorkspaceProject> {
-        const response = await request<PersonalProject | WorkspaceProject>(
-            'POST',
-            this.syncApiBase,
-            ENDPOINT_REST_PROJECTS,
-            this.authToken,
-            args,
-            requestId,
-        )
+        const response = await request<PersonalProject | WorkspaceProject>({
+            httpMethod: 'POST',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_REST_PROJECTS,
+            apiToken: this.authToken,
+            payload: args,
+            requestId: requestId,
+        })
 
         return validateProject(response.data)
     }
@@ -649,14 +646,14 @@ export class TodoistApi {
         requestId?: string,
     ): Promise<PersonalProject | WorkspaceProject> {
         z.string().parse(id)
-        const response = await request<PersonalProject | WorkspaceProject>(
-            'POST',
-            this.syncApiBase,
-            generatePath(ENDPOINT_REST_PROJECTS, id),
-            this.authToken,
-            args,
-            requestId,
-        )
+        const response = await request<PersonalProject | WorkspaceProject>({
+            httpMethod: 'POST',
+            baseUri: this.syncApiBase,
+            relativePath: generatePath(ENDPOINT_REST_PROJECTS, id),
+            apiToken: this.authToken,
+            payload: args,
+            requestId: requestId,
+        })
 
         return validateProject(response.data)
     }
@@ -670,14 +667,13 @@ export class TodoistApi {
      */
     async deleteProject(id: string, requestId?: string): Promise<boolean> {
         z.string().parse(id)
-        const response = await request(
-            'DELETE',
-            this.syncApiBase,
-            generatePath(ENDPOINT_REST_PROJECTS, id),
-            this.authToken,
-            undefined,
-            requestId,
-        )
+        const response = await request({
+            httpMethod: 'DELETE',
+            baseUri: this.syncApiBase,
+            relativePath: generatePath(ENDPOINT_REST_PROJECTS, id),
+            apiToken: this.authToken,
+            requestId: requestId,
+        })
         return isSuccess(response)
     }
 
@@ -693,14 +689,13 @@ export class TodoistApi {
         requestId?: string,
     ): Promise<PersonalProject | WorkspaceProject> {
         z.string().parse(id)
-        const response = await request<PersonalProject | WorkspaceProject>(
-            'POST',
-            this.syncApiBase,
-            generatePath(ENDPOINT_REST_PROJECTS, id, PROJECT_ARCHIVE),
-            this.authToken,
-            undefined,
-            requestId,
-        )
+        const response = await request<PersonalProject | WorkspaceProject>({
+            httpMethod: 'POST',
+            baseUri: this.syncApiBase,
+            relativePath: generatePath(ENDPOINT_REST_PROJECTS, id, PROJECT_ARCHIVE),
+            apiToken: this.authToken,
+            requestId: requestId,
+        })
         return validateProject(response.data)
     }
 
@@ -716,14 +711,13 @@ export class TodoistApi {
         requestId?: string,
     ): Promise<PersonalProject | WorkspaceProject> {
         z.string().parse(id)
-        const response = await request<PersonalProject | WorkspaceProject>(
-            'POST',
-            this.syncApiBase,
-            generatePath(ENDPOINT_REST_PROJECTS, id, PROJECT_UNARCHIVE),
-            this.authToken,
-            undefined,
-            requestId,
-        )
+        const response = await request<PersonalProject | WorkspaceProject>({
+            httpMethod: 'POST',
+            baseUri: this.syncApiBase,
+            relativePath: generatePath(ENDPOINT_REST_PROJECTS, id, PROJECT_UNARCHIVE),
+            apiToken: this.authToken,
+            requestId: requestId,
+        })
         return validateProject(response.data)
     }
 
@@ -741,13 +735,17 @@ export class TodoistApi {
         z.string().parse(projectId)
         const {
             data: { results, nextCursor },
-        } = await request<GetProjectCollaboratorsResponse>(
-            'GET',
-            this.syncApiBase,
-            generatePath(ENDPOINT_REST_PROJECTS, projectId, ENDPOINT_REST_PROJECT_COLLABORATORS),
-            this.authToken,
-            args,
-        )
+        } = await request<GetProjectCollaboratorsResponse>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: generatePath(
+                ENDPOINT_REST_PROJECTS,
+                projectId,
+                ENDPOINT_REST_PROJECT_COLLABORATORS,
+            ),
+            apiToken: this.authToken,
+            payload: args,
+        })
 
         return {
             results: validateUserArray(results),
@@ -764,13 +762,13 @@ export class TodoistApi {
     async getSections(args: GetSectionsArgs): Promise<GetSectionsResponse> {
         const {
             data: { results, nextCursor },
-        } = await request<GetSectionsResponse>(
-            'GET',
-            this.syncApiBase,
-            ENDPOINT_REST_SECTIONS,
-            this.authToken,
-            args,
-        )
+        } = await request<GetSectionsResponse>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_REST_SECTIONS,
+            apiToken: this.authToken,
+            payload: args,
+        })
 
         return {
             results: validateSectionArray(results),
@@ -786,12 +784,12 @@ export class TodoistApi {
      */
     async getSection(id: string): Promise<Section> {
         z.string().parse(id)
-        const response = await request<Section>(
-            'GET',
-            this.syncApiBase,
-            generatePath(ENDPOINT_REST_SECTIONS, id),
-            this.authToken,
-        )
+        const response = await request<Section>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: generatePath(ENDPOINT_REST_SECTIONS, id),
+            apiToken: this.authToken,
+        })
 
         return validateSection(response.data)
     }
@@ -804,14 +802,14 @@ export class TodoistApi {
      * @returns A promise that resolves to the created section.
      */
     async addSection(args: AddSectionArgs, requestId?: string): Promise<Section> {
-        const response = await request<Section>(
-            'POST',
-            this.syncApiBase,
-            ENDPOINT_REST_SECTIONS,
-            this.authToken,
-            args,
-            requestId,
-        )
+        const response = await request<Section>({
+            httpMethod: 'POST',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_REST_SECTIONS,
+            apiToken: this.authToken,
+            payload: args,
+            requestId: requestId,
+        })
 
         return validateSection(response.data)
     }
@@ -826,14 +824,14 @@ export class TodoistApi {
      */
     async updateSection(id: string, args: UpdateSectionArgs, requestId?: string): Promise<Section> {
         z.string().parse(id)
-        const response = await request(
-            'POST',
-            this.syncApiBase,
-            generatePath(ENDPOINT_REST_SECTIONS, id),
-            this.authToken,
-            args,
-            requestId,
-        )
+        const response = await request({
+            httpMethod: 'POST',
+            baseUri: this.syncApiBase,
+            relativePath: generatePath(ENDPOINT_REST_SECTIONS, id),
+            apiToken: this.authToken,
+            payload: args,
+            requestId: requestId,
+        })
         return validateSection(response.data)
     }
 
@@ -846,14 +844,13 @@ export class TodoistApi {
      */
     async deleteSection(id: string, requestId?: string): Promise<boolean> {
         z.string().parse(id)
-        const response = await request(
-            'DELETE',
-            this.syncApiBase,
-            generatePath(ENDPOINT_REST_SECTIONS, id),
-            this.authToken,
-            undefined,
-            requestId,
-        )
+        const response = await request({
+            httpMethod: 'DELETE',
+            baseUri: this.syncApiBase,
+            relativePath: generatePath(ENDPOINT_REST_SECTIONS, id),
+            apiToken: this.authToken,
+            requestId: requestId,
+        })
         return isSuccess(response)
     }
 
@@ -865,12 +862,12 @@ export class TodoistApi {
      */
     async getLabel(id: string): Promise<Label> {
         z.string().parse(id)
-        const response = await request<Label>(
-            'GET',
-            this.syncApiBase,
-            generatePath(ENDPOINT_REST_LABELS, id),
-            this.authToken,
-        )
+        const response = await request<Label>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: generatePath(ENDPOINT_REST_LABELS, id),
+            apiToken: this.authToken,
+        })
 
         return validateLabel(response.data)
     }
@@ -884,13 +881,13 @@ export class TodoistApi {
     async getLabels(args: GetLabelsArgs = {}): Promise<GetLabelsResponse> {
         const {
             data: { results, nextCursor: nextCursor },
-        } = await request<GetLabelsResponse>(
-            'GET',
-            this.syncApiBase,
-            ENDPOINT_REST_LABELS,
-            this.authToken,
-            args,
-        )
+        } = await request<GetLabelsResponse>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_REST_LABELS,
+            apiToken: this.authToken,
+            payload: args,
+        })
 
         return {
             results: validateLabelArray(results),
@@ -906,14 +903,14 @@ export class TodoistApi {
      * @returns A promise that resolves to the created label.
      */
     async addLabel(args: AddLabelArgs, requestId?: string): Promise<Label> {
-        const response = await request<Label>(
-            'POST',
-            this.syncApiBase,
-            ENDPOINT_REST_LABELS,
-            this.authToken,
-            args,
-            requestId,
-        )
+        const response = await request<Label>({
+            httpMethod: 'POST',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_REST_LABELS,
+            apiToken: this.authToken,
+            payload: args,
+            requestId: requestId,
+        })
 
         return validateLabel(response.data)
     }
@@ -928,14 +925,14 @@ export class TodoistApi {
      */
     async updateLabel(id: string, args: UpdateLabelArgs, requestId?: string): Promise<Label> {
         z.string().parse(id)
-        const response = await request(
-            'POST',
-            this.syncApiBase,
-            generatePath(ENDPOINT_REST_LABELS, id),
-            this.authToken,
-            args,
-            requestId,
-        )
+        const response = await request({
+            httpMethod: 'POST',
+            baseUri: this.syncApiBase,
+            relativePath: generatePath(ENDPOINT_REST_LABELS, id),
+            apiToken: this.authToken,
+            payload: args,
+            requestId: requestId,
+        })
         return validateLabel(response.data)
     }
 
@@ -948,14 +945,13 @@ export class TodoistApi {
      */
     async deleteLabel(id: string, requestId?: string): Promise<boolean> {
         z.string().parse(id)
-        const response = await request(
-            'DELETE',
-            this.syncApiBase,
-            generatePath(ENDPOINT_REST_LABELS, id),
-            this.authToken,
-            undefined,
-            requestId,
-        )
+        const response = await request({
+            httpMethod: 'DELETE',
+            baseUri: this.syncApiBase,
+            relativePath: generatePath(ENDPOINT_REST_LABELS, id),
+            apiToken: this.authToken,
+            requestId: requestId,
+        })
         return isSuccess(response)
     }
 
@@ -968,13 +964,13 @@ export class TodoistApi {
     async getSharedLabels(args?: GetSharedLabelsArgs): Promise<GetSharedLabelsResponse> {
         const {
             data: { results, nextCursor: nextCursor },
-        } = await request<GetSharedLabelsResponse>(
-            'GET',
-            this.syncApiBase,
-            ENDPOINT_REST_LABELS_SHARED,
-            this.authToken,
-            args,
-        )
+        } = await request<GetSharedLabelsResponse>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_REST_LABELS_SHARED,
+            apiToken: this.authToken,
+            payload: args,
+        })
 
         return { results, nextCursor }
     }
@@ -986,13 +982,13 @@ export class TodoistApi {
      * @returns A promise that resolves to `true` if successful.
      */
     async renameSharedLabel(args: RenameSharedLabelArgs): Promise<boolean> {
-        const response = await request<void>(
-            'POST',
-            this.syncApiBase,
-            ENDPOINT_REST_LABELS_SHARED_RENAME,
-            this.authToken,
-            args,
-        )
+        const response = await request<void>({
+            httpMethod: 'POST',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_REST_LABELS_SHARED_RENAME,
+            apiToken: this.authToken,
+            payload: args,
+        })
 
         return isSuccess(response)
     }
@@ -1004,13 +1000,13 @@ export class TodoistApi {
      * @returns A promise that resolves to `true` if successful.
      */
     async removeSharedLabel(args: RemoveSharedLabelArgs): Promise<boolean> {
-        const response = await request<void>(
-            'POST',
-            this.syncApiBase,
-            ENDPOINT_REST_LABELS_SHARED_REMOVE,
-            this.authToken,
-            args,
-        )
+        const response = await request<void>({
+            httpMethod: 'POST',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_REST_LABELS_SHARED_REMOVE,
+            apiToken: this.authToken,
+            payload: args,
+        })
 
         return isSuccess(response)
     }
@@ -1026,13 +1022,13 @@ export class TodoistApi {
     ): Promise<GetCommentsResponse> {
         const {
             data: { results, nextCursor },
-        } = await request<GetCommentsResponse>(
-            'GET',
-            this.syncApiBase,
-            ENDPOINT_REST_COMMENTS,
-            this.authToken,
-            args,
-        )
+        } = await request<GetCommentsResponse>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_REST_COMMENTS,
+            apiToken: this.authToken,
+            payload: args,
+        })
 
         return {
             results: validateCommentArray(results),
@@ -1048,12 +1044,12 @@ export class TodoistApi {
      */
     async getComment(id: string): Promise<Comment> {
         z.string().parse(id)
-        const response = await request<Comment>(
-            'GET',
-            this.syncApiBase,
-            generatePath(ENDPOINT_REST_COMMENTS, id),
-            this.authToken,
-        )
+        const response = await request<Comment>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: generatePath(ENDPOINT_REST_COMMENTS, id),
+            apiToken: this.authToken,
+        })
 
         return validateComment(response.data)
     }
@@ -1066,14 +1062,14 @@ export class TodoistApi {
      * @returns A promise that resolves to the created comment.
      */
     async addComment(args: AddCommentArgs, requestId?: string): Promise<Comment> {
-        const response = await request<Comment>(
-            'POST',
-            this.syncApiBase,
-            ENDPOINT_REST_COMMENTS,
-            this.authToken,
-            args,
-            requestId,
-        )
+        const response = await request<Comment>({
+            httpMethod: 'POST',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_REST_COMMENTS,
+            apiToken: this.authToken,
+            payload: args,
+            requestId: requestId,
+        })
 
         return validateComment(response.data)
     }
@@ -1088,14 +1084,14 @@ export class TodoistApi {
      */
     async updateComment(id: string, args: UpdateCommentArgs, requestId?: string): Promise<Comment> {
         z.string().parse(id)
-        const response = await request<boolean>(
-            'POST',
-            this.syncApiBase,
-            generatePath(ENDPOINT_REST_COMMENTS, id),
-            this.authToken,
-            args,
-            requestId,
-        )
+        const response = await request<boolean>({
+            httpMethod: 'POST',
+            baseUri: this.syncApiBase,
+            relativePath: generatePath(ENDPOINT_REST_COMMENTS, id),
+            apiToken: this.authToken,
+            payload: args,
+            requestId: requestId,
+        })
         return validateComment(response.data)
     }
 
@@ -1108,14 +1104,13 @@ export class TodoistApi {
      */
     async deleteComment(id: string, requestId?: string): Promise<boolean> {
         z.string().parse(id)
-        const response = await request(
-            'DELETE',
-            this.syncApiBase,
-            generatePath(ENDPOINT_REST_COMMENTS, id),
-            this.authToken,
-            undefined,
-            requestId,
-        )
+        const response = await request({
+            httpMethod: 'DELETE',
+            baseUri: this.syncApiBase,
+            relativePath: generatePath(ENDPOINT_REST_COMMENTS, id),
+            apiToken: this.authToken,
+            requestId: requestId,
+        })
         return isSuccess(response)
     }
     /**
@@ -1124,12 +1119,12 @@ export class TodoistApi {
      * @returns A promise that resolves to the productivity stats.
      */
     async getProductivityStats(): Promise<ProductivityStats> {
-        const response = await request<ProductivityStats>(
-            'GET',
-            this.syncApiBase,
-            ENDPOINT_REST_PRODUCTIVITY,
-            this.authToken,
-        )
+        const response = await request<ProductivityStats>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_REST_PRODUCTIVITY,
+            apiToken: this.authToken,
+        })
         return validateProductivityStats(response.data)
     }
 
@@ -1150,13 +1145,13 @@ export class TodoistApi {
 
         const {
             data: { results, nextCursor },
-        } = await request<GetActivityLogsResponse>(
-            'GET',
-            this.syncApiBase,
-            ENDPOINT_REST_ACTIVITIES,
-            this.authToken,
-            processedArgs as Record<string, unknown>,
-        )
+        } = await request<GetActivityLogsResponse>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_REST_ACTIVITIES,
+            apiToken: this.authToken,
+            payload: processedArgs as Record<string, unknown>,
+        })
 
         // Convert legacy API object types back to modern SDK types
         const normalizedResults = results.map((event) => {
@@ -1216,15 +1211,15 @@ export class TodoistApi {
             additionalFields.project_id = args.projectId
         }
 
-        const data = await uploadMultipartFile<Attachment>(
-            this.syncApiBase,
-            this.authToken,
-            ENDPOINT_REST_UPLOADS,
-            args.file,
-            args.fileName,
-            additionalFields,
-            requestId,
-        )
+        const data = await uploadMultipartFile<Attachment>({
+            baseUrl: this.syncApiBase,
+            authToken: this.authToken,
+            endpoint: ENDPOINT_REST_UPLOADS,
+            file: args.file,
+            fileName: args.fileName,
+            additionalFields: additionalFields,
+            requestId: requestId,
+        })
 
         return validateAttachment(data)
     }
@@ -1244,14 +1239,14 @@ export class TodoistApi {
      * ```
      */
     async deleteUpload(args: DeleteUploadArgs, requestId?: string): Promise<boolean> {
-        const response = await request(
-            'DELETE',
-            this.syncApiBase,
-            ENDPOINT_REST_UPLOADS,
-            this.authToken,
-            args,
-            requestId,
-        )
+        const response = await request({
+            httpMethod: 'DELETE',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_REST_UPLOADS,
+            apiToken: this.authToken,
+            payload: args,
+            requestId: requestId,
+        })
         return isSuccess(response)
     }
 
@@ -1268,22 +1263,14 @@ export class TodoistApi {
         args: GetWorkspaceInvitationsArgs,
         requestId?: string,
     ): Promise<WorkspaceInvitationsResponse> {
-        const response = requestId
-            ? await request<WorkspaceInvitationsResponse>(
-                  'GET',
-                  this.syncApiBase,
-                  ENDPOINT_WORKSPACE_INVITATIONS,
-                  this.authToken,
-                  { workspace_id: args.workspaceId },
-                  requestId,
-              )
-            : await request<WorkspaceInvitationsResponse>(
-                  'GET',
-                  this.syncApiBase,
-                  ENDPOINT_WORKSPACE_INVITATIONS,
-                  this.authToken,
-                  { workspace_id: args.workspaceId },
-              )
+        const response = await request<WorkspaceInvitationsResponse>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_WORKSPACE_INVITATIONS,
+            apiToken: this.authToken,
+            payload: { workspace_id: args.workspaceId },
+            requestId: requestId,
+        })
 
         return response.data
     }
@@ -1303,22 +1290,14 @@ export class TodoistApi {
             queryParams.workspace_id = args.workspaceId
         }
 
-        const response = requestId
-            ? await request<AllWorkspaceInvitationsResponse>(
-                  'GET',
-                  this.syncApiBase,
-                  ENDPOINT_WORKSPACE_INVITATIONS_ALL,
-                  this.authToken,
-                  queryParams,
-                  requestId,
-              )
-            : await request<AllWorkspaceInvitationsResponse>(
-                  'GET',
-                  this.syncApiBase,
-                  ENDPOINT_WORKSPACE_INVITATIONS_ALL,
-                  this.authToken,
-                  queryParams,
-              )
+        const response = await request<AllWorkspaceInvitationsResponse>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_WORKSPACE_INVITATIONS_ALL,
+            apiToken: this.authToken,
+            payload: queryParams,
+            requestId: requestId,
+        })
 
         return validateWorkspaceInvitationArray(response.data)
     }
@@ -1334,17 +1313,17 @@ export class TodoistApi {
         args: DeleteWorkspaceInvitationArgs,
         requestId?: string,
     ): Promise<WorkspaceInvitation> {
-        const response = await request<WorkspaceInvitation>(
-            'POST',
-            this.syncApiBase,
-            ENDPOINT_WORKSPACE_INVITATIONS_DELETE,
-            this.authToken,
-            {
+        const response = await request<WorkspaceInvitation>({
+            httpMethod: 'POST',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_WORKSPACE_INVITATIONS_DELETE,
+            apiToken: this.authToken,
+            payload: {
                 workspace_id: args.workspaceId,
                 user_email: args.userEmail,
             },
-            requestId,
-        )
+            requestId: requestId,
+        })
 
         return validateWorkspaceInvitation(response.data)
     }
@@ -1360,14 +1339,13 @@ export class TodoistApi {
         args: WorkspaceInvitationActionArgs,
         requestId?: string,
     ): Promise<WorkspaceInvitation> {
-        const response = await request<WorkspaceInvitation>(
-            'PUT',
-            this.syncApiBase,
-            getWorkspaceInvitationAcceptEndpoint(args.inviteCode),
-            this.authToken,
-            undefined,
-            requestId,
-        )
+        const response = await request<WorkspaceInvitation>({
+            httpMethod: 'PUT',
+            baseUri: this.syncApiBase,
+            relativePath: getWorkspaceInvitationAcceptEndpoint(args.inviteCode),
+            apiToken: this.authToken,
+            requestId: requestId,
+        })
 
         return validateWorkspaceInvitation(response.data)
     }
@@ -1383,14 +1361,13 @@ export class TodoistApi {
         args: WorkspaceInvitationActionArgs,
         requestId?: string,
     ): Promise<WorkspaceInvitation> {
-        const response = await request<WorkspaceInvitation>(
-            'PUT',
-            this.syncApiBase,
-            getWorkspaceInvitationRejectEndpoint(args.inviteCode),
-            this.authToken,
-            undefined,
-            requestId,
-        )
+        const response = await request<WorkspaceInvitation>({
+            httpMethod: 'PUT',
+            baseUri: this.syncApiBase,
+            relativePath: getWorkspaceInvitationRejectEndpoint(args.inviteCode),
+            apiToken: this.authToken,
+            requestId: requestId,
+        })
 
         return validateWorkspaceInvitation(response.data)
     }
@@ -1403,17 +1380,17 @@ export class TodoistApi {
      * @returns Workspace user information.
      */
     async joinWorkspace(args: JoinWorkspaceArgs, requestId?: string): Promise<JoinWorkspaceResult> {
-        const response = await request<JoinWorkspaceResult>(
-            'POST',
-            this.syncApiBase,
-            ENDPOINT_WORKSPACE_JOIN,
-            this.authToken,
-            {
+        const response = await request<JoinWorkspaceResult>({
+            httpMethod: 'POST',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_WORKSPACE_JOIN,
+            apiToken: this.authToken,
+            payload: {
                 invite_code: args.inviteCode,
                 workspace_id: args.workspaceId,
             },
-            requestId,
-        )
+            requestId: requestId,
+        })
 
         return validateJoinWorkspaceResult(response.data)
     }
@@ -1431,18 +1408,18 @@ export class TodoistApi {
     ): Promise<WorkspaceLogoResponse> {
         if (args.delete) {
             // Delete logo
-            const data = await uploadMultipartFile<WorkspaceLogoResponse>(
-                this.syncApiBase,
-                this.authToken,
-                ENDPOINT_WORKSPACE_LOGO,
-                Buffer.alloc(0), // Empty buffer for delete
-                'delete',
-                {
+            const data = await uploadMultipartFile<WorkspaceLogoResponse>({
+                baseUrl: this.syncApiBase,
+                authToken: this.authToken,
+                endpoint: ENDPOINT_WORKSPACE_LOGO,
+                file: Buffer.alloc(0), // Empty buffer for delete
+                fileName: 'delete',
+                additionalFields: {
                     workspace_id: args.workspaceId,
                     delete: true,
                 },
-                requestId,
-            )
+                requestId: requestId,
+            })
             return data
         }
 
@@ -1459,15 +1436,15 @@ export class TodoistApi {
             workspace_id: args.workspaceId,
         }
 
-        const data = await uploadMultipartFile<WorkspaceLogoResponse>(
-            this.syncApiBase,
-            this.authToken,
-            ENDPOINT_WORKSPACE_LOGO,
-            args.file,
-            args.fileName,
-            additionalFields,
-            requestId,
-        )
+        const data = await uploadMultipartFile<WorkspaceLogoResponse>({
+            baseUrl: this.syncApiBase,
+            authToken: this.authToken,
+            endpoint: ENDPOINT_WORKSPACE_LOGO,
+            file: args.file,
+            fileName: args.fileName,
+            additionalFields: additionalFields,
+            requestId: requestId,
+        })
 
         return data
     }
@@ -1483,22 +1460,14 @@ export class TodoistApi {
         args: GetWorkspacePlanDetailsArgs,
         requestId?: string,
     ): Promise<WorkspacePlanDetails> {
-        const response = requestId
-            ? await request<WorkspacePlanDetails>(
-                  'GET',
-                  this.syncApiBase,
-                  ENDPOINT_WORKSPACE_PLAN_DETAILS,
-                  this.authToken,
-                  { workspace_id: args.workspaceId },
-                  requestId,
-              )
-            : await request<WorkspacePlanDetails>(
-                  'GET',
-                  this.syncApiBase,
-                  ENDPOINT_WORKSPACE_PLAN_DETAILS,
-                  this.authToken,
-                  { workspace_id: args.workspaceId },
-              )
+        const response = await request<WorkspacePlanDetails>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_WORKSPACE_PLAN_DETAILS,
+            apiToken: this.authToken,
+            payload: { workspace_id: args.workspaceId },
+            requestId: requestId,
+        })
 
         return validateWorkspacePlanDetails(response.data)
     }
@@ -1525,24 +1494,18 @@ export class TodoistApi {
             queryParams.limit = args.limit
         }
 
-        const response = requestId
-            ? await request<{
-                  has_more: boolean
-                  next_cursor?: string
-                  workspace_users: WorkspaceUser[]
-              }>(
-                  'GET',
-                  this.syncApiBase,
-                  ENDPOINT_WORKSPACE_USERS,
-                  this.authToken,
-                  queryParams,
-                  requestId,
-              )
-            : await request<{
-                  has_more: boolean
-                  next_cursor?: string
-                  workspace_users: WorkspaceUser[]
-              }>('GET', this.syncApiBase, ENDPOINT_WORKSPACE_USERS, this.authToken, queryParams)
+        const response = await request<{
+            has_more: boolean
+            next_cursor?: string
+            workspace_users: WorkspaceUser[]
+        }>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_WORKSPACE_USERS,
+            apiToken: this.authToken,
+            payload: queryParams,
+            requestId: requestId,
+        })
 
         return {
             hasMore: response.data.has_more || false,
@@ -1570,22 +1533,14 @@ export class TodoistApi {
             queryParams.limit = args.limit
         }
 
-        const response = requestId
-            ? await request<GetProjectsResponse>(
-                  'GET',
-                  this.syncApiBase,
-                  getWorkspaceActiveProjectsEndpoint(args.workspaceId),
-                  this.authToken,
-                  queryParams,
-                  requestId,
-              )
-            : await request<GetProjectsResponse>(
-                  'GET',
-                  this.syncApiBase,
-                  getWorkspaceActiveProjectsEndpoint(args.workspaceId),
-                  this.authToken,
-                  queryParams,
-              )
+        const response = await request<GetProjectsResponse>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: getWorkspaceActiveProjectsEndpoint(args.workspaceId),
+            apiToken: this.authToken,
+            payload: queryParams,
+            requestId: requestId,
+        })
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
         const validatedProjects = response.data.results?.map((project: unknown) =>
@@ -1619,22 +1574,14 @@ export class TodoistApi {
             queryParams.limit = args.limit
         }
 
-        const response = requestId
-            ? await request<GetProjectsResponse>(
-                  'GET',
-                  this.syncApiBase,
-                  getWorkspaceArchivedProjectsEndpoint(args.workspaceId),
-                  this.authToken,
-                  queryParams,
-                  requestId,
-              )
-            : await request<GetProjectsResponse>(
-                  'GET',
-                  this.syncApiBase,
-                  getWorkspaceArchivedProjectsEndpoint(args.workspaceId),
-                  this.authToken,
-                  queryParams,
-              )
+        const response = await request<GetProjectsResponse>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: getWorkspaceArchivedProjectsEndpoint(args.workspaceId),
+            apiToken: this.authToken,
+            payload: queryParams,
+            requestId: requestId,
+        })
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
         const validatedProjects = response.data.results?.map((project: unknown) =>

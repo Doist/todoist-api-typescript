@@ -47,14 +47,14 @@ describe('TodoistApi moveTask', () => {
             await api.moveTask(TASK_ID, args, DEFAULT_REQUEST_ID)
 
             expect(requestMock).toHaveBeenCalledTimes(1)
-            expect(requestMock).toHaveBeenCalledWith(
-                'POST',
-                getSyncBaseUri(),
-                `${ENDPOINT_REST_TASKS}/${TASK_ID}/${ENDPOINT_REST_TASK_MOVE}`,
-                DEFAULT_AUTH_TOKEN,
-                expectedApiArgs,
-                DEFAULT_REQUEST_ID,
-            )
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'POST',
+                baseUri: getSyncBaseUri(),
+                relativePath: `${ENDPOINT_REST_TASKS}/${TASK_ID}/${ENDPOINT_REST_TASK_MOVE}`,
+                apiToken: DEFAULT_AUTH_TOKEN,
+                payload: expectedApiArgs,
+                requestId: DEFAULT_REQUEST_ID,
+            })
         })
 
         test('returns moved task', async () => {
@@ -86,14 +86,14 @@ describe('TodoistApi moveTask', () => {
         await api.moveTask(TASK_ID, { projectId: PROJECT_ID }, DEFAULT_REQUEST_ID)
 
         expect(requestMock).toHaveBeenCalledTimes(1)
-        expect(requestMock).toHaveBeenCalledWith(
-            'POST',
-            getSyncBaseUri('https://staging.todoist.com'),
-            `${ENDPOINT_REST_TASKS}/${TASK_ID}/${ENDPOINT_REST_TASK_MOVE}`,
-            DEFAULT_AUTH_TOKEN,
-            { project_id: PROJECT_ID },
-            DEFAULT_REQUEST_ID,
-        )
+        expect(requestMock).toHaveBeenCalledWith({
+            httpMethod: 'POST',
+            baseUri: getSyncBaseUri('https://staging.todoist.com'),
+            relativePath: `${ENDPOINT_REST_TASKS}/${TASK_ID}/${ENDPOINT_REST_TASK_MOVE}`,
+            apiToken: DEFAULT_AUTH_TOKEN,
+            payload: { project_id: PROJECT_ID },
+            requestId: DEFAULT_REQUEST_ID,
+        })
     })
 
     test('works without requestId', async () => {
@@ -109,13 +109,13 @@ describe('TodoistApi moveTask', () => {
         await api.moveTask(TASK_ID, { projectId: PROJECT_ID })
 
         expect(requestMock).toHaveBeenCalledTimes(1)
-        expect(requestMock).toHaveBeenCalledWith(
-            'POST',
-            getSyncBaseUri(),
-            `${ENDPOINT_REST_TASKS}/${TASK_ID}/${ENDPOINT_REST_TASK_MOVE}`,
-            DEFAULT_AUTH_TOKEN,
-            { project_id: PROJECT_ID },
-            undefined,
-        )
+        expect(requestMock).toHaveBeenCalledWith({
+            httpMethod: 'POST',
+            baseUri: getSyncBaseUri(),
+            relativePath: `${ENDPOINT_REST_TASKS}/${TASK_ID}/${ENDPOINT_REST_TASK_MOVE}`,
+            apiToken: DEFAULT_AUTH_TOKEN,
+            payload: { project_id: PROJECT_ID },
+            requestId: undefined,
+        })
     })
 })

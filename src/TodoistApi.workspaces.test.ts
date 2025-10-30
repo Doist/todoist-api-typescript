@@ -23,13 +23,13 @@ describe('TodoistApi workspaces', () => {
 
             const result = await api.getWorkspaceInvitations({ workspaceId: 123 })
 
-            expect(requestMock).toHaveBeenCalledWith(
-                'GET',
-                getSyncBaseUri(),
-                'workspaces/invitations',
-                'token',
-                { workspace_id: 123 },
-            )
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'GET',
+                baseUri: getSyncBaseUri(),
+                relativePath: 'workspaces/invitations',
+                apiToken: 'token',
+                payload: { workspace_id: 123 },
+            })
             expect(result).toEqual(mockResponse)
         })
 
@@ -40,14 +40,14 @@ describe('TodoistApi workspaces', () => {
 
             await api.getWorkspaceInvitations({ workspaceId: 456 }, requestId)
 
-            expect(requestMock).toHaveBeenCalledWith(
-                'GET',
-                getSyncBaseUri(),
-                'workspaces/invitations',
-                'token',
-                { workspace_id: 456 },
-                requestId,
-            )
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'GET',
+                baseUri: getSyncBaseUri(),
+                relativePath: 'workspaces/invitations',
+                apiToken: 'token',
+                payload: { workspace_id: 456 },
+                requestId: requestId,
+            })
         })
     })
 
@@ -67,13 +67,13 @@ describe('TodoistApi workspaces', () => {
 
             const result = await api.getAllWorkspaceInvitations()
 
-            expect(requestMock).toHaveBeenCalledWith(
-                'GET',
-                getSyncBaseUri(),
-                'workspaces/invitations/all',
-                'token',
-                {},
-            )
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'GET',
+                baseUri: getSyncBaseUri(),
+                relativePath: 'workspaces/invitations/all',
+                apiToken: 'token',
+                payload: {},
+            })
             expect(result).toEqual(mockResponse)
         })
 
@@ -83,14 +83,14 @@ describe('TodoistApi workspaces', () => {
 
             await api.getAllWorkspaceInvitations({}, requestId)
 
-            expect(requestMock).toHaveBeenCalledWith(
-                'GET',
-                getSyncBaseUri(),
-                'workspaces/invitations/all',
-                'token',
-                {},
-                requestId,
-            )
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'GET',
+                baseUri: getSyncBaseUri(),
+                relativePath: 'workspaces/invitations/all',
+                apiToken: 'token',
+                payload: {},
+                requestId: requestId,
+            })
         })
     })
 
@@ -112,17 +112,17 @@ describe('TodoistApi workspaces', () => {
                 userEmail: 'user@example.com',
             })
 
-            expect(requestMock).toHaveBeenCalledWith(
-                'POST',
-                getSyncBaseUri(),
-                'workspaces/invitations/delete',
-                'token',
-                {
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'POST',
+                baseUri: getSyncBaseUri(),
+                relativePath: 'workspaces/invitations/delete',
+                apiToken: 'token',
+                payload: {
                     workspace_id: 789,
                     user_email: 'user@example.com',
                 },
-                undefined,
-            )
+                requestId: undefined,
+            })
             expect(result).toEqual(mockInvitation)
         })
     })
@@ -142,14 +142,13 @@ describe('TodoistApi workspaces', () => {
 
             const result = await api.acceptWorkspaceInvitation({ inviteCode: 'abc123' })
 
-            expect(requestMock).toHaveBeenCalledWith(
-                'PUT',
-                getSyncBaseUri(),
-                'workspaces/invitations/abc123/accept',
-                'token',
-                undefined,
-                undefined,
-            )
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'PUT',
+                baseUri: getSyncBaseUri(),
+                relativePath: 'workspaces/invitations/abc123/accept',
+                apiToken: 'token',
+                requestId: undefined,
+            })
             expect(result).toEqual(mockInvitation)
         })
     })
@@ -169,14 +168,13 @@ describe('TodoistApi workspaces', () => {
 
             const result = await api.rejectWorkspaceInvitation({ inviteCode: 'def456' })
 
-            expect(requestMock).toHaveBeenCalledWith(
-                'PUT',
-                getSyncBaseUri(),
-                'workspaces/invitations/def456/reject',
-                'token',
-                undefined,
-                undefined,
-            )
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'PUT',
+                baseUri: getSyncBaseUri(),
+                relativePath: 'workspaces/invitations/def456/reject',
+                apiToken: 'token',
+                requestId: undefined,
+            })
             expect(result).toEqual(mockInvitation)
         })
     })
@@ -195,17 +193,17 @@ describe('TodoistApi workspaces', () => {
 
             const result = await api.joinWorkspace({ inviteCode: 'invite123' })
 
-            expect(requestMock).toHaveBeenCalledWith(
-                'POST',
-                getSyncBaseUri(),
-                'workspaces/join',
-                'token',
-                {
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'POST',
+                baseUri: getSyncBaseUri(),
+                relativePath: 'workspaces/join',
+                apiToken: 'token',
+                payload: {
                     invite_code: 'invite123',
                     workspace_id: undefined,
                 },
-                undefined,
-            )
+                requestId: undefined,
+            })
             expect(result).toEqual(mockJoinResult)
         })
 
@@ -214,17 +212,17 @@ describe('TodoistApi workspaces', () => {
 
             const result = await api.joinWorkspace({ workspaceId: 789 })
 
-            expect(requestMock).toHaveBeenCalledWith(
-                'POST',
-                getSyncBaseUri(),
-                'workspaces/join',
-                'token',
-                {
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'POST',
+                baseUri: getSyncBaseUri(),
+                relativePath: 'workspaces/join',
+                apiToken: 'token',
+                payload: {
                     invite_code: undefined,
                     workspace_id: 789,
                 },
-                undefined,
-            )
+                requestId: undefined,
+            })
             expect(result).toEqual(mockJoinResult)
         })
     })
@@ -243,15 +241,15 @@ describe('TodoistApi workspaces', () => {
                 fileName: 'logo.png',
             })
 
-            expect(mockedUploadMultipartFile).toHaveBeenCalledWith(
-                getSyncBaseUri(),
-                'token',
-                'workspaces/logo',
-                '/path/to/logo.png',
-                'logo.png',
-                { workspace_id: 123 },
-                undefined,
-            )
+            expect(mockedUploadMultipartFile).toHaveBeenCalledWith({
+                baseUrl: getSyncBaseUri(),
+                authToken: 'token',
+                endpoint: 'workspaces/logo',
+                file: '/path/to/logo.png',
+                fileName: 'logo.png',
+                additionalFields: { workspace_id: 123 },
+                requestId: undefined,
+            })
             expect(result).toEqual(mockLogoResponse)
         })
 
@@ -264,15 +262,15 @@ describe('TodoistApi workspaces', () => {
                 fileName: 'logo.jpg',
             })
 
-            expect(mockedUploadMultipartFile).toHaveBeenCalledWith(
-                getSyncBaseUri(),
-                'token',
-                'workspaces/logo',
-                buffer,
-                'logo.jpg',
-                { workspace_id: 456 },
-                undefined,
-            )
+            expect(mockedUploadMultipartFile).toHaveBeenCalledWith({
+                baseUrl: getSyncBaseUri(),
+                authToken: 'token',
+                endpoint: 'workspaces/logo',
+                file: buffer,
+                fileName: 'logo.jpg',
+                additionalFields: { workspace_id: 456 },
+                requestId: undefined,
+            })
         })
 
         test('deletes workspace logo', async () => {
@@ -281,18 +279,18 @@ describe('TodoistApi workspaces', () => {
                 delete: true,
             })
 
-            expect(mockedUploadMultipartFile).toHaveBeenCalledWith(
-                getSyncBaseUri(),
-                'token',
-                'workspaces/logo',
-                expect.any(Buffer),
-                'delete',
-                {
+            expect(mockedUploadMultipartFile).toHaveBeenCalledWith({
+                baseUrl: getSyncBaseUri(),
+                authToken: 'token',
+                endpoint: 'workspaces/logo',
+                file: expect.any(Buffer),
+                fileName: 'delete',
+                additionalFields: {
                     workspace_id: 789,
                     delete: true,
                 },
-                undefined,
-            )
+                requestId: undefined,
+            })
         })
 
         test('throws error when file missing and not deleting', async () => {
@@ -328,13 +326,13 @@ describe('TodoistApi workspaces', () => {
 
             const result = await api.getWorkspacePlanDetails({ workspaceId: 123 })
 
-            expect(requestMock).toHaveBeenCalledWith(
-                'GET',
-                getSyncBaseUri(),
-                'workspaces/plan_details',
-                'token',
-                { workspace_id: 123 },
-            )
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'GET',
+                baseUri: getSyncBaseUri(),
+                relativePath: 'workspaces/plan_details',
+                apiToken: 'token',
+                payload: { workspace_id: 123 },
+            })
             expect(result).toEqual(mockPlanDetails)
         })
     })
@@ -374,13 +372,13 @@ describe('TodoistApi workspaces', () => {
 
             const result = await api.getWorkspaceUsers()
 
-            expect(requestMock).toHaveBeenCalledWith(
-                'GET',
-                getSyncBaseUri(),
-                'workspaces/users',
-                'token',
-                {},
-            )
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'GET',
+                baseUri: getSyncBaseUri(),
+                relativePath: 'workspaces/users',
+                apiToken: 'token',
+                payload: {},
+            })
             expect(result).toEqual({
                 hasMore: false,
                 nextCursor: undefined,
@@ -397,17 +395,17 @@ describe('TodoistApi workspaces', () => {
                 limit: 50,
             })
 
-            expect(requestMock).toHaveBeenCalledWith(
-                'GET',
-                getSyncBaseUri(),
-                'workspaces/users',
-                'token',
-                {
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'GET',
+                baseUri: getSyncBaseUri(),
+                relativePath: 'workspaces/users',
+                apiToken: 'token',
+                payload: {
                     workspace_id: 456,
                     cursor: 'cursor123',
                     limit: 50,
                 },
-            )
+            })
         })
 
         test('handles null workspace ID', async () => {
@@ -415,13 +413,13 @@ describe('TodoistApi workspaces', () => {
 
             await api.getWorkspaceUsers({ workspaceId: null })
 
-            expect(requestMock).toHaveBeenCalledWith(
-                'GET',
-                getSyncBaseUri(),
-                'workspaces/users',
-                'token',
-                {},
-            )
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'GET',
+                baseUri: getSyncBaseUri(),
+                relativePath: 'workspaces/users',
+                apiToken: 'token',
+                payload: {},
+            })
         })
     })
 
@@ -464,16 +462,16 @@ describe('TodoistApi workspaces', () => {
                 limit: 25,
             })
 
-            expect(requestMock).toHaveBeenCalledWith(
-                'GET',
-                getSyncBaseUri(),
-                'workspaces/123/projects/active',
-                'token',
-                {
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'GET',
+                baseUri: getSyncBaseUri(),
+                relativePath: 'workspaces/123/projects/active',
+                apiToken: 'token',
+                payload: {
                     cursor: 'cursor456',
                     limit: 25,
                 },
-            )
+            })
             expect(result.results).toEqual(mockProjects)
         })
     })
@@ -491,13 +489,13 @@ describe('TodoistApi workspaces', () => {
                 workspaceId: 789,
             })
 
-            expect(requestMock).toHaveBeenCalledWith(
-                'GET',
-                getSyncBaseUri(),
-                'workspaces/789/projects/archived',
-                'token',
-                {},
-            )
+            expect(requestMock).toHaveBeenCalledWith({
+                httpMethod: 'GET',
+                baseUri: getSyncBaseUri(),
+                relativePath: 'workspaces/789/projects/archived',
+                apiToken: 'token',
+                payload: {},
+            })
             expect(result.results).toEqual([])
         })
     })
