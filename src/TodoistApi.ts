@@ -98,14 +98,14 @@ import {
     ENDPOINT_WORKSPACE_INVITATIONS,
     ENDPOINT_WORKSPACE_INVITATIONS_ALL,
     ENDPOINT_WORKSPACE_INVITATIONS_DELETE,
-    ENDPOINT_WORKSPACE_INVITATION_ACCEPT,
-    ENDPOINT_WORKSPACE_INVITATION_REJECT,
+    getWorkspaceInvitationAcceptEndpoint,
+    getWorkspaceInvitationRejectEndpoint,
     ENDPOINT_WORKSPACE_JOIN,
     ENDPOINT_WORKSPACE_LOGO,
     ENDPOINT_WORKSPACE_PLAN_DETAILS,
     ENDPOINT_WORKSPACE_USERS,
-    ENDPOINT_WORKSPACE_PROJECTS_ACTIVE,
-    ENDPOINT_WORKSPACE_PROJECTS_ARCHIVED,
+    getWorkspaceActiveProjectsEndpoint,
+    getWorkspaceArchivedProjectsEndpoint,
 } from './consts/endpoints'
 import {
     validateAttachment,
@@ -1349,7 +1349,7 @@ export class TodoistApi {
         const response = await request<WorkspaceInvitation>(
             'PUT',
             this.syncApiBase,
-            ENDPOINT_WORKSPACE_INVITATION_ACCEPT(args.inviteCode),
+            getWorkspaceInvitationAcceptEndpoint(args.inviteCode),
             this.authToken,
             undefined,
             requestId,
@@ -1372,7 +1372,7 @@ export class TodoistApi {
         const response = await request<WorkspaceInvitation>(
             'PUT',
             this.syncApiBase,
-            ENDPOINT_WORKSPACE_INVITATION_REJECT(args.inviteCode),
+            getWorkspaceInvitationRejectEndpoint(args.inviteCode),
             this.authToken,
             undefined,
             requestId,
@@ -1549,7 +1549,7 @@ export class TodoistApi {
         const response = await request<GetProjectsResponse>(
             'GET',
             this.syncApiBase,
-            ENDPOINT_WORKSPACE_PROJECTS_ACTIVE(args.workspaceId),
+            getWorkspaceActiveProjectsEndpoint(args.workspaceId),
             this.authToken,
             queryParams,
             requestId,
@@ -1592,7 +1592,7 @@ export class TodoistApi {
         const response = await request<GetProjectsResponse>(
             'GET',
             this.syncApiBase,
-            ENDPOINT_WORKSPACE_PROJECTS_ARCHIVED(args.workspaceId),
+            getWorkspaceArchivedProjectsEndpoint(args.workspaceId),
             this.authToken,
             queryParams,
             requestId,

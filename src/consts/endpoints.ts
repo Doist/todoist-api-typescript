@@ -62,19 +62,19 @@ export const ENDPOINT_WORKSPACE_PLAN_DETAILS = 'workspaces/plan_details'
 export const ENDPOINT_WORKSPACE_USERS = 'workspaces/users'
 
 // Workspace invitation actions (require invite_code parameter)
-export function ENDPOINT_WORKSPACE_INVITATION_ACCEPT(inviteCode: string): string {
+export function getWorkspaceInvitationAcceptEndpoint(inviteCode: string): string {
     return `workspaces/invitations/${inviteCode}/accept`
 }
 
-export function ENDPOINT_WORKSPACE_INVITATION_REJECT(inviteCode: string): string {
+export function getWorkspaceInvitationRejectEndpoint(inviteCode: string): string {
     return `workspaces/invitations/${inviteCode}/reject`
 }
 
 // Workspace projects (require workspace_id parameter)
-export function ENDPOINT_WORKSPACE_PROJECTS_ACTIVE(workspaceId: number): string {
+export function getWorkspaceActiveProjectsEndpoint(workspaceId: number): string {
     return `workspaces/${workspaceId}/projects/active`
 }
 
-export function ENDPOINT_WORKSPACE_PROJECTS_ARCHIVED(workspaceId: number): string {
+export function getWorkspaceArchivedProjectsEndpoint(workspaceId: number): string {
     return `workspaces/${workspaceId}/projects/archived`
 }
