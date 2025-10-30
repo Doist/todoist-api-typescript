@@ -9,7 +9,7 @@ import {
     RawComment,
     PersonalProject,
 } from '../types'
-import { getProjectUrl, getTaskUrl, getSectionUrl } from '../utils/urlHelpers'
+import { getProjectUrl, getTaskUrl, getSectionUrl } from '../utils/url-helpers'
 
 export const DEFAULT_TASK_ID = '1234'
 export const DEFAULT_TASK_CONTENT = 'This is a task'

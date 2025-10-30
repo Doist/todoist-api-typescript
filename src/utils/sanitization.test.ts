@@ -1,5 +1,5 @@
 import { getSanitizedContent, getSanitizedTasks } from './sanitization'
-import { DEFAULT_TASK } from '../testUtils/testDefaults'
+import { DEFAULT_TASK } from '../test-utils/test-defaults'
 import { Task } from '../types'
 
 describe('getSanitizedContent', () => {

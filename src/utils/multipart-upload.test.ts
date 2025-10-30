@@ -1,4 +1,4 @@
-import { uploadMultipartFile } from './multipartUpload'
+import { uploadMultipartFile } from './multipart-upload'
 import axios from 'axios'
 import * as fs from 'fs'
 import { Readable } from 'stream'

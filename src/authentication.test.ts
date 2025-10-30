@@ -5,8 +5,8 @@ import {
     revokeToken,
     Permission,
 } from './authentication'
-import { setupRestClientMock } from './testUtils/mocks'
-import { assertInstance } from './testUtils/asserts'
+import { setupRestClientMock } from './test-utils/mocks'
+import { assertInstance } from './test-utils/asserts'
 import { TodoistRequestError } from './types'
 import { getSyncBaseUri } from './consts/endpoints'
 

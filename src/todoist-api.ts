@@ -67,7 +67,7 @@ import {
     AllWorkspaceInvitationsResponse,
     WorkspaceLogoResponse,
 } from './types/requests'
-import { request, isSuccess } from './restClient'
+import { request, isSuccess } from './rest-client'
 import {
     getSyncBaseUri,
     ENDPOINT_REST_TASKS,
@@ -129,8 +129,8 @@ import {
     validateWorkspacePlanDetails,
     validateJoinWorkspaceResult,
 } from './utils/validators'
-import { formatDateToYYYYMMDD } from './utils/urlHelpers'
-import { uploadMultipartFile } from './utils/multipartUpload'
+import { formatDateToYYYYMMDD } from './utils/url-helpers'
+import { uploadMultipartFile } from './utils/multipart-upload'
 import { normalizeObjectTypeForApi, denormalizeObjectTypeFromApi } from './utils/activity-helpers'
 import { z } from 'zod'
 

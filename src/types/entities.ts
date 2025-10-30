@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { getProjectUrl, getTaskUrl, getSectionUrl } from '../utils/urlHelpers'
+import { getProjectUrl, getTaskUrl, getSectionUrl } from '../utils/url-helpers'
 
 export const DueDateSchema = z
     .object({

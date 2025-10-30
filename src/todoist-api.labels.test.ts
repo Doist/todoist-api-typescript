@@ -1,5 +1,5 @@
 import { TodoistApi } from '.'
-import { DEFAULT_AUTH_TOKEN, DEFAULT_LABEL, DEFAULT_REQUEST_ID } from './testUtils/testDefaults'
+import { DEFAULT_AUTH_TOKEN, DEFAULT_LABEL, DEFAULT_REQUEST_ID } from './test-utils/test-defaults'
 import {
     getSyncBaseUri,
     ENDPOINT_REST_LABELS,
@@ -7,7 +7,7 @@ import {
     ENDPOINT_REST_LABELS_SHARED_RENAME,
     ENDPOINT_REST_LABELS_SHARED_REMOVE,
 } from './consts/endpoints'
-import { setupRestClientMock } from './testUtils/mocks'
+import { setupRestClientMock } from './test-utils/mocks'
 
 function getTarget() {
     return new TodoistApi(DEFAULT_AUTH_TOKEN)

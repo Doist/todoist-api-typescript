@@ -1,10 +1,10 @@
 // eslint-disable-next-line import/no-named-as-default
 import Axios, { AxiosStatic, AxiosResponse, AxiosError } from 'axios'
-import { request, isSuccess, paramsSerializer } from './restClient'
+import { request, isSuccess, paramsSerializer } from './rest-client'
 import { TodoistRequestError } from './types/errors'
 import * as caseConverter from 'axios-case-converter'
-import { assertInstance } from './testUtils/asserts'
-import { DEFAULT_REQUEST_ID } from './testUtils/testDefaults'
+import { assertInstance } from './test-utils/asserts'
+import { DEFAULT_REQUEST_ID } from './test-utils/test-defaults'
 import { API_BASE_URI } from './consts/endpoints'
 
 const RANDOM_ID = 'SomethingRandom'
