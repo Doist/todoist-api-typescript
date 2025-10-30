@@ -1270,20 +1270,20 @@ export class TodoistApi {
     ): Promise<WorkspaceInvitationsResponse> {
         const response = requestId
             ? await request<WorkspaceInvitationsResponse>(
-                'GET',
-                this.syncApiBase,
-                ENDPOINT_WORKSPACE_INVITATIONS,
-                this.authToken,
-                { workspace_id: args.workspaceId },
-                requestId,
-            )
+                  'GET',
+                  this.syncApiBase,
+                  ENDPOINT_WORKSPACE_INVITATIONS,
+                  this.authToken,
+                  { workspace_id: args.workspaceId },
+                  requestId,
+              )
             : await request<WorkspaceInvitationsResponse>(
-                'GET',
-                this.syncApiBase,
-                ENDPOINT_WORKSPACE_INVITATIONS,
-                this.authToken,
-                { workspace_id: args.workspaceId },
-            )
+                  'GET',
+                  this.syncApiBase,
+                  ENDPOINT_WORKSPACE_INVITATIONS,
+                  this.authToken,
+                  { workspace_id: args.workspaceId },
+              )
 
         return response.data
     }
@@ -1305,20 +1305,20 @@ export class TodoistApi {
 
         const response = requestId
             ? await request<AllWorkspaceInvitationsResponse>(
-                'GET',
-                this.syncApiBase,
-                ENDPOINT_WORKSPACE_INVITATIONS_ALL,
-                this.authToken,
-                queryParams,
-                requestId,
-            )
+                  'GET',
+                  this.syncApiBase,
+                  ENDPOINT_WORKSPACE_INVITATIONS_ALL,
+                  this.authToken,
+                  queryParams,
+                  requestId,
+              )
             : await request<AllWorkspaceInvitationsResponse>(
-                'GET',
-                this.syncApiBase,
-                ENDPOINT_WORKSPACE_INVITATIONS_ALL,
-                this.authToken,
-                queryParams,
-            )
+                  'GET',
+                  this.syncApiBase,
+                  ENDPOINT_WORKSPACE_INVITATIONS_ALL,
+                  this.authToken,
+                  queryParams,
+              )
 
         return validateWorkspaceInvitationArray(response.data)
     }
@@ -1485,20 +1485,20 @@ export class TodoistApi {
     ): Promise<WorkspacePlanDetails> {
         const response = requestId
             ? await request<WorkspacePlanDetails>(
-                'GET',
-                this.syncApiBase,
-                ENDPOINT_WORKSPACE_PLAN_DETAILS,
-                this.authToken,
-                { workspace_id: args.workspaceId },
-                requestId,
-            )
+                  'GET',
+                  this.syncApiBase,
+                  ENDPOINT_WORKSPACE_PLAN_DETAILS,
+                  this.authToken,
+                  { workspace_id: args.workspaceId },
+                  requestId,
+              )
             : await request<WorkspacePlanDetails>(
-                'GET',
-                this.syncApiBase,
-                ENDPOINT_WORKSPACE_PLAN_DETAILS,
-                this.authToken,
-                { workspace_id: args.workspaceId },
-            )
+                  'GET',
+                  this.syncApiBase,
+                  ENDPOINT_WORKSPACE_PLAN_DETAILS,
+                  this.authToken,
+                  { workspace_id: args.workspaceId },
+              )
 
         return validateWorkspacePlanDetails(response.data)
     }
@@ -1527,28 +1527,22 @@ export class TodoistApi {
 
         const response = requestId
             ? await request<{
-                has_more: boolean
-                next_cursor?: string
-                workspace_users: WorkspaceUser[]
-            }>(
-                'GET',
-                this.syncApiBase,
-                ENDPOINT_WORKSPACE_USERS,
-                this.authToken,
-                queryParams,
-                requestId,
-            )
+                  has_more: boolean
+                  next_cursor?: string
+                  workspace_users: WorkspaceUser[]
+              }>(
+                  'GET',
+                  this.syncApiBase,
+                  ENDPOINT_WORKSPACE_USERS,
+                  this.authToken,
+                  queryParams,
+                  requestId,
+              )
             : await request<{
-                has_more: boolean
-                next_cursor?: string
-                workspace_users: WorkspaceUser[]
-            }>(
-                'GET',
-                this.syncApiBase,
-                ENDPOINT_WORKSPACE_USERS,
-                this.authToken,
-                queryParams,
-            )
+                  has_more: boolean
+                  next_cursor?: string
+                  workspace_users: WorkspaceUser[]
+              }>('GET', this.syncApiBase, ENDPOINT_WORKSPACE_USERS, this.authToken, queryParams)
 
         return {
             hasMore: response.data.has_more || false,
@@ -1578,20 +1572,20 @@ export class TodoistApi {
 
         const response = requestId
             ? await request<GetProjectsResponse>(
-                'GET',
-                this.syncApiBase,
-                getWorkspaceActiveProjectsEndpoint(args.workspaceId),
-                this.authToken,
-                queryParams,
-                requestId,
-            )
+                  'GET',
+                  this.syncApiBase,
+                  getWorkspaceActiveProjectsEndpoint(args.workspaceId),
+                  this.authToken,
+                  queryParams,
+                  requestId,
+              )
             : await request<GetProjectsResponse>(
-                'GET',
-                this.syncApiBase,
-                getWorkspaceActiveProjectsEndpoint(args.workspaceId),
-                this.authToken,
-                queryParams,
-            )
+                  'GET',
+                  this.syncApiBase,
+                  getWorkspaceActiveProjectsEndpoint(args.workspaceId),
+                  this.authToken,
+                  queryParams,
+              )
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
         const validatedProjects = response.data.results?.map((project: unknown) =>
@@ -1627,20 +1621,20 @@ export class TodoistApi {
 
         const response = requestId
             ? await request<GetProjectsResponse>(
-                'GET',
-                this.syncApiBase,
-                getWorkspaceArchivedProjectsEndpoint(args.workspaceId),
-                this.authToken,
-                queryParams,
-                requestId,
-            )
+                  'GET',
+                  this.syncApiBase,
+                  getWorkspaceArchivedProjectsEndpoint(args.workspaceId),
+                  this.authToken,
+                  queryParams,
+                  requestId,
+              )
             : await request<GetProjectsResponse>(
-                'GET',
-                this.syncApiBase,
-                getWorkspaceArchivedProjectsEndpoint(args.workspaceId),
-                this.authToken,
-                queryParams,
-            )
+                  'GET',
+                  this.syncApiBase,
+                  getWorkspaceArchivedProjectsEndpoint(args.workspaceId),
+                  this.authToken,
+                  queryParams,
+              )
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
         const validatedProjects = response.data.results?.map((project: unknown) =>

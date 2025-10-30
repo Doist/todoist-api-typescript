@@ -53,14 +53,16 @@ describe('TodoistApi workspaces', () => {
 
     describe('getAllWorkspaceInvitations', () => {
         test('gets all workspace invitations', async () => {
-            const mockResponse = [{
-                id: '1',
-                inviterId: '123',
-                userEmail: 'admin@example.com',
-                workspaceId: '456',
-                role: 'ADMIN' as const,
-                isExistingUser: true,
-            }]
+            const mockResponse = [
+                {
+                    id: '1',
+                    inviterId: '123',
+                    userEmail: 'admin@example.com',
+                    workspaceId: '456',
+                    role: 'ADMIN' as const,
+                    isExistingUser: true,
+                },
+            ]
             const requestMock = setupRestClientMock(mockResponse)
 
             const result = await api.getAllWorkspaceInvitations()
