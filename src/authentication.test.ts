@@ -46,7 +46,7 @@ describe('authentication', () => {
         test.each(authUrlTheories)(
             'Formatting %p with arguments %p returns %p',
             (clientId, state, permissions, baseUrl, expected) => {
-                const url = getAuthorizationUrl(clientId, permissions, state, baseUrl)
+                const url = getAuthorizationUrl({ clientId, permissions, state, baseUrl })
                 expect(url).toEqual(expected)
             },
         )
@@ -55,7 +55,7 @@ describe('authentication', () => {
             expect.assertions(1)
 
             try {
-                getAuthorizationUrl('SomeId', [], 'SomeState')
+                getAuthorizationUrl({ clientId: 'SomeId', permissions: [], state: 'SomeState' })
             } catch (e: unknown) {
                 assertInstance(e, Error)
                 expect(e.message).toEqual(
