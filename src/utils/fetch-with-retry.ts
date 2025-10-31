@@ -42,10 +42,14 @@ function createTimeoutSignal(timeoutMs: number, existingSignal?: AbortSignal): A
             clearTimeout(timeoutId)
             controller.abort(existingSignal.reason)
         } else {
-            existingSignal.addEventListener('abort', () => {
-                clearTimeout(timeoutId)
-                controller.abort(existingSignal.reason)
-            }, { once: true })
+            existingSignal.addEventListener(
+                'abort',
+                () => {
+                    clearTimeout(timeoutId)
+                    controller.abort(existingSignal.reason)
+                },
+                { once: true },
+            )
         }
     }
 

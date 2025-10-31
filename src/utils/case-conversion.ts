@@ -30,7 +30,7 @@ export function camelCaseKeys<T>(obj: T): T {
     }
 
     if (Array.isArray(obj)) {
-        return obj.map(item => camelCaseKeys(item)) as T
+        return obj.map((item) => camelCaseKeys(item)) as T
     }
 
     if (typeof obj === 'object' && obj.constructor === Object) {
@@ -54,7 +54,7 @@ export function snakeCaseKeys<T>(obj: T): T {
     }
 
     if (Array.isArray(obj)) {
-        return obj.map(item => snakeCaseKeys(item)) as T
+        return obj.map((item) => snakeCaseKeys(item)) as T
     }
 
     if (typeof obj === 'object' && obj.constructor === Object) {

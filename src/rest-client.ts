@@ -175,7 +175,6 @@ export async function request<T>(args: RequestArgs): Promise<HttpResponse<T>> {
         // Convert snake_case response to camelCase
         const convertedData = camelCaseKeys(response.data)
         return { ...response, data: convertedData }
-
     } catch (error: unknown) {
         if (!(error instanceof Error)) {
             throw new Error('An unknown error occurred during the request')

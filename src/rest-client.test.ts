@@ -97,7 +97,7 @@ describe('restClient', () => {
             expect.objectContaining({
                 method: 'GET',
                 headers: DEFAULT_HEADERS,
-            })
+            }),
         )
 
         // Verify the response structure
@@ -121,7 +121,7 @@ describe('restClient', () => {
             expect.objectContaining({
                 method: 'GET',
                 headers: AUTHORIZATION_HEADERS,
-            })
+            }),
         )
     })
 
@@ -154,7 +154,7 @@ describe('restClient', () => {
                 method: 'POST',
                 headers: expect.objectContaining(AUTHORIZATION_HEADERS),
                 body: JSON.stringify({ some_key: 'someValue' }), // Should be snake_case
-            })
+            }),
         )
 
         expect(result.data).toEqual(DEFAULT_RESPONSE_DATA)
@@ -171,7 +171,7 @@ describe('restClient', () => {
                 baseUri: DEFAULT_BASE_URI,
                 relativePath: DEFAULT_ENDPOINT,
                 apiToken: DEFAULT_AUTH_TOKEN,
-            })
+            }),
         ).rejects.toThrow(TodoistRequestError)
     })
 

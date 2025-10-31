@@ -72,12 +72,13 @@ export type HttpError = Error & {
 export function isNetworkError(error: Error): error is NetworkError {
     // Network errors in fetch are typically TypeError with specific messages
     return (
-        error instanceof TypeError &&
-        (error.message.includes('fetch') ||
-            error.message.includes('network') ||
-            error.message.includes('Failed to fetch') ||
-            error.message.includes('NetworkError'))
-    ) || (error as NetworkError).isNetworkError === true
+        (error instanceof TypeError &&
+            (error.message.includes('fetch') ||
+                error.message.includes('network') ||
+                error.message.includes('Failed to fetch') ||
+                error.message.includes('NetworkError'))) ||
+        (error as NetworkError).isNetworkError === true
+    )
 }
 
 /**
