@@ -1,13 +1,12 @@
 import { TodoistApi } from './todoist-api'
 import { setupRestClientMock } from './test-utils/mocks'
 import { getSyncBaseUri } from './consts/endpoints'
-import axios from 'axios'
 import * as fs from 'fs'
 import { Readable } from 'stream'
 
-// Mock axios
-jest.mock('axios')
-const mockedAxios = axios as jest.Mocked<typeof axios>
+// Mock fetch globally
+const mockFetch = jest.fn()
+global.fetch = mockFetch as unknown as typeof fetch
 
 // Mock fs
 jest.mock('fs')
@@ -29,9 +28,17 @@ describe('TodoistApi uploads', () => {
 
         beforeEach(() => {
             jest.clearAllMocks()
-            mockedAxios.post.mockResolvedValue({
-                data: mockUploadResult,
-            })
+
+            // Mock successful fetch response
+            const mockResponse = {
+                ok: true,
+                status: 200,
+                statusText: 'OK',
+                headers: new Map([['content-type', 'application/json']]),
+                text: jest.fn().mockResolvedValue(JSON.stringify(mockUploadResult)),
+                json: jest.fn().mockResolvedValue(mockUploadResult),
+            }
+            mockFetch.mockResolvedValue(mockResponse as unknown as Response)
         })
 
         test('uploads file from Buffer with fileName', async () => {
@@ -44,11 +51,11 @@ describe('TodoistApi uploads', () => {
                 projectId: '12345',
             })
 
-            expect(mockedAxios.post).toHaveBeenCalledTimes(1)
-            const [url, , config] = mockedAxios.post.mock.calls[0]
+            expect(mockFetch).toHaveBeenCalledTimes(1)
+            const [url, config] = mockFetch.mock.calls[0]
 
             expect(url).toBe(`${getSyncBaseUri()}uploads`)
-            expect(config?.headers?.Authorization).toBe('Bearer token')
+            expect((config as RequestInit)?.headers).toHaveProperty('Authorization', 'Bearer token')
             expect(result).toEqual(mockUploadResult)
         })
 
@@ -64,7 +71,7 @@ describe('TodoistApi uploads', () => {
             })
 
             expect(mockedFs.createReadStream).toHaveBeenCalledWith('/path/to/document.pdf')
-            expect(mockedAxios.post).toHaveBeenCalledTimes(1)
+            expect(mockFetch).toHaveBeenCalledTimes(1)
             expect(result).toEqual(mockUploadResult)
         })
 
@@ -80,7 +87,7 @@ describe('TodoistApi uploads', () => {
             })
 
             expect(mockedFs.createReadStream).toHaveBeenCalledWith('/path/to/document.pdf')
-            expect(mockedAxios.post).toHaveBeenCalledTimes(1)
+            expect(mockFetch).toHaveBeenCalledTimes(1)
         })
 
         test('uploads file from stream with fileName', async () => {
@@ -92,7 +99,7 @@ describe('TodoistApi uploads', () => {
                 fileName: 'stream-file.pdf',
             })
 
-            expect(mockedAxios.post).toHaveBeenCalledTimes(1)
+            expect(mockFetch).toHaveBeenCalledTimes(1)
         })
 
         test.each([
@@ -132,9 +139,9 @@ describe('TodoistApi uploads', () => {
                 requestId,
             )
 
-            expect(mockedAxios.post).toHaveBeenCalledTimes(1)
-            const [, , config] = mockedAxios.post.mock.calls[0]
-            expect(config?.headers?.['X-Request-Id']).toBe(requestId)
+            expect(mockFetch).toHaveBeenCalledTimes(1)
+            const [, config] = mockFetch.mock.calls[0]
+            expect((config as RequestInit)?.headers).toHaveProperty('X-Request-Id', requestId)
         })
 
         test('uploads file without projectId', async () => {
@@ -146,7 +153,7 @@ describe('TodoistApi uploads', () => {
                 fileName: 'test.pdf',
             })
 
-            expect(mockedAxios.post).toHaveBeenCalledTimes(1)
+            expect(mockFetch).toHaveBeenCalledTimes(1)
         })
     })
 

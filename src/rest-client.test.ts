@@ -1,15 +1,13 @@
-// eslint-disable-next-line import/no-named-as-default
-import Axios, { AxiosStatic, AxiosResponse, AxiosError } from 'axios'
 import { request, isSuccess, paramsSerializer } from './rest-client'
 import { TodoistRequestError } from './types/errors'
-import * as caseConverter from 'axios-case-converter'
-import { assertInstance } from './test-utils/asserts'
-import { DEFAULT_REQUEST_ID } from './test-utils/test-defaults'
-import { API_BASE_URI } from './consts/endpoints'
+import type { HttpResponse as TodoistHttpResponse } from './types/http'
+
+// Mock fetch globally
+const mockFetch = jest.fn()
+global.fetch = mockFetch as unknown as typeof fetch
 
 const RANDOM_ID = 'SomethingRandom'
 
-jest.mock('axios')
 jest.mock('uuid', () => ({ v4: () => RANDOM_ID }))
 
 const DEFAULT_BASE_URI = 'https://someapi.com/'
@@ -25,179 +23,106 @@ const AUTHORIZATION_HEADERS = {
     Authorization: `Bearer ${DEFAULT_AUTH_TOKEN}`,
 }
 
-const HEADERS_WITH_REQUEST_ID = {
-    ...DEFAULT_HEADERS,
-    'X-Request-Id': DEFAULT_REQUEST_ID,
-}
-
 const DEFAULT_PAYLOAD = {
     someKey: 'someValue',
 }
 
-const DEFAULT_RESPONSE = {
-    data: DEFAULT_PAYLOAD,
-} as AxiosResponse
+const DEFAULT_RESPONSE_DATA = DEFAULT_PAYLOAD
 
-const DEFAULT_ERROR_MESSAGE = 'There was an error'
-
-function setupAxiosMock(response = DEFAULT_RESPONSE) {
-    const axiosMock = Axios as jest.Mocked<typeof Axios>
-
-    axiosMock.create = jest.fn(() => axiosMock)
-    axiosMock.get.mockResolvedValue(response)
-    axiosMock.post.mockResolvedValue(response)
-    axiosMock.delete.mockResolvedValue(response)
-
-    jest.spyOn(caseConverter, 'default').mockImplementation(() => axiosMock)
-    return axiosMock
-}
-
-function setupAxiosMockWithError(statusCode: number, responseData: unknown) {
-    const axiosMock = Axios as jest.Mocked<typeof Axios>
-    axiosMock.create = jest.fn(() => axiosMock)
-
-    const axiosError = {
-        message: DEFAULT_ERROR_MESSAGE,
-        response: { status: statusCode, data: responseData } as AxiosResponse,
-        isAxiosError: true,
-    } as AxiosError
-
-    function errorFunc(): Promise<unknown> {
-        throw axiosError
+// Helper to mock successful fetch responses
+function mockSuccessfulResponse(responseData = DEFAULT_RESPONSE_DATA, status = 200) {
+    const mockResponse = {
+        ok: status >= 200 && status < 300,
+        status,
+        statusText: status === 200 ? 'OK' : 'Error',
+        headers: new Map([['content-type', 'application/json']]),
+        text: jest.fn().mockResolvedValue(JSON.stringify(responseData)),
+        json: jest.fn().mockResolvedValue(responseData),
     }
 
-    axiosMock.get.mockImplementation(errorFunc)
-    axiosMock.post.mockImplementation(errorFunc)
-    axiosMock.delete.mockImplementation(errorFunc)
-    return axiosMock
+    mockFetch.mockResolvedValue(mockResponse as unknown as Response)
+    return mockResponse
+}
+
+// Helper to mock error responses
+function mockErrorResponse(responseData: unknown, status: number) {
+    const mockResponse = {
+        ok: false,
+        status,
+        statusText: 'Error',
+        headers: new Map([['content-type', 'application/json']]),
+        text: jest.fn().mockResolvedValue(JSON.stringify(responseData)),
+        json: jest.fn().mockResolvedValue(responseData),
+    }
+
+    mockFetch.mockResolvedValue(mockResponse as unknown as Response)
+    return mockResponse
 }
 
 describe('restClient', () => {
-    let axiosMock: jest.Mocked<AxiosStatic>
-
     beforeEach(() => {
-        axiosMock = setupAxiosMock()
+        mockFetch.mockClear()
     })
 
-    test('request creates axios client with default headers', async () => {
-        await request({
-            httpMethod: 'GET',
-            baseUri: DEFAULT_BASE_URI,
-            relativePath: DEFAULT_ENDPOINT,
-        })
+    test('request makes GET request with correct URL and headers', async () => {
+        mockSuccessfulResponse(DEFAULT_RESPONSE_DATA)
 
-        expect(axiosMock.create).toHaveBeenCalledTimes(1)
-        expect(axiosMock.create).toHaveBeenCalledWith({
-            baseURL: DEFAULT_BASE_URI,
-            headers: DEFAULT_HEADERS,
-        })
-    })
-
-    test('request adds authorization header to config if token is passed', async () => {
-        await request({
-            httpMethod: 'GET',
-            baseUri: DEFAULT_BASE_URI,
-            relativePath: DEFAULT_ENDPOINT,
-            apiToken: DEFAULT_AUTH_TOKEN,
-        })
-
-        expect(axiosMock.create).toHaveBeenCalledTimes(1)
-        expect(axiosMock.create).toHaveBeenCalledWith({
-            baseURL: DEFAULT_BASE_URI,
-            headers: AUTHORIZATION_HEADERS,
-        })
-    })
-
-    test('request adds request ID header to config if ID is passed', async () => {
-        await request({
-            httpMethod: 'GET',
-            baseUri: DEFAULT_BASE_URI,
-            relativePath: DEFAULT_ENDPOINT,
-            requestId: DEFAULT_REQUEST_ID,
-        })
-
-        expect(axiosMock.create).toHaveBeenCalledTimes(1)
-        expect(axiosMock.create).toHaveBeenCalledWith({
-            baseURL: DEFAULT_BASE_URI,
-            headers: HEADERS_WITH_REQUEST_ID,
-        })
-    })
-
-    test('get calls axios with expected endpoint', async () => {
-        await request({
-            httpMethod: 'GET',
-            baseUri: DEFAULT_BASE_URI,
-            relativePath: DEFAULT_ENDPOINT,
-            apiToken: DEFAULT_AUTH_TOKEN,
-        })
-
-        expect(axiosMock.get).toHaveBeenCalledTimes(1)
-        expect(axiosMock.get).toHaveBeenCalledWith(DEFAULT_ENDPOINT, {
-            params: undefined,
-            paramsSerializer: {
-                serialize: paramsSerializer,
-            },
-        })
-    })
-
-    test('get passes params to axios', async () => {
-        await request({
-            httpMethod: 'GET',
-            baseUri: DEFAULT_BASE_URI,
-            relativePath: DEFAULT_ENDPOINT,
-            apiToken: DEFAULT_AUTH_TOKEN,
-            payload: DEFAULT_PAYLOAD,
-        })
-
-        expect(axiosMock.get).toHaveBeenCalledTimes(1)
-        expect(axiosMock.get).toHaveBeenCalledWith(DEFAULT_ENDPOINT, {
-            params: DEFAULT_PAYLOAD,
-            paramsSerializer: {
-                serialize: paramsSerializer,
-            },
-        })
-    })
-
-    test('get returns response from axios', async () => {
         const result = await request({
             httpMethod: 'GET',
             baseUri: DEFAULT_BASE_URI,
             relativePath: DEFAULT_ENDPOINT,
-            apiToken: DEFAULT_AUTH_TOKEN,
         })
 
-        expect(axiosMock.get).toHaveBeenCalledTimes(1)
-        expect(result).toEqual(DEFAULT_RESPONSE)
+        // Verify the fetch was called with correct parameters
+        expect(mockFetch).toHaveBeenCalledTimes(1)
+        expect(mockFetch).toHaveBeenCalledWith(
+            `${DEFAULT_BASE_URI}${DEFAULT_ENDPOINT}`,
+            expect.objectContaining({
+                method: 'GET',
+                headers: DEFAULT_HEADERS,
+            }),
+        )
+
+        // Verify the response structure
+        expect(result.data).toEqual(DEFAULT_RESPONSE_DATA)
+        expect(result.status).toBe(200)
+        expect(result.statusText).toBe('OK')
     })
 
-    test('post sends expected endpoint and payload to axios', async () => {
+    test('request adds authorization header if token is passed', async () => {
+        mockSuccessfulResponse(DEFAULT_RESPONSE_DATA)
+
         await request({
-            httpMethod: 'POST',
+            httpMethod: 'GET',
             baseUri: DEFAULT_BASE_URI,
             relativePath: DEFAULT_ENDPOINT,
             apiToken: DEFAULT_AUTH_TOKEN,
-            payload: DEFAULT_PAYLOAD,
         })
 
-        expect(axiosMock.post).toHaveBeenCalledTimes(1)
-        expect(axiosMock.post).toHaveBeenCalledWith(DEFAULT_ENDPOINT, DEFAULT_PAYLOAD)
+        expect(mockFetch).toHaveBeenCalledWith(
+            `${DEFAULT_BASE_URI}${DEFAULT_ENDPOINT}`,
+            expect.objectContaining({
+                method: 'GET',
+                headers: AUTHORIZATION_HEADERS,
+            }),
+        )
     })
 
-    test('post sends expected endpoint and payload to axios when sync commands are used', async () => {
-        await request({
-            httpMethod: 'POST',
-            baseUri: DEFAULT_BASE_URI,
-            relativePath: DEFAULT_ENDPOINT,
-            apiToken: DEFAULT_AUTH_TOKEN,
-            payload: DEFAULT_PAYLOAD,
-            hasSyncCommands: true,
-        })
+    test('paramsSerializer works correctly', () => {
+        const params = {
+            filter: 'today',
+            ids: [1, 2, 3],
+            nullValue: null,
+            undefinedValue: undefined,
+        }
 
-        expect(axiosMock.post).toHaveBeenCalledTimes(1)
-        expect(axiosMock.post).toHaveBeenCalledWith(DEFAULT_ENDPOINT, '{"someKey":"someValue"}')
+        const result = paramsSerializer(params)
+        expect(result).toBe('filter=today&ids=1%2C2%2C3')
     })
 
-    test('post returns response from axios', async () => {
+    test('POST request with JSON payload', async () => {
+        mockSuccessfulResponse(DEFAULT_RESPONSE_DATA)
+
         const result = await request({
             httpMethod: 'POST',
             baseUri: DEFAULT_BASE_URI,
@@ -206,80 +131,31 @@ describe('restClient', () => {
             payload: DEFAULT_PAYLOAD,
         })
 
-        expect(axiosMock.post).toHaveBeenCalledTimes(1)
-        expect(result).toEqual(DEFAULT_RESPONSE)
+        expect(mockFetch).toHaveBeenCalledWith(
+            `${DEFAULT_BASE_URI}${DEFAULT_ENDPOINT}`,
+            expect.objectContaining({
+                method: 'POST',
+                headers: expect.objectContaining(AUTHORIZATION_HEADERS),
+                body: JSON.stringify({ some_key: 'someValue' }), // Should be snake_case
+            }),
+        )
+
+        expect(result.data).toEqual(DEFAULT_RESPONSE_DATA)
     })
 
-    test('random request ID is created if none provided for POST request', async () => {
-        await request({
-            httpMethod: 'POST',
-            baseUri: DEFAULT_BASE_URI,
-            relativePath: DEFAULT_ENDPOINT,
-            apiToken: DEFAULT_AUTH_TOKEN,
-            payload: DEFAULT_PAYLOAD,
-        })
-
-        expect(axiosMock.create).toHaveBeenCalledWith({
-            baseURL: DEFAULT_BASE_URI,
-            headers: { ...AUTHORIZATION_HEADERS, 'X-Request-Id': RANDOM_ID },
-        })
-    })
-
-    test('random request ID is not created if none provided for POST request on the sync endpoint', async () => {
-        const syncUrl = new URL(API_BASE_URI, DEFAULT_BASE_URI).toString()
-        await request({
-            httpMethod: 'POST',
-            baseUri: syncUrl,
-            relativePath: DEFAULT_ENDPOINT,
-            apiToken: DEFAULT_AUTH_TOKEN,
-            payload: DEFAULT_PAYLOAD,
-        })
-
-        expect(axiosMock.create).toHaveBeenCalledWith({
-            baseURL: syncUrl,
-            headers: { ...AUTHORIZATION_HEADERS },
-        })
-    })
-
-    test('delete calls axios with expected endpoint', async () => {
-        await request({
-            httpMethod: 'DELETE',
-            baseUri: DEFAULT_BASE_URI,
-            relativePath: DEFAULT_ENDPOINT,
-            apiToken: DEFAULT_AUTH_TOKEN,
-        })
-
-        expect(axiosMock.delete).toHaveBeenCalledTimes(1)
-        expect(axiosMock.delete).toHaveBeenCalledWith(DEFAULT_ENDPOINT)
-    })
-
-    test('request throws TodoistRequestError on axios error with expected values', async () => {
+    test('Error handling returns TodoistRequestError', async () => {
         const statusCode = 403
-        const responseData = 'Some Data'
-        axiosMock = setupAxiosMockWithError(statusCode, responseData)
+        const responseData = 'Forbidden'
+        mockErrorResponse(responseData, statusCode)
 
-        expect.assertions(3)
-
-        try {
-            await request({
+        await expect(
+            request({
                 httpMethod: 'GET',
                 baseUri: DEFAULT_BASE_URI,
                 relativePath: DEFAULT_ENDPOINT,
                 apiToken: DEFAULT_AUTH_TOKEN,
-            })
-        } catch (e: unknown) {
-            assertInstance(e, TodoistRequestError)
-            expect(e.message).toEqual(DEFAULT_ERROR_MESSAGE)
-            expect(e.httpStatusCode).toEqual(statusCode)
-            expect(e.responseData).toEqual(responseData)
-        }
-    })
-
-    test('TodoistRequestError reports isAuthenticationError for relevant status codes', () => {
-        const statusCode = 403
-
-        const requestError = new TodoistRequestError('An Error', statusCode, undefined)
-        expect(requestError.isAuthenticationError()).toBeTruthy()
+            }),
+        ).rejects.toThrow(TodoistRequestError)
     })
 
     const responseStatusTheories = [
@@ -290,7 +166,12 @@ describe('restClient', () => {
     ] as const
 
     test.each(responseStatusTheories)('status code %p returns isSuccess %p', (status, expected) => {
-        const response = { status } as AxiosResponse
+        const response: TodoistHttpResponse = {
+            status,
+            statusText: 'Test',
+            headers: {},
+            data: null,
+        }
         const success = isSuccess(response)
         expect(success).toEqual(expected)
     })

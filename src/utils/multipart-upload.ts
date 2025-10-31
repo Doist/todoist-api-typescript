@@ -1,7 +1,8 @@
 import FormData from 'form-data'
 import { createReadStream } from 'fs'
 import { basename } from 'path'
-import axios, { type AxiosResponse } from 'axios'
+import { fetchWithRetry } from './fetch-with-retry'
+import type { HttpResponse } from '../types/http'
 
 type UploadMultipartFileArgs = {
     baseUrl: string
@@ -127,8 +128,16 @@ export async function uploadMultipartFile<T>(args: UploadMultipartFileArgs): Pro
         headers['X-Request-Id'] = requestId
     }
 
-    // Make the request using axios
-    const response: AxiosResponse<T> = await axios.post(url, form, { headers })
+    // Make the request using fetch
+    const response: HttpResponse<T> = await fetchWithRetry({
+        url,
+        options: {
+            method: 'POST',
+            body: form as unknown as BodyInit, // FormData from 'form-data' package is compatible with fetch
+            headers,
+            timeout: 30000, // 30 second timeout for file uploads
+        },
+    })
 
     return response.data
 }

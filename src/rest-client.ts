@@ -1,15 +1,12 @@
-// eslint-disable-next-line import/no-named-as-default
-import Axios, { AxiosResponse, AxiosError } from 'axios'
-import applyCaseMiddleware from 'axios-case-converter'
 import { TodoistRequestError } from './types/errors'
-import { HttpMethod } from './types/http'
+import { HttpMethod, HttpResponse, isNetworkError, isHttpError } from './types/http'
 import { v4 as uuidv4 } from 'uuid'
-import axiosRetry from 'axios-retry'
 import { API_BASE_URI } from './consts/endpoints'
-import { customCamelCase } from './utils/processing-helpers'
+import { camelCaseKeys, snakeCaseKeys } from './utils/case-conversion'
+import { fetchWithRetry } from './utils/fetch-with-retry'
 
 type GetTodoistRequestErrorArgs = {
-    error: Error | AxiosError
+    error: Error
     originalStack?: Error
 }
 
@@ -20,7 +17,7 @@ type GetRequestConfigurationArgs = {
     customHeaders?: Record<string, string>
 }
 
-type GetAxiosClientArgs = {
+type GetHttpClientArgs = {
     baseURL: string
     apiToken?: string
     requestId?: string
@@ -63,27 +60,19 @@ function getAuthHeader(apiKey: string) {
     return `Bearer ${apiKey}`
 }
 
-function isNetworkError(error: AxiosError) {
-    return Boolean(!error.response && error.code !== 'ECONNABORTED')
-}
-
 function getRetryDelay(retryCount: number) {
     return retryCount === 1 ? 0 : 500
-}
-
-function isAxiosError(error: unknown): error is AxiosError {
-    return Boolean((error as AxiosError)?.isAxiosError)
 }
 
 function getTodoistRequestError(args: GetTodoistRequestErrorArgs): TodoistRequestError {
     const { error, originalStack } = args
     const requestError = new TodoistRequestError(error.message)
 
-    requestError.stack = isAxiosError(error) && originalStack ? originalStack.stack : error.stack
+    requestError.stack = originalStack ? originalStack.stack : error.stack
 
-    if (isAxiosError(error) && error.response) {
-        requestError.httpStatusCode = error.response.status
-        requestError.responseData = error.response.data
+    if (isHttpError(error)) {
+        requestError.httpStatusCode = error.status
+        requestError.responseData = error.data
     }
 
     return requestError
@@ -98,29 +87,26 @@ function getRequestConfiguration(args: GetRequestConfigurationArgs) {
     return { baseURL, headers }
 }
 
-function getAxiosClient(args: GetAxiosClientArgs) {
+function getHttpClientConfig(args: GetHttpClientArgs) {
     const { baseURL, apiToken, requestId, customHeaders } = args
     const configuration = getRequestConfiguration({ baseURL, apiToken, requestId, customHeaders })
-    const client = applyCaseMiddleware(Axios.create(configuration), {
-        caseFunctions: {
-            camel: customCamelCase,
+
+    return {
+        ...configuration,
+        timeout: 30000, // 30 second timeout
+        retry: {
+            retries: 3,
+            retryCondition: isNetworkError,
+            retryDelay: getRetryDelay,
         },
-    })
-
-    axiosRetry(client, {
-        retries: 3,
-        retryCondition: isNetworkError,
-        retryDelay: getRetryDelay,
-    })
-
-    return client
+    }
 }
 
-export function isSuccess(response: AxiosResponse): boolean {
+export function isSuccess(response: HttpResponse): boolean {
     return response.status >= 200 && response.status < 300
 }
 
-export async function request<T>(args: RequestArgs): Promise<AxiosResponse<T>> {
+export async function request<T>(args: RequestArgs): Promise<HttpResponse<T>> {
     const {
         httpMethod,
         baseUri,
@@ -132,9 +118,7 @@ export async function request<T>(args: RequestArgs): Promise<AxiosResponse<T>> {
         customHeaders,
     } = args
 
-    // axios loses the original stack when returning errors, for the sake of better reporting
-    // we capture it here and reapply it to any thrown errors.
-    // Ref: https://github.com/axios/axios/issues/2387
+    // Capture original stack for better error reporting
     const originalStack = new Error()
 
     try {
@@ -144,31 +128,56 @@ export async function request<T>(args: RequestArgs): Promise<AxiosResponse<T>> {
             requestId = uuidv4()
         }
 
-        const axiosClient = getAxiosClient({ baseURL: baseUri, apiToken, requestId, customHeaders })
+        const config = getHttpClientConfig({ baseURL: baseUri, apiToken, requestId, customHeaders })
+        const url = `${baseUri}${relativePath}`
+
+        const fetchOptions: RequestInit & { timeout?: number } = {
+            method: httpMethod,
+            headers: config.headers,
+            timeout: config.timeout,
+        }
+
+        let finalUrl = url
 
         switch (httpMethod) {
             case 'GET':
-                return await axiosClient.get<T>(relativePath, {
-                    params: payload,
-                    paramsSerializer: {
-                        serialize: paramsSerializer,
-                    },
-                })
+                // For GET requests, add query parameters to URL
+                if (payload) {
+                    const queryString = paramsSerializer(payload)
+                    if (queryString) {
+                        const separator = url.includes('?') ? '&' : '?'
+                        finalUrl = `${url}${separator}${queryString}`
+                    }
+                }
+                break
             case 'POST':
-                return await axiosClient.post<T>(
-                    relativePath,
-                    hasSyncCommands ? JSON.stringify(payload) : payload,
-                )
-            case 'PUT':
-                return await axiosClient.put<T>(
-                    relativePath,
-                    hasSyncCommands ? JSON.stringify(payload) : payload,
-                )
+            case 'PUT': {
+                // Convert payload from camelCase to snake_case
+                const convertedPayload = payload ? snakeCaseKeys(payload) : payload
+                const body = hasSyncCommands
+                    ? JSON.stringify(convertedPayload)
+                    : JSON.stringify(convertedPayload)
+
+                fetchOptions.body = body
+                break
+            }
             case 'DELETE':
-                return await axiosClient.delete<T>(relativePath)
+                // DELETE requests don't have a body
+                break
         }
+
+        // Make the request
+        const response = await fetchWithRetry<T>({
+            url: finalUrl,
+            options: fetchOptions,
+            retryConfig: config.retry,
+        })
+
+        // Convert snake_case response to camelCase
+        const convertedData = camelCaseKeys(response.data)
+        return { ...response, data: convertedData }
     } catch (error: unknown) {
-        if (!isAxiosError(error) && !(error instanceof Error)) {
+        if (!(error instanceof Error)) {
             throw new Error('An unknown error occurred during the request')
         }
 

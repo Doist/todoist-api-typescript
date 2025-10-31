@@ -1,11 +1,10 @@
 import { uploadMultipartFile } from './multipart-upload'
-import axios from 'axios'
 import * as fs from 'fs'
 import { Readable } from 'stream'
 
-// Mock axios
-jest.mock('axios')
-const mockedAxios = axios as jest.Mocked<typeof axios>
+// Mock fetch globally
+const mockFetch = jest.fn()
+global.fetch = mockFetch as unknown as typeof fetch
 
 // Mock fs
 jest.mock('fs')
@@ -15,11 +14,21 @@ describe('uploadMultipartFile', () => {
     const baseUrl = 'https://api.todoist.com/api/v1/'
     const authToken = 'test-token'
     const endpoint = 'test-endpoint'
-    const mockResponse = { data: { fileUrl: 'https://example.com/file.pdf' } }
+    const mockResponseData = { fileUrl: 'https://example.com/file.pdf' }
 
     beforeEach(() => {
         jest.clearAllMocks()
-        mockedAxios.post.mockResolvedValue(mockResponse)
+
+        // Mock successful fetch response
+        const mockResponse = {
+            ok: true,
+            status: 200,
+            statusText: 'OK',
+            headers: new Map([['content-type', 'application/json']]),
+            text: jest.fn().mockResolvedValue(JSON.stringify(mockResponseData)),
+            json: jest.fn().mockResolvedValue(mockResponseData),
+        }
+        mockFetch.mockResolvedValue(mockResponse as unknown as Response)
     })
 
     describe('file path uploads', () => {
@@ -38,13 +47,16 @@ describe('uploadMultipartFile', () => {
             })
 
             expect(mockedFs.createReadStream).toHaveBeenCalledWith('/path/to/document.pdf')
-            expect(mockedAxios.post).toHaveBeenCalledTimes(1)
-            expect(result).toEqual(mockResponse.data)
+            expect(mockFetch).toHaveBeenCalledTimes(1)
+            expect(result).toEqual(mockResponseData)
 
-            const [url, , config] = mockedAxios.post.mock.calls[0]
+            const [url, config] = mockFetch.mock.calls[0]
             expect(url).toBe(`${baseUrl}${endpoint}`)
-            expect(config?.headers?.Authorization).toBe('Bearer test-token')
-            expect(config?.headers?.['X-Request-Id']).toBe('req-123')
+            expect((config as RequestInit)?.headers).toHaveProperty(
+                'Authorization',
+                'Bearer test-token',
+            )
+            expect((config as RequestInit)?.headers).toHaveProperty('X-Request-Id', 'req-123')
         })
 
         test('uploads file from path with custom fileName', async () => {
@@ -61,7 +73,7 @@ describe('uploadMultipartFile', () => {
             })
 
             expect(mockedFs.createReadStream).toHaveBeenCalledWith('/path/to/document.pdf')
-            expect(mockedAxios.post).toHaveBeenCalledTimes(1)
+            expect(mockFetch).toHaveBeenCalledTimes(1)
         })
     })
 
@@ -78,12 +90,15 @@ describe('uploadMultipartFile', () => {
                 additionalFields: { workspace_id: 456 },
             })
 
-            expect(mockedAxios.post).toHaveBeenCalledTimes(1)
-            expect(result).toEqual(mockResponse.data)
+            expect(mockFetch).toHaveBeenCalledTimes(1)
+            expect(result).toEqual(mockResponseData)
 
-            const [url, , config] = mockedAxios.post.mock.calls[0]
+            const [url, config] = mockFetch.mock.calls[0]
             expect(url).toBe(`${baseUrl}${endpoint}`)
-            expect(config?.headers?.Authorization).toBe('Bearer test-token')
+            expect((config as RequestInit)?.headers).toHaveProperty(
+                'Authorization',
+                'Bearer test-token',
+            )
         })
 
         test('throws error when Buffer provided without fileName', async () => {
@@ -115,8 +130,8 @@ describe('uploadMultipartFile', () => {
                 additionalFields: { delete: true },
             })
 
-            expect(mockedAxios.post).toHaveBeenCalledTimes(1)
-            expect(result).toEqual(mockResponse.data)
+            expect(mockFetch).toHaveBeenCalledTimes(1)
+            expect(result).toEqual(mockResponseData)
         })
 
         test('throws error when stream provided without fileName', async () => {
@@ -163,7 +178,7 @@ describe('uploadMultipartFile', () => {
                 additionalFields: additionalFields,
             })
 
-            expect(mockedAxios.post).toHaveBeenCalledTimes(1)
+            expect(mockFetch).toHaveBeenCalledTimes(1)
             // We can't easily test FormData contents, but we verified the method doesn't throw
         })
 
@@ -179,7 +194,7 @@ describe('uploadMultipartFile', () => {
                 additionalFields: {},
             })
 
-            expect(mockedAxios.post).toHaveBeenCalledTimes(1)
+            expect(mockFetch).toHaveBeenCalledTimes(1)
         })
     })
 
@@ -196,8 +211,11 @@ describe('uploadMultipartFile', () => {
                 additionalFields: {},
             })
 
-            const [, , config] = mockedAxios.post.mock.calls[0]
-            expect(config?.headers?.Authorization).toBe('Bearer test-token')
+            const [, config] = mockFetch.mock.calls[0]
+            expect((config as RequestInit)?.headers).toHaveProperty(
+                'Authorization',
+                'Bearer test-token',
+            )
             // FormData.getHeaders() is mocked, so we can't test specific multipart headers
         })
 
@@ -213,8 +231,8 @@ describe('uploadMultipartFile', () => {
                 additionalFields: {},
             })
 
-            const [, , config] = mockedAxios.post.mock.calls[0]
-            expect(config?.headers?.['X-Request-Id']).toBeUndefined()
+            const [, config] = mockFetch.mock.calls[0]
+            expect((config as RequestInit)?.headers).not.toHaveProperty('X-Request-Id')
         })
     })
 })
