@@ -10,6 +10,9 @@
         "jest": true
     },
     "ignorePatterns": ["dist/", "jest.config.js"],
+    "rules": {
+        "max-params": ["error", 3]
+    },
     "overrides": [
         {
             "files": ["**/*.test.ts?(x)"],
@@ -17,7 +20,9 @@
                 // Ref.: https://github.com/typescript-eslint/typescript-eslint/issues/1776#issuecomment-601758481
                 "@typescript-eslint/unbound-method": "off",
                 // Allow expect.any(), expect.objectContaining(), expect.arrayContaining() usage in test files
-                "@typescript-eslint/no-unsafe-assignment": "off"
+                "@typescript-eslint/no-unsafe-assignment": "off",
+                // Disable max-params rule for test files
+                "max-params": "off"
             }
         }
     ]
