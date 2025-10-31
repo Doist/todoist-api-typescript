@@ -6,8 +6,17 @@
     "repository": "git@github.com:doist/todoist-api-typescript.git",
     "homepage": "https://doist.github.io/todoist-api-typescript/",
     "license": "MIT",
-    "main": "dist/index.js",
-    "types": "dist/index.d.ts",
+    "type": "module",
+    "main": "dist/cjs/index.js",
+    "module": "dist/esm/index.js",
+    "types": "dist/types/index.d.ts",
+    "exports": {
+        ".": {
+            "import": "./dist/esm/index.js",
+            "require": "./dist/cjs/index.js",
+            "types": "./dist/types/index.d.ts"
+        }
+    },
     "sideEffects": false,
     "engines": {
         "node": ">=20.0.0"
@@ -21,7 +30,11 @@
         "ts-compile-check": "npx tsc -p tsconfig.typecheck.json",
         "audit": "npm audit --audit-level=moderate",
         "test": "jest",
-        "build": "npx tsc -p tsconfig.json",
+        "build:cjs": "npx tsc -p tsconfig.cjs.json",
+        "build:esm": "npx tsc -p tsconfig.esm.json",
+        "build:fix-esm": "node scripts/fix-esm-imports.cjs",
+        "build:post": "echo '{\"type\":\"commonjs\"}' > dist/cjs/package.json",
+        "build": "npm-run-all clean build:cjs build:esm build:fix-esm build:post",
         "integrity-checks": "npm-run-all clean format-check lint-check test build",
         "prepublishOnly": "npm run integrity-checks",
         "prepare": "npm run build"
@@ -71,7 +84,9 @@
         "*.{ts,tsx,json,html,yml,yaml,md}": "prettier --check"
     },
     "files": [
-        "dist/**/*",
+        "dist/cjs/**/*",
+        "dist/esm/**/*",
+        "dist/types/**/*",
         "!dist/**/*.test.js",
         "!dist/**/*.test.d.ts"
     ]
