@@ -104,12 +104,17 @@ export function getAuthStateParameter(): string {
  * @returns The full authorization URL to redirect users to
  * @see https://todoist.com/api/v1/docs#tag/Authorization/OAuth
  */
-export function getAuthorizationUrl(
-    clientId: string,
-    permissions: Permission[],
-    state: string,
-    baseUrl?: string,
-): string {
+export function getAuthorizationUrl({
+    clientId,
+    permissions,
+    state,
+    baseUrl,
+}: {
+    clientId: string
+    permissions: Permission[]
+    state: string
+    baseUrl?: string
+}): string {
     if (!permissions?.length) {
         throw new Error('At least one scope value should be passed for permissions.')
     }
