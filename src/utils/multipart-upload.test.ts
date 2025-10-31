@@ -52,8 +52,11 @@ describe('uploadMultipartFile', () => {
 
             const [url, config] = mockFetch.mock.calls[0]
             expect(url).toBe(`${baseUrl}${endpoint}`)
-            expect(config?.headers?.Authorization).toBe('Bearer test-token')
-            expect(config?.headers?.['X-Request-Id']).toBe('req-123')
+            expect((config as RequestInit)?.headers).toHaveProperty(
+                'Authorization',
+                'Bearer test-token',
+            )
+            expect((config as RequestInit)?.headers).toHaveProperty('X-Request-Id', 'req-123')
         })
 
         test('uploads file from path with custom fileName', async () => {
@@ -92,7 +95,10 @@ describe('uploadMultipartFile', () => {
 
             const [url, config] = mockFetch.mock.calls[0]
             expect(url).toBe(`${baseUrl}${endpoint}`)
-            expect(config?.headers?.Authorization).toBe('Bearer test-token')
+            expect((config as RequestInit)?.headers).toHaveProperty(
+                'Authorization',
+                'Bearer test-token',
+            )
         })
 
         test('throws error when Buffer provided without fileName', async () => {
@@ -206,7 +212,10 @@ describe('uploadMultipartFile', () => {
             })
 
             const [, config] = mockFetch.mock.calls[0]
-            expect(config?.headers?.Authorization).toBe('Bearer test-token')
+            expect((config as RequestInit)?.headers).toHaveProperty(
+                'Authorization',
+                'Bearer test-token',
+            )
             // FormData.getHeaders() is mocked, so we can't test specific multipart headers
         })
 
@@ -223,7 +232,7 @@ describe('uploadMultipartFile', () => {
             })
 
             const [, config] = mockFetch.mock.calls[0]
-            expect(config?.headers?.['X-Request-Id']).toBeUndefined()
+            expect((config as RequestInit)?.headers).not.toHaveProperty('X-Request-Id')
         })
     })
 })

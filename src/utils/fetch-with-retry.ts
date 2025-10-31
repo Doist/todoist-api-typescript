@@ -1,4 +1,4 @@
-import type { HttpResponse, RetryConfig, NetworkError } from '../types/http'
+import type { HttpResponse, RetryConfig } from '../types/http'
 import { isNetworkError } from '../types/http'
 
 /**
@@ -150,7 +150,7 @@ export async function fetchWithRetry<T = unknown>(args: {
             if (!shouldRetry) {
                 // Add network error flag for network errors
                 if (isNetworkError(lastError)) {
-                    const networkError = lastError as NetworkError
+                    const networkError = lastError
                     networkError.isNetworkError = true
                 }
                 throw lastError

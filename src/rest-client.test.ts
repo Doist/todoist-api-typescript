@@ -1,8 +1,5 @@
 import { request, isSuccess, paramsSerializer } from './rest-client'
 import { TodoistRequestError } from './types/errors'
-import { assertInstance } from './test-utils/asserts'
-import { DEFAULT_REQUEST_ID } from './test-utils/test-defaults'
-import { API_BASE_URI } from './consts/endpoints'
 import type { HttpResponse as TodoistHttpResponse } from './types/http'
 
 // Mock fetch globally
@@ -26,25 +23,11 @@ const AUTHORIZATION_HEADERS = {
     Authorization: `Bearer ${DEFAULT_AUTH_TOKEN}`,
 }
 
-const HEADERS_WITH_REQUEST_ID = {
-    ...DEFAULT_HEADERS,
-    'X-Request-Id': DEFAULT_REQUEST_ID,
-}
-
 const DEFAULT_PAYLOAD = {
     someKey: 'someValue',
 }
 
 const DEFAULT_RESPONSE_DATA = DEFAULT_PAYLOAD
-
-const DEFAULT_RESPONSE: TodoistHttpResponse = {
-    data: DEFAULT_RESPONSE_DATA,
-    status: 200,
-    statusText: 'OK',
-    headers: {},
-}
-
-const DEFAULT_ERROR_MESSAGE = 'There was an error'
 
 // Helper to mock successful fetch responses
 function mockSuccessfulResponse(responseData = DEFAULT_RESPONSE_DATA, status = 200) {

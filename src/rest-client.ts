@@ -131,7 +131,7 @@ export async function request<T>(args: RequestArgs): Promise<HttpResponse<T>> {
         const config = getHttpClientConfig({ baseURL: baseUri, apiToken, requestId, customHeaders })
         const url = `${baseUri}${relativePath}`
 
-        let fetchOptions: RequestInit & { timeout?: number } = {
+        const fetchOptions: RequestInit & { timeout?: number } = {
             method: httpMethod,
             headers: config.headers,
             timeout: config.timeout,
@@ -151,7 +151,7 @@ export async function request<T>(args: RequestArgs): Promise<HttpResponse<T>> {
                 }
                 break
             case 'POST':
-            case 'PUT':
+            case 'PUT': {
                 // Convert payload from camelCase to snake_case
                 const convertedPayload = payload ? snakeCaseKeys(payload) : payload
                 const body = hasSyncCommands
@@ -160,6 +160,7 @@ export async function request<T>(args: RequestArgs): Promise<HttpResponse<T>> {
 
                 fetchOptions.body = body
                 break
+            }
             case 'DELETE':
                 // DELETE requests don't have a body
                 break

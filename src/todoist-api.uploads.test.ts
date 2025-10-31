@@ -55,7 +55,7 @@ describe('TodoistApi uploads', () => {
             const [url, config] = mockFetch.mock.calls[0]
 
             expect(url).toBe(`${getSyncBaseUri()}uploads`)
-            expect(config?.headers?.Authorization).toBe('Bearer token')
+            expect((config as RequestInit)?.headers).toHaveProperty('Authorization', 'Bearer token')
             expect(result).toEqual(mockUploadResult)
         })
 
@@ -141,7 +141,7 @@ describe('TodoistApi uploads', () => {
 
             expect(mockFetch).toHaveBeenCalledTimes(1)
             const [, config] = mockFetch.mock.calls[0]
-            expect(config?.headers?.['X-Request-Id']).toBe(requestId)
+            expect((config as RequestInit)?.headers).toHaveProperty('X-Request-Id', requestId)
         })
 
         test('uploads file without projectId', async () => {
