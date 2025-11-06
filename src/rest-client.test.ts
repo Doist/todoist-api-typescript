@@ -120,6 +120,39 @@ describe('restClient', () => {
         expect(result).toBe('filter=today&ids=1%2C2%2C3')
     })
 
+    test('GET request converts camelCase parameters to snake_case in URL', async () => {
+        mockSuccessfulResponse(DEFAULT_RESPONSE_DATA)
+
+        await request({
+            httpMethod: 'GET',
+            baseUri: DEFAULT_BASE_URI,
+            relativePath: DEFAULT_ENDPOINT,
+            apiToken: DEFAULT_AUTH_TOKEN,
+            payload: {
+                projectId: '123',
+                isCompleted: true,
+                parentItemId: '456',
+                dueDatetime: '2024-01-01T12:00:00Z',
+            },
+        })
+
+        // Verify the fetch was called with URL containing snake_case parameters
+        expect(mockFetch).toHaveBeenCalledWith(
+            expect.stringContaining('project_id=123'),
+            expect.objectContaining({
+                method: 'GET',
+                headers: AUTHORIZATION_HEADERS,
+            }),
+        )
+
+        // Verify all camelCase parameters were converted to snake_case
+        const [actualUrl] = mockFetch.mock.calls[0]
+        expect(actualUrl).toContain('project_id=123')
+        expect(actualUrl).toContain('is_completed=true')
+        expect(actualUrl).toContain('parent_item_id=456')
+        expect(actualUrl).toContain('due_datetime=2024-01-01T12%3A00%3A00Z')
+    })
+
     test('POST request with JSON payload', async () => {
         mockSuccessfulResponse(DEFAULT_RESPONSE_DATA)
 
