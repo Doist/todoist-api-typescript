@@ -143,7 +143,9 @@ export async function request<T>(args: RequestArgs): Promise<HttpResponse<T>> {
             case 'GET':
                 // For GET requests, add query parameters to URL
                 if (payload) {
-                    const queryString = paramsSerializer(payload)
+                    // Convert payload from camelCase to snake_case
+                    const convertedPayload = snakeCaseKeys(payload)
+                    const queryString = paramsSerializer(convertedPayload)
                     if (queryString) {
                         const separator = url.includes('?') ? '&' : '?'
                         finalUrl = `${url}${separator}${queryString}`
