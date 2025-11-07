@@ -285,6 +285,7 @@ export const CurrentUserSchema = z.object({
     avatarSmall: z.string().nullish(),
     businessAccountId: z.string().nullable(),
     isPremium: z.boolean(),
+    premiumStatus: z.string(),
     dateFormat: z.number().int(),
     timeFormat: z.number().int(),
     weeklyGoal: z.number().int(),

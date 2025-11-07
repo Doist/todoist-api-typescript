@@ -17,6 +17,7 @@ const DEFAULT_CURRENT_USER_RESPONSE: CurrentUser = {
     avatarSmall: 'https://example.com/avatars/test_user_small.jpg',
     businessAccountId: null,
     isPremium: true,
+    premiumStatus: 'current_personal_plan',
     dateFormat: 0,
     timeFormat: 0,
     weeklyGoal: 100,
