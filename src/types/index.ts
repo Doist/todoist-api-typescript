@@ -1,3 +1,4 @@
 export * from './entities'
 export * from './errors'
 export * from './requests'
+export * from './http'

@@ -87,3 +87,23 @@ export function isNetworkError(error: Error): error is NetworkError {
 export function isHttpError(error: Error): error is HttpError {
     return 'status' in error && typeof (error as HttpError).status === 'number'
 }
+
+/**
+ * Custom fetch response interface that custom HTTP clients must implement
+ */
+export type CustomFetchResponse = {
+    ok: boolean
+    status: number
+    statusText: string
+    headers: Record<string, string>
+    text(): Promise<string>
+    json(): Promise<unknown>
+}
+
+/**
+ * Custom fetch function type for alternative HTTP clients
+ */
+export type CustomFetch = (
+    url: string,
+    options?: RequestInit & { timeout?: number },
+) => Promise<CustomFetchResponse>

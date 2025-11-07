@@ -1,5 +1,5 @@
 import { TodoistRequestError } from './types/errors'
-import { HttpMethod, HttpResponse, isNetworkError, isHttpError } from './types/http'
+import { HttpMethod, HttpResponse, isNetworkError, isHttpError, CustomFetch } from './types/http'
 import { v4 as uuidv4 } from 'uuid'
 import { API_BASE_URI } from './consts/endpoints'
 import { camelCaseKeys, snakeCaseKeys } from './utils/case-conversion'
@@ -33,6 +33,7 @@ type RequestArgs = {
     requestId?: string
     hasSyncCommands?: boolean
     customHeaders?: Record<string, string>
+    customFetch?: CustomFetch
 }
 
 export function paramsSerializer(params: Record<string, unknown>) {
@@ -116,6 +117,7 @@ export async function request<T>(args: RequestArgs): Promise<HttpResponse<T>> {
         requestId: initialRequestId,
         hasSyncCommands,
         customHeaders,
+        customFetch,
     } = args
 
     // Capture original stack for better error reporting
@@ -174,6 +176,7 @@ export async function request<T>(args: RequestArgs): Promise<HttpResponse<T>> {
             url: finalUrl,
             options: fetchOptions,
             retryConfig: config.retry,
+            customFetch,
         })
 
         // Convert snake_case response to camelCase
