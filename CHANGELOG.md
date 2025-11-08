@@ -7,26 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [6.1.0](https://github.com/Doist/todoist-api-typescript/compare/v6.0.1...v6.1.0) (2025-11-08)
 
-
 ### Features
 
-* add custom HTTP client support for cross-platform compatibility ([#383](https://github.com/Doist/todoist-api-typescript/issues/383)) ([e5f13e5](https://github.com/Doist/todoist-api-typescript/commit/e5f13e5de3686e6ba7469b199ab05886086b68d6))
-
+-   add custom HTTP client support for cross-platform compatibility ([#383](https://github.com/Doist/todoist-api-typescript/issues/383)) ([e5f13e5](https://github.com/Doist/todoist-api-typescript/commit/e5f13e5de3686e6ba7469b199ab05886086b68d6))
 
 ### Bug Fixes
 
-* configure Release Please to not include component in tags ([ac0cc9d](https://github.com/Doist/todoist-api-typescript/commit/ac0cc9d4c6d2b84d89c095773f928b9ab7b28fa1))
-* rename release-please config file to correct filename ([73c9e5c](https://github.com/Doist/todoist-api-typescript/commit/73c9e5cb4bbe6cf02a73f5859bb043d1d2cda373))
-
+-   configure Release Please to not include component in tags ([ac0cc9d](https://github.com/Doist/todoist-api-typescript/commit/ac0cc9d4c6d2b84d89c095773f928b9ab7b28fa1))
+-   rename release-please config file to correct filename ([73c9e5c](https://github.com/Doist/todoist-api-typescript/commit/73c9e5cb4bbe6cf02a73f5859bb043d1d2cda373))
 
 ### Code Refactoring
 
-* migrate all tests from mockFetch to MSW ([#384](https://github.com/Doist/todoist-api-typescript/issues/384)) ([1d5c150](https://github.com/Doist/todoist-api-typescript/commit/1d5c150b0336ac9eab95916bab2489274178519c))
-
+-   migrate all tests from mockFetch to MSW ([#384](https://github.com/Doist/todoist-api-typescript/issues/384)) ([1d5c150](https://github.com/Doist/todoist-api-typescript/commit/1d5c150b0336ac9eab95916bab2489274178519c))
 
 ### Miscellaneous
 
-* set up Release Please for automated releases ([#385](https://github.com/Doist/todoist-api-typescript/issues/385)) ([4402acc](https://github.com/Doist/todoist-api-typescript/commit/4402acc5325a5c9a59ea47c40853f2b143cb30ff))
+-   set up Release Please for automated releases ([#385](https://github.com/Doist/todoist-api-typescript/issues/385)) ([4402acc](https://github.com/Doist/todoist-api-typescript/commit/4402acc5325a5c9a59ea47c40853f2b143cb30ff))
 
 ## [Unreleased]
 
