@@ -440,11 +440,11 @@ export class TodoistApi {
             hasSyncCommands: true,
         })
 
-        if (response.data.sync_status) {
-            Object.entries(response.data.sync_status).forEach(([_, value]) => {
+        if (response.data.syncStatus) {
+            Object.entries(response.data.syncStatus).forEach(([_, value]) => {
                 if (value === 'ok') return
 
-                throw new TodoistRequestError(value.error, value.http_code, value.error_extra)
+                throw new TodoistRequestError(value.error, value.httpCode, value.errorExtra)
             })
         }
 
@@ -1495,9 +1495,9 @@ export class TodoistApi {
         }
 
         const response = await request<{
-            has_more: boolean
-            next_cursor?: string
-            workspace_users: WorkspaceUser[]
+            hasMore: boolean
+            nextCursor?: string
+            workspaceUsers: WorkspaceUser[]
         }>({
             httpMethod: 'GET',
             baseUri: this.syncApiBase,
@@ -1508,9 +1508,9 @@ export class TodoistApi {
         })
 
         return {
-            hasMore: response.data.has_more || false,
-            nextCursor: response.data.next_cursor,
-            workspaceUsers: validateWorkspaceUserArray(response.data.workspace_users || []),
+            hasMore: response.data.hasMore || false,
+            nextCursor: response.data.nextCursor,
+            workspaceUsers: validateWorkspaceUserArray(response.data.workspaceUsers || []),
         }
     }
 

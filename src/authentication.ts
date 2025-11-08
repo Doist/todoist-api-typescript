@@ -144,23 +144,33 @@ export async function getAuthToken(
     args: AuthTokenRequestArgs,
     baseUrl?: string,
 ): Promise<AuthTokenResponse> {
-    const response = await request<AuthTokenResponse>({
-        httpMethod: 'POST',
-        baseUri: getAuthBaseUri(baseUrl),
-        relativePath: ENDPOINT_GET_TOKEN,
-        apiToken: undefined,
-        payload: args,
-    })
+    try {
+        const response = await request<AuthTokenResponse>({
+            httpMethod: 'POST',
+            baseUri: getAuthBaseUri(baseUrl),
+            relativePath: ENDPOINT_GET_TOKEN,
+            apiToken: undefined,
+            payload: args,
+        })
 
-    if (response.status !== 200 || !response.data?.accessToken) {
+        if (response.status !== 200 || !response.data?.accessToken) {
+            throw new TodoistRequestError(
+                'Authentication token exchange failed.',
+                response.status,
+                response.data,
+            )
+        }
+
+        return response.data
+    } catch (error) {
+        // Re-throw with custom message for authentication failures
+        const err = error as TodoistRequestError
         throw new TodoistRequestError(
             'Authentication token exchange failed.',
-            response.status,
-            response.data,
+            err.httpStatusCode,
+            err.responseData,
         )
     }
-
-    return response.data
 }
 
 /**

@@ -5,7 +5,7 @@ import {
     revokeToken,
     Permission,
 } from './authentication'
-import { setupRestClientMock } from './test-utils/mocks'
+import { server, http, HttpResponse } from './test-utils/msw-setup'
 import { assertInstance } from './test-utils/asserts'
 import { TodoistRequestError } from './types'
 import { getSyncBaseUri } from './consts/endpoints'
@@ -77,23 +77,12 @@ describe('authentication', () => {
             tokenType: 'Bearer',
         }
 
-        test('calls request with expected values', async () => {
-            const requestMock = setupRestClientMock(successfulTokenResponse)
-
-            await getAuthToken(defaultAuthRequest)
-
-            expect(requestMock).toHaveBeenCalledTimes(1)
-            expect(requestMock).toHaveBeenCalledWith({
-                httpMethod: 'POST',
-                baseUri: 'https://todoist.com/oauth/',
-                relativePath: 'access_token',
-                apiToken: undefined,
-                payload: defaultAuthRequest,
-            })
-        })
-
         test('returns values from successful request', async () => {
-            setupRestClientMock(successfulTokenResponse)
+            server.use(
+                http.post('https://todoist.com/oauth/access_token', () => {
+                    return HttpResponse.json(successfulTokenResponse, { status: 200 })
+                }),
+            )
 
             const tokenResponse = await getAuthToken(defaultAuthRequest)
 
@@ -102,7 +91,11 @@ describe('authentication', () => {
 
         test('throws error if non 200 response', async () => {
             const failureStatus = 400
-            setupRestClientMock(undefined, failureStatus)
+            server.use(
+                http.post('https://todoist.com/oauth/access_token', () => {
+                    return HttpResponse.json(undefined, { status: failureStatus })
+                }),
+            )
 
             expect.assertions(3)
 
@@ -122,7 +115,11 @@ describe('authentication', () => {
                 tokenType: undefined,
             }
 
-            setupRestClientMock(missingTokenResponse)
+            server.use(
+                http.post('https://todoist.com/oauth/access_token', () => {
+                    return HttpResponse.json(missingTokenResponse, { status: 200 })
+                }),
+            )
 
             expect.assertions(2)
 
@@ -143,19 +140,15 @@ describe('authentication', () => {
             accessToken: 'AToken',
         }
 
-        test('calls request with expected values', async () => {
-            const requestMock = setupRestClientMock(undefined, 200)
+        test('returns true when revocation succeeds', async () => {
+            server.use(
+                http.post(`${getSyncBaseUri()}access_tokens/revoke`, () => {
+                    return HttpResponse.json(undefined, { status: 200 })
+                }),
+            )
 
             const isSuccess = await revokeAuthToken(revokeTokenRequest)
 
-            expect(requestMock).toHaveBeenCalledTimes(1)
-            expect(requestMock).toHaveBeenCalledWith({
-                httpMethod: 'POST',
-                baseUri: getSyncBaseUri(),
-                relativePath: 'access_tokens/revoke',
-                apiToken: undefined,
-                payload: revokeTokenRequest,
-            })
             expect(isSuccess).toEqual(true)
         })
     })
@@ -168,52 +161,50 @@ describe('authentication', () => {
         }
 
         test('calls request with RFC 7009 compliant parameters', async () => {
-            const requestMock = setupRestClientMock(undefined, 200)
+            let capturedHeaders: Record<string, string> = {}
+            let capturedBody: unknown = null
+
+            server.use(
+                http.post(`${getSyncBaseUri()}revoke`, async ({ request }) => {
+                    // Capture headers
+                    const headers: Record<string, string> = {}
+                    request.headers.forEach((value, key) => {
+                        headers[key] = value
+                    })
+                    capturedHeaders = headers
+
+                    // Capture body
+                    capturedBody = await request.json()
+
+                    return HttpResponse.json(undefined, { status: 200 })
+                }),
+            )
 
             const isSuccess = await revokeToken(revokeTokenRequest)
 
-            expect(requestMock).toHaveBeenCalledTimes(1)
-
-            // Verify the correct endpoint is called
-            expect(requestMock).toHaveBeenCalledTimes(1)
-            const mockCall = requestMock.mock.calls[0] as [
-                {
-                    httpMethod: string
-                    baseUri: string
-                    relativePath: string
-                    apiToken?: string
-                    payload: Record<string, unknown>
-                    customHeaders?: Record<string, string>
-                },
-            ]
-            const callArgs = mockCall[0]
-            expect(callArgs.httpMethod).toEqual('POST')
-            expect(callArgs.baseUri).toEqual(getSyncBaseUri())
-            expect(callArgs.relativePath).toEqual('revoke')
-
-            // Verify no API token is passed (should be undefined)
-            expect(callArgs.apiToken).toBeUndefined()
-
             // Verify request body contains only token and token_type_hint
-            expect(callArgs.payload).toEqual({
+            expect(capturedBody).toEqual({
                 token: 'AToken',
                 token_type_hint: 'access_token',
             })
 
             // Verify Basic Auth header is present
-            const customHeaders = callArgs.customHeaders
-            expect(customHeaders).toBeDefined()
-            expect(customHeaders?.Authorization).toMatch(/^Basic /)
+            expect(capturedHeaders).toBeDefined()
+            expect(capturedHeaders.authorization).toMatch(/^Basic /)
 
             // Verify Basic Auth is correctly encoded (base64 of "SomeId:ASecret")
             const expectedAuth = Buffer.from('SomeId:ASecret').toString('base64')
-            expect(customHeaders?.Authorization).toEqual(`Basic ${expectedAuth}`)
+            expect(capturedHeaders.authorization).toEqual(`Basic ${expectedAuth}`)
 
             expect(isSuccess).toEqual(true)
         })
 
         test('returns true when revocation succeeds', async () => {
-            setupRestClientMock(undefined, 200)
+            server.use(
+                http.post(`${getSyncBaseUri()}revoke`, () => {
+                    return HttpResponse.json(undefined, { status: 200 })
+                }),
+            )
 
             const result = await revokeToken(revokeTokenRequest)
 

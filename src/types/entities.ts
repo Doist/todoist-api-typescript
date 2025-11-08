@@ -562,11 +562,11 @@ export const WorkspacePlanDetailsSchema = z.object({
 export type WorkspacePlanDetails = z.infer<typeof WorkspacePlanDetailsSchema>
 
 export const JoinWorkspaceResultSchema = z.object({
-    custom_sorting_applied: z.boolean(),
-    project_sort_preference: z.string(),
+    customSortingApplied: z.boolean(),
+    projectSortPreference: z.string(),
     role: WorkspaceRoleSchema,
-    user_id: z.string(),
-    workspace_id: z.string(),
+    userId: z.string(),
+    workspaceId: z.string(),
 })
 
 /**

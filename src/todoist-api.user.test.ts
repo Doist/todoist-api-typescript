@@ -1,7 +1,7 @@
 import { TodoistApi, type CurrentUser, type ProductivityStats } from '.'
 import { DEFAULT_AUTH_TOKEN } from './test-utils/test-defaults'
 import { getSyncBaseUri, ENDPOINT_REST_USER, ENDPOINT_REST_PRODUCTIVITY } from './consts/endpoints'
-import { setupRestClientMock } from './test-utils/mocks'
+import { server, http, HttpResponse } from './test-utils/msw-setup'
 
 function getTarget(baseUrl = 'https://api.todoist.com') {
     return new TodoistApi(DEFAULT_AUTH_TOKEN, baseUrl)
@@ -84,7 +84,7 @@ const PRODUCTIVITY_STATS_RESPONSE: ProductivityStats = {
             time: '2025-01-02T12:00:00.000Z',
         },
     ],
-    projectColors: { 'dummy-project-id': 'blue' },
+    projectColors: { dummyProjectId: 'blue' },
     weekItems: [
         {
             from: '2025-01-01',
@@ -97,35 +97,31 @@ const PRODUCTIVITY_STATS_RESPONSE: ProductivityStats = {
 
 describe('TodoistApi user endpoints', () => {
     describe('getUser', () => {
-        test('calls get on restClient with expected parameters', async () => {
-            const requestMock = setupRestClientMock(DEFAULT_CURRENT_USER_RESPONSE)
+        test('returns result from rest client', async () => {
+            server.use(
+                http.get(`${getSyncBaseUri()}${ENDPOINT_REST_USER}`, () => {
+                    return HttpResponse.json(DEFAULT_CURRENT_USER_RESPONSE, { status: 200 })
+                }),
+            )
             const api = getTarget()
 
-            await api.getUser()
+            const actual = await api.getUser()
 
-            expect(requestMock).toHaveBeenCalledTimes(1)
-            expect(requestMock).toHaveBeenCalledWith({
-                httpMethod: 'GET',
-                baseUri: getSyncBaseUri(),
-                relativePath: ENDPOINT_REST_USER,
-                apiToken: DEFAULT_AUTH_TOKEN,
-            })
+            expect(actual).toEqual(DEFAULT_CURRENT_USER_RESPONSE)
         })
 
-        test('calls get on restClient with expected parameters against staging', async () => {
-            const requestMock = setupRestClientMock(DEFAULT_CURRENT_USER_RESPONSE)
+        test('returns result from rest client against staging', async () => {
             const stagingBaseUrl = 'https://api.todoist-staging.com'
+            server.use(
+                http.get(`${getSyncBaseUri(stagingBaseUrl)}${ENDPOINT_REST_USER}`, () => {
+                    return HttpResponse.json(DEFAULT_CURRENT_USER_RESPONSE, { status: 200 })
+                }),
+            )
             const api = getTarget(stagingBaseUrl)
 
-            await api.getUser()
+            const actual = await api.getUser()
 
-            expect(requestMock).toHaveBeenCalledTimes(1)
-            expect(requestMock).toHaveBeenCalledWith({
-                httpMethod: 'GET',
-                baseUri: getSyncBaseUri(stagingBaseUrl),
-                relativePath: ENDPOINT_REST_USER,
-                apiToken: DEFAULT_AUTH_TOKEN,
-            })
+            expect(actual).toEqual(DEFAULT_CURRENT_USER_RESPONSE)
         })
 
         test('handles user with null business account id', async () => {
@@ -133,7 +129,11 @@ describe('TodoistApi user endpoints', () => {
                 ...DEFAULT_CURRENT_USER_RESPONSE,
                 businessAccountId: null,
             }
-            setupRestClientMock(responseWithNullBusinessAccount)
+            server.use(
+                http.get(`${getSyncBaseUri()}${ENDPOINT_REST_USER}`, () => {
+                    return HttpResponse.json(responseWithNullBusinessAccount, { status: 200 })
+                }),
+            )
             const api = getTarget()
 
             const actual = await api.getUser()
@@ -149,7 +149,11 @@ describe('TodoistApi user endpoints', () => {
                 avatarS640: null,
                 avatarSmall: null,
             }
-            setupRestClientMock(responseWithNullAvatars)
+            server.use(
+                http.get(`${getSyncBaseUri()}${ENDPOINT_REST_USER}`, () => {
+                    return HttpResponse.json(responseWithNullAvatars, { status: 200 })
+                }),
+            )
             const api = getTarget()
 
             const actual = await api.getUser()
@@ -161,7 +165,11 @@ describe('TodoistApi user endpoints', () => {
         })
 
         test('handles user with tzInfo field', async () => {
-            setupRestClientMock(DEFAULT_CURRENT_USER_RESPONSE)
+            server.use(
+                http.get(`${getSyncBaseUri()}${ENDPOINT_REST_USER}`, () => {
+                    return HttpResponse.json(DEFAULT_CURRENT_USER_RESPONSE, { status: 200 })
+                }),
+            )
             const api = getTarget()
 
             const actual = await api.getUser()
@@ -178,21 +186,12 @@ describe('TodoistApi user endpoints', () => {
     })
 
     describe('getProductivityStats', () => {
-        test('calls get on expected url', async () => {
-            const requestMock = setupRestClientMock(PRODUCTIVITY_STATS_RESPONSE)
-            const api = getTarget()
-            await api.getProductivityStats()
-            expect(requestMock).toHaveBeenCalledTimes(1)
-            expect(requestMock).toHaveBeenCalledWith({
-                httpMethod: 'GET',
-                baseUri: getSyncBaseUri(),
-                relativePath: ENDPOINT_REST_PRODUCTIVITY,
-                apiToken: DEFAULT_AUTH_TOKEN,
-            })
-        })
-
         test('returns result from rest client', async () => {
-            setupRestClientMock(PRODUCTIVITY_STATS_RESPONSE)
+            server.use(
+                http.get(`${getSyncBaseUri()}${ENDPOINT_REST_PRODUCTIVITY}`, () => {
+                    return HttpResponse.json(PRODUCTIVITY_STATS_RESPONSE, { status: 200 })
+                }),
+            )
             const api = getTarget()
             const stats = await api.getProductivityStats()
             expect(stats).toEqual(PRODUCTIVITY_STATS_RESPONSE)

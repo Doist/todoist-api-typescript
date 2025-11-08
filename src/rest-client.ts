@@ -153,19 +153,20 @@ export async function request<T>(args: RequestArgs): Promise<HttpResponse<T>> {
                 }
                 break
             case 'POST':
-            case 'PUT': {
+            case 'PUT':
+            case 'DELETE': {
                 // Convert payload from camelCase to snake_case
-                const convertedPayload = payload ? snakeCaseKeys(payload) : payload
-                const body = hasSyncCommands
-                    ? JSON.stringify(convertedPayload)
-                    : JSON.stringify(convertedPayload)
+                // Note: While DELETE with body is uncommon, the Todoist API uses it for some endpoints
+                if (payload) {
+                    const convertedPayload = snakeCaseKeys(payload)
+                    const body = hasSyncCommands
+                        ? JSON.stringify(convertedPayload)
+                        : JSON.stringify(convertedPayload)
 
-                fetchOptions.body = body
+                    fetchOptions.body = body
+                }
                 break
             }
-            case 'DELETE':
-                // DELETE requests don't have a body
-                break
         }
 
         // Make the request

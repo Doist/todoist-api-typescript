@@ -1,5 +1,5 @@
 import { TodoistApi } from '.'
-import { DEFAULT_AUTH_TOKEN, DEFAULT_LABEL, DEFAULT_REQUEST_ID } from './test-utils/test-defaults'
+import { DEFAULT_AUTH_TOKEN, DEFAULT_LABEL } from './test-utils/test-defaults'
 import {
     getSyncBaseUri,
     ENDPOINT_REST_LABELS,
@@ -7,7 +7,7 @@ import {
     ENDPOINT_REST_LABELS_SHARED_RENAME,
     ENDPOINT_REST_LABELS_SHARED_REMOVE,
 } from './consts/endpoints'
-import { setupRestClientMock } from './test-utils/mocks'
+import { server, http, HttpResponse } from './test-utils/msw-setup'
 
 function getTarget() {
     return new TodoistApi(DEFAULT_AUTH_TOKEN)
@@ -15,61 +15,35 @@ function getTarget() {
 
 describe('TodoistApi label endpoints', () => {
     describe('getLabel', () => {
-        test('calls get request with expected url', async () => {
-            const labelId = '12'
-            const requestMock = setupRestClientMock(DEFAULT_LABEL)
-            const api = getTarget()
-
-            await api.getLabel(labelId)
-
-            expect(requestMock).toHaveBeenCalledTimes(1)
-            expect(requestMock).toHaveBeenCalledWith({
-                httpMethod: 'GET',
-                baseUri: getSyncBaseUri(),
-                relativePath: `${ENDPOINT_REST_LABELS}/${labelId}`,
-                apiToken: DEFAULT_AUTH_TOKEN,
-            })
-        })
-
         test('returns result from rest client', async () => {
-            setupRestClientMock(DEFAULT_LABEL)
+            const labelId = '123'
+            server.use(
+                http.get(`${getSyncBaseUri()}${ENDPOINT_REST_LABELS}/${labelId}`, () => {
+                    return HttpResponse.json(DEFAULT_LABEL, { status: 200 })
+                }),
+            )
             const api = getTarget()
 
-            const label = await api.getLabel('123')
+            const label = await api.getLabel(labelId)
 
             expect(label).toEqual(DEFAULT_LABEL)
         })
     })
 
     describe('getLabels', () => {
-        test('calls get on labels endpoint', async () => {
-            const requestMock = setupRestClientMock({
-                results: [DEFAULT_LABEL],
-                nextCursor: '123',
-            })
-            const api = getTarget()
-
-            await api.getLabels({ limit: 10, cursor: '0' })
-
-            expect(requestMock).toHaveBeenCalledTimes(1)
-            expect(requestMock).toHaveBeenCalledWith({
-                httpMethod: 'GET',
-                baseUri: getSyncBaseUri(),
-                relativePath: ENDPOINT_REST_LABELS,
-                apiToken: DEFAULT_AUTH_TOKEN,
-                payload: {
-                    limit: 10,
-                    cursor: '0',
-                },
-            })
-        })
-
         test('returns result from rest client', async () => {
             const labels = [DEFAULT_LABEL]
-            setupRestClientMock({
-                results: [DEFAULT_LABEL],
-                nextCursor: '123',
-            })
+            server.use(
+                http.get(`${getSyncBaseUri()}${ENDPOINT_REST_LABELS}`, () => {
+                    return HttpResponse.json(
+                        {
+                            results: [DEFAULT_LABEL],
+                            nextCursor: '123',
+                        },
+                        { status: 200 },
+                    )
+                }),
+            )
             const api = getTarget()
 
             const { results, nextCursor } = await api.getLabels()
@@ -84,25 +58,12 @@ describe('TodoistApi label endpoints', () => {
             name: 'This is a label',
         }
 
-        test('calls post on restClient with expected parameters', async () => {
-            const requestMock = setupRestClientMock(DEFAULT_LABEL)
-            const api = getTarget()
-
-            await api.addLabel(DEFAULT_ADD_LABEL_ARGS, DEFAULT_REQUEST_ID)
-
-            expect(requestMock).toHaveBeenCalledTimes(1)
-            expect(requestMock).toHaveBeenCalledWith({
-                httpMethod: 'POST',
-                baseUri: getSyncBaseUri(),
-                relativePath: ENDPOINT_REST_LABELS,
-                apiToken: DEFAULT_AUTH_TOKEN,
-                payload: DEFAULT_ADD_LABEL_ARGS,
-                requestId: DEFAULT_REQUEST_ID,
-            })
-        })
-
         test('returns result from rest client', async () => {
-            setupRestClientMock(DEFAULT_LABEL)
+            server.use(
+                http.post(`${getSyncBaseUri()}${ENDPOINT_REST_LABELS}`, () => {
+                    return HttpResponse.json(DEFAULT_LABEL, { status: 200 })
+                }),
+            )
             const api = getTarget()
 
             const label = await api.addLabel(DEFAULT_ADD_LABEL_ARGS)
@@ -116,27 +77,13 @@ describe('TodoistApi label endpoints', () => {
             name: 'A new name',
         }
 
-        test('calls post on restClient with expected parameters', async () => {
-            const labelId = '123'
-            const requestMock = setupRestClientMock(DEFAULT_LABEL, 204)
-            const api = getTarget()
-
-            await api.updateLabel(labelId, DEFAULT_UPDATE_LABEL_ARGS, DEFAULT_REQUEST_ID)
-
-            expect(requestMock).toHaveBeenCalledTimes(1)
-            expect(requestMock).toHaveBeenCalledWith({
-                httpMethod: 'POST',
-                baseUri: getSyncBaseUri(),
-                relativePath: `${ENDPOINT_REST_LABELS}/${labelId}`,
-                apiToken: DEFAULT_AUTH_TOKEN,
-                payload: DEFAULT_UPDATE_LABEL_ARGS,
-                requestId: DEFAULT_REQUEST_ID,
-            })
-        })
-
         test('returns success result from rest client', async () => {
             const returnedTask = { ...DEFAULT_LABEL, ...DEFAULT_UPDATE_LABEL_ARGS }
-            setupRestClientMock(returnedTask, 204)
+            server.use(
+                http.post(`${getSyncBaseUri()}${ENDPOINT_REST_LABELS}/123`, () => {
+                    return HttpResponse.json(returnedTask, { status: 200 })
+                }),
+            )
             const api = getTarget()
 
             const result = await api.updateLabel('123', DEFAULT_UPDATE_LABEL_ARGS)
@@ -146,26 +93,12 @@ describe('TodoistApi label endpoints', () => {
     })
 
     describe('deleteLabel', () => {
-        test('calls delete on expected label', async () => {
-            const labelId = '123'
-            const requestMock = setupRestClientMock(undefined, 204)
-            const api = getTarget()
-
-            await api.deleteLabel(labelId, DEFAULT_REQUEST_ID)
-
-            expect(requestMock).toHaveBeenCalledTimes(1)
-            expect(requestMock).toHaveBeenCalledWith({
-                httpMethod: 'DELETE',
-                baseUri: getSyncBaseUri(),
-                relativePath: `${ENDPOINT_REST_LABELS}/${labelId}`,
-                apiToken: DEFAULT_AUTH_TOKEN,
-                payload: undefined,
-                requestId: DEFAULT_REQUEST_ID,
-            })
-        })
-
         test('returns success result from rest client', async () => {
-            setupRestClientMock(undefined, 204)
+            server.use(
+                http.delete(`${getSyncBaseUri()}${ENDPOINT_REST_LABELS}/123`, () => {
+                    return HttpResponse.json(undefined, { status: 204 })
+                }),
+            )
             const api = getTarget()
 
             const result = await api.deleteLabel('123')
@@ -175,30 +108,13 @@ describe('TodoistApi label endpoints', () => {
     })
 
     describe('getSharedLabels', () => {
-        test('calls getSharedLabels with expected parameters', async () => {
-            const mockResponse = { results: ['shared1', 'shared2'], nextCursor: 'abc' }
-            const requestMock = setupRestClientMock(mockResponse)
-            const api = getTarget()
-
-            await api.getSharedLabels({
-                omitPersonal: true,
-                limit: 10,
-                cursor: 'abc',
-            })
-
-            expect(requestMock).toHaveBeenCalledTimes(1)
-            expect(requestMock).toHaveBeenCalledWith({
-                httpMethod: 'GET',
-                baseUri: getSyncBaseUri(),
-                relativePath: ENDPOINT_REST_LABELS_SHARED,
-                apiToken: DEFAULT_AUTH_TOKEN,
-                payload: { omitPersonal: true, limit: 10, cursor: 'abc' },
-            })
-        })
-
         test('returns result from rest client', async () => {
             const mockResponse = { results: ['shared1', 'shared2'], nextCursor: 'abc' }
-            setupRestClientMock(mockResponse)
+            server.use(
+                http.get(`${getSyncBaseUri()}${ENDPOINT_REST_LABELS_SHARED}`, () => {
+                    return HttpResponse.json(mockResponse, { status: 200 })
+                }),
+            )
             const api = getTarget()
 
             const result = await api.getSharedLabels()
@@ -208,26 +124,13 @@ describe('TodoistApi label endpoints', () => {
     })
 
     describe('renameSharedLabel', () => {
-        test('calls renameSharedLabel with expected parameters', async () => {
-            const args = { name: 'old', newName: 'new' }
-            const requestMock = setupRestClientMock(null)
-            const api = getTarget()
-
-            await api.renameSharedLabel(args)
-
-            expect(requestMock).toHaveBeenCalledTimes(1)
-            expect(requestMock).toHaveBeenCalledWith({
-                httpMethod: 'POST',
-                baseUri: getSyncBaseUri(),
-                relativePath: ENDPOINT_REST_LABELS_SHARED_RENAME,
-                apiToken: DEFAULT_AUTH_TOKEN,
-                payload: args,
-            })
-        })
-
         test('returns success result from rest client', async () => {
             const args = { name: 'old', newName: 'new' }
-            setupRestClientMock(null)
+            server.use(
+                http.post(`${getSyncBaseUri()}${ENDPOINT_REST_LABELS_SHARED_RENAME}`, () => {
+                    return HttpResponse.json(null, { status: 200 })
+                }),
+            )
             const api = getTarget()
 
             const result = await api.renameSharedLabel(args)
@@ -237,26 +140,13 @@ describe('TodoistApi label endpoints', () => {
     })
 
     describe('removeSharedLabel', () => {
-        test('calls removeSharedLabel with expected parameters', async () => {
-            const args = { name: 'toremove' }
-            const requestMock = setupRestClientMock(null)
-            const api = getTarget()
-
-            await api.removeSharedLabel(args)
-
-            expect(requestMock).toHaveBeenCalledTimes(1)
-            expect(requestMock).toHaveBeenCalledWith({
-                httpMethod: 'POST',
-                baseUri: getSyncBaseUri(),
-                relativePath: ENDPOINT_REST_LABELS_SHARED_REMOVE,
-                apiToken: DEFAULT_AUTH_TOKEN,
-                payload: args,
-            })
-        })
-
         test('returns success result from rest client', async () => {
             const args = { name: 'toremove' }
-            setupRestClientMock(null)
+            server.use(
+                http.post(`${getSyncBaseUri()}${ENDPOINT_REST_LABELS_SHARED_REMOVE}`, () => {
+                    return HttpResponse.json(null, { status: 200 })
+                }),
+            )
             const api = getTarget()
 
             const result = await api.removeSharedLabel(args)

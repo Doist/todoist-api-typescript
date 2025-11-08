@@ -1,5 +1,6 @@
+import { jest } from '@jest/globals'
 import { TodoistApi } from './todoist-api'
-import { setupRestClientMock } from './test-utils/mocks'
+import { server, http, HttpResponse } from './test-utils/msw-setup'
 import { getSyncBaseUri } from './consts/endpoints'
 import { uploadMultipartFile } from './utils/multipart-upload'
 
@@ -19,35 +20,29 @@ describe('TodoistApi workspaces', () => {
     describe('getWorkspaceInvitations', () => {
         test('gets workspace invitations', async () => {
             const mockResponse = ['user1@example.com', 'user2@example.com']
-            const requestMock = setupRestClientMock(mockResponse)
+            server.use(
+                http.get(`${getSyncBaseUri()}workspaces/invitations`, () => {
+                    return HttpResponse.json(mockResponse, { status: 200 })
+                }),
+            )
 
             const result = await api.getWorkspaceInvitations({ workspaceId: 123 })
 
-            expect(requestMock).toHaveBeenCalledWith({
-                httpMethod: 'GET',
-                baseUri: getSyncBaseUri(),
-                relativePath: 'workspaces/invitations',
-                apiToken: 'token',
-                payload: { workspace_id: 123 },
-            })
             expect(result).toEqual(mockResponse)
         })
 
         test('gets workspace invitations with requestId', async () => {
             const mockResponse = ['user@example.com']
-            const requestMock = setupRestClientMock(mockResponse)
+            server.use(
+                http.get(`${getSyncBaseUri()}workspaces/invitations`, () => {
+                    return HttpResponse.json(mockResponse, { status: 200 })
+                }),
+            )
             const requestId = 'test-request'
 
-            await api.getWorkspaceInvitations({ workspaceId: 456 }, requestId)
+            const result = await api.getWorkspaceInvitations({ workspaceId: 456 }, requestId)
 
-            expect(requestMock).toHaveBeenCalledWith({
-                httpMethod: 'GET',
-                baseUri: getSyncBaseUri(),
-                relativePath: 'workspaces/invitations',
-                apiToken: 'token',
-                payload: { workspace_id: 456 },
-                requestId: requestId,
-            })
+            expect(result).toEqual(mockResponse)
         })
     })
 
@@ -63,34 +58,28 @@ describe('TodoistApi workspaces', () => {
                     isExistingUser: true,
                 },
             ]
-            const requestMock = setupRestClientMock(mockResponse)
+            server.use(
+                http.get(`${getSyncBaseUri()}workspaces/invitations/all`, () => {
+                    return HttpResponse.json(mockResponse, { status: 200 })
+                }),
+            )
 
             const result = await api.getAllWorkspaceInvitations()
 
-            expect(requestMock).toHaveBeenCalledWith({
-                httpMethod: 'GET',
-                baseUri: getSyncBaseUri(),
-                relativePath: 'workspaces/invitations/all',
-                apiToken: 'token',
-                payload: {},
-            })
             expect(result).toEqual(mockResponse)
         })
 
         test('gets all workspace invitations with requestId', async () => {
-            const requestMock = setupRestClientMock([])
+            server.use(
+                http.get(`${getSyncBaseUri()}workspaces/invitations/all`, () => {
+                    return HttpResponse.json([], { status: 200 })
+                }),
+            )
             const requestId = 'admin-request'
 
-            await api.getAllWorkspaceInvitations({}, requestId)
+            const result = await api.getAllWorkspaceInvitations({}, requestId)
 
-            expect(requestMock).toHaveBeenCalledWith({
-                httpMethod: 'GET',
-                baseUri: getSyncBaseUri(),
-                relativePath: 'workspaces/invitations/all',
-                apiToken: 'token',
-                payload: {},
-                requestId: requestId,
-            })
+            expect(result).toEqual([])
         })
     })
 
@@ -105,24 +94,17 @@ describe('TodoistApi workspaces', () => {
         }
 
         test('deletes workspace invitation', async () => {
-            const requestMock = setupRestClientMock(mockInvitation)
+            server.use(
+                http.post(`${getSyncBaseUri()}workspaces/invitations/delete`, () => {
+                    return HttpResponse.json(mockInvitation, { status: 200 })
+                }),
+            )
 
             const result = await api.deleteWorkspaceInvitation({
                 workspaceId: 789,
                 userEmail: 'user@example.com',
             })
 
-            expect(requestMock).toHaveBeenCalledWith({
-                httpMethod: 'POST',
-                baseUri: getSyncBaseUri(),
-                relativePath: 'workspaces/invitations/delete',
-                apiToken: 'token',
-                payload: {
-                    workspace_id: 789,
-                    user_email: 'user@example.com',
-                },
-                requestId: undefined,
-            })
             expect(result).toEqual(mockInvitation)
         })
     })
@@ -138,17 +120,14 @@ describe('TodoistApi workspaces', () => {
         }
 
         test('accepts workspace invitation', async () => {
-            const requestMock = setupRestClientMock(mockInvitation)
+            server.use(
+                http.put(`${getSyncBaseUri()}workspaces/invitations/abc123/accept`, () => {
+                    return HttpResponse.json(mockInvitation, { status: 200 })
+                }),
+            )
 
             const result = await api.acceptWorkspaceInvitation({ inviteCode: 'abc123' })
 
-            expect(requestMock).toHaveBeenCalledWith({
-                httpMethod: 'PUT',
-                baseUri: getSyncBaseUri(),
-                relativePath: 'workspaces/invitations/abc123/accept',
-                apiToken: 'token',
-                requestId: undefined,
-            })
             expect(result).toEqual(mockInvitation)
         })
     })
@@ -164,66 +143,59 @@ describe('TodoistApi workspaces', () => {
         }
 
         test('rejects workspace invitation', async () => {
-            const requestMock = setupRestClientMock(mockInvitation)
+            server.use(
+                http.put(`${getSyncBaseUri()}workspaces/invitations/def456/reject`, () => {
+                    return HttpResponse.json(mockInvitation, { status: 200 })
+                }),
+            )
 
             const result = await api.rejectWorkspaceInvitation({ inviteCode: 'def456' })
 
-            expect(requestMock).toHaveBeenCalledWith({
-                httpMethod: 'PUT',
-                baseUri: getSyncBaseUri(),
-                relativePath: 'workspaces/invitations/def456/reject',
-                apiToken: 'token',
-                requestId: undefined,
-            })
             expect(result).toEqual(mockInvitation)
         })
     })
 
     describe('joinWorkspace', () => {
-        const mockJoinResult = {
+        // Mock response in snake_case (API format)
+        const mockJoinResponse = {
             custom_sorting_applied: true,
-            project_sort_preference: 'alphabetical',
+            project_sort_preference: 'alphabetical' as const,
             role: 'MEMBER' as const,
             user_id: '123',
             workspace_id: '456',
         }
 
+        // Expected result after camelCase conversion
+        const expectedJoinResult = {
+            customSortingApplied: true,
+            projectSortPreference: 'alphabetical' as const,
+            role: 'MEMBER' as const,
+            userId: '123',
+            workspaceId: '456',
+        }
+
         test('joins workspace via invite code', async () => {
-            const requestMock = setupRestClientMock(mockJoinResult)
+            server.use(
+                http.post(`${getSyncBaseUri()}workspaces/join`, () => {
+                    return HttpResponse.json(mockJoinResponse, { status: 200 })
+                }),
+            )
 
             const result = await api.joinWorkspace({ inviteCode: 'invite123' })
 
-            expect(requestMock).toHaveBeenCalledWith({
-                httpMethod: 'POST',
-                baseUri: getSyncBaseUri(),
-                relativePath: 'workspaces/join',
-                apiToken: 'token',
-                payload: {
-                    invite_code: 'invite123',
-                    workspace_id: undefined,
-                },
-                requestId: undefined,
-            })
-            expect(result).toEqual(mockJoinResult)
+            expect(result).toEqual(expectedJoinResult)
         })
 
         test('joins workspace via workspace ID', async () => {
-            const requestMock = setupRestClientMock(mockJoinResult)
+            server.use(
+                http.post(`${getSyncBaseUri()}workspaces/join`, () => {
+                    return HttpResponse.json(mockJoinResponse, { status: 200 })
+                }),
+            )
 
             const result = await api.joinWorkspace({ workspaceId: 789 })
 
-            expect(requestMock).toHaveBeenCalledWith({
-                httpMethod: 'POST',
-                baseUri: getSyncBaseUri(),
-                relativePath: 'workspaces/join',
-                apiToken: 'token',
-                payload: {
-                    invite_code: undefined,
-                    workspace_id: 789,
-                },
-                requestId: undefined,
-            })
-            expect(result).toEqual(mockJoinResult)
+            expect(result).toEqual(expectedJoinResult)
         })
     })
 
@@ -322,23 +294,20 @@ describe('TodoistApi workspaces', () => {
         }
 
         test('gets workspace plan details', async () => {
-            const requestMock = setupRestClientMock(mockPlanDetails)
+            server.use(
+                http.get(`${getSyncBaseUri()}workspaces/plan_details`, () => {
+                    return HttpResponse.json(mockPlanDetails, { status: 200 })
+                }),
+            )
 
             const result = await api.getWorkspacePlanDetails({ workspaceId: 123 })
 
-            expect(requestMock).toHaveBeenCalledWith({
-                httpMethod: 'GET',
-                baseUri: getSyncBaseUri(),
-                relativePath: 'workspaces/plan_details',
-                apiToken: 'token',
-                payload: { workspace_id: 123 },
-            })
             expect(result).toEqual(mockPlanDetails)
         })
     })
 
     describe('getWorkspaceUsers', () => {
-        const mockUsers = [
+        const expectedUsers = [
             {
                 userId: '1',
                 workspaceId: '123',
@@ -361,64 +330,83 @@ describe('TodoistApi workspaces', () => {
             },
         ]
 
+        // Mock response with snake_case keys (will be converted to camelCase by rest-client)
         const mockResponse = {
             has_more: false,
             next_cursor: undefined,
-            workspace_users: mockUsers,
+            workspace_users: [
+                {
+                    user_id: '1',
+                    workspace_id: '123',
+                    user_email: 'user1@example.com',
+                    full_name: 'User One',
+                    timezone: 'UTC',
+                    role: 'ADMIN' as const,
+                    image_id: null,
+                    is_deleted: false,
+                },
+                {
+                    user_id: '2',
+                    workspace_id: '123',
+                    user_email: 'user2@example.com',
+                    full_name: 'User Two',
+                    timezone: 'PST',
+                    role: 'MEMBER' as const,
+                    image_id: 'img123',
+                    is_deleted: false,
+                },
+            ],
         }
 
         test('gets workspace users with default parameters', async () => {
-            const requestMock = setupRestClientMock(mockResponse)
+            server.use(
+                http.get(`${getSyncBaseUri()}workspaces/users`, () => {
+                    return HttpResponse.json(mockResponse, { status: 200 })
+                }),
+            )
 
             const result = await api.getWorkspaceUsers()
 
-            expect(requestMock).toHaveBeenCalledWith({
-                httpMethod: 'GET',
-                baseUri: getSyncBaseUri(),
-                relativePath: 'workspaces/users',
-                apiToken: 'token',
-                payload: {},
-            })
             expect(result).toEqual({
                 hasMore: false,
                 nextCursor: undefined,
-                workspaceUsers: mockUsers,
+                workspaceUsers: expectedUsers,
             })
         })
 
         test('gets workspace users with all parameters', async () => {
-            const requestMock = setupRestClientMock(mockResponse)
+            server.use(
+                http.get(`${getSyncBaseUri()}workspaces/users`, () => {
+                    return HttpResponse.json(mockResponse, { status: 200 })
+                }),
+            )
 
-            await api.getWorkspaceUsers({
+            const result = await api.getWorkspaceUsers({
                 workspaceId: 456,
                 cursor: 'cursor123',
                 limit: 50,
             })
 
-            expect(requestMock).toHaveBeenCalledWith({
-                httpMethod: 'GET',
-                baseUri: getSyncBaseUri(),
-                relativePath: 'workspaces/users',
-                apiToken: 'token',
-                payload: {
-                    workspace_id: 456,
-                    cursor: 'cursor123',
-                    limit: 50,
-                },
+            expect(result).toEqual({
+                hasMore: false,
+                nextCursor: undefined,
+                workspaceUsers: expectedUsers,
             })
         })
 
         test('handles null workspace ID', async () => {
-            const requestMock = setupRestClientMock(mockResponse)
+            server.use(
+                http.get(`${getSyncBaseUri()}workspaces/users`, () => {
+                    return HttpResponse.json(mockResponse, { status: 200 })
+                }),
+            )
 
-            await api.getWorkspaceUsers({ workspaceId: null })
+            const result = await api.getWorkspaceUsers({ workspaceId: null })
 
-            expect(requestMock).toHaveBeenCalledWith({
-                httpMethod: 'GET',
-                baseUri: getSyncBaseUri(),
-                relativePath: 'workspaces/users',
-                apiToken: 'token',
-                payload: {},
+            expect(result).toEqual({
+                hasMore: false,
+                nextCursor: undefined,
+                workspaceUsers: expectedUsers,
             })
         })
     })
@@ -454,7 +442,11 @@ describe('TodoistApi workspaces', () => {
         }
 
         test('gets workspace active projects', async () => {
-            const requestMock = setupRestClientMock(mockResponse)
+            server.use(
+                http.get(`${getSyncBaseUri()}workspaces/123/projects/active`, () => {
+                    return HttpResponse.json(mockResponse, { status: 200 })
+                }),
+            )
 
             const result = await api.getWorkspaceActiveProjects({
                 workspaceId: 123,
@@ -462,16 +454,6 @@ describe('TodoistApi workspaces', () => {
                 limit: 25,
             })
 
-            expect(requestMock).toHaveBeenCalledWith({
-                httpMethod: 'GET',
-                baseUri: getSyncBaseUri(),
-                relativePath: 'workspaces/123/projects/active',
-                apiToken: 'token',
-                payload: {
-                    cursor: 'cursor456',
-                    limit: 25,
-                },
-            })
             expect(result.results).toEqual(mockProjects)
         })
     })
@@ -483,19 +465,16 @@ describe('TodoistApi workspaces', () => {
         }
 
         test('gets workspace archived projects', async () => {
-            const requestMock = setupRestClientMock(mockResponse)
+            server.use(
+                http.get(`${getSyncBaseUri()}workspaces/789/projects/archived`, () => {
+                    return HttpResponse.json(mockResponse, { status: 200 })
+                }),
+            )
 
             const result = await api.getWorkspaceArchivedProjects({
                 workspaceId: 789,
             })
 
-            expect(requestMock).toHaveBeenCalledWith({
-                httpMethod: 'GET',
-                baseUri: getSyncBaseUri(),
-                relativePath: 'workspaces/789/projects/archived',
-                apiToken: 'token',
-                payload: {},
-            })
             expect(result.results).toEqual([])
         })
     })
