@@ -1,4 +1,4 @@
-import type { HttpResponse, RetryConfig } from '../types/http'
+import type { HttpResponse, RetryConfig, CustomFetch, CustomFetchResponse } from '../types/http'
 import { isNetworkError } from '../types/http'
 
 /**
@@ -62,14 +62,32 @@ function createTimeoutSignal(timeoutMs: number, existingSignal?: AbortSignal): A
 }
 
 /**
+ * Converts native fetch Response to CustomFetchResponse for consistency
+ */
+function convertResponseToCustomFetch(response: Response): CustomFetchResponse {
+    // Clone the response so we can read it multiple times (if clone method exists)
+    const clonedResponse = response.clone ? response.clone() : response
+
+    return {
+        ok: response.ok,
+        status: response.status,
+        statusText: response.statusText,
+        headers: headersToObject(response.headers),
+        text: () => clonedResponse.text(),
+        json: () => response.json(),
+    }
+}
+
+/**
  * Performs a fetch request with retry logic and timeout support
  */
 export async function fetchWithRetry<T = unknown>(args: {
     url: string
     options?: RequestInit & { timeout?: number }
     retryConfig?: Partial<RetryConfig>
+    customFetch?: CustomFetch
 }): Promise<HttpResponse<T>> {
-    const { url, options = {}, retryConfig = {} } = args
+    const { url, options = {}, retryConfig = {}, customFetch } = args
     const config = { ...DEFAULT_RETRY_CONFIG, ...retryConfig }
     const { timeout, signal: userSignal, ...fetchOptions } = options
 
@@ -83,14 +101,25 @@ export async function fetchWithRetry<T = unknown>(args: {
                 requestSignal = createTimeoutSignal(timeout, requestSignal)
             }
 
-            const response = await fetch(url, {
-                ...fetchOptions,
-                signal: requestSignal,
-            })
+            // Use custom fetch or native fetch
+            let fetchResponse: CustomFetchResponse
+            if (customFetch) {
+                fetchResponse = await customFetch(url, {
+                    ...fetchOptions,
+                    signal: requestSignal,
+                    timeout,
+                })
+            } else {
+                const nativeResponse = await fetch(url, {
+                    ...fetchOptions,
+                    signal: requestSignal,
+                })
+                fetchResponse = convertResponseToCustomFetch(nativeResponse)
+            }
 
             // Check if the response is successful
-            if (!response.ok) {
-                const errorMessage = `HTTP ${response.status}: ${response.statusText}`
+            if (!fetchResponse.ok) {
+                const errorMessage = `HTTP ${fetchResponse.status}: ${fetchResponse.statusText}`
                 const error = new Error(errorMessage) as Error & {
                     status: number
                     statusText: string
@@ -98,18 +127,18 @@ export async function fetchWithRetry<T = unknown>(args: {
                     data?: unknown
                 }
 
-                error.status = response.status
-                error.statusText = response.statusText
+                error.status = fetchResponse.status
+                error.statusText = fetchResponse.statusText
                 error.response = {
                     data: undefined, // Will be set below if we can parse the response
-                    status: response.status,
-                    statusText: response.statusText,
-                    headers: headersToObject(response.headers),
+                    status: fetchResponse.status,
+                    statusText: fetchResponse.statusText,
+                    headers: fetchResponse.headers,
                 }
 
                 // Try to get response body for error details
                 try {
-                    const responseText = await response.text()
+                    const responseText = await fetchResponse.text()
                     let responseData: unknown
                     try {
                         responseData = responseText ? JSON.parse(responseText) : undefined
@@ -126,7 +155,7 @@ export async function fetchWithRetry<T = unknown>(args: {
             }
 
             // Parse response
-            const responseText = await response.text()
+            const responseText = await fetchResponse.text()
             let data: T
             try {
                 data = responseText ? (JSON.parse(responseText) as T) : (undefined as T)
@@ -137,9 +166,9 @@ export async function fetchWithRetry<T = unknown>(args: {
 
             return {
                 data,
-                status: response.status,
-                statusText: response.statusText,
-                headers: headersToObject(response.headers),
+                status: fetchResponse.status,
+                statusText: fetchResponse.statusText,
+                headers: fetchResponse.headers,
             }
         } catch (error) {
             lastError = error as Error

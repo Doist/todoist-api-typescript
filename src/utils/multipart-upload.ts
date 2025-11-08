@@ -2,7 +2,7 @@ import FormData from 'form-data'
 import { createReadStream } from 'fs'
 import { basename } from 'path'
 import { fetchWithRetry } from './fetch-with-retry'
-import type { HttpResponse } from '../types/http'
+import type { HttpResponse, CustomFetch } from '../types/http'
 
 type UploadMultipartFileArgs = {
     baseUrl: string
@@ -12,6 +12,7 @@ type UploadMultipartFileArgs = {
     fileName?: string
     additionalFields: Record<string, string | number | boolean>
     requestId?: string
+    customFetch?: CustomFetch
 }
 
 /**
@@ -78,7 +79,16 @@ function getContentTypeFromFileName(fileName: string): string {
  * ```
  */
 export async function uploadMultipartFile<T>(args: UploadMultipartFileArgs): Promise<T> {
-    const { baseUrl, authToken, endpoint, file, fileName, additionalFields, requestId } = args
+    const {
+        baseUrl,
+        authToken,
+        endpoint,
+        file,
+        fileName,
+        additionalFields,
+        requestId,
+        customFetch,
+    } = args
     const form = new FormData()
 
     // Determine file type and add to form data
@@ -137,6 +147,7 @@ export async function uploadMultipartFile<T>(args: UploadMultipartFileArgs): Pro
             headers,
             timeout: 30000, // 30 second timeout for file uploads
         },
+        customFetch,
     })
 
     return response.data

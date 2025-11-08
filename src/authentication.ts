@@ -1,6 +1,7 @@
 import { request, isSuccess } from './rest-client'
 import { v4 as uuid } from 'uuid'
 import { TodoistRequestError } from './types'
+import { CustomFetch } from './types/http'
 import {
     getAuthBaseUri,
     getSyncBaseUri,
@@ -9,6 +10,14 @@ import {
     ENDPOINT_REVOKE_TOKEN,
     ENDPOINT_REVOKE,
 } from './consts/endpoints'
+
+/**
+ * Options for authentication functions
+ */
+export type AuthOptions = {
+    baseUrl?: string
+    customFetch?: CustomFetch
+}
 
 /**
  * Permission scopes that can be requested during OAuth2 authorization.
@@ -140,10 +149,35 @@ export function getAuthorizationUrl({
  * @returns The access token response
  * @throws {@link TodoistRequestError} If the token exchange fails
  */
+// Function overloads for backward compatibility
+/**
+ * @deprecated Use options object instead: getAuthToken(args, { baseUrl, customFetch })
+ */
 export async function getAuthToken(
     args: AuthTokenRequestArgs,
     baseUrl?: string,
+): Promise<AuthTokenResponse>
+export async function getAuthToken(
+    args: AuthTokenRequestArgs,
+    options?: AuthOptions,
+): Promise<AuthTokenResponse>
+export async function getAuthToken(
+    args: AuthTokenRequestArgs,
+    baseUrlOrOptions?: string | AuthOptions,
 ): Promise<AuthTokenResponse> {
+    let baseUrl: string | undefined
+    let customFetch: CustomFetch | undefined
+
+    if (typeof baseUrlOrOptions === 'string') {
+        // Legacy signature: (args, baseUrl)
+        baseUrl = baseUrlOrOptions
+        customFetch = undefined
+    } else if (baseUrlOrOptions) {
+        // New signature: (args, options)
+        baseUrl = baseUrlOrOptions.baseUrl
+        customFetch = baseUrlOrOptions.customFetch
+    }
+
     try {
         const response = await request<AuthTokenResponse>({
             httpMethod: 'POST',
@@ -151,6 +185,7 @@ export async function getAuthToken(
             relativePath: ENDPOINT_GET_TOKEN,
             apiToken: undefined,
             payload: args,
+            customFetch,
         })
 
         if (response.status !== 200 || !response.data?.accessToken) {
@@ -189,16 +224,41 @@ export async function getAuthToken(
  * @returns True if revocation was successful
  * @see https://todoist.com/api/v1/docs#tag/Authorization/operation/revoke_access_token_api_api_v1_access_tokens_delete
  */
+// Function overloads for backward compatibility
+/**
+ * @deprecated Use options object instead: revokeAuthToken(args, { baseUrl, customFetch })
+ */
 export async function revokeAuthToken(
     args: RevokeAuthTokenRequestArgs,
     baseUrl?: string,
+): Promise<boolean>
+export async function revokeAuthToken(
+    args: RevokeAuthTokenRequestArgs,
+    options?: AuthOptions,
+): Promise<boolean>
+export async function revokeAuthToken(
+    args: RevokeAuthTokenRequestArgs,
+    baseUrlOrOptions?: string | AuthOptions,
 ): Promise<boolean> {
+    let baseUrl: string | undefined
+    let customFetch: CustomFetch | undefined
+
+    if (typeof baseUrlOrOptions === 'string') {
+        // Legacy signature: (args, baseUrl)
+        baseUrl = baseUrlOrOptions
+        customFetch = undefined
+    } else if (baseUrlOrOptions) {
+        // New signature: (args, options)
+        baseUrl = baseUrlOrOptions.baseUrl
+        customFetch = baseUrlOrOptions.customFetch
+    }
     const response = await request({
         httpMethod: 'POST',
         baseUri: getSyncBaseUri(baseUrl),
         relativePath: ENDPOINT_REVOKE_TOKEN,
         apiToken: undefined,
         payload: args,
+        customFetch,
     })
 
     return isSuccess(response)
@@ -223,10 +283,31 @@ export async function revokeAuthToken(
  * @see https://datatracker.ietf.org/doc/html/rfc7009
  * @see https://todoist.com/api/v1/docs#tag/Authorization
  */
+// Function overloads for backward compatibility
+/**
+ * @deprecated Use options object instead: revokeToken(args, { baseUrl, customFetch })
+ */
+export async function revokeToken(args: RevokeTokenRequestArgs, baseUrl?: string): Promise<boolean>
 export async function revokeToken(
     args: RevokeTokenRequestArgs,
-    baseUrl?: string,
+    options?: AuthOptions,
+): Promise<boolean>
+export async function revokeToken(
+    args: RevokeTokenRequestArgs,
+    baseUrlOrOptions?: string | AuthOptions,
 ): Promise<boolean> {
+    let baseUrl: string | undefined
+    let customFetch: CustomFetch | undefined
+
+    if (typeof baseUrlOrOptions === 'string') {
+        // Legacy signature: (args, baseUrl)
+        baseUrl = baseUrlOrOptions
+        customFetch = undefined
+    } else if (baseUrlOrOptions) {
+        // New signature: (args, options)
+        baseUrl = baseUrlOrOptions.baseUrl
+        customFetch = baseUrlOrOptions.customFetch
+    }
     const { clientId, clientSecret, token } = args
 
     // Create Basic Auth header as per RFC 7009
@@ -250,6 +331,7 @@ export async function revokeToken(
         requestId: undefined,
         hasSyncCommands: false,
         customHeaders: customHeaders,
+        customFetch,
     })
 
     return isSuccess(response)

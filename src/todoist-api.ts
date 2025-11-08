@@ -67,6 +67,7 @@ import {
     AllWorkspaceInvitationsResponse,
     WorkspaceLogoResponse,
 } from './types/requests'
+import { CustomFetch } from './types/http'
 import { request, isSuccess } from './rest-client'
 import {
     getSyncBaseUri,
@@ -170,22 +171,59 @@ function generatePath(...segments: string[]): string {
  * For more information about the Todoist API v1, see the [official documentation](https://todoist.com/api/v1).
  * If you're migrating from v9, please refer to the [migration guide](https://todoist.com/api/v1/docs#tag/Migrating-from-v9).
  */
+
+/**
+ * Configuration options for the TodoistApi constructor
+ */
+export type TodoistApiOptions = {
+    /**
+     * Optional custom API base URL. If not provided, defaults to Todoist's standard API endpoint
+     */
+    baseUrl?: string
+    /**
+     * Optional custom fetch function for alternative HTTP clients (e.g., Obsidian's requestUrl, React Native fetch)
+     */
+    customFetch?: CustomFetch
+}
+
 export class TodoistApi {
     private authToken: string
     private syncApiBase: string
+    private customFetch?: CustomFetch
 
+    // Constructor overloads for backward compatibility
+    /**
+     * @deprecated Use options object instead: new TodoistApi(token, { baseUrl, customFetch })
+     */
+    constructor(authToken: string, baseUrl?: string)
+    constructor(authToken: string, options?: TodoistApiOptions)
     constructor(
         /**
          * Your Todoist API token.
          */
         authToken: string,
         /**
-         * Optional custom API base URL. If not provided, defaults to Todoist's standard API endpoint
+         * Optional custom API base URL or options object
          */
-        baseUrl?: string,
+        baseUrlOrOptions?: string | TodoistApiOptions,
     ) {
         this.authToken = authToken
-        this.syncApiBase = getSyncBaseUri(baseUrl)
+
+        // Handle backward compatibility
+        if (typeof baseUrlOrOptions === 'string') {
+            // Legacy constructor: (authToken, baseUrl)
+            // eslint-disable-next-line no-console
+            console.warn(
+                'TodoistApi constructor with baseUrl as second parameter is deprecated. Use options object instead: new TodoistApi(token, { baseUrl, customFetch })',
+            )
+            this.syncApiBase = getSyncBaseUri(baseUrlOrOptions)
+            this.customFetch = undefined
+        } else {
+            // New constructor: (authToken, options)
+            const options: TodoistApiOptions = (baseUrlOrOptions as TodoistApiOptions) || {}
+            this.syncApiBase = getSyncBaseUri(options.baseUrl)
+            this.customFetch = options.customFetch
+        }
     }
 
     /**
@@ -199,6 +237,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: ENDPOINT_REST_USER,
             apiToken: this.authToken,
+            customFetch: this.customFetch,
         })
 
         return validateCurrentUser(response.data)
@@ -217,6 +256,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: generatePath(ENDPOINT_REST_TASKS, id),
             apiToken: this.authToken,
+            customFetch: this.customFetch,
         })
 
         return validateTask(response.data)
@@ -236,6 +276,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: ENDPOINT_REST_TASKS,
             apiToken: this.authToken,
+            customFetch: this.customFetch,
             payload: args,
         })
 
@@ -259,6 +300,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: ENDPOINT_REST_TASKS_FILTER,
             apiToken: this.authToken,
+            customFetch: this.customFetch,
             payload: args,
         })
 
@@ -284,6 +326,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: ENDPOINT_REST_TASKS_COMPLETED_BY_COMPLETION_DATE,
             apiToken: this.authToken,
+            customFetch: this.customFetch,
             payload: args,
         })
 
@@ -309,6 +352,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: ENDPOINT_REST_TASKS_COMPLETED_BY_DUE_DATE,
             apiToken: this.authToken,
+            customFetch: this.customFetch,
             payload: args,
         })
 
@@ -332,6 +376,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: ENDPOINT_REST_TASKS_COMPLETED_SEARCH,
             apiToken: this.authToken,
+            customFetch: this.customFetch,
             payload: args,
         })
 
@@ -354,6 +399,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: ENDPOINT_REST_TASKS,
             apiToken: this.authToken,
+            customFetch: this.customFetch,
             payload: args,
             requestId: requestId,
         })
@@ -373,6 +419,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: ENDPOINT_SYNC_QUICK_ADD,
             apiToken: this.authToken,
+            customFetch: this.customFetch,
             payload: args,
         })
 
@@ -394,6 +441,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: generatePath(ENDPOINT_REST_TASKS, id),
             apiToken: this.authToken,
+            customFetch: this.customFetch,
             payload: args,
             requestId: requestId,
         })
@@ -435,6 +483,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: ENDPOINT_SYNC,
             apiToken: this.authToken,
+            customFetch: this.customFetch,
             payload: syncRequest,
             requestId: requestId,
             hasSyncCommands: true,
@@ -475,6 +524,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: generatePath(ENDPOINT_REST_TASKS, id, ENDPOINT_REST_TASK_MOVE),
             apiToken: this.authToken,
+            customFetch: this.customFetch,
             payload: {
                 ...(args.projectId && { project_id: args.projectId }),
                 ...(args.sectionId && { section_id: args.sectionId }),
@@ -500,6 +550,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: generatePath(ENDPOINT_REST_TASKS, id, ENDPOINT_REST_TASK_CLOSE),
             apiToken: this.authToken,
+            customFetch: this.customFetch,
             requestId: requestId,
         })
         return isSuccess(response)
@@ -519,6 +570,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: generatePath(ENDPOINT_REST_TASKS, id, ENDPOINT_REST_TASK_REOPEN),
             apiToken: this.authToken,
+            customFetch: this.customFetch,
             requestId: requestId,
         })
         return isSuccess(response)
@@ -538,6 +590,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: generatePath(ENDPOINT_REST_TASKS, id),
             apiToken: this.authToken,
+            customFetch: this.customFetch,
             requestId: requestId,
         })
         return isSuccess(response)
@@ -556,6 +609,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: generatePath(ENDPOINT_REST_PROJECTS, id),
             apiToken: this.authToken,
+            customFetch: this.customFetch,
         })
 
         return validateProject(response.data)
@@ -575,6 +629,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: ENDPOINT_REST_PROJECTS,
             apiToken: this.authToken,
+            customFetch: this.customFetch,
             payload: args,
         })
 
@@ -600,6 +655,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: ENDPOINT_REST_PROJECTS_ARCHIVED,
             apiToken: this.authToken,
+            customFetch: this.customFetch,
             payload: args,
         })
 
@@ -625,6 +681,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: ENDPOINT_REST_PROJECTS,
             apiToken: this.authToken,
+            customFetch: this.customFetch,
             payload: args,
             requestId: requestId,
         })
@@ -651,6 +708,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: generatePath(ENDPOINT_REST_PROJECTS, id),
             apiToken: this.authToken,
+            customFetch: this.customFetch,
             payload: args,
             requestId: requestId,
         })
@@ -672,6 +730,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: generatePath(ENDPOINT_REST_PROJECTS, id),
             apiToken: this.authToken,
+            customFetch: this.customFetch,
             requestId: requestId,
         })
         return isSuccess(response)
@@ -694,6 +753,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: generatePath(ENDPOINT_REST_PROJECTS, id, PROJECT_ARCHIVE),
             apiToken: this.authToken,
+            customFetch: this.customFetch,
             requestId: requestId,
         })
         return validateProject(response.data)
@@ -716,6 +776,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: generatePath(ENDPOINT_REST_PROJECTS, id, PROJECT_UNARCHIVE),
             apiToken: this.authToken,
+            customFetch: this.customFetch,
             requestId: requestId,
         })
         return validateProject(response.data)
@@ -744,6 +805,7 @@ export class TodoistApi {
                 ENDPOINT_REST_PROJECT_COLLABORATORS,
             ),
             apiToken: this.authToken,
+            customFetch: this.customFetch,
             payload: args,
         })
 
@@ -767,6 +829,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: ENDPOINT_REST_SECTIONS,
             apiToken: this.authToken,
+            customFetch: this.customFetch,
             payload: args,
         })
 
@@ -789,6 +852,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: generatePath(ENDPOINT_REST_SECTIONS, id),
             apiToken: this.authToken,
+            customFetch: this.customFetch,
         })
 
         return validateSection(response.data)
@@ -807,6 +871,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: ENDPOINT_REST_SECTIONS,
             apiToken: this.authToken,
+            customFetch: this.customFetch,
             payload: args,
             requestId: requestId,
         })
@@ -829,6 +894,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: generatePath(ENDPOINT_REST_SECTIONS, id),
             apiToken: this.authToken,
+            customFetch: this.customFetch,
             payload: args,
             requestId: requestId,
         })
@@ -849,6 +915,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: generatePath(ENDPOINT_REST_SECTIONS, id),
             apiToken: this.authToken,
+            customFetch: this.customFetch,
             requestId: requestId,
         })
         return isSuccess(response)
@@ -867,6 +934,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: generatePath(ENDPOINT_REST_LABELS, id),
             apiToken: this.authToken,
+            customFetch: this.customFetch,
         })
 
         return validateLabel(response.data)
@@ -886,6 +954,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: ENDPOINT_REST_LABELS,
             apiToken: this.authToken,
+            customFetch: this.customFetch,
             payload: args,
         })
 
@@ -908,6 +977,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: ENDPOINT_REST_LABELS,
             apiToken: this.authToken,
+            customFetch: this.customFetch,
             payload: args,
             requestId: requestId,
         })
@@ -930,6 +1000,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: generatePath(ENDPOINT_REST_LABELS, id),
             apiToken: this.authToken,
+            customFetch: this.customFetch,
             payload: args,
             requestId: requestId,
         })
@@ -950,6 +1021,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: generatePath(ENDPOINT_REST_LABELS, id),
             apiToken: this.authToken,
+            customFetch: this.customFetch,
             requestId: requestId,
         })
         return isSuccess(response)
@@ -969,6 +1041,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: ENDPOINT_REST_LABELS_SHARED,
             apiToken: this.authToken,
+            customFetch: this.customFetch,
             payload: args,
         })
 
@@ -987,6 +1060,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: ENDPOINT_REST_LABELS_SHARED_RENAME,
             apiToken: this.authToken,
+            customFetch: this.customFetch,
             payload: args,
         })
 
@@ -1005,6 +1079,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: ENDPOINT_REST_LABELS_SHARED_REMOVE,
             apiToken: this.authToken,
+            customFetch: this.customFetch,
             payload: args,
         })
 
@@ -1027,6 +1102,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: ENDPOINT_REST_COMMENTS,
             apiToken: this.authToken,
+            customFetch: this.customFetch,
             payload: args,
         })
 
@@ -1049,6 +1125,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: generatePath(ENDPOINT_REST_COMMENTS, id),
             apiToken: this.authToken,
+            customFetch: this.customFetch,
         })
 
         return validateComment(response.data)
@@ -1067,6 +1144,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: ENDPOINT_REST_COMMENTS,
             apiToken: this.authToken,
+            customFetch: this.customFetch,
             payload: args,
             requestId: requestId,
         })
@@ -1089,6 +1167,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: generatePath(ENDPOINT_REST_COMMENTS, id),
             apiToken: this.authToken,
+            customFetch: this.customFetch,
             payload: args,
             requestId: requestId,
         })
@@ -1109,6 +1188,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: generatePath(ENDPOINT_REST_COMMENTS, id),
             apiToken: this.authToken,
+            customFetch: this.customFetch,
             requestId: requestId,
         })
         return isSuccess(response)
@@ -1124,6 +1204,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: ENDPOINT_REST_PRODUCTIVITY,
             apiToken: this.authToken,
+            customFetch: this.customFetch,
         })
         return validateProductivityStats(response.data)
     }
@@ -1150,6 +1231,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: ENDPOINT_REST_ACTIVITIES,
             apiToken: this.authToken,
+            customFetch: this.customFetch,
             payload: processedArgs as Record<string, unknown>,
         })
 
@@ -1219,6 +1301,7 @@ export class TodoistApi {
             fileName: args.fileName,
             additionalFields: additionalFields,
             requestId: requestId,
+            customFetch: this.customFetch,
         })
 
         return validateAttachment(data)
@@ -1244,6 +1327,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: ENDPOINT_REST_UPLOADS,
             apiToken: this.authToken,
+            customFetch: this.customFetch,
             payload: args,
             requestId: requestId,
         })
@@ -1268,6 +1352,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: ENDPOINT_WORKSPACE_INVITATIONS,
             apiToken: this.authToken,
+            customFetch: this.customFetch,
             payload: { workspace_id: args.workspaceId },
             requestId: requestId,
         })
@@ -1295,6 +1380,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: ENDPOINT_WORKSPACE_INVITATIONS_ALL,
             apiToken: this.authToken,
+            customFetch: this.customFetch,
             payload: queryParams,
             requestId: requestId,
         })
@@ -1318,6 +1404,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: ENDPOINT_WORKSPACE_INVITATIONS_DELETE,
             apiToken: this.authToken,
+            customFetch: this.customFetch,
             payload: {
                 workspace_id: args.workspaceId,
                 user_email: args.userEmail,
@@ -1344,6 +1431,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: getWorkspaceInvitationAcceptEndpoint(args.inviteCode),
             apiToken: this.authToken,
+            customFetch: this.customFetch,
             requestId: requestId,
         })
 
@@ -1366,6 +1454,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: getWorkspaceInvitationRejectEndpoint(args.inviteCode),
             apiToken: this.authToken,
+            customFetch: this.customFetch,
             requestId: requestId,
         })
 
@@ -1385,6 +1474,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: ENDPOINT_WORKSPACE_JOIN,
             apiToken: this.authToken,
+            customFetch: this.customFetch,
             payload: {
                 invite_code: args.inviteCode,
                 workspace_id: args.workspaceId,
@@ -1419,6 +1509,7 @@ export class TodoistApi {
                     delete: true,
                 },
                 requestId: requestId,
+                customFetch: this.customFetch,
             })
             return data
         }
@@ -1444,6 +1535,7 @@ export class TodoistApi {
             fileName: args.fileName,
             additionalFields: additionalFields,
             requestId: requestId,
+            customFetch: this.customFetch,
         })
 
         return data
@@ -1465,6 +1557,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: ENDPOINT_WORKSPACE_PLAN_DETAILS,
             apiToken: this.authToken,
+            customFetch: this.customFetch,
             payload: { workspace_id: args.workspaceId },
             requestId: requestId,
         })
@@ -1503,6 +1596,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: ENDPOINT_WORKSPACE_USERS,
             apiToken: this.authToken,
+            customFetch: this.customFetch,
             payload: queryParams,
             requestId: requestId,
         })
@@ -1538,6 +1632,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: getWorkspaceActiveProjectsEndpoint(args.workspaceId),
             apiToken: this.authToken,
+            customFetch: this.customFetch,
             payload: queryParams,
             requestId: requestId,
         })
@@ -1579,6 +1674,7 @@ export class TodoistApi {
             baseUri: this.syncApiBase,
             relativePath: getWorkspaceArchivedProjectsEndpoint(args.workspaceId),
             apiToken: this.authToken,
+            customFetch: this.customFetch,
             payload: queryParams,
             requestId: requestId,
         })
