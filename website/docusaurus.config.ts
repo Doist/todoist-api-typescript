@@ -111,6 +111,7 @@ const config: Config = {
                 readme: 'none',
                 tsconfig: '../tsconfig.json',
                 useCodeBlocks: true,
+                sanitizeComments: true,
                 sidebar: { autoConfiguration: true },
                 disableSources: true,
                 expandObjects: true,
