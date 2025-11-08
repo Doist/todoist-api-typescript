@@ -137,15 +137,43 @@ api.getProjects()
 
 ## Releases
 
-A new version is published to the NPM Registry whenever a new release on GitHub is created.
+This project uses [Release Please](https://github.com/googleapis/release-please) to automate releases. Releases are created automatically based on [Conventional Commits](https://www.conventionalcommits.org/).
 
-The version in both package.json and package-lock.json is updated with:
+### For Contributors
 
-`npm version <major|minor|patch> --no-git-tag-version`
+When making changes, use conventional commit messages:
 
-Once these changes have been pushed and merged, a release should be created, and a GitHub Action will automatically perform all the necessary steps and will release the version number that's specified inside the `package.json` file's version field.
+-   `feat:` - New features (triggers a minor version bump)
+-   `fix:` - Bug fixes (triggers a patch version bump)
+-   `feat!:` or `BREAKING CHANGE:` - Breaking changes (triggers a major version bump)
+-   `chore:`, `docs:`, `refactor:`, `perf:` - Other changes (included in changelog)
 
-Users of the API client can then update to this version in their `package.json`.
+Example:
+
+```
+feat: add support for recurring tasks
+fix: resolve issue with date parsing
+feat!: remove deprecated getTask method
+```
+
+### For Maintainers
+
+The release process is fully automated:
+
+1. **Automatic PR Creation**: When commits are merged to `main`, Release Please automatically creates or updates a release PR with:
+
+    - Updated version in `package.json`
+    - Updated `CHANGELOG.md`
+    - Aggregated changes since the last release
+
+2. **Review and Merge**: Review the release PR to ensure the version bump and changelog are correct, then merge it.
+
+3. **Automatic Release**: Upon merging the release PR:
+    - A GitHub release is automatically created with the new version tag
+    - The `publish.yml` workflow is triggered by the tag
+    - The package is automatically published to NPM
+
+Users of the API client can then update to the new version in their `package.json`.
 
 ### Feedback
 
