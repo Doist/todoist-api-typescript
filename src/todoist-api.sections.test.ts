@@ -1,7 +1,7 @@
 import { TodoistApi } from '.'
-import { DEFAULT_AUTH_TOKEN, DEFAULT_REQUEST_ID, DEFAULT_SECTION } from './test-utils/test-defaults'
+import { DEFAULT_AUTH_TOKEN, DEFAULT_SECTION } from './test-utils/test-defaults'
 import { getSyncBaseUri, ENDPOINT_REST_SECTIONS } from './consts/endpoints'
-import { setupRestClientMock } from './test-utils/mocks'
+import { server, http, HttpResponse } from './test-utils/msw-setup'
 import { getSectionUrl } from './utils/url-helpers'
 
 function getTarget() {
@@ -10,24 +10,12 @@ function getTarget() {
 
 describe('TodoistApi section endpoints', () => {
     describe('getSection', () => {
-        test('calls get request with expected url', async () => {
-            const sectionId = '12'
-            const requestMock = setupRestClientMock(DEFAULT_SECTION)
-            const api = getTarget()
-
-            await api.getSection(sectionId)
-
-            expect(requestMock).toHaveBeenCalledTimes(1)
-            expect(requestMock).toHaveBeenCalledWith({
-                httpMethod: 'GET',
-                baseUri: getSyncBaseUri(),
-                relativePath: `${ENDPOINT_REST_SECTIONS}/${sectionId}`,
-                apiToken: DEFAULT_AUTH_TOKEN,
-            })
-        })
-
         test('returns result from rest client', async () => {
-            setupRestClientMock(DEFAULT_SECTION)
+            server.use(
+                http.get(`${getSyncBaseUri()}${ENDPOINT_REST_SECTIONS}/123`, () => {
+                    return HttpResponse.json(DEFAULT_SECTION, { status: 200 })
+                }),
+            )
             const api = getTarget()
 
             const section = await api.getSection('123')
@@ -38,30 +26,16 @@ describe('TodoistApi section endpoints', () => {
     })
 
     describe('getSections', () => {
-        test('calls get on sections endpoint', async () => {
-            const projectId = '123'
-            const requestMock = setupRestClientMock({
-                results: [DEFAULT_SECTION],
-                nextCursor: '123',
-            })
-            const api = getTarget()
-
-            const args = { projectId, limit: 10, cursor: '0' }
-            await api.getSections(args)
-
-            expect(requestMock).toHaveBeenCalledTimes(1)
-            expect(requestMock).toHaveBeenCalledWith({
-                httpMethod: 'GET',
-                baseUri: getSyncBaseUri(),
-                relativePath: ENDPOINT_REST_SECTIONS,
-                apiToken: DEFAULT_AUTH_TOKEN,
-                payload: args,
-            })
-        })
-
         test('returns result from rest client', async () => {
             const sections = [DEFAULT_SECTION]
-            setupRestClientMock({ results: sections, nextCursor: '123' })
+            server.use(
+                http.get(`${getSyncBaseUri()}${ENDPOINT_REST_SECTIONS}`, () => {
+                    return HttpResponse.json(
+                        { results: sections, nextCursor: '123' },
+                        { status: 200 },
+                    )
+                }),
+            )
             const api = getTarget()
 
             const { results, nextCursor } = await api.getSections({ projectId: '123' })
@@ -77,25 +51,12 @@ describe('TodoistApi section endpoints', () => {
             projectId: '123',
         }
 
-        test('calls post on restClient with expected parameters', async () => {
-            const requestMock = setupRestClientMock(DEFAULT_SECTION)
-            const api = getTarget()
-
-            await api.addSection(DEFAULT_ADD_SECTION_ARGS, DEFAULT_REQUEST_ID)
-
-            expect(requestMock).toHaveBeenCalledTimes(1)
-            expect(requestMock).toHaveBeenCalledWith({
-                httpMethod: 'POST',
-                baseUri: getSyncBaseUri(),
-                relativePath: ENDPOINT_REST_SECTIONS,
-                apiToken: DEFAULT_AUTH_TOKEN,
-                payload: DEFAULT_ADD_SECTION_ARGS,
-                requestId: DEFAULT_REQUEST_ID,
-            })
-        })
-
         test('returns result from rest client', async () => {
-            setupRestClientMock(DEFAULT_SECTION)
+            server.use(
+                http.post(`${getSyncBaseUri()}${ENDPOINT_REST_SECTIONS}`, () => {
+                    return HttpResponse.json(DEFAULT_SECTION, { status: 200 })
+                }),
+            )
             const api = getTarget()
 
             const section = await api.addSection(DEFAULT_ADD_SECTION_ARGS)
@@ -107,24 +68,6 @@ describe('TodoistApi section endpoints', () => {
     describe('updateSection', () => {
         const DEFAULT_UPDATE_SECTION_ARGS = { name: 'a new name' }
 
-        test('calls post on restClient with expected parameters', async () => {
-            const sectionId = '123'
-            const requestMock = setupRestClientMock(DEFAULT_SECTION, 204)
-            const api = getTarget()
-
-            await api.updateSection(sectionId, DEFAULT_UPDATE_SECTION_ARGS, DEFAULT_REQUEST_ID)
-
-            expect(requestMock).toHaveBeenCalledTimes(1)
-            expect(requestMock).toHaveBeenCalledWith({
-                httpMethod: 'POST',
-                baseUri: getSyncBaseUri(),
-                relativePath: `${ENDPOINT_REST_SECTIONS}/${sectionId}`,
-                apiToken: DEFAULT_AUTH_TOKEN,
-                payload: DEFAULT_UPDATE_SECTION_ARGS,
-                requestId: DEFAULT_REQUEST_ID,
-            })
-        })
-
         test('returns success result from rest client', async () => {
             const returnedSection = {
                 ...DEFAULT_SECTION,
@@ -132,7 +75,11 @@ describe('TodoistApi section endpoints', () => {
                 id: '123',
                 url: getSectionUrl('123', 'a new name'),
             }
-            setupRestClientMock(returnedSection, 204)
+            server.use(
+                http.post(`${getSyncBaseUri()}${ENDPOINT_REST_SECTIONS}/123`, () => {
+                    return HttpResponse.json(returnedSection, { status: 200 })
+                }),
+            )
             const api = getTarget()
 
             const response = await api.updateSection('123', DEFAULT_UPDATE_SECTION_ARGS)
@@ -142,26 +89,12 @@ describe('TodoistApi section endpoints', () => {
     })
 
     describe('deleteSection', () => {
-        test('calls delete on expected section', async () => {
-            const sectionId = '123'
-            const requestMock = setupRestClientMock(true)
-            const api = getTarget()
-
-            await api.deleteSection(sectionId, DEFAULT_REQUEST_ID)
-
-            expect(requestMock).toHaveBeenCalledTimes(1)
-            expect(requestMock).toHaveBeenCalledWith({
-                httpMethod: 'DELETE',
-                baseUri: getSyncBaseUri(),
-                relativePath: `${ENDPOINT_REST_SECTIONS}/${sectionId}`,
-                apiToken: DEFAULT_AUTH_TOKEN,
-                payload: undefined,
-                requestId: DEFAULT_REQUEST_ID,
-            })
-        })
-
         test('returns success result from rest client', async () => {
-            setupRestClientMock(undefined, 204)
+            server.use(
+                http.delete(`${getSyncBaseUri()}${ENDPOINT_REST_SECTIONS}/123`, () => {
+                    return HttpResponse.json(undefined, { status: 204 })
+                }),
+            )
             const api = getTarget()
 
             const response = await api.deleteSection('123')

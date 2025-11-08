@@ -1,10 +1,8 @@
+import { jest } from '@jest/globals'
 import { uploadMultipartFile } from './multipart-upload'
 import * as fs from 'fs'
 import { Readable } from 'stream'
-
-// Mock fetch globally
-const mockFetch = jest.fn()
-global.fetch = mockFetch as unknown as typeof fetch
+import { server, http, HttpResponse, getLastRequest, captureRequest } from '../test-utils/msw-setup'
 
 // Mock fs
 jest.mock('fs')
@@ -17,18 +15,20 @@ describe('uploadMultipartFile', () => {
     const mockResponseData = { fileUrl: 'https://example.com/file.pdf' }
 
     beforeEach(() => {
-        jest.clearAllMocks()
-
-        // Mock successful fetch response
-        const mockResponse = {
-            ok: true,
-            status: 200,
-            statusText: 'OK',
-            headers: new Map([['content-type', 'application/json']]),
-            text: jest.fn().mockResolvedValue(JSON.stringify(mockResponseData)),
-            json: jest.fn().mockResolvedValue(mockResponseData),
-        }
-        mockFetch.mockResolvedValue(mockResponse as unknown as Response)
+        // Mock successful upload response with MSW
+        server.use(
+            http.post(`${baseUrl}${endpoint}`, async ({ request }) => {
+                // Capture request but don't try to parse FormData as JSON
+                let body: unknown = undefined
+                try {
+                    body = await request.formData()
+                } catch {
+                    // FormData parsing might fail in test environment
+                }
+                captureRequest({ request, body })
+                return HttpResponse.json(mockResponseData, { status: 200 })
+            }),
+        )
     })
 
     describe('file path uploads', () => {
@@ -47,16 +47,13 @@ describe('uploadMultipartFile', () => {
             })
 
             expect(mockedFs.createReadStream).toHaveBeenCalledWith('/path/to/document.pdf')
-            expect(mockFetch).toHaveBeenCalledTimes(1)
             expect(result).toEqual(mockResponseData)
 
-            const [url, config] = mockFetch.mock.calls[0]
-            expect(url).toBe(`${baseUrl}${endpoint}`)
-            expect((config as RequestInit)?.headers).toHaveProperty(
-                'Authorization',
-                'Bearer test-token',
-            )
-            expect((config as RequestInit)?.headers).toHaveProperty('X-Request-Id', 'req-123')
+            const capturedRequest = getLastRequest()
+            expect(capturedRequest).toBeDefined()
+            expect(capturedRequest?.url).toBe(`${baseUrl}${endpoint}`)
+            expect(capturedRequest?.headers['authorization']).toBe('Bearer test-token')
+            expect(capturedRequest?.headers['x-request-id']).toBe('req-123')
         })
 
         test('uploads file from path with custom fileName', async () => {
@@ -73,7 +70,9 @@ describe('uploadMultipartFile', () => {
             })
 
             expect(mockedFs.createReadStream).toHaveBeenCalledWith('/path/to/document.pdf')
-            expect(mockFetch).toHaveBeenCalledTimes(1)
+
+            const capturedRequest = getLastRequest()
+            expect(capturedRequest).toBeDefined()
         })
     })
 
@@ -90,15 +89,12 @@ describe('uploadMultipartFile', () => {
                 additionalFields: { workspace_id: 456 },
             })
 
-            expect(mockFetch).toHaveBeenCalledTimes(1)
             expect(result).toEqual(mockResponseData)
 
-            const [url, config] = mockFetch.mock.calls[0]
-            expect(url).toBe(`${baseUrl}${endpoint}`)
-            expect((config as RequestInit)?.headers).toHaveProperty(
-                'Authorization',
-                'Bearer test-token',
-            )
+            const capturedRequest = getLastRequest()
+            expect(capturedRequest).toBeDefined()
+            expect(capturedRequest?.url).toBe(`${baseUrl}${endpoint}`)
+            expect(capturedRequest?.headers['authorization']).toBe('Bearer test-token')
         })
 
         test('throws error when Buffer provided without fileName', async () => {
@@ -130,8 +126,10 @@ describe('uploadMultipartFile', () => {
                 additionalFields: { delete: true },
             })
 
-            expect(mockFetch).toHaveBeenCalledTimes(1)
             expect(result).toEqual(mockResponseData)
+
+            const capturedRequest = getLastRequest()
+            expect(capturedRequest).toBeDefined()
         })
 
         test('throws error when stream provided without fileName', async () => {
@@ -178,7 +176,8 @@ describe('uploadMultipartFile', () => {
                 additionalFields: additionalFields,
             })
 
-            expect(mockFetch).toHaveBeenCalledTimes(1)
+            const capturedRequest = getLastRequest()
+            expect(capturedRequest).toBeDefined()
             // We can't easily test FormData contents, but we verified the method doesn't throw
         })
 
@@ -194,7 +193,8 @@ describe('uploadMultipartFile', () => {
                 additionalFields: {},
             })
 
-            expect(mockFetch).toHaveBeenCalledTimes(1)
+            const capturedRequest = getLastRequest()
+            expect(capturedRequest).toBeDefined()
         })
     })
 
@@ -211,11 +211,9 @@ describe('uploadMultipartFile', () => {
                 additionalFields: {},
             })
 
-            const [, config] = mockFetch.mock.calls[0]
-            expect((config as RequestInit)?.headers).toHaveProperty(
-                'Authorization',
-                'Bearer test-token',
-            )
+            const capturedRequest = getLastRequest()
+            expect(capturedRequest).toBeDefined()
+            expect(capturedRequest?.headers['authorization']).toBe('Bearer test-token')
             // FormData.getHeaders() is mocked, so we can't test specific multipart headers
         })
 
@@ -231,8 +229,9 @@ describe('uploadMultipartFile', () => {
                 additionalFields: {},
             })
 
-            const [, config] = mockFetch.mock.calls[0]
-            expect((config as RequestInit)?.headers).not.toHaveProperty('X-Request-Id')
+            const capturedRequest = getLastRequest()
+            expect(capturedRequest).toBeDefined()
+            expect(capturedRequest?.headers['x-request-id']).toBeUndefined()
         })
     })
 })

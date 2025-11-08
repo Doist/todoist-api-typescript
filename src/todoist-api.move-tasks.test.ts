@@ -1,8 +1,24 @@
 import { TodoistApi } from '.'
 import { DEFAULT_AUTH_TOKEN, DEFAULT_REQUEST_ID, DEFAULT_TASK } from './test-utils/test-defaults'
 import { getSyncBaseUri, ENDPOINT_SYNC } from './consts/endpoints'
-import { setupRestClientMock } from './test-utils/mocks'
+import { server, http, HttpResponse } from './test-utils/msw-setup'
 import { getTaskUrl } from './utils/url-helpers'
+
+type SyncCommand = {
+    uuid: string
+    type: string
+    args: {
+        id?: string
+        project_id?: string
+        section_id?: string
+        parent_id?: string
+    }
+}
+
+type SyncPayload = {
+    commands: SyncCommand[]
+    resource_types: string[]
+}
 
 function getTarget(baseUrl = 'https://api.todoist.com') {
     return new TodoistApi(DEFAULT_AUTH_TOKEN, baseUrl)
@@ -18,82 +34,105 @@ describe('TodoistApi moveTasks', () => {
     }))
 
     test('moves multiple tasks to project with unique UUIDs', async () => {
-        const requestMock = setupRestClientMock({
-            items: MOVED_TASKS,
-            sync_status: { [expect.any(String)]: 'ok' },
-        })
+        let capturedPayload: SyncPayload | null = null
+
+        server.use(
+            http.post(`${getSyncBaseUri()}${ENDPOINT_SYNC}`, async ({ request }) => {
+                capturedPayload = (await request.json()) as SyncPayload
+                return HttpResponse.json(
+                    {
+                        items: MOVED_TASKS,
+                        sync_status: { [expect.any(String)]: 'ok' },
+                    },
+                    { status: 200 },
+                )
+            }),
+        )
         const api = getTarget()
 
         const result = await api.moveTasks(TASK_IDS, { projectId: '999' }, DEFAULT_REQUEST_ID)
-
-        // Verify API call structure
-        expect(requestMock).toHaveBeenCalledWith({
-            httpMethod: 'POST',
-            baseUri: getSyncBaseUri(),
-            relativePath: ENDPOINT_SYNC,
-            apiToken: DEFAULT_AUTH_TOKEN,
-            payload: expect.objectContaining({
-                commands: expect.arrayContaining([
-                    expect.objectContaining({
-                        type: 'item_move',
-                        args: expect.objectContaining({ project_id: '999' }),
-                    }),
-                ]),
-                resource_types: ['items'],
-            }),
-            requestId: DEFAULT_REQUEST_ID,
-            hasSyncCommands: true,
-        })
 
         // Verify return value
         expect(result).toEqual(MOVED_TASKS)
 
         // Critical: Verify unique UUIDs (see https://github.com/Doist/todoist-api-typescript/issues/310)
-        expect(requestMock).toHaveBeenCalledTimes(1)
-        const mockCall = requestMock.mock.calls[0] as [
-            { payload: { commands: Array<{ uuid: string }> } },
-        ]
-        const sentRequest = mockCall[0].payload
-        const uuids = sentRequest.commands.map((cmd) => cmd.uuid)
+        expect(capturedPayload).not.toBeNull()
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const payload = capturedPayload!
+
+        const commands: SyncCommand[] = payload.commands
+        expect(commands).toBeDefined()
+        expect(commands.length).toBe(TASK_IDS.length)
+
+        const uuids = commands.map((cmd) => cmd.uuid)
         const uniqueUuids = new Set(uuids)
         expect(uniqueUuids.size).toBe(TASK_IDS.length) // All UUIDs must be different
+
+        // Verify command structure
+        commands.forEach((cmd) => {
+            expect(cmd.type).toBe('item_move')
+            expect(cmd.args).toMatchObject({ project_id: '999' })
+        })
+        expect(payload.resource_types).toEqual(['items'])
     })
 
     test('supports section move', async () => {
-        const requestMock = setupRestClientMock({
-            items: [{ ...DEFAULT_TASK, id: '123', sectionId: '888' }],
-            sync_status: { [expect.any(String)]: 'ok' },
-        })
+        let capturedPayload: SyncPayload | null = null
+
+        server.use(
+            http.post(`${getSyncBaseUri()}${ENDPOINT_SYNC}`, async ({ request }) => {
+                capturedPayload = (await request.json()) as SyncPayload
+                return HttpResponse.json(
+                    {
+                        items: [{ ...DEFAULT_TASK, id: '123', sectionId: '888' }],
+                        sync_status: { [expect.any(String)]: 'ok' },
+                    },
+                    { status: 200 },
+                )
+            }),
+        )
         const api = getTarget()
 
         await api.moveTasks(['123'], { sectionId: '888' })
 
-        expect(requestMock).toHaveBeenCalledTimes(1)
-        const mockCall = requestMock.mock.calls[0] as [
-            { payload: { commands: Array<{ args: Record<string, unknown> }> } },
-        ]
-        const sentRequest = mockCall[0].payload
-        expect(sentRequest.commands[0].args).toEqual({
+        expect(capturedPayload).not.toBeNull()
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const payload = capturedPayload!
+
+        const commands: SyncCommand[] = payload.commands
+        const firstCommand: SyncCommand = commands[0]
+        expect(firstCommand.args).toEqual({
             id: '123',
             section_id: '888',
         })
     })
 
     test('supports parent move', async () => {
-        const requestMock = setupRestClientMock({
-            items: [{ ...DEFAULT_TASK, id: '123', parentId: '777' }],
-            sync_status: { [expect.any(String)]: 'ok' },
-        })
+        let capturedPayload: SyncPayload | null = null
+
+        server.use(
+            http.post(`${getSyncBaseUri()}${ENDPOINT_SYNC}`, async ({ request }) => {
+                capturedPayload = (await request.json()) as SyncPayload
+                return HttpResponse.json(
+                    {
+                        items: [{ ...DEFAULT_TASK, id: '123', parentId: '777' }],
+                        sync_status: { [expect.any(String)]: 'ok' },
+                    },
+                    { status: 200 },
+                )
+            }),
+        )
         const api = getTarget()
 
         await api.moveTasks(['123'], { parentId: '777' })
 
-        expect(requestMock).toHaveBeenCalledTimes(1)
-        const mockCall = requestMock.mock.calls[0] as [
-            { payload: { commands: Array<{ args: Record<string, unknown> }> } },
-        ]
-        const sentRequest = mockCall[0].payload
-        expect(sentRequest.commands[0].args).toEqual({
+        expect(capturedPayload).not.toBeNull()
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const payload = capturedPayload!
+
+        const commands: SyncCommand[] = payload.commands
+        const firstCommand: SyncCommand = commands[0]
+        expect(firstCommand.args).toEqual({
             id: '123',
             parent_id: '777',
         })
@@ -109,14 +148,30 @@ describe('TodoistApi moveTasks', () => {
         )
 
         // Test sync API error
-        setupRestClientMock({
-            items: [],
-            sync_status: { uuid: { error: 'TASK_NOT_FOUND', http_code: 404, error_extra: {} } },
-        })
+        server.use(
+            http.post(`${getSyncBaseUri()}${ENDPOINT_SYNC}`, () => {
+                return HttpResponse.json(
+                    {
+                        items: [],
+                        sync_status: {
+                            uuid: { error: 'TASK_NOT_FOUND', http_code: 404, error_extra: {} },
+                        },
+                    },
+                    { status: 200 },
+                )
+            }),
+        )
         await expect(api.moveTasks(['123'], { projectId: '999' })).rejects.toThrow('TASK_NOT_FOUND')
 
         // Test no tasks returned
-        setupRestClientMock({ sync_status: { [expect.any(String)]: 'ok' } })
+        server.use(
+            http.post(`${getSyncBaseUri()}${ENDPOINT_SYNC}`, () => {
+                return HttpResponse.json(
+                    { sync_status: { [expect.any(String)]: 'ok' } },
+                    { status: 200 },
+                )
+            }),
+        )
         await expect(api.moveTasks(['123'], { projectId: '999' })).rejects.toThrow(
             'Tasks not found',
         )
@@ -129,10 +184,17 @@ describe('TodoistApi moveTasks', () => {
             projectId: '999',
             url: getTaskUrl('999', DEFAULT_TASK.content),
         }
-        setupRestClientMock({
-            items: [...MOVED_TASKS, extraTask],
-            sync_status: { [expect.any(String)]: 'ok' },
-        })
+        server.use(
+            http.post(`${getSyncBaseUri()}${ENDPOINT_SYNC}`, () => {
+                return HttpResponse.json(
+                    {
+                        items: [...MOVED_TASKS, extraTask],
+                        sync_status: { [expect.any(String)]: 'ok' },
+                    },
+                    { status: 200 },
+                )
+            }),
+        )
         const api = getTarget()
 
         const result = await api.moveTasks(TASK_IDS, { projectId: '999' })

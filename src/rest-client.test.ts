@@ -1,10 +1,8 @@
+import { jest } from '@jest/globals'
 import { request, isSuccess, paramsSerializer } from './rest-client'
 import { TodoistRequestError } from './types/errors'
 import type { HttpResponse as TodoistHttpResponse } from './types/http'
-
-// Mock fetch globally
-const mockFetch = jest.fn()
-global.fetch = mockFetch as unknown as typeof fetch
+import { server, http, HttpResponse, getLastRequest, captureRequest } from './test-utils/msw-setup'
 
 const RANDOM_ID = 'SomethingRandom'
 
@@ -14,58 +12,28 @@ const DEFAULT_BASE_URI = 'https://someapi.com/'
 const DEFAULT_ENDPOINT = 'endpoint'
 const DEFAULT_AUTH_TOKEN = 'AToken'
 
-const DEFAULT_HEADERS = {
-    'Content-Type': 'application/json',
-}
-
-const AUTHORIZATION_HEADERS = {
-    ...DEFAULT_HEADERS,
-    Authorization: `Bearer ${DEFAULT_AUTH_TOKEN}`,
-}
-
 const DEFAULT_PAYLOAD = {
     someKey: 'someValue',
 }
 
 const DEFAULT_RESPONSE_DATA = DEFAULT_PAYLOAD
 
-// Helper to mock successful fetch responses
-function mockSuccessfulResponse(responseData = DEFAULT_RESPONSE_DATA, status = 200) {
-    const mockResponse = {
-        ok: status >= 200 && status < 300,
-        status,
-        statusText: status === 200 ? 'OK' : 'Error',
-        headers: new Map([['content-type', 'application/json']]),
-        text: jest.fn().mockResolvedValue(JSON.stringify(responseData)),
-        json: jest.fn().mockResolvedValue(responseData),
-    }
-
-    mockFetch.mockResolvedValue(mockResponse as unknown as Response)
-    return mockResponse
-}
-
-// Helper to mock error responses
-function mockErrorResponse(responseData: unknown, status: number) {
-    const mockResponse = {
-        ok: false,
-        status,
-        statusText: 'Error',
-        headers: new Map([['content-type', 'application/json']]),
-        text: jest.fn().mockResolvedValue(JSON.stringify(responseData)),
-        json: jest.fn().mockResolvedValue(responseData),
-    }
-
-    mockFetch.mockResolvedValue(mockResponse as unknown as Response)
-    return mockResponse
-}
-
 describe('restClient', () => {
-    beforeEach(() => {
-        mockFetch.mockClear()
-    })
-
     test('request makes GET request with correct URL and headers', async () => {
-        mockSuccessfulResponse(DEFAULT_RESPONSE_DATA)
+        const url = `${DEFAULT_BASE_URI}${DEFAULT_ENDPOINT}`
+
+        server.use(
+            http.get(url, ({ request }) => {
+                const headers: Record<string, string> = {}
+                request.headers.forEach((value, key) => {
+                    headers[key] = value
+                })
+
+                captureRequest({ request, body: undefined })
+
+                return HttpResponse.json(DEFAULT_RESPONSE_DATA, { status: 200 })
+            }),
+        )
 
         const result = await request({
             httpMethod: 'GET',
@@ -73,15 +41,12 @@ describe('restClient', () => {
             relativePath: DEFAULT_ENDPOINT,
         })
 
-        // Verify the fetch was called with correct parameters
-        expect(mockFetch).toHaveBeenCalledTimes(1)
-        expect(mockFetch).toHaveBeenCalledWith(
-            `${DEFAULT_BASE_URI}${DEFAULT_ENDPOINT}`,
-            expect.objectContaining({
-                method: 'GET',
-                headers: DEFAULT_HEADERS,
-            }),
-        )
+        // Verify the request was made
+        const capturedRequest = getLastRequest()
+        expect(capturedRequest).toBeDefined()
+        expect(capturedRequest?.url).toBe(url)
+        expect(capturedRequest?.method).toBe('GET')
+        expect(capturedRequest?.headers['content-type']).toBe('application/json')
 
         // Verify the response structure
         expect(result.data).toEqual(DEFAULT_RESPONSE_DATA)
@@ -90,7 +55,14 @@ describe('restClient', () => {
     })
 
     test('request adds authorization header if token is passed', async () => {
-        mockSuccessfulResponse(DEFAULT_RESPONSE_DATA)
+        const url = `${DEFAULT_BASE_URI}${DEFAULT_ENDPOINT}`
+
+        server.use(
+            http.get(url, ({ request }) => {
+                captureRequest({ request, body: undefined })
+                return HttpResponse.json(DEFAULT_RESPONSE_DATA, { status: 200 })
+            }),
+        )
 
         await request({
             httpMethod: 'GET',
@@ -99,13 +71,11 @@ describe('restClient', () => {
             apiToken: DEFAULT_AUTH_TOKEN,
         })
 
-        expect(mockFetch).toHaveBeenCalledWith(
-            `${DEFAULT_BASE_URI}${DEFAULT_ENDPOINT}`,
-            expect.objectContaining({
-                method: 'GET',
-                headers: AUTHORIZATION_HEADERS,
-            }),
-        )
+        // Verify the request included the authorization header
+        const capturedRequest = getLastRequest()
+        expect(capturedRequest).toBeDefined()
+        expect(capturedRequest?.headers['authorization']).toBe(`Bearer ${DEFAULT_AUTH_TOKEN}`)
+        expect(capturedRequest?.headers['content-type']).toBe('application/json')
     })
 
     test('paramsSerializer works correctly', () => {
@@ -121,7 +91,12 @@ describe('restClient', () => {
     })
 
     test('GET request converts camelCase parameters to snake_case in URL', async () => {
-        mockSuccessfulResponse(DEFAULT_RESPONSE_DATA)
+        server.use(
+            http.get(`${DEFAULT_BASE_URI}${DEFAULT_ENDPOINT}`, ({ request }) => {
+                captureRequest({ request, body: undefined })
+                return HttpResponse.json(DEFAULT_RESPONSE_DATA, { status: 200 })
+            }),
+        )
 
         await request({
             httpMethod: 'GET',
@@ -136,25 +111,24 @@ describe('restClient', () => {
             },
         })
 
-        // Verify the fetch was called with URL containing snake_case parameters
-        expect(mockFetch).toHaveBeenCalledWith(
-            expect.stringContaining('project_id=123'),
-            expect.objectContaining({
-                method: 'GET',
-                headers: AUTHORIZATION_HEADERS,
-            }),
-        )
-
-        // Verify all camelCase parameters were converted to snake_case
-        const [actualUrl] = mockFetch.mock.calls[0]
-        expect(actualUrl).toContain('project_id=123')
-        expect(actualUrl).toContain('is_completed=true')
-        expect(actualUrl).toContain('parent_item_id=456')
-        expect(actualUrl).toContain('due_datetime=2024-01-01T12%3A00%3A00Z')
+        // Verify all camelCase parameters were converted to snake_case in the URL
+        const capturedRequest = getLastRequest()
+        expect(capturedRequest).toBeDefined()
+        expect(capturedRequest?.url).toContain('project_id=123')
+        expect(capturedRequest?.url).toContain('is_completed=true')
+        expect(capturedRequest?.url).toContain('parent_item_id=456')
+        expect(capturedRequest?.url).toContain('due_datetime=2024-01-01T12%3A00%3A00Z')
+        expect(capturedRequest?.headers['authorization']).toBe(`Bearer ${DEFAULT_AUTH_TOKEN}`)
     })
 
     test('POST request with JSON payload', async () => {
-        mockSuccessfulResponse(DEFAULT_RESPONSE_DATA)
+        server.use(
+            http.post(`${DEFAULT_BASE_URI}${DEFAULT_ENDPOINT}`, async ({ request }) => {
+                const body = await request.json()
+                captureRequest({ request, body })
+                return HttpResponse.json(DEFAULT_RESPONSE_DATA, { status: 200 })
+            }),
+        )
 
         const result = await request({
             httpMethod: 'POST',
@@ -164,14 +138,12 @@ describe('restClient', () => {
             payload: DEFAULT_PAYLOAD,
         })
 
-        expect(mockFetch).toHaveBeenCalledWith(
-            `${DEFAULT_BASE_URI}${DEFAULT_ENDPOINT}`,
-            expect.objectContaining({
-                method: 'POST',
-                headers: expect.objectContaining(AUTHORIZATION_HEADERS),
-                body: JSON.stringify({ some_key: 'someValue' }), // Should be snake_case
-            }),
-        )
+        // Verify the request body was converted to snake_case
+        const capturedRequest = getLastRequest()
+        expect(capturedRequest).toBeDefined()
+        expect(capturedRequest?.method).toBe('POST')
+        expect(capturedRequest?.headers['authorization']).toBe(`Bearer ${DEFAULT_AUTH_TOKEN}`)
+        expect(capturedRequest?.body).toEqual({ some_key: 'someValue' })
 
         expect(result.data).toEqual(DEFAULT_RESPONSE_DATA)
     })
@@ -179,7 +151,12 @@ describe('restClient', () => {
     test('Error handling returns TodoistRequestError', async () => {
         const statusCode = 403
         const responseData = 'Forbidden'
-        mockErrorResponse(responseData, statusCode)
+
+        server.use(
+            http.get(`${DEFAULT_BASE_URI}${DEFAULT_ENDPOINT}`, () => {
+                return HttpResponse.json(responseData, { status: statusCode })
+            }),
+        )
 
         await expect(
             request({

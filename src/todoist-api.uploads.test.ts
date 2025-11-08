@@ -1,12 +1,9 @@
+import { jest } from '@jest/globals'
 import { TodoistApi } from './todoist-api'
-import { setupRestClientMock } from './test-utils/mocks'
 import { getSyncBaseUri } from './consts/endpoints'
 import * as fs from 'fs'
 import { Readable } from 'stream'
-
-// Mock fetch globally
-const mockFetch = jest.fn()
-global.fetch = mockFetch as unknown as typeof fetch
+import { server, http, HttpResponse, getLastRequest, captureRequest } from './test-utils/msw-setup'
 
 // Mock fs
 jest.mock('fs')
@@ -27,18 +24,19 @@ describe('TodoistApi uploads', () => {
         }
 
         beforeEach(() => {
-            jest.clearAllMocks()
-
-            // Mock successful fetch response
-            const mockResponse = {
-                ok: true,
-                status: 200,
-                statusText: 'OK',
-                headers: new Map([['content-type', 'application/json']]),
-                text: jest.fn().mockResolvedValue(JSON.stringify(mockUploadResult)),
-                json: jest.fn().mockResolvedValue(mockUploadResult),
-            }
-            mockFetch.mockResolvedValue(mockResponse as unknown as Response)
+            // Mock successful upload response with MSW
+            server.use(
+                http.post(`${getSyncBaseUri()}uploads`, async ({ request }) => {
+                    let body: unknown = undefined
+                    try {
+                        body = await request.formData()
+                    } catch {
+                        // FormData parsing might fail in test environment
+                    }
+                    captureRequest({ request, body })
+                    return HttpResponse.json(mockUploadResult, { status: 200 })
+                }),
+            )
         })
 
         test('uploads file from Buffer with fileName', async () => {
@@ -51,11 +49,10 @@ describe('TodoistApi uploads', () => {
                 projectId: '12345',
             })
 
-            expect(mockFetch).toHaveBeenCalledTimes(1)
-            const [url, config] = mockFetch.mock.calls[0]
-
-            expect(url).toBe(`${getSyncBaseUri()}uploads`)
-            expect((config as RequestInit)?.headers).toHaveProperty('Authorization', 'Bearer token')
+            const capturedRequest = getLastRequest()
+            expect(capturedRequest).toBeDefined()
+            expect(capturedRequest?.url).toBe(`${getSyncBaseUri()}uploads`)
+            expect(capturedRequest?.headers['authorization']).toBe('Bearer token')
             expect(result).toEqual(mockUploadResult)
         })
 
@@ -71,7 +68,9 @@ describe('TodoistApi uploads', () => {
             })
 
             expect(mockedFs.createReadStream).toHaveBeenCalledWith('/path/to/document.pdf')
-            expect(mockFetch).toHaveBeenCalledTimes(1)
+
+            const capturedRequest = getLastRequest()
+            expect(capturedRequest).toBeDefined()
             expect(result).toEqual(mockUploadResult)
         })
 
@@ -87,7 +86,9 @@ describe('TodoistApi uploads', () => {
             })
 
             expect(mockedFs.createReadStream).toHaveBeenCalledWith('/path/to/document.pdf')
-            expect(mockFetch).toHaveBeenCalledTimes(1)
+
+            const capturedRequest = getLastRequest()
+            expect(capturedRequest).toBeDefined()
         })
 
         test('uploads file from stream with fileName', async () => {
@@ -99,7 +100,8 @@ describe('TodoistApi uploads', () => {
                 fileName: 'stream-file.pdf',
             })
 
-            expect(mockFetch).toHaveBeenCalledTimes(1)
+            const capturedRequest = getLastRequest()
+            expect(capturedRequest).toBeDefined()
         })
 
         test.each([
@@ -139,9 +141,9 @@ describe('TodoistApi uploads', () => {
                 requestId,
             )
 
-            expect(mockFetch).toHaveBeenCalledTimes(1)
-            const [, config] = mockFetch.mock.calls[0]
-            expect((config as RequestInit)?.headers).toHaveProperty('X-Request-Id', requestId)
+            const capturedRequest = getLastRequest()
+            expect(capturedRequest).toBeDefined()
+            expect(capturedRequest?.headers['x-request-id']).toBe(requestId)
         })
 
         test('uploads file without projectId', async () => {
@@ -153,35 +155,56 @@ describe('TodoistApi uploads', () => {
                 fileName: 'test.pdf',
             })
 
-            expect(mockFetch).toHaveBeenCalledTimes(1)
+            const capturedRequest = getLastRequest()
+            expect(capturedRequest).toBeDefined()
         })
     })
 
     describe('deleteUpload', () => {
         test('deletes upload successfully', async () => {
-            const requestMock = setupRestClientMock('ok', 200)
+            server.use(
+                http.delete(`${getSyncBaseUri()}uploads`, async ({ request }) => {
+                    let body: unknown = undefined
+                    try {
+                        body = await request.json()
+                    } catch {
+                        // Might not have a body
+                    }
+                    captureRequest({ request, body })
+                    return HttpResponse.json('ok', { status: 200 })
+                }),
+            )
+
             const api = new TodoistApi('token')
 
             const result = await api.deleteUpload({
                 fileUrl: 'https://cdn.todoist.com/uploads/test-file.pdf',
             })
 
-            expect(requestMock).toHaveBeenCalledTimes(1)
-            expect(requestMock).toHaveBeenCalledWith({
-                httpMethod: 'DELETE',
-                baseUri: getSyncBaseUri(),
-                relativePath: 'uploads',
-                apiToken: 'token',
-                payload: {
-                    fileUrl: 'https://cdn.todoist.com/uploads/test-file.pdf',
-                },
-                requestId: undefined,
+            const capturedRequest = getLastRequest()
+            expect(capturedRequest).toBeDefined()
+            expect(capturedRequest?.method).toBe('DELETE')
+            expect(capturedRequest?.headers['authorization']).toBe('Bearer token')
+            expect(capturedRequest?.body).toEqual({
+                file_url: 'https://cdn.todoist.com/uploads/test-file.pdf',
             })
             expect(result).toBe(true)
         })
 
         test('deletes upload with requestId', async () => {
-            const requestMock = setupRestClientMock('ok', 200)
+            server.use(
+                http.delete(`${getSyncBaseUri()}uploads`, async ({ request }) => {
+                    let body: unknown = undefined
+                    try {
+                        body = await request.json()
+                    } catch {
+                        // Might not have a body
+                    }
+                    captureRequest({ request, body })
+                    return HttpResponse.json('ok', { status: 200 })
+                }),
+            )
+
             const api = new TodoistApi('token')
             const requestId = 'test-request-id'
 
@@ -192,16 +215,13 @@ describe('TodoistApi uploads', () => {
                 requestId,
             )
 
-            expect(requestMock).toHaveBeenCalledTimes(1)
-            expect(requestMock).toHaveBeenCalledWith({
-                httpMethod: 'DELETE',
-                baseUri: getSyncBaseUri(),
-                relativePath: 'uploads',
-                apiToken: 'token',
-                payload: {
-                    fileUrl: 'https://cdn.todoist.com/uploads/test-file.pdf',
-                },
-                requestId: requestId,
+            const capturedRequest = getLastRequest()
+            expect(capturedRequest).toBeDefined()
+            expect(capturedRequest?.method).toBe('DELETE')
+            expect(capturedRequest?.headers['authorization']).toBe('Bearer token')
+            expect(capturedRequest?.headers['x-request-id']).toBe(requestId)
+            expect(capturedRequest?.body).toEqual({
+                file_url: 'https://cdn.todoist.com/uploads/test-file.pdf',
             })
             expect(result).toBe(true)
         })

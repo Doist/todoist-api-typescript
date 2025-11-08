@@ -8,10 +8,10 @@ export type Command = {
 
 export type SyncError = {
     error: string
-    error_code: number
-    error_extra: Record<string, unknown>
-    error_tag: string
-    http_code: number
+    errorCode: number
+    errorExtra: Record<string, unknown>
+    errorTag: string
+    httpCode: number
 }
 
 export type SyncRequest = {
@@ -21,5 +21,5 @@ export type SyncRequest = {
 
 export type SyncResponse = {
     items?: Task[]
-    sync_status?: Record<string, 'ok' | SyncError>
+    syncStatus?: Record<string, 'ok' | SyncError>
 }
