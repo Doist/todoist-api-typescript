@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.1.1](https://github.com/Doist/todoist-api-typescript/compare/v6.1.0...v6.1.1) (2025-11-08)
+
+
+### Bug Fixes
+
+* resolve docs deployment failure and add PR validation ([#388](https://github.com/Doist/todoist-api-typescript/issues/388)) ([4e7646b](https://github.com/Doist/todoist-api-typescript/commit/4e7646b6338743a3fea79c786e36cd736d838023))
+* update Release Please to trigger publish workflow ([80d1079](https://github.com/Doist/todoist-api-typescript/commit/80d10799d64f56010c25af3cc3e39a47610225f0))
+
 ## [6.1.0](https://github.com/Doist/todoist-api-typescript/compare/v6.0.1...v6.1.0) (2025-11-08)
 
 ### Features
