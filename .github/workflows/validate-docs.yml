@@ -1,0 +1,47 @@
+name: Validate Documentation
+
+on:
+    pull_request:
+        paths:
+            - 'src/**'
+            - 'website/**'
+            - 'package*.json'
+            - '.nvmrc'
+
+jobs:
+    validate-docs:
+        runs-on: ubuntu-latest
+        timeout-minutes: 15
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version-file: .nvmrc
+
+            - name: Install SDK dependencies
+              run: npm ci
+
+            - name: Install docusaurus dependencies
+              working-directory: ./website
+              run: npm ci
+
+            - name: Build documentation
+              working-directory: ./website
+              run: npm run build
+
+            - name: Validate documentation build
+              run: |
+                  if [ ! -d "website/build" ]; then
+                      echo "❌ Documentation build failed - no build directory found"
+                      exit 1
+                  fi
+
+                  if [ ! -f "website/build/index.html" ]; then
+                      echo "❌ Documentation build failed - no index.html found"
+                      exit 1
+                  fi
+
+                  echo "✅ Documentation build successful"
