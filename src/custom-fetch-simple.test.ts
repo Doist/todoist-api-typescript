@@ -1,11 +1,43 @@
-import { TodoistApi } from './todoist-api'
+import { TodoistApi, type CurrentUser } from '.'
 import { CustomFetch, CustomFetchResponse } from './types/http'
-
-// Mock fetch globally
-const mockFetch = jest.fn()
-global.fetch = mockFetch as unknown as typeof fetch
+import { server, http, HttpResponse } from './test-utils/msw-setup'
+import { getSyncBaseUri, ENDPOINT_REST_USER } from './consts/endpoints'
 
 const DEFAULT_AUTH_TOKEN = 'test-auth-token'
+
+const MOCK_CURRENT_USER: CurrentUser = {
+    id: '123456789',
+    email: 'test.user@example.com',
+    fullName: 'Test User',
+    avatarBig: 'https://example.com/avatars/test_user_big.jpg',
+    avatarMedium: 'https://example.com/avatars/test_user_medium.jpg',
+    avatarS640: 'https://example.com/avatars/test_user_s640.jpg',
+    avatarSmall: 'https://example.com/avatars/test_user_small.jpg',
+    businessAccountId: null,
+    isPremium: true,
+    dateFormat: 0,
+    timeFormat: 0,
+    weeklyGoal: 100,
+    dailyGoal: 10,
+    completedCount: 102920,
+    completedToday: 12,
+    karma: 86394.0,
+    karmaTrend: 'up',
+    lang: 'en',
+    nextWeek: 1,
+    startDay: 1,
+    startPage: 'project?id=test_project_123',
+    tzInfo: {
+        gmtString: '+02:00',
+        hours: 2,
+        isDst: 1,
+        minutes: 0,
+        timezone: 'Europe/Madrid',
+    },
+    inboxProjectId: 'test_project_123',
+    daysOff: [6, 7],
+    weekendStartDay: 6,
+}
 
 describe('Custom Fetch Core Functionality', () => {
     beforeEach(() => {
@@ -38,22 +70,18 @@ describe('Custom Fetch Core Functionality', () => {
                 status: 200,
                 statusText: 'OK',
                 headers: { 'content-type': 'application/json' },
-                text: () => Promise.resolve('{"id":"123"}'),
-                json: () => Promise.resolve({ id: '123' }),
+                text: () => Promise.resolve(JSON.stringify(MOCK_CURRENT_USER)),
+                json: () => Promise.resolve(MOCK_CURRENT_USER),
             } as CustomFetchResponse)
 
             const api = new TodoistApi(DEFAULT_AUTH_TOKEN, {
                 customFetch: mockCustomFetch,
             })
 
-            try {
-                await api.getUser()
-            } catch (error) {
-                // Expected to fail validation, but custom fetch should be called
-            }
+            await api.getUser()
 
             expect(mockCustomFetch).toHaveBeenCalledWith(
-                'https://api.todoist.com/api/v1/user',
+                `${getSyncBaseUri()}${ENDPOINT_REST_USER}`,
                 expect.objectContaining({
                     method: 'GET',
                     headers: expect.objectContaining({
@@ -64,24 +92,16 @@ describe('Custom Fetch Core Functionality', () => {
         })
 
         it('should use native fetch when no custom fetch provided', async () => {
-            mockFetch.mockResolvedValue({
-                ok: true,
-                status: 200,
-                statusText: 'OK',
-                headers: new Map([['content-type', 'application/json']]),
-                text: jest.fn().mockResolvedValue('{"id":"123"}'),
-                json: jest.fn().mockResolvedValue({ id: '123' }),
-            })
+            server.use(
+                http.get(`${getSyncBaseUri()}${ENDPOINT_REST_USER}`, () => {
+                    return HttpResponse.json(MOCK_CURRENT_USER, { status: 200 })
+                }),
+            )
 
             const api = new TodoistApi(DEFAULT_AUTH_TOKEN)
+            const user = await api.getUser()
 
-            try {
-                await api.getUser()
-            } catch (error) {
-                // Expected to fail validation, but native fetch should be called
-            }
-
-            expect(mockFetch).toHaveBeenCalled()
+            expect(user).toEqual(MOCK_CURRENT_USER)
         })
     })
 })
