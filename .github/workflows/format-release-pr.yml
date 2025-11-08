@@ -1,0 +1,39 @@
+name: Format Release PR
+
+on:
+    pull_request:
+        branches:
+            - main
+
+jobs:
+    format:
+        # Only run on Release Please PRs
+        if: startsWith(github.head_ref, 'release-please--')
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+        steps:
+            - name: Checkout PR
+              uses: actions/checkout@v4
+              with:
+                  ref: ${{ github.head_ref }}
+                  token: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version-file: .nvmrc
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Format files
+              run: npm run format-fix
+
+            - name: Commit formatting changes
+              run: |
+                  git config --global user.name 'github-actions[bot]'
+                  git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+                  git add -A
+                  git diff --staged --quiet || git commit -m "chore: auto-format with prettier"
+                  git push
