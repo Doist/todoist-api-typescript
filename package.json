@@ -23,8 +23,8 @@
     },
     "scripts": {
         "clean": "rimraf dist",
-        "format-check": "npx prettier --check \"./**/*.{ts,tsx,json,md,yml,babelrc,html}\"",
-        "format-fix": "npx prettier --write \"./**/*.{ts,tsx,json,md,yml,babelrc,html}\"",
+        "format-check": "npx prettier --check \"./**/*.{ts,tsx,json,md,yml,babelrc,html}\" --ignore-path .prettierignore",
+        "format-fix": "npx prettier --write \"./**/*.{ts,tsx,json,md,yml,babelrc,html}\" --ignore-path .prettierignore",
         "lint": "eslint ./src --ext ts,tsx --fix",
         "lint-check": "eslint ./src --ext ts,tsx",
         "ts-compile-check": "npx tsc -p tsconfig.typecheck.json",

@@ -1,2 +1,5 @@
 # ignore auto-generated documentation website
 website
+
+# Exclude CHANGELOG.md as it's managed by Release Please
+CHANGELOG.md
