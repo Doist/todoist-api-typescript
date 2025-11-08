@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.1.4](https://github.com/Doist/todoist-api-typescript/compare/v6.1.3...v6.1.4) (2025-11-08)
+
+
+### Bug Fixes
+
+* exclude CHANGELOG.md from Prettier formatting ([06a7601](https://github.com/Doist/todoist-api-typescript/commit/06a7601f2d0ce0e54855a4239adb2fad67032f51))
+
 ## [6.1.3](https://github.com/Doist/todoist-api-typescript/compare/v6.1.2...v6.1.3) (2025-11-08)
 
 
