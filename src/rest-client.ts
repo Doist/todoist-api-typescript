@@ -44,8 +44,14 @@ export function paramsSerializer(params: Record<string, unknown>) {
         if (value != null) {
             if (Array.isArray(value)) {
                 qs.append(key, value.join(','))
-            } else {
+            } else if (
+                typeof value === 'string' ||
+                typeof value === 'number' ||
+                typeof value === 'boolean'
+            ) {
                 qs.append(key, String(value))
+            } else {
+                qs.append(key, JSON.stringify(value))
             }
         }
     })

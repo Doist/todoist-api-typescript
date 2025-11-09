@@ -3,3 +3,6 @@ website
 
 # Exclude CHANGELOG.md as it's managed by Release Please
 CHANGELOG.md
+
+# Ignore build output directories
+dist
