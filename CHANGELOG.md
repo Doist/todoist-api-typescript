@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.1.6](https://github.com/Doist/todoist-api-typescript/compare/v6.1.5...v6.1.6) (2025-11-10)
+
+
+### Miscellaneous
+
+* Expose `premiumStatus` user field ([#382](https://github.com/Doist/todoist-api-typescript/issues/382)) ([4c66fed](https://github.com/Doist/todoist-api-typescript/commit/4c66fedae165fd8d0aa5ddb84d0f393344cbf14e))
+
 ## [6.1.5](https://github.com/Doist/todoist-api-typescript/compare/v6.1.4...v6.1.5) (2025-11-10)
 
 
