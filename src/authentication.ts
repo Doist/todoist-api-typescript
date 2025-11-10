@@ -155,8 +155,9 @@ export function getAuthorizationUrl({
  */
 export async function getAuthToken(
     args: AuthTokenRequestArgs,
-    baseUrl?: string,
+    baseUrl: string,
 ): Promise<AuthTokenResponse>
+export async function getAuthToken(args: AuthTokenRequestArgs): Promise<AuthTokenResponse>
 export async function getAuthToken(
     args: AuthTokenRequestArgs,
     options?: AuthOptions,
@@ -230,8 +231,9 @@ export async function getAuthToken(
  */
 export async function revokeAuthToken(
     args: RevokeAuthTokenRequestArgs,
-    baseUrl?: string,
+    baseUrl: string,
 ): Promise<boolean>
+export async function revokeAuthToken(args: RevokeAuthTokenRequestArgs): Promise<boolean>
 export async function revokeAuthToken(
     args: RevokeAuthTokenRequestArgs,
     options?: AuthOptions,
@@ -287,7 +289,8 @@ export async function revokeAuthToken(
 /**
  * @deprecated Use options object instead: revokeToken(args, { baseUrl, customFetch })
  */
-export async function revokeToken(args: RevokeTokenRequestArgs, baseUrl?: string): Promise<boolean>
+export async function revokeToken(args: RevokeTokenRequestArgs, baseUrl: string): Promise<boolean>
+export async function revokeToken(args: RevokeTokenRequestArgs): Promise<boolean>
 export async function revokeToken(
     args: RevokeTokenRequestArgs,
     options?: AuthOptions,
