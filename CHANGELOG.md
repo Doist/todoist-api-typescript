@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.1.5](https://github.com/Doist/todoist-api-typescript/compare/v6.1.4...v6.1.5) (2025-11-10)
+
+
+### Bug Fixes
+
+* Correct the deprecations ([#393](https://github.com/Doist/todoist-api-typescript/issues/393)) ([e1b2fdc](https://github.com/Doist/todoist-api-typescript/commit/e1b2fdcd3e1c450eac2b0bdf6d9de897fc386820))
+
+
+### Miscellaneous
+
+* **deps:** update dependency @doist/eslint-config to v12 ([#371](https://github.com/Doist/todoist-api-typescript/issues/371)) ([e355e4b](https://github.com/Doist/todoist-api-typescript/commit/e355e4b2ade4cc231b9927f5caf7ce2a8dbd1fb6))
+
 ## [6.1.4](https://github.com/Doist/todoist-api-typescript/compare/v6.1.3...v6.1.4) (2025-11-08)
 
 
