@@ -195,7 +195,8 @@ export class TodoistApi {
     /**
      * @deprecated Use options object instead: new TodoistApi(token, { baseUrl, customFetch })
      */
-    constructor(authToken: string, baseUrl?: string)
+    constructor(authToken: string, baseUrl: string)
+    constructor(authToken: string)
     constructor(authToken: string, options?: TodoistApiOptions)
     constructor(
         /**
