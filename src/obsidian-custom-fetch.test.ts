@@ -77,6 +77,7 @@ describe('Obsidian Custom Fetch Integration', () => {
                 avatarSmall: null,
                 businessAccountId: null,
                 isPremium: true,
+                premiumStatus: 'current_personal_plan',
                 dateFormat: 0,
                 timeFormat: 0,
                 weeklyGoal: 100,
