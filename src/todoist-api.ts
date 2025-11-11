@@ -819,10 +819,11 @@ export class TodoistApi {
     /**
      * Retrieves all sections within a specific project or matching criteria.
      *
-     * @param args - Filter parameters such as project ID.
+     * @param args - Filter parameters such as project ID. If no projectId is provided,
+     * all sections are returned.
      * @returns A promise that resolves to an array of sections.
      */
-    async getSections(args: GetSectionsArgs): Promise<GetSectionsResponse> {
+    async getSections(args?: GetSectionsArgs): Promise<GetSectionsResponse> {
         const {
             data: { results, nextCursor },
         } = await request<GetSectionsResponse>({
