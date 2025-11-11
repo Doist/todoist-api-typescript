@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.1.7](https://github.com/Doist/todoist-api-typescript/compare/v6.1.6...v6.1.7) (2025-11-11)
+
+
+### Bug Fixes
+
+* Don't force `projectId` for fetching sections ([#395](https://github.com/Doist/todoist-api-typescript/issues/395)) ([8ddd19c](https://github.com/Doist/todoist-api-typescript/commit/8ddd19c68f8940f90978154352d6875cd775ab06))
+
 ## [6.1.6](https://github.com/Doist/todoist-api-typescript/compare/v6.1.5...v6.1.6) (2025-11-10)
 
 
