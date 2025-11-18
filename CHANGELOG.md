@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.1.8](https://github.com/Doist/todoist-api-typescript/compare/v6.1.7...v6.1.8) (2025-11-18)
+
+
+### Miscellaneous
+
+* **deps:** bump js-yaml from 3.14.1 to 3.14.2 in /website ([#397](https://github.com/Doist/todoist-api-typescript/issues/397)) ([4bc0d65](https://github.com/Doist/todoist-api-typescript/commit/4bc0d65ae3f2d338010b11738d554b9da3155f25))
+
 ## [6.1.7](https://github.com/Doist/todoist-api-typescript/compare/v6.1.6...v6.1.7) (2025-11-11)
 
 
