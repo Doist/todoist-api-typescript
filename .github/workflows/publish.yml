@@ -6,6 +6,12 @@ on:
             - 'v*'
     workflow_dispatch:
 
+permissions:
+    # Enable reading repository contents (allows checkout without token)
+    contents: read
+    # Enable the use of OIDC for trusted publishing and npm provenance
+    id-token: write
+
 jobs:
     publish:
         runs-on: ubuntu-latest
@@ -21,10 +27,11 @@ jobs:
                   scope: '@doist'
                   registry-url: 'https://registry.npmjs.org/'
 
+            - name: Ensure npm 11.5.1 or later is installed
+              run: npm install -g npm@latest
+
             - name: Install dependencies
               run: npm ci
 
             - name: Publish package
-              run: npm publish
-              env:
-                  NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
+              run: npm publish --provenance --access public
