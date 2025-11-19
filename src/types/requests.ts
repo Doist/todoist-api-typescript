@@ -259,7 +259,7 @@ export type GetProjectCollaboratorsResponse = {
  * @see https://todoist.com/api/v1/docs#tag/Sections/operation/get_sections_api_v1_sections_get
  */
 export type GetSectionsArgs = {
-    projectId: string | null
+    projectId?: string | null
     cursor?: string | null
     limit?: number
 }
