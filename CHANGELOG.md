@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.1.10](https://github.com/Doist/todoist-api-typescript/compare/v6.1.9...v6.1.10) (2025-11-19)
+
+
+### Bug Fixes
+
+* Remove dependency on `projectId` for GetSectionsArgs ([#405](https://github.com/Doist/todoist-api-typescript/issues/405)) ([89bc88a](https://github.com/Doist/todoist-api-typescript/commit/89bc88ae910c88d049ae8490eddb7770bda37c55))
+
+
+### Miscellaneous
+
+* **deps:** bump js-yaml ([#403](https://github.com/Doist/todoist-api-typescript/issues/403)) ([e37a4b1](https://github.com/Doist/todoist-api-typescript/commit/e37a4b12474c88dcd4bcacc553aa802f4de61cd8))
+
 ## [6.1.9](https://github.com/Doist/todoist-api-typescript/compare/v6.1.8...v6.1.9) (2025-11-18)
 
 
