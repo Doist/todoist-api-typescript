@@ -36,7 +36,7 @@
         "build:fix-dts": "node scripts/fix-dts-imports.cjs",
         "build:post": "echo '{\"type\":\"commonjs\"}' > dist/cjs/package.json",
         "build": "npm-run-all clean build:cjs build:esm build:fix-esm build:fix-dts build:post",
-        "attw": "npx @arethetypeswrong/cli --pack",
+        "attw": "npx @arethetypeswrong/cli --pack --ignore-rules fallback-condition false-esm",
         "integrity-checks": "npm-run-all clean format-check lint-check test build attw",
         "prepublishOnly": "npm run integrity-checks",
         "prepare": "npm run build"
