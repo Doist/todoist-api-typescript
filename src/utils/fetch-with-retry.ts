@@ -1,3 +1,4 @@
+import { Agent } from 'undici'
 import type { HttpResponse, RetryConfig, CustomFetch, CustomFetchResponse } from '../types/http'
 import { isNetworkError } from '../types/http'
 
@@ -13,6 +14,15 @@ const DEFAULT_RETRY_CONFIG: RetryConfig = {
         return retryNumber === 1 ? 0 : 500
     },
 }
+
+/**
+ * HTTP agent with keepAlive disabled to prevent hanging connections
+ * This ensures the process exits immediately after requests complete
+ */
+const httpAgent = new Agent({
+    keepAliveTimeout: 1, // Close connections after 1ms of idle time
+    keepAliveMaxTimeout: 1, // Maximum time to keep connections alive
+})
 
 /**
  * Converts Headers object to a plain object
@@ -113,6 +123,8 @@ export async function fetchWithRetry<T = unknown>(args: {
                 const nativeResponse = await fetch(url, {
                     ...fetchOptions,
                     signal: requestSignal,
+                    // @ts-expect-error - dispatcher is a valid option for Node.js fetch but not in the TS types
+                    dispatcher: httpAgent,
                 })
                 fetchResponse = convertResponseToCustomFetch(nativeResponse)
             }
