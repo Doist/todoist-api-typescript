@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.1.11](https://github.com/Doist/todoist-api-typescript/compare/v6.1.10...v6.1.11) (2025-11-24)
+
+
+### Bug Fixes
+
+* add .js extensions to declaration file imports to resolve type re-export issue ([#410](https://github.com/Doist/todoist-api-typescript/issues/410)) ([f059ad9](https://github.com/Doist/todoist-api-typescript/commit/f059ad9ac63b22b7b73037f1461049a5e7678ae0))
+* resolve 30-second connection hang in v6.0.0+ ([#408](https://github.com/Doist/todoist-api-typescript/issues/408)) ([27d6133](https://github.com/Doist/todoist-api-typescript/commit/27d61334273974be771f76f650a64c5e3f890bf1))
+
 ## [6.1.10](https://github.com/Doist/todoist-api-typescript/compare/v6.1.9...v6.1.10) (2025-11-19)
 
 
