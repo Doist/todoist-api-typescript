@@ -4,7 +4,7 @@ import { getSyncBaseUri, ENDPOINT_REST_USER, ENDPOINT_REST_PRODUCTIVITY } from '
 import { server, http, HttpResponse } from './test-utils/msw-setup'
 
 function getTarget(baseUrl = 'https://api.todoist.com') {
-    return new TodoistApi(DEFAULT_AUTH_TOKEN, baseUrl)
+    return new TodoistApi(DEFAULT_AUTH_TOKEN, { baseUrl })
 }
 
 const DEFAULT_CURRENT_USER_RESPONSE: CurrentUser = {

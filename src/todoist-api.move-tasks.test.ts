@@ -21,7 +21,7 @@ type SyncPayload = {
 }
 
 function getTarget(baseUrl = 'https://api.todoist.com') {
-    return new TodoistApi(DEFAULT_AUTH_TOKEN, baseUrl)
+    return new TodoistApi(DEFAULT_AUTH_TOKEN, { baseUrl })
 }
 
 describe('TodoistApi moveTasks', () => {
