@@ -20,7 +20,7 @@ import { server, http, HttpResponse } from './test-utils/msw-setup'
 import { getTaskUrl } from './utils/url-helpers'
 
 function getTarget(baseUrl = 'https://api.todoist.com') {
-    return new TodoistApi(DEFAULT_AUTH_TOKEN, baseUrl)
+    return new TodoistApi(DEFAULT_AUTH_TOKEN, { baseUrl })
 }
 
 describe('TodoistApi task endpoints', () => {

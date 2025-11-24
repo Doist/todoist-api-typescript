@@ -4,7 +4,7 @@ import { getSyncBaseUri, ENDPOINT_REST_ACTIVITIES } from './consts/endpoints'
 import { server, http, HttpResponse } from './test-utils/msw-setup'
 
 function getTarget(baseUrl = 'https://api.todoist.com') {
-    return new TodoistApi(DEFAULT_AUTH_TOKEN, baseUrl)
+    return new TodoistApi(DEFAULT_AUTH_TOKEN, { baseUrl })
 }
 
 const DEFAULT_ACTIVITY_RESPONSE: ActivityEvent[] = [
