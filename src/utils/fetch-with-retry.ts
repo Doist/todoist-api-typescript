@@ -36,15 +36,26 @@ function headersToObject(headers: Headers): Record<string, string> {
 }
 
 /**
- * Creates an AbortSignal that times out after the specified duration
+ * Creates an AbortSignal that aborts after timeoutMs. Returns the signal and a
+ * clear function to cancel the timeout early.
  */
-function createTimeoutSignal(timeoutMs: number, existingSignal?: AbortSignal): AbortSignal {
+function createTimeoutSignal(
+    timeoutMs: number,
+    existingSignal?: AbortSignal,
+): {
+    signal: AbortSignal
+    clear: () => void
+} {
     const controller = new AbortController()
 
     // Timeout logic
     const timeoutId = setTimeout(() => {
         controller.abort(new Error(`Request timeout after ${timeoutMs}ms`))
     }, timeoutMs)
+
+    function clear() {
+        clearTimeout(timeoutId)
+    }
 
     // If there's an existing signal, forward its abort
     if (existingSignal) {
@@ -68,7 +79,7 @@ function createTimeoutSignal(timeoutMs: number, existingSignal?: AbortSignal): A
         clearTimeout(timeoutId)
     })
 
-    return controller.signal
+    return { signal: controller.signal, clear }
 }
 
 /**
@@ -104,11 +115,17 @@ export async function fetchWithRetry<T = unknown>(args: {
     let lastError: Error | undefined
 
     for (let attempt = 0; attempt <= config.retries; attempt++) {
+        // Timeout clear function for this attempt (hoisted for catch scope)
+        let clearTimeoutFn: (() => void) | undefined
+
         try {
             // Set up timeout and signal handling
             let requestSignal = userSignal || undefined
             if (timeout && timeout > 0) {
-                requestSignal = createTimeoutSignal(timeout, requestSignal)
+                const timeoutResult = createTimeoutSignal(timeout, requestSignal)
+
+                requestSignal = timeoutResult.signal
+                clearTimeoutFn = timeoutResult.clear
             }
 
             // Use custom fetch or native fetch
@@ -176,6 +193,11 @@ export async function fetchWithRetry<T = unknown>(args: {
                 data = responseText as T
             }
 
+            // Success – clear pending timeout (if any) so Node can exit promptly
+            if (clearTimeoutFn) {
+                clearTimeoutFn()
+            }
+
             return {
                 data,
                 status: fetchResponse.status,
@@ -194,6 +216,11 @@ export async function fetchWithRetry<T = unknown>(args: {
                     const networkError = lastError
                     networkError.isNetworkError = true
                 }
+
+                if (clearTimeoutFn) {
+                    clearTimeoutFn()
+                }
+
                 throw lastError
             }
 
@@ -201,6 +228,11 @@ export async function fetchWithRetry<T = unknown>(args: {
             const delay = config.retryDelay(attempt + 1)
             if (delay > 0) {
                 await new Promise((resolve) => setTimeout(resolve, delay))
+            }
+
+            // Retry path – ensure this attempt's timeout is cleared before looping
+            if (clearTimeoutFn) {
+                clearTimeoutFn()
             }
         }
     }
