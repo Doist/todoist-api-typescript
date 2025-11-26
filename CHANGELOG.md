@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.1.12](https://github.com/Doist/todoist-api-typescript/compare/v6.1.11...v6.1.12) (2025-11-26)
+
+
+### Bug Fixes
+
+* Fix script hanging for 30 seconds ([#414](https://github.com/Doist/todoist-api-typescript/issues/414)) ([afd7094](https://github.com/Doist/todoist-api-typescript/commit/afd70949d8bcc32b09f3ae3217663ab7035cde66))
+
+
+### Miscellaneous
+
+* Update tests to not use deprecator ctor ([#411](https://github.com/Doist/todoist-api-typescript/issues/411)) ([bb71041](https://github.com/Doist/todoist-api-typescript/commit/bb710419ecd6f904367fb93353ec08f6839153a6))
+
 ## [6.1.11](https://github.com/Doist/todoist-api-typescript/compare/v6.1.10...v6.1.11) (2025-11-24)
 
 
