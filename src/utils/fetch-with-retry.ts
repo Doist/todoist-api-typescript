@@ -53,7 +53,9 @@ function createTimeoutSignal(
         controller.abort(new Error(`Request timeout after ${timeoutMs}ms`))
     }, timeoutMs)
 
-    const clear = () => clearTimeout(timeoutId)
+    function clear() {
+        clearTimeout(timeoutId)
+    }
 
     // If there's an existing signal, forward its abort
     if (existingSignal) {
