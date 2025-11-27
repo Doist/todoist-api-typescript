@@ -95,6 +95,7 @@ export const DEFAULT_TASK: Task = {
     noteCount: DEFAULT_NOTE_COUNT,
     dayOrder: DEFAULT_ORDER,
     isCollapsed: DEFAULT_IS_COLLAPSED,
+    isUncompletable: false,
     url: DEFAULT_TASK_URL,
 }
 
@@ -127,6 +128,7 @@ export const TASK_WITH_OPTIONALS_AS_NULL: Task = {
     description: DEFAULT_TASK_DESCRIPTION,
     dayOrder: DEFAULT_ORDER,
     isCollapsed: DEFAULT_IS_COLLAPSED,
+    isUncompletable: false,
     noteCount: DEFAULT_NOTE_COUNT,
     url: DEFAULT_TASK_URL,
 }

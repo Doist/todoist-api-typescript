@@ -55,6 +55,81 @@ describe('TodoistApi task endpoints', () => {
 
             expect(task).toEqual(DEFAULT_TASK)
         })
+
+        test('adds uncompletable prefix when isUncompletable is true', async () => {
+            const expectedTask = {
+                ...DEFAULT_TASK,
+                content: '* This is an uncompletable task',
+                isUncompletable: true,
+            }
+
+            server.use(
+                http.post(`${getSyncBaseUri()}${ENDPOINT_REST_TASKS}`, async ({ request }) => {
+                    const body = (await request.json()) as any
+                    expect(body.content).toBe('* This is an uncompletable task')
+                    return HttpResponse.json(expectedTask, { status: 200 })
+                }),
+            )
+            const api = getTarget()
+
+            const task = await api.addTask({
+                content: 'This is an uncompletable task',
+                isUncompletable: true,
+            })
+
+            expect(task.content).toBe('* This is an uncompletable task')
+            expect(task.isUncompletable).toBe(true)
+        })
+
+        test('preserves existing prefix when isUncompletable is false', async () => {
+            const expectedTask = {
+                ...DEFAULT_TASK,
+                content: '* Already has prefix',
+                isUncompletable: true,
+            }
+
+            server.use(
+                http.post(`${getSyncBaseUri()}${ENDPOINT_REST_TASKS}`, async ({ request }) => {
+                    const body = (await request.json()) as any
+                    expect(body.content).toBe('* Already has prefix')
+                    return HttpResponse.json(expectedTask, { status: 200 })
+                }),
+            )
+            const api = getTarget()
+
+            const task = await api.addTask({
+                content: '* Already has prefix',
+                isUncompletable: false,
+            })
+
+            expect(task.content).toBe('* Already has prefix')
+            expect(task.isUncompletable).toBe(true)
+        })
+
+        test('does not add prefix when isUncompletable is false', async () => {
+            const expectedTask = {
+                ...DEFAULT_TASK,
+                content: 'Regular completable task',
+                isUncompletable: false,
+            }
+
+            server.use(
+                http.post(`${getSyncBaseUri()}${ENDPOINT_REST_TASKS}`, async ({ request }) => {
+                    const body = (await request.json()) as any
+                    expect(body.content).toBe('Regular completable task')
+                    return HttpResponse.json(expectedTask, { status: 200 })
+                }),
+            )
+            const api = getTarget()
+
+            const task = await api.addTask({
+                content: 'Regular completable task',
+                isUncompletable: false,
+            })
+
+            expect(task.content).toBe('Regular completable task')
+            expect(task.isUncompletable).toBe(false)
+        })
     })
 
     describe('updateTask', () => {
@@ -80,6 +155,55 @@ describe('TodoistApi task endpoints', () => {
             const response = await api.updateTask('123', DEFAULT_UPDATE_TASK_ARGS)
 
             expect(response).toEqual(returnedTask)
+        })
+
+        test('processes content with isUncompletable when both are provided', async () => {
+            const returnedTask = {
+                ...DEFAULT_TASK,
+                content: '* Updated uncompletable task',
+                isUncompletable: true,
+                url: getTaskUrl(DEFAULT_TASK_ID, '* Updated uncompletable task'),
+            }
+
+            server.use(
+                http.post(`${getSyncBaseUri()}${ENDPOINT_REST_TASKS}/123`, async ({ request }) => {
+                    const body = (await request.json()) as any
+                    expect(body.content).toBe('* Updated uncompletable task')
+                    return HttpResponse.json(returnedTask, { status: 200 })
+                }),
+            )
+            const api = getTarget()
+
+            const response = await api.updateTask('123', {
+                content: 'Updated uncompletable task',
+                isUncompletable: true,
+            })
+
+            expect(response.content).toBe('* Updated uncompletable task')
+            expect(response.isUncompletable).toBe(true)
+        })
+
+        test('does not process content when only isUncompletable is provided', async () => {
+            const returnedTask = {
+                ...DEFAULT_TASK,
+                isUncompletable: false,
+            }
+
+            server.use(
+                http.post(`${getSyncBaseUri()}${ENDPOINT_REST_TASKS}/123`, async ({ request }) => {
+                    const body = (await request.json()) as any
+                    expect(body.content).toBeUndefined()
+                    expect(body.is_uncompletable).toBe(false) // Note: snake_case conversion
+                    return HttpResponse.json(returnedTask, { status: 200 })
+                }),
+            )
+            const api = getTarget()
+
+            const response = await api.updateTask('123', {
+                isUncompletable: false,
+            })
+
+            expect(response.isUncompletable).toBe(false)
         })
     })
 
@@ -151,6 +275,56 @@ describe('TodoistApi task endpoints', () => {
             const api = getTarget()
             const task = await api.quickAddTask(DEFAULT_QUICK_ADD_ARGS)
             expect(task).toEqual(DEFAULT_TASK)
+        })
+
+        test('adds uncompletable prefix when isUncompletable is true', async () => {
+            const expectedTask = {
+                ...DEFAULT_TASK,
+                content: '* Quick uncompletable task',
+                isUncompletable: true,
+            }
+
+            server.use(
+                http.post(`${getSyncBaseUri()}${ENDPOINT_SYNC_QUICK_ADD}`, async ({ request }) => {
+                    const body = (await request.json()) as any
+                    expect(body.text).toBe('* Quick uncompletable task')
+                    return HttpResponse.json(expectedTask, { status: 200 })
+                }),
+            )
+            const api = getTarget()
+
+            const task = await api.quickAddTask({
+                text: 'Quick uncompletable task',
+                isUncompletable: true,
+            })
+
+            expect(task.content).toBe('* Quick uncompletable task')
+            expect(task.isUncompletable).toBe(true)
+        })
+
+        test('preserves existing prefix even when isUncompletable is false', async () => {
+            const expectedTask = {
+                ...DEFAULT_TASK,
+                content: '* Already prefixed quick task',
+                isUncompletable: true,
+            }
+
+            server.use(
+                http.post(`${getSyncBaseUri()}${ENDPOINT_SYNC_QUICK_ADD}`, async ({ request }) => {
+                    const body = (await request.json()) as any
+                    expect(body.text).toBe('* Already prefixed quick task')
+                    return HttpResponse.json(expectedTask, { status: 200 })
+                }),
+            )
+            const api = getTarget()
+
+            const task = await api.quickAddTask({
+                text: '* Already prefixed quick task',
+                isUncompletable: false,
+            })
+
+            expect(task.content).toBe('* Already prefixed quick task')
+            expect(task.isUncompletable).toBe(true)
         })
     })
 

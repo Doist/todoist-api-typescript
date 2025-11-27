@@ -32,6 +32,7 @@ export type AddTaskArgs = {
     dueLang?: string
     deadlineLang?: string
     deadlineDate?: string
+    isUncompletable?: boolean
 } & RequireOneOrNone<{
     dueDate?: string
     dueDatetime?: string
@@ -141,6 +142,7 @@ export type UpdateTaskArgs = {
     assigneeId?: string | null
     deadlineDate?: string | null
     deadlineLang?: string | null
+    isUncompletable?: boolean
 } & RequireOneOrNone<{
     dueDate?: string
     dueDatetime?: string
@@ -160,6 +162,7 @@ export type QuickAddTaskArgs = {
     reminder?: string
     autoReminder?: boolean
     meta?: boolean
+    isUncompletable?: boolean
 }
 
 /**
