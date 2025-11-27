@@ -65,7 +65,7 @@ describe('TodoistApi task endpoints', () => {
 
             server.use(
                 http.post(`${getSyncBaseUri()}${ENDPOINT_REST_TASKS}`, async ({ request }) => {
-                    const body = (await request.json()) as any
+                    const body = (await request.json()) as Record<string, unknown>
                     expect(body.content).toBe('* This is an uncompletable task')
                     return HttpResponse.json(expectedTask, { status: 200 })
                 }),
@@ -90,7 +90,7 @@ describe('TodoistApi task endpoints', () => {
 
             server.use(
                 http.post(`${getSyncBaseUri()}${ENDPOINT_REST_TASKS}`, async ({ request }) => {
-                    const body = (await request.json()) as any
+                    const body = (await request.json()) as Record<string, unknown>
                     expect(body.content).toBe('* Already has prefix')
                     return HttpResponse.json(expectedTask, { status: 200 })
                 }),
@@ -115,7 +115,7 @@ describe('TodoistApi task endpoints', () => {
 
             server.use(
                 http.post(`${getSyncBaseUri()}${ENDPOINT_REST_TASKS}`, async ({ request }) => {
-                    const body = (await request.json()) as any
+                    const body = (await request.json()) as Record<string, unknown>
                     expect(body.content).toBe('Regular completable task')
                     return HttpResponse.json(expectedTask, { status: 200 })
                 }),
@@ -167,7 +167,7 @@ describe('TodoistApi task endpoints', () => {
 
             server.use(
                 http.post(`${getSyncBaseUri()}${ENDPOINT_REST_TASKS}/123`, async ({ request }) => {
-                    const body = (await request.json()) as any
+                    const body = (await request.json()) as Record<string, unknown>
                     expect(body.content).toBe('* Updated uncompletable task')
                     return HttpResponse.json(returnedTask, { status: 200 })
                 }),
@@ -191,7 +191,7 @@ describe('TodoistApi task endpoints', () => {
 
             server.use(
                 http.post(`${getSyncBaseUri()}${ENDPOINT_REST_TASKS}/123`, async ({ request }) => {
-                    const body = (await request.json()) as any
+                    const body = (await request.json()) as Record<string, unknown>
                     expect(body.content).toBeUndefined()
                     expect(body.is_uncompletable).toBe(false) // Note: snake_case conversion
                     return HttpResponse.json(returnedTask, { status: 200 })
@@ -286,7 +286,7 @@ describe('TodoistApi task endpoints', () => {
 
             server.use(
                 http.post(`${getSyncBaseUri()}${ENDPOINT_SYNC_QUICK_ADD}`, async ({ request }) => {
-                    const body = (await request.json()) as any
+                    const body = (await request.json()) as Record<string, unknown>
                     expect(body.text).toBe('* Quick uncompletable task')
                     return HttpResponse.json(expectedTask, { status: 200 })
                 }),
@@ -311,7 +311,7 @@ describe('TodoistApi task endpoints', () => {
 
             server.use(
                 http.post(`${getSyncBaseUri()}${ENDPOINT_SYNC_QUICK_ADD}`, async ({ request }) => {
-                    const body = (await request.json()) as any
+                    const body = (await request.json()) as Record<string, unknown>
                     expect(body.text).toBe('* Already prefixed quick task')
                     return HttpResponse.json(expectedTask, { status: 200 })
                 }),
