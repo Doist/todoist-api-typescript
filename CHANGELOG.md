@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.2.0](https://github.com/Doist/todoist-api-typescript/compare/v6.1.12...v6.2.0) (2025-11-27)
+
+
+### Features
+
+* Add uncompletable task support with isUncompletable field ([#418](https://github.com/Doist/todoist-api-typescript/issues/418)) ([93e007a](https://github.com/Doist/todoist-api-typescript/commit/93e007a09adb22b20b7b70bf069bc18bda573fe3))
+
+
+### Bug Fixes
+
+* Exclude website folder from triggering releases ([#417](https://github.com/Doist/todoist-api-typescript/issues/417)) ([26a7da8](https://github.com/Doist/todoist-api-typescript/commit/26a7da8d53d1edf3c2497c1f0cb7f83cc6cde383))
+* Replace 'any' with 'Record&lt;string, unknown&gt;' in test mocks ([#419](https://github.com/Doist/todoist-api-typescript/issues/419)) ([d95300f](https://github.com/Doist/todoist-api-typescript/commit/d95300fd3da480dd4936148cdaf8f729171ea1a1))
+
 ## [6.1.12](https://github.com/Doist/todoist-api-typescript/compare/v6.1.11...v6.1.12) (2025-11-26)
 
 
