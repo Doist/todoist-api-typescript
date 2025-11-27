@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { getProjectUrl, getTaskUrl, getSectionUrl } from '../utils/url-helpers'
+import { hasUncompletablePrefix } from '../utils/uncompletable-helpers'
 
 export const DueDateSchema = z
     .object({
@@ -63,10 +64,14 @@ export const TaskSchema = z
         noteCount: z.number().int(),
         dayOrder: z.number().int(),
         isCollapsed: z.boolean(),
+        isUncompletable: z.boolean().default(false),
     })
     .transform((data) => {
+        // Auto-detect uncompletable status from content prefix
+        const isUncompletable = hasUncompletablePrefix(data.content)
         return {
             ...data,
+            isUncompletable,
             url: getTaskUrl(data.id, data.content),
         }
     })

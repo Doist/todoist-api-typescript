@@ -133,6 +133,7 @@ import {
 import { formatDateToYYYYMMDD } from './utils/url-helpers'
 import { uploadMultipartFile } from './utils/multipart-upload'
 import { normalizeObjectTypeForApi, denormalizeObjectTypeFromApi } from './utils/activity-helpers'
+import { processTaskContent } from './utils/uncompletable-helpers'
 import { z } from 'zod'
 
 import { v4 as uuidv4 } from 'uuid'
@@ -395,13 +396,19 @@ export class TodoistApi {
      * @returns A promise that resolves to the created task.
      */
     async addTask(args: AddTaskArgs, requestId?: string): Promise<Task> {
+        // Process content based on isUncompletable flag
+        const processedArgs = {
+            ...args,
+            content: processTaskContent(args.content, args.isUncompletable),
+        }
+
         const response = await request<Task>({
             httpMethod: 'POST',
             baseUri: this.syncApiBase,
             relativePath: ENDPOINT_REST_TASKS,
             apiToken: this.authToken,
             customFetch: this.customFetch,
-            payload: args,
+            payload: processedArgs,
             requestId: requestId,
         })
 
@@ -415,13 +422,19 @@ export class TodoistApi {
      * @returns A promise that resolves to the created task.
      */
     async quickAddTask(args: QuickAddTaskArgs): Promise<Task> {
+        // Process text based on isUncompletable flag
+        const processedArgs = {
+            ...args,
+            text: processTaskContent(args.text, args.isUncompletable),
+        }
+
         const response = await request<Task>({
             httpMethod: 'POST',
             baseUri: this.syncApiBase,
             relativePath: ENDPOINT_SYNC_QUICK_ADD,
             apiToken: this.authToken,
             customFetch: this.customFetch,
-            payload: args,
+            payload: processedArgs,
         })
 
         return validateTask(response.data)
@@ -437,13 +450,20 @@ export class TodoistApi {
      */
     async updateTask(id: string, args: UpdateTaskArgs, requestId?: string): Promise<Task> {
         z.string().parse(id)
+
+        // Process content if both content and isUncompletable are provided
+        const processedArgs =
+            args.content && args.isUncompletable !== undefined
+                ? { ...args, content: processTaskContent(args.content, args.isUncompletable) }
+                : args
+
         const response = await request<Task>({
             httpMethod: 'POST',
             baseUri: this.syncApiBase,
             relativePath: generatePath(ENDPOINT_REST_TASKS, id),
             apiToken: this.authToken,
             customFetch: this.customFetch,
-            payload: args,
+            payload: processedArgs,
             requestId: requestId,
         })
 
