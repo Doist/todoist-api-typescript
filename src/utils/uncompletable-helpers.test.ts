@@ -7,124 +7,42 @@ import {
 
 describe('uncompletable-helpers', () => {
     describe('addUncompletablePrefix', () => {
-        test('adds prefix to content without prefix', () => {
-            expect(addUncompletablePrefix('Task content')).toBe('* Task content')
-        })
-
-        test('does not add prefix if already present', () => {
-            expect(addUncompletablePrefix('* Already prefixed')).toBe('* Already prefixed')
-        })
-
-        test('handles empty string', () => {
-            expect(addUncompletablePrefix('')).toBe('* ')
-        })
-
-        test('handles content with just asterisk (no space)', () => {
-            expect(addUncompletablePrefix('*No space')).toBe('* *No space')
-        })
-
-        test('handles content with multiple asterisks', () => {
-            expect(addUncompletablePrefix('** Bold text')).toBe('* ** Bold text')
+        test.each([
+            ['Task content', '* Task content'],
+            ['* Already prefixed', '* Already prefixed'],
+            ['', '* '],
+            ['*No space', '* *No space'],
+            ['** Bold text', '* ** Bold text'],
+        ])('transforms "%s" to "%s"', (input, expected) => {
+            expect(addUncompletablePrefix(input)).toBe(expected)
         })
     })
 
     describe('removeUncompletablePrefix', () => {
-        test('removes prefix from content with prefix', () => {
-            expect(removeUncompletablePrefix('* Task content')).toBe('Task content')
-        })
-
-        test('does not modify content without prefix', () => {
-            expect(removeUncompletablePrefix('Regular task')).toBe('Regular task')
-        })
-
-        test('handles content with just prefix', () => {
-            expect(removeUncompletablePrefix('* ')).toBe('')
-        })
-
-        test('does not remove asterisk without space', () => {
-            expect(removeUncompletablePrefix('*No space')).toBe('*No space')
-        })
-
-        test('handles content with multiple prefixes', () => {
-            expect(removeUncompletablePrefix('* * Double prefix')).toBe('* Double prefix')
+        test.each([
+            ['* Task content', 'Task content'],
+            ['Regular task', 'Regular task'],
+            ['* ', ''],
+            ['*No space', '*No space'],
+            ['* * Double prefix', '* Double prefix'],
+        ])('transforms "%s" to "%s"', (input, expected) => {
+            expect(removeUncompletablePrefix(input)).toBe(expected)
         })
     })
 
     describe('hasUncompletablePrefix', () => {
-        test('returns true for content with prefix', () => {
-            expect(hasUncompletablePrefix('* Task content')).toBe(true)
-        })
-
-        test('returns false for content without prefix', () => {
-            expect(hasUncompletablePrefix('Regular task')).toBe(false)
-        })
-
-        test('returns false for asterisk without space', () => {
-            expect(hasUncompletablePrefix('*No space')).toBe(false)
-        })
-
-        test('returns true for just the prefix', () => {
-            expect(hasUncompletablePrefix('* ')).toBe(true)
-        })
-
-        test('returns false for empty string', () => {
-            expect(hasUncompletablePrefix('')).toBe(false)
+        test.each([
+            ['* Task content', true],
+            ['Regular task', false],
+            ['*No space', false],
+            ['* ', true],
+            ['', false],
+        ])('returns %s for input "%s"', (input, expected) => {
+            expect(hasUncompletablePrefix(input)).toBe(expected)
         })
     })
 
     describe('processTaskContent', () => {
-        describe('content prefix takes precedence', () => {
-            test('preserves existing prefix even when isUncompletable is false', () => {
-                expect(processTaskContent('* Existing prefix', false)).toBe('* Existing prefix')
-            })
-
-            test('preserves existing prefix when isUncompletable is true', () => {
-                expect(processTaskContent('* Existing prefix', true)).toBe('* Existing prefix')
-            })
-
-            test('preserves existing prefix when isUncompletable is undefined', () => {
-                expect(processTaskContent('* Existing prefix')).toBe('* Existing prefix')
-            })
-        })
-
-        describe('adds prefix when requested and not present', () => {
-            test('adds prefix when isUncompletable is true', () => {
-                expect(processTaskContent('Regular task', true)).toBe('* Regular task')
-            })
-
-            test('does not add prefix when isUncompletable is false', () => {
-                expect(processTaskContent('Regular task', false)).toBe('Regular task')
-            })
-
-            test('does not add prefix when isUncompletable is undefined', () => {
-                expect(processTaskContent('Regular task')).toBe('Regular task')
-            })
-        })
-
-        describe('edge cases', () => {
-            test('handles empty string with isUncompletable true', () => {
-                expect(processTaskContent('', true)).toBe('* ')
-            })
-
-            test('handles empty string with isUncompletable false', () => {
-                expect(processTaskContent('', false)).toBe('')
-            })
-
-            test('handles content with asterisk but no space', () => {
-                expect(processTaskContent('*Bold text', true)).toBe('* *Bold text')
-            })
-
-            test('handles content with multiple asterisks', () => {
-                expect(processTaskContent('**Important task**', true)).toBe('* **Important task**')
-            })
-
-            test('handles content starting with space', () => {
-                expect(processTaskContent(' Indented task', true)).toBe('*  Indented task')
-            })
-        })
-    })
-
-    describe('integration test cases', () => {
         const testCases = [
             // Content prefix takes precedence
             {
