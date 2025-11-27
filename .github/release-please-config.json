@@ -4,6 +4,7 @@
         ".": {
             "release-type": "node",
             "package-name": "@doist/todoist-api-typescript",
+            "exclude-paths": ["website"],
             "changelog-sections": [
                 { "type": "feat", "section": "Features" },
                 { "type": "fix", "section": "Bug Fixes" },
