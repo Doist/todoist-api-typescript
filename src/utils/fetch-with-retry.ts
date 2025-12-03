@@ -1,4 +1,3 @@
-import { Agent } from 'undici'
 import type { HttpResponse, RetryConfig, CustomFetch, CustomFetchResponse } from '../types/http'
 import { isNetworkError } from '../types/http'
 
@@ -16,13 +15,40 @@ const DEFAULT_RETRY_CONFIG: RetryConfig = {
 }
 
 /**
- * HTTP agent with keepAlive disabled to prevent hanging connections
- * This ensures the process exits immediately after requests complete
+ * Type for the undici Agent - represents what we need from the Agent instance
+ * We don't need to match all properties, just what's required for the dispatcher
  */
-const httpAgent = new Agent({
-    keepAliveTimeout: 1, // Close connections after 1ms of idle time
-    keepAliveMaxTimeout: 1, // Maximum time to keep connections alive
-})
+type UndiciAgent = {
+    // This is an opaque type - we just need to be able to pass it as a dispatcher
+    readonly [key: string]: unknown
+}
+
+/**
+ * Cached HTTP agent to prevent creating multiple agents
+ * null = not initialized, undefined = browser env, UndiciAgent = Node.js env
+ */
+let httpAgent: UndiciAgent | undefined | null = null
+
+/**
+ * Gets the HTTP agent for Node.js environments or undefined for browser environments.
+ * Uses dynamic import to avoid loading undici in browser environments.
+ */
+async function getHttpAgent(): Promise<UndiciAgent | undefined> {
+    if (httpAgent === null) {
+        if (typeof process !== 'undefined' && process.versions?.node) {
+            // We're in Node.js - dynamically import undici
+            const { Agent } = await import('undici')
+            httpAgent = new Agent({
+                keepAliveTimeout: 1, // Close connections after 1ms of idle time
+                keepAliveMaxTimeout: 1, // Maximum time to keep connections alive
+            }) as unknown as UndiciAgent
+        } else {
+            // We're in browser - no agent needed
+            httpAgent = undefined
+        }
+    }
+    return httpAgent
+}
 
 /**
  * Converts Headers object to a plain object
@@ -141,7 +167,7 @@ export async function fetchWithRetry<T = unknown>(args: {
                     ...fetchOptions,
                     signal: requestSignal,
                     // @ts-expect-error - dispatcher is a valid option for Node.js fetch but not in the TS types
-                    dispatcher: httpAgent,
+                    dispatcher: await getHttpAgent(),
                 })
                 fetchResponse = convertResponseToCustomFetch(nativeResponse)
             }
