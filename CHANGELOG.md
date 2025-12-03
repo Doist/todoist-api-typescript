@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.2.1](https://github.com/Doist/todoist-api-typescript/compare/v6.2.0...v6.2.1) (2025-12-03)
+
+
+### Bug Fixes
+
+* Fix undici browser compatibility with dynamic imports ([#424](https://github.com/Doist/todoist-api-typescript/issues/424)) ([7cd8707](https://github.com/Doist/todoist-api-typescript/commit/7cd8707e1574122bd8494d4d9c8766faa19b0023))
+
+
+### Code Refactoring
+
+* reduce uncompletable test redundancy by 48% ([#420](https://github.com/Doist/todoist-api-typescript/issues/420)) ([e056fd5](https://github.com/Doist/todoist-api-typescript/commit/e056fd5c42c3754fa2e8b34edcaa68884385f69e))
+
 ## [6.2.0](https://github.com/Doist/todoist-api-typescript/compare/v6.1.12...v6.2.0) (2025-11-27)
 
 
