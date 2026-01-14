@@ -323,6 +323,15 @@ export type GetLabelsArgs = {
 }
 
 /**
+ * Arguments for searching labels.
+ */
+export type SearchLabelsArgs = {
+    query: string
+    cursor?: string | null
+    limit?: number
+}
+
+/**
  * Response from retrieving labels.
  * @see https://todoist.com/api/v1/docs#tag/Labels/operation/get_labels_api_v1_labels_get
  */

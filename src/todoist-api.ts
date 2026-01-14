@@ -36,6 +36,7 @@ import {
     SearchProjectsArgs,
     GetProjectCollaboratorsArgs,
     GetLabelsArgs,
+    SearchLabelsArgs,
     GetLabelsResponse,
     GetTasksResponse,
     GetProjectsResponse,
@@ -85,6 +86,7 @@ import {
     ENDPOINT_REST_TASK_REOPEN,
     ENDPOINT_REST_TASK_MOVE,
     ENDPOINT_REST_LABELS,
+    ENDPOINT_REST_LABELS_SEARCH,
     ENDPOINT_REST_PROJECT_COLLABORATORS,
     ENDPOINT_REST_SECTIONS,
     ENDPOINT_REST_SECTIONS_SEARCH,
@@ -1027,6 +1029,30 @@ export class TodoistApi {
             httpMethod: 'GET',
             baseUri: this.syncApiBase,
             relativePath: ENDPOINT_REST_LABELS,
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
+            payload: args,
+        })
+
+        return {
+            results: validateLabelArray(results),
+            nextCursor,
+        }
+    }
+
+    /**
+     * Searches labels by name.
+     *
+     * @param args - Search parameters including the query string.
+     * @returns A promise that resolves to a paginated response of labels.
+     */
+    async searchLabels(args: SearchLabelsArgs): Promise<GetLabelsResponse> {
+        const {
+            data: { results, nextCursor },
+        } = await request<GetLabelsResponse>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_REST_LABELS_SEARCH,
             apiToken: this.authToken,
             customFetch: this.customFetch,
             payload: args,
