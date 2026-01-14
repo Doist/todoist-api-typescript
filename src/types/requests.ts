@@ -277,6 +277,16 @@ export type GetSectionsArgs = {
 }
 
 /**
+ * Arguments for searching sections.
+ */
+export type SearchSectionsArgs = {
+    query: string
+    cursor?: string | null
+    limit?: number
+    projectId?: string | null
+}
+
+/**
  * Response from retrieving sections.
  * @see https://todoist.com/api/v1/docs#tag/Sections/operation/get_sections_api_v1_sections_get
  */

@@ -25,6 +25,7 @@ export const ENDPOINT_REST_TASKS_COMPLETED_BY_DUE_DATE =
     ENDPOINT_REST_TASKS + '/completed/by_due_date'
 export const ENDPOINT_REST_TASKS_COMPLETED_SEARCH = 'completed/search'
 export const ENDPOINT_REST_SECTIONS = 'sections'
+export const ENDPOINT_REST_SECTIONS_SEARCH = ENDPOINT_REST_SECTIONS + '/search'
 export const ENDPOINT_REST_LABELS = 'labels'
 export const ENDPOINT_REST_LABELS_SHARED = ENDPOINT_REST_LABELS + '/shared'
 export const ENDPOINT_REST_LABELS_SHARED_RENAME = ENDPOINT_REST_LABELS_SHARED + '/rename'
