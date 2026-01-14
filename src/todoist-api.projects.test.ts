@@ -9,6 +9,7 @@ import {
 import {
     getSyncBaseUri,
     ENDPOINT_REST_PROJECTS,
+    ENDPOINT_REST_PROJECTS_SEARCH,
     ENDPOINT_REST_PROJECT_COLLABORATORS,
     PROJECT_ARCHIVE,
     PROJECT_UNARCHIVE,
@@ -50,6 +51,26 @@ describe('TodoistApi project endpoints', () => {
             const api = getTarget()
 
             const { results, nextCursor } = await api.getProjects()
+
+            expect(results).toEqual(projects)
+            expect(nextCursor).toBe('123')
+        })
+    })
+
+    describe('searchProjects', () => {
+        test('returns result from rest client', async () => {
+            const projects = [DEFAULT_PROJECT, PROJECT_WITH_OPTIONALS_AS_NULL]
+            server.use(
+                http.get(`${getSyncBaseUri()}${ENDPOINT_REST_PROJECTS_SEARCH}`, () => {
+                    return HttpResponse.json(
+                        { results: projects, nextCursor: '123' },
+                        { status: 200 },
+                    )
+                }),
+            )
+            const api = getTarget()
+
+            const { results, nextCursor } = await api.searchProjects({ query: 'Work' })
 
             expect(results).toEqual(projects)
             expect(nextCursor).toBe('123')

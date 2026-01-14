@@ -33,6 +33,7 @@ import {
     RenameSharedLabelArgs,
     RemoveSharedLabelArgs,
     GetProjectsArgs,
+    SearchProjectsArgs,
     GetProjectCollaboratorsArgs,
     GetLabelsArgs,
     GetLabelsResponse,
@@ -77,6 +78,7 @@ import {
     ENDPOINT_REST_TASKS_COMPLETED_BY_DUE_DATE,
     ENDPOINT_REST_TASKS_COMPLETED_SEARCH,
     ENDPOINT_REST_PROJECTS,
+    ENDPOINT_REST_PROJECTS_SEARCH,
     ENDPOINT_SYNC_QUICK_ADD,
     ENDPOINT_REST_TASK_CLOSE,
     ENDPOINT_REST_TASK_REOPEN,
@@ -649,6 +651,30 @@ export class TodoistApi {
             httpMethod: 'GET',
             baseUri: this.syncApiBase,
             relativePath: ENDPOINT_REST_PROJECTS,
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
+            payload: args,
+        })
+
+        return {
+            results: validateProjectArray(results),
+            nextCursor,
+        }
+    }
+
+    /**
+     * Searches projects by name.
+     *
+     * @param args - Search parameters including the query string.
+     * @returns A promise that resolves to a paginated response of projects.
+     */
+    async searchProjects(args: SearchProjectsArgs): Promise<GetProjectsResponse> {
+        const {
+            data: { results, nextCursor },
+        } = await request<GetProjectsResponse>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_REST_PROJECTS_SEARCH,
             apiToken: this.authToken,
             customFetch: this.customFetch,
             payload: args,

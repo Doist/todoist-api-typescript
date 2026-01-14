@@ -190,6 +190,15 @@ export type GetProjectsArgs = {
 }
 
 /**
+ * Arguments for searching projects.
+ */
+export type SearchProjectsArgs = {
+    query: string
+    cursor?: string | null
+    limit?: number
+}
+
+/**
  * Response from retrieving projects.
  * @see https://todoist.com/api/v1/docs#tag/Projects/operation/get_projects_api_v1_projects_get
  */
