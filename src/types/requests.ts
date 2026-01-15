@@ -192,11 +192,12 @@ export type GetProjectsArgs = {
 /**
  * Arguments for searching projects.
  */
-export type SearchProjectsArgs = {
+type SearchArgs = {
     query: string
     cursor?: string | null
     limit?: number
 }
+export type SearchProjectsArgs = SearchArgs
 
 /**
  * Response from retrieving projects.
@@ -279,12 +280,7 @@ export type GetSectionsArgs = {
 /**
  * Arguments for searching sections.
  */
-export type SearchSectionsArgs = {
-    query: string
-    cursor?: string | null
-    limit?: number
-    projectId?: string | null
-}
+export type SearchSectionsArgs = SearchArgs & { projectId?: string | null }
 
 /**
  * Response from retrieving sections.
@@ -325,11 +321,7 @@ export type GetLabelsArgs = {
 /**
  * Arguments for searching labels.
  */
-export type SearchLabelsArgs = {
-    query: string
-    cursor?: string | null
-    limit?: number
-}
+export type SearchLabelsArgs = SearchArgs
 
 /**
  * Response from retrieving labels.
