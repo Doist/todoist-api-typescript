@@ -190,6 +190,16 @@ export type GetProjectsArgs = {
 }
 
 /**
+ * Arguments for searching projects.
+ */
+type SearchArgs = {
+    query: string
+    cursor?: string | null
+    limit?: number
+}
+export type SearchProjectsArgs = SearchArgs
+
+/**
  * Response from retrieving projects.
  * @see https://todoist.com/api/v1/docs#tag/Projects/operation/get_projects_api_v1_projects_get
  */
@@ -268,6 +278,11 @@ export type GetSectionsArgs = {
 }
 
 /**
+ * Arguments for searching sections.
+ */
+export type SearchSectionsArgs = SearchArgs & { projectId?: string | null }
+
+/**
  * Response from retrieving sections.
  * @see https://todoist.com/api/v1/docs#tag/Sections/operation/get_sections_api_v1_sections_get
  */
@@ -302,6 +317,11 @@ export type GetLabelsArgs = {
     cursor?: string | null
     limit?: number
 }
+
+/**
+ * Arguments for searching labels.
+ */
+export type SearchLabelsArgs = SearchArgs
 
 /**
  * Response from retrieving labels.

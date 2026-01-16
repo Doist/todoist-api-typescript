@@ -33,13 +33,16 @@ import {
     RenameSharedLabelArgs,
     RemoveSharedLabelArgs,
     GetProjectsArgs,
+    SearchProjectsArgs,
     GetProjectCollaboratorsArgs,
     GetLabelsArgs,
+    SearchLabelsArgs,
     GetLabelsResponse,
     GetTasksResponse,
     GetProjectsResponse,
     GetProjectCollaboratorsResponse,
     GetSectionsArgs,
+    SearchSectionsArgs,
     GetSectionsResponse,
     GetSharedLabelsResponse,
     GetCommentsResponse,
@@ -77,13 +80,16 @@ import {
     ENDPOINT_REST_TASKS_COMPLETED_BY_DUE_DATE,
     ENDPOINT_REST_TASKS_COMPLETED_SEARCH,
     ENDPOINT_REST_PROJECTS,
+    ENDPOINT_REST_PROJECTS_SEARCH,
     ENDPOINT_SYNC_QUICK_ADD,
     ENDPOINT_REST_TASK_CLOSE,
     ENDPOINT_REST_TASK_REOPEN,
     ENDPOINT_REST_TASK_MOVE,
     ENDPOINT_REST_LABELS,
+    ENDPOINT_REST_LABELS_SEARCH,
     ENDPOINT_REST_PROJECT_COLLABORATORS,
     ENDPOINT_REST_SECTIONS,
+    ENDPOINT_REST_SECTIONS_SEARCH,
     ENDPOINT_REST_COMMENTS,
     ENDPOINT_REST_LABELS_SHARED,
     ENDPOINT_REST_LABELS_SHARED_RENAME,
@@ -661,6 +667,30 @@ export class TodoistApi {
     }
 
     /**
+     * Searches projects by name.
+     *
+     * @param args - Search parameters including the query string.
+     * @returns A promise that resolves to a paginated response of projects.
+     */
+    async searchProjects(args: SearchProjectsArgs): Promise<GetProjectsResponse> {
+        const {
+            data: { results, nextCursor },
+        } = await request<GetProjectsResponse>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_REST_PROJECTS_SEARCH,
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
+            payload: args,
+        })
+
+        return {
+            results: validateProjectArray(results),
+            nextCursor,
+        }
+    }
+
+    /**
      * Retrieves all archived projects with optional filters.
      *
      * @param args - Optional filters for retrieving archived projects.
@@ -862,6 +892,30 @@ export class TodoistApi {
     }
 
     /**
+     * Searches sections by name.
+     *
+     * @param args - Search parameters including the query string.
+     * @returns A promise that resolves to a paginated response of sections.
+     */
+    async searchSections(args: SearchSectionsArgs): Promise<GetSectionsResponse> {
+        const {
+            data: { results, nextCursor },
+        } = await request<GetSectionsResponse>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_REST_SECTIONS_SEARCH,
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
+            payload: args,
+        })
+
+        return {
+            results: validateSectionArray(results),
+            nextCursor,
+        }
+    }
+
+    /**
      * Retrieves a single section by its ID.
      *
      * @param id - The unique identifier of the section.
@@ -975,6 +1029,30 @@ export class TodoistApi {
             httpMethod: 'GET',
             baseUri: this.syncApiBase,
             relativePath: ENDPOINT_REST_LABELS,
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
+            payload: args,
+        })
+
+        return {
+            results: validateLabelArray(results),
+            nextCursor,
+        }
+    }
+
+    /**
+     * Searches labels by name.
+     *
+     * @param args - Search parameters including the query string.
+     * @returns A promise that resolves to a paginated response of labels.
+     */
+    async searchLabels(args: SearchLabelsArgs): Promise<GetLabelsResponse> {
+        const {
+            data: { results, nextCursor },
+        } = await request<GetLabelsResponse>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_REST_LABELS_SEARCH,
             apiToken: this.authToken,
             customFetch: this.customFetch,
             payload: args,
