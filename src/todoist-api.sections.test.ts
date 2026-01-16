@@ -1,6 +1,10 @@
 import { TodoistApi } from '.'
 import { DEFAULT_AUTH_TOKEN, DEFAULT_SECTION } from './test-utils/test-defaults'
-import { getSyncBaseUri, ENDPOINT_REST_SECTIONS } from './consts/endpoints'
+import {
+    getSyncBaseUri,
+    ENDPOINT_REST_SECTIONS,
+    ENDPOINT_REST_SECTIONS_SEARCH,
+} from './consts/endpoints'
 import { server, http, HttpResponse } from './test-utils/msw-setup'
 import { getSectionUrl } from './utils/url-helpers'
 
@@ -42,6 +46,47 @@ describe('TodoistApi section endpoints', () => {
 
             expect(results).toEqual(sections)
             expect(nextCursor).toBe('123')
+        })
+    })
+
+    describe('searchSections', () => {
+        test('returns result from rest client', async () => {
+            const sections = [DEFAULT_SECTION]
+            server.use(
+                http.get(`${getSyncBaseUri()}${ENDPOINT_REST_SECTIONS_SEARCH}`, () => {
+                    return HttpResponse.json(
+                        { results: sections, nextCursor: null },
+                        { status: 200 },
+                    )
+                }),
+            )
+            const api = getTarget()
+
+            const { results, nextCursor } = await api.searchSections({ query: 'test' })
+
+            expect(results).toEqual(sections)
+            expect(nextCursor).toBeNull()
+        })
+
+        test('returns result with projectId filter', async () => {
+            const sections = [DEFAULT_SECTION]
+            server.use(
+                http.get(`${getSyncBaseUri()}${ENDPOINT_REST_SECTIONS_SEARCH}`, () => {
+                    return HttpResponse.json(
+                        { results: sections, nextCursor: null },
+                        { status: 200 },
+                    )
+                }),
+            )
+            const api = getTarget()
+
+            const { results, nextCursor } = await api.searchSections({
+                query: 'test',
+                projectId: '123',
+            })
+
+            expect(results).toEqual(sections)
+            expect(nextCursor).toBeNull()
         })
     })
 

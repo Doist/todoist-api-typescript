@@ -217,6 +217,23 @@ export type GetArchivedProjectsResponse = {
 }
 
 /**
+ * Arguments for searching projects.
+ */
+export type SearchProjectsArgs = {
+    query: string
+    cursor?: string | null
+    limit?: number
+}
+
+/**
+ * Response from searching projects.
+ */
+export type SearchProjectsResponse = {
+    results: (PersonalProject | WorkspaceProject)[]
+    nextCursor: string | null
+}
+
+/**
  * Arguments for creating a new project.
  * @see https://todoist.com/api/v1/docs#tag/Projects/operation/create_project_api_v1_projects_post
  */
@@ -277,6 +294,24 @@ export type GetSectionsResponse = {
 }
 
 /**
+ * Arguments for searching sections.
+ */
+export type SearchSectionsArgs = {
+    query: string
+    projectId?: string | null
+    cursor?: string | null
+    limit?: number
+}
+
+/**
+ * Response from searching sections.
+ */
+export type SearchSectionsResponse = {
+    results: Section[]
+    nextCursor: string | null
+}
+
+/**
  * Arguments for creating a new section.
  * @see https://todoist.com/api/v1/docs#tag/Sections/operation/create_section_api_v1_sections_post
  */
@@ -308,6 +343,23 @@ export type GetLabelsArgs = {
  * @see https://todoist.com/api/v1/docs#tag/Labels/operation/get_labels_api_v1_labels_get
  */
 export type GetLabelsResponse = {
+    results: Label[]
+    nextCursor: string | null
+}
+
+/**
+ * Arguments for searching labels.
+ */
+export type SearchLabelsArgs = {
+    query: string
+    cursor?: string | null
+    limit?: number
+}
+
+/**
+ * Response from searching labels.
+ */
+export type SearchLabelsResponse = {
     results: Label[]
     nextCursor: string | null
 }

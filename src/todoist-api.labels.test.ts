@@ -3,6 +3,7 @@ import { DEFAULT_AUTH_TOKEN, DEFAULT_LABEL } from './test-utils/test-defaults'
 import {
     getSyncBaseUri,
     ENDPOINT_REST_LABELS,
+    ENDPOINT_REST_LABELS_SEARCH,
     ENDPOINT_REST_LABELS_SHARED,
     ENDPOINT_REST_LABELS_SHARED_RENAME,
     ENDPOINT_REST_LABELS_SHARED_REMOVE,
@@ -50,6 +51,23 @@ describe('TodoistApi label endpoints', () => {
 
             expect(results).toEqual(labels)
             expect(nextCursor).toBe('123')
+        })
+    })
+
+    describe('searchLabels', () => {
+        test('returns result from rest client', async () => {
+            const labels = [DEFAULT_LABEL]
+            server.use(
+                http.get(`${getSyncBaseUri()}${ENDPOINT_REST_LABELS_SEARCH}`, () => {
+                    return HttpResponse.json({ results: labels, nextCursor: null }, { status: 200 })
+                }),
+            )
+            const api = getTarget()
+
+            const { results, nextCursor } = await api.searchLabels({ query: 'test' })
+
+            expect(results).toEqual(labels)
+            expect(nextCursor).toBeNull()
         })
     })
 
