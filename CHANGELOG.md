@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.3.0](https://github.com/Doist/todoist-api-typescript/compare/v6.2.1...v6.3.0) (2026-01-16)
+
+
+### Features
+
+* Add search for projects, sections, and labels ([#426](https://github.com/Doist/todoist-api-typescript/issues/426)) ([663880f](https://github.com/Doist/todoist-api-typescript/commit/663880ff83d3d6aa0720137f12dc5fe82b4d9057))
+
+
+### Miscellaneous
+
+* **deps:** bump undici from 7.16.0 to 7.18.2 ([#427](https://github.com/Doist/todoist-api-typescript/issues/427)) ([a04cbb1](https://github.com/Doist/todoist-api-typescript/commit/a04cbb13a8f82a2e7691110b054d2abe26e64a2f))
+
 ## [6.2.1](https://github.com/Doist/todoist-api-typescript/compare/v6.2.0...v6.2.1) (2025-12-03)
 
 
