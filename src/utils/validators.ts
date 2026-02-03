@@ -29,6 +29,8 @@ import {
     type WorkspacePlanDetails,
     JoinWorkspaceResultSchema,
     type JoinWorkspaceResult,
+    WorkspaceSchema,
+    type Workspace,
 } from '../types/entities'
 
 export function validateTask(input: unknown): Task {
@@ -154,4 +156,12 @@ export function validateWorkspacePlanDetails(input: unknown): WorkspacePlanDetai
 
 export function validateJoinWorkspaceResult(input: unknown): JoinWorkspaceResult {
     return JoinWorkspaceResultSchema.parse(input)
+}
+
+export function validateWorkspace(input: unknown): Workspace {
+    return WorkspaceSchema.parse(input)
+}
+
+export function validateWorkspaceArray(input: unknown[]): Workspace[] {
+    return input.map(validateWorkspace)
 }

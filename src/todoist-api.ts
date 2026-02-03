@@ -12,6 +12,7 @@ import {
     WorkspaceInvitation,
     WorkspacePlanDetails,
     JoinWorkspaceResult,
+    Workspace,
 } from './types/entities'
 import {
     AddCommentArgs,
@@ -135,6 +136,7 @@ import {
     validateWorkspaceInvitationArray,
     validateWorkspacePlanDetails,
     validateJoinWorkspaceResult,
+    validateWorkspaceArray,
 } from './utils/validators'
 import { formatDateToYYYYMMDD } from './utils/url-helpers'
 import { uploadMultipartFile } from './utils/multipart-upload'
@@ -232,6 +234,43 @@ export class TodoistApi {
             this.syncApiBase = getSyncBaseUri(options.baseUrl)
             this.customFetch = options.customFetch
         }
+    }
+
+    /**
+     * Makes a request to the Sync API and handles error checking.
+     *
+     * @param syncRequest - The sync request payload
+     * @param requestId - Optional request identifier
+     * @param hasSyncCommands - Whether this request contains sync commands (write operations)
+     * @returns The sync response data
+     * @throws TodoistRequestError if sync status contains errors
+     */
+    private async requestSync(
+        syncRequest: SyncRequest,
+        requestId?: string,
+        hasSyncCommands = false,
+    ): Promise<SyncResponse> {
+        const response = await request<SyncResponse>({
+            httpMethod: 'POST',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_SYNC,
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
+            payload: syncRequest,
+            requestId: requestId,
+            hasSyncCommands: hasSyncCommands,
+        })
+
+        // Check for sync errors and throw if any are found
+        if (response.data.syncStatus) {
+            Object.entries(response.data.syncStatus).forEach(([_, value]) => {
+                if (value === 'ok') return
+
+                throw new TodoistRequestError(value.error, value.httpCode, value.errorExtra)
+            })
+        }
+
+        return response.data
     }
 
     /**
@@ -505,30 +544,13 @@ export class TodoistApi {
             resource_types: ['items'],
         }
 
-        const response = await request<SyncResponse>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_SYNC,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: syncRequest,
-            requestId: requestId,
-            hasSyncCommands: true,
-        })
+        const syncResponse = await this.requestSync(syncRequest, requestId, true)
 
-        if (response.data.syncStatus) {
-            Object.entries(response.data.syncStatus).forEach(([_, value]) => {
-                if (value === 'ok') return
-
-                throw new TodoistRequestError(value.error, value.httpCode, value.errorExtra)
-            })
-        }
-
-        if (!response.data.items?.length) {
+        if (!syncResponse.items?.length) {
             throw new TodoistRequestError('Tasks not found', 404)
         }
 
-        const syncTasks = response.data.items.filter((task) => ids.includes(task.id))
+        const syncTasks = syncResponse.items.filter((task) => ids.includes(task.id))
         if (!syncTasks.length) {
             throw new TodoistRequestError('Tasks not found', 404)
         }
@@ -1706,6 +1728,39 @@ export class TodoistApi {
             nextCursor: response.data.nextCursor,
             workspaceUsers: validateWorkspaceUserArray(response.data.workspaceUsers || []),
         }
+    }
+
+    /**
+     * Retrieves all workspaces for the authenticated user.
+     *
+     * Uses the Sync API internally to fetch workspace data.
+     *
+     * @param requestId - Optional custom identifier for the request.
+     * @returns A promise that resolves to an array of workspaces.
+     *
+     * @example
+     * ```typescript
+     * const workspaces = await api.getWorkspaces()
+     * workspaces.forEach(workspace => {
+     *   console.log(`${workspace.name} (${workspace.plan}) - Role: ${workspace.role}`)
+     * })
+     * ```
+     */
+    async getWorkspaces(requestId?: string): Promise<Workspace[]> {
+        const syncRequest: SyncRequest = {
+            sync_token: '*',
+            resource_types: ['workspaces'],
+        }
+
+        const syncResponse = await this.requestSync(syncRequest, requestId, false)
+
+        const workspacesData = syncResponse.workspaces
+        if (!workspacesData || typeof workspacesData !== 'object') {
+            return []
+        }
+
+        const workspacesArray = Object.values(workspacesData)
+        return validateWorkspaceArray(workspacesArray)
     }
 
     /**
