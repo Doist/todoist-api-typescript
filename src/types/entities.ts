@@ -584,3 +584,56 @@ export const JoinWorkspaceResultSchema = z.object({
  * Result returned when successfully joining a workspace.
  */
 export type JoinWorkspaceResult = z.infer<typeof JoinWorkspaceResultSchema>
+
+/**
+ * Available workspace plans.
+ */
+export const WORKSPACE_PLANS = ['STARTER', 'BUSINESS'] as const
+
+/**
+ * Workspace plan type.
+ */
+export type WorkspacePlan = (typeof WORKSPACE_PLANS)[number]
+
+export const WorkspacePlanSchema = z.enum(WORKSPACE_PLANS)
+
+/**
+ * Workspace resource limits.
+ */
+export const WorkspaceLimitsSchema = z
+    .object({
+        current: z.record(z.string(), z.any()).nullable(),
+        next: z.record(z.string(), z.any()).nullable(),
+    })
+    .catchall(z.any())
+
+export type WorkspaceLimits = z.infer<typeof WorkspaceLimitsSchema>
+
+/**
+ * Workspace properties (flexible object for unknown fields).
+ */
+export const WorkspacePropertiesSchema = z.record(z.string(), z.unknown())
+export type WorkspaceProperties = z.infer<typeof WorkspacePropertiesSchema>
+
+/**
+ * Represents a workspace in Todoist.
+ */
+export const WorkspaceSchema = z.object({
+    id: z.string(),
+    name: z.string(),
+    plan: WorkspacePlanSchema,
+    role: WorkspaceRoleSchema,
+    inviteCode: z.string(),
+    isLinkSharingEnabled: z.boolean(),
+    isGuestAllowed: z.boolean(),
+    limits: WorkspaceLimitsSchema,
+    logoBig: z.string().nullish(),
+    logoMedium: z.string().nullish(),
+    logoSmall: z.string().nullish(),
+    logoS640: z.string().nullish(),
+    createdAt: z.string(),
+    creatorId: z.string(),
+    properties: WorkspacePropertiesSchema,
+})
+
+export type Workspace = z.infer<typeof WorkspaceSchema>

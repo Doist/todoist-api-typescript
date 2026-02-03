@@ -17,6 +17,60 @@ describe('TodoistApi workspaces', () => {
         jest.clearAllMocks()
     })
 
+    // Test fixtures
+    const mockBusinessWorkspace = {
+        id: '12345',
+        name: 'My Workspace',
+        plan: 'BUSINESS',
+        role: 'ADMIN',
+        invite_code: 'invite123',
+        is_link_sharing_enabled: true,
+        is_guest_allowed: false,
+        limits: {
+            current: {
+                max_projects: 300,
+                max_workspace_users: 100,
+                upload_limit_mb: 100,
+                plan_name: 'teams_workspaces_business',
+            },
+            next: null,
+        },
+        logo_big: 'https://example.com/logo_big.jpg',
+        logo_medium: 'https://example.com/logo_medium.jpg',
+        logo_small: 'https://example.com/logo_small.jpg',
+        logo_s640: 'https://example.com/logo_s640.jpg',
+        created_at: '2023-01-01T00:00:00Z',
+        creator_id: '98765',
+        properties: {},
+    }
+
+    const mockStarterWorkspace = {
+        id: '67890',
+        name: 'Personal',
+        plan: 'STARTER',
+        role: 'ADMIN',
+        invite_code: 'invite456',
+        is_link_sharing_enabled: false,
+        is_guest_allowed: false,
+        limits: {
+            current: {
+                max_projects: 5,
+                max_workspace_users: 5,
+                upload_limit_mb: 5,
+                plan_name: 'teams_workspaces_starter',
+            },
+            next: null,
+        },
+        created_at: '2023-06-01T00:00:00Z',
+        creator_id: '11111',
+        properties: {},
+    }
+
+    const mockWorkspaceData = {
+        [mockBusinessWorkspace.id]: mockBusinessWorkspace,
+        [mockStarterWorkspace.id]: mockStarterWorkspace,
+    }
+
     describe('getWorkspaceInvitations', () => {
         test('gets workspace invitations', async () => {
             const mockResponse = ['user1@example.com', 'user2@example.com']
@@ -476,6 +530,66 @@ describe('TodoistApi workspaces', () => {
             })
 
             expect(result.results).toEqual([])
+        })
+    })
+
+    describe('getWorkspaces', () => {
+        test('gets workspaces successfully', async () => {
+            const mockSyncResponse = {
+                sync_token: 'abc123',
+                full_sync: true,
+                workspaces: mockWorkspaceData,
+            }
+
+            server.use(
+                http.post(`${getSyncBaseUri()}sync`, async ({ request }) => {
+                    const body = (await request.json()) as {
+                        sync_token?: string
+                        resource_types?: string[]
+                    }
+                    expect(body).toMatchObject({
+                        sync_token: '*',
+                        resource_types: ['workspaces'],
+                    })
+                    return HttpResponse.json(mockSyncResponse, { status: 200 })
+                }),
+            )
+
+            const result = await api.getWorkspaces()
+
+            expect(result).toHaveLength(2)
+            expect(result[0]).toMatchObject({
+                id: '12345',
+                name: 'My Workspace',
+                plan: 'BUSINESS',
+                role: 'ADMIN',
+                inviteCode: 'invite123',
+                isLinkSharingEnabled: true,
+                isGuestAllowed: false,
+            })
+        })
+
+        test('validates workspace schema', async () => {
+            server.use(
+                http.post(`${getSyncBaseUri()}sync`, () => {
+                    return HttpResponse.json(
+                        {
+                            sync_token: 'token',
+                            full_sync: true,
+                            workspaces: {
+                                invalid: {
+                                    id: '123',
+                                    name: 'Invalid',
+                                    plan: 'INVALID_PLAN',
+                                },
+                            },
+                        },
+                        { status: 200 },
+                    )
+                }),
+            )
+
+            await expect(api.getWorkspaces()).rejects.toThrow()
         })
     })
 })
