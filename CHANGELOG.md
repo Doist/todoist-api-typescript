@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.4.1](https://github.com/Doist/todoist-api-typescript/compare/v6.4.0...v6.4.1) (2026-02-12)
+
+
+### Bug Fixes
+
+* Deprecate noteCount field on Task ([#439](https://github.com/Doist/todoist-api-typescript/issues/439)) ([ffeac23](https://github.com/Doist/todoist-api-typescript/commit/ffeac23bd4ebf7cf05dd2b23a5c984c28d16c652))
+
+
+### Miscellaneous
+
+* **deps-dev:** bump webpack from 5.101.3 to 5.105.0 ([#436](https://github.com/Doist/todoist-api-typescript/issues/436)) ([7cee4c9](https://github.com/Doist/todoist-api-typescript/commit/7cee4c9c25f5142590e920be9082421c6a6b7a60))
+
 ## [6.4.0](https://github.com/Doist/todoist-api-typescript/compare/v6.3.0...v6.4.0) (2026-02-03)
 
 
