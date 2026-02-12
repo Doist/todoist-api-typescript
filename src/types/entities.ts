@@ -61,6 +61,9 @@ export const TaskSchema = z
         childOrder: z.number().int(),
         content: z.string(),
         description: z.string(),
+        /**
+         * @deprecated This field is deprecated and will always return 0. It will be removed in a future version. Do not use or rely on this field.
+         */
         noteCount: z.number().int(),
         dayOrder: z.number().int(),
         isCollapsed: z.boolean(),
