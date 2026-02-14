@@ -8,6 +8,7 @@ import type {
     Label,
     PersonalProject,
     ProjectViewStyle,
+    ProjectVisibility,
     Section,
     Task,
     User,
@@ -606,7 +607,7 @@ export type MoveProjectToWorkspaceArgs = {
     folderId?: string | null
     /** Optional access settings for the project in the workspace. */
     access?: {
-        visibility: 'restricted' | 'team' | 'public'
+        visibility: ProjectVisibility
     }
 }
 
