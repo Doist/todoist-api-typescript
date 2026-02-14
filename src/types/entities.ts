@@ -120,10 +120,14 @@ export const PersonalProjectSchema = BaseProjectSchema.extend({
     }
 })
 
+export const ProjectVisibilitySchema = z.enum(['restricted', 'team', 'public'])
+export type ProjectVisibility = z.infer<typeof ProjectVisibilitySchema>
+
 /**
  * Schema for workspace projects in Todoist.
  */
 export const WorkspaceProjectSchema = BaseProjectSchema.extend({
+    access: z.object({ visibility: ProjectVisibilitySchema }).optional(),
     collaboratorRoleDefault: z.string(),
     folderId: z.string().nullable(),
     isInviteOnly: z.boolean().nullable(),
