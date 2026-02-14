@@ -8,6 +8,7 @@ import type {
     Label,
     PersonalProject,
     ProjectViewStyle,
+    ProjectVisibility,
     Section,
     Task,
     User,
@@ -592,6 +593,30 @@ export type DeleteUploadArgs = {
      * The URL of the file to delete.
      */
     fileUrl: string
+}
+
+/**
+ * Arguments for moving a project to a workspace.
+ */
+export type MoveProjectToWorkspaceArgs = {
+    /** The ID of the project to move. */
+    projectId: string
+    /** The target workspace ID. */
+    workspaceId: string
+    /** Optional target folder ID within the workspace. */
+    folderId?: string | null
+    /** Optional access settings for the project in the workspace. */
+    access?: {
+        visibility: ProjectVisibility
+    }
+}
+
+/**
+ * Arguments for moving a project to personal.
+ */
+export type MoveProjectToPersonalArgs = {
+    /** The ID of the project to move. */
+    projectId: string
 }
 
 // Workspace-related types

@@ -45,6 +45,9 @@ export const ENDPOINT_REST_ACTIVITIES = 'activities'
 export const ENDPOINT_REST_UPLOADS = 'uploads'
 export const PROJECT_ARCHIVE = 'archive'
 export const PROJECT_UNARCHIVE = 'unarchive'
+export const ENDPOINT_REST_PROJECTS_MOVE_TO_WORKSPACE =
+    ENDPOINT_REST_PROJECTS + '/move_to_workspace'
+export const ENDPOINT_REST_PROJECTS_MOVE_TO_PERSONAL = ENDPOINT_REST_PROJECTS + '/move_to_personal'
 
 export const ENDPOINT_SYNC_QUICK_ADD = ENDPOINT_REST_TASKS + '/quick'
 
