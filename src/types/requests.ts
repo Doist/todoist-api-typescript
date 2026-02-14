@@ -594,6 +594,30 @@ export type DeleteUploadArgs = {
     fileUrl: string
 }
 
+/**
+ * Arguments for moving a project to a workspace.
+ */
+export type MoveProjectToWorkspaceArgs = {
+    /** The ID of the project to move. */
+    projectId: string
+    /** The target workspace ID. */
+    workspaceId: string
+    /** Optional target folder ID within the workspace. */
+    folderId?: string | null
+    /** Optional access settings for the project in the workspace. */
+    access?: {
+        visibility: 'restricted' | 'team' | 'public'
+    }
+}
+
+/**
+ * Arguments for moving a project to personal.
+ */
+export type MoveProjectToPersonalArgs = {
+    /** The ID of the project to move. */
+    projectId: string
+}
+
 // Workspace-related types
 
 /**

@@ -70,6 +70,8 @@ import {
     WorkspaceInvitationsResponse,
     AllWorkspaceInvitationsResponse,
     WorkspaceLogoResponse,
+    MoveProjectToWorkspaceArgs,
+    MoveProjectToPersonalArgs,
 } from './types/requests'
 import { CustomFetch } from './types/http'
 import { request, isSuccess } from './rest-client'
@@ -98,6 +100,8 @@ import {
     ENDPOINT_SYNC,
     PROJECT_ARCHIVE,
     PROJECT_UNARCHIVE,
+    ENDPOINT_REST_PROJECTS_MOVE_TO_WORKSPACE,
+    ENDPOINT_REST_PROJECTS_MOVE_TO_PERSONAL,
     ENDPOINT_REST_PROJECTS_ARCHIVED,
     ENDPOINT_REST_USER,
     ENDPOINT_REST_PRODUCTIVITY,
@@ -853,6 +857,52 @@ export class TodoistApi {
             requestId: requestId,
         })
         return validateProject(response.data)
+    }
+
+    /**
+     * Moves a project to a workspace.
+     *
+     * @param args - The arguments for moving the project.
+     * @param requestId - Optional custom identifier for the request.
+     * @returns A promise that resolves to the moved project.
+     */
+    async moveProjectToWorkspace(
+        args: MoveProjectToWorkspaceArgs,
+        requestId?: string,
+    ): Promise<PersonalProject | WorkspaceProject> {
+        const response = await request<{ project: PersonalProject | WorkspaceProject }>({
+            httpMethod: 'POST',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_REST_PROJECTS_MOVE_TO_WORKSPACE,
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
+            payload: args,
+            requestId: requestId,
+        })
+        return validateProject(response.data.project)
+    }
+
+    /**
+     * Moves a project to personal.
+     *
+     * @param args - The arguments for moving the project.
+     * @param requestId - Optional custom identifier for the request.
+     * @returns A promise that resolves to the moved project.
+     */
+    async moveProjectToPersonal(
+        args: MoveProjectToPersonalArgs,
+        requestId?: string,
+    ): Promise<PersonalProject | WorkspaceProject> {
+        const response = await request<{ project: PersonalProject | WorkspaceProject }>({
+            httpMethod: 'POST',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_REST_PROJECTS_MOVE_TO_PERSONAL,
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
+            payload: args,
+            requestId: requestId,
+        })
+        return validateProject(response.data.project)
     }
 
     /**

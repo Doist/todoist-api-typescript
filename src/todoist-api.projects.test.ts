@@ -13,6 +13,8 @@ import {
     ENDPOINT_REST_PROJECT_COLLABORATORS,
     PROJECT_ARCHIVE,
     PROJECT_UNARCHIVE,
+    ENDPOINT_REST_PROJECTS_MOVE_TO_WORKSPACE,
+    ENDPOINT_REST_PROJECTS_MOVE_TO_PERSONAL,
 } from './consts/endpoints'
 import { server, http, HttpResponse } from './test-utils/msw-setup'
 import { getProjectUrl } from './utils/url-helpers'
@@ -212,6 +214,51 @@ describe('TodoistApi project endpoints', () => {
                 expect(results).toEqual(projects)
                 expect(nextCursor).toBe('abc')
             })
+        })
+    })
+
+    describe('moveProjectToWorkspace', () => {
+        test('returns project from response', async () => {
+            server.use(
+                http.post(
+                    `${getSyncBaseUri()}${ENDPOINT_REST_PROJECTS_MOVE_TO_WORKSPACE}`,
+                    () => {
+                        return HttpResponse.json(
+                            { project: DEFAULT_PROJECT, items: [], sections: [] },
+                            { status: 200 },
+                        )
+                    },
+                ),
+            )
+            const api = getTarget()
+
+            const project = await api.moveProjectToWorkspace({
+                projectId: '123',
+                workspaceId: '456',
+            })
+
+            expect(project).toEqual(DEFAULT_PROJECT)
+        })
+    })
+
+    describe('moveProjectToPersonal', () => {
+        test('returns project from response', async () => {
+            server.use(
+                http.post(
+                    `${getSyncBaseUri()}${ENDPOINT_REST_PROJECTS_MOVE_TO_PERSONAL}`,
+                    () => {
+                        return HttpResponse.json(
+                            { project: DEFAULT_PROJECT, items: [], sections: [] },
+                            { status: 200 },
+                        )
+                    },
+                ),
+            )
+            const api = getTarget()
+
+            const project = await api.moveProjectToPersonal({ projectId: '123' })
+
+            expect(project).toEqual(DEFAULT_PROJECT)
         })
     })
 })
