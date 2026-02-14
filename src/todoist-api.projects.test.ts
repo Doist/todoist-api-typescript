@@ -220,15 +220,12 @@ describe('TodoistApi project endpoints', () => {
     describe('moveProjectToWorkspace', () => {
         test('returns project from response', async () => {
             server.use(
-                http.post(
-                    `${getSyncBaseUri()}${ENDPOINT_REST_PROJECTS_MOVE_TO_WORKSPACE}`,
-                    () => {
-                        return HttpResponse.json(
-                            { project: DEFAULT_PROJECT, items: [], sections: [] },
-                            { status: 200 },
-                        )
-                    },
-                ),
+                http.post(`${getSyncBaseUri()}${ENDPOINT_REST_PROJECTS_MOVE_TO_WORKSPACE}`, () => {
+                    return HttpResponse.json(
+                        { project: DEFAULT_PROJECT, items: [], sections: [] },
+                        { status: 200 },
+                    )
+                }),
             )
             const api = getTarget()
 
@@ -244,15 +241,12 @@ describe('TodoistApi project endpoints', () => {
     describe('moveProjectToPersonal', () => {
         test('returns project from response', async () => {
             server.use(
-                http.post(
-                    `${getSyncBaseUri()}${ENDPOINT_REST_PROJECTS_MOVE_TO_PERSONAL}`,
-                    () => {
-                        return HttpResponse.json(
-                            { project: DEFAULT_PROJECT, items: [], sections: [] },
-                            { status: 200 },
-                        )
-                    },
-                ),
+                http.post(`${getSyncBaseUri()}${ENDPOINT_REST_PROJECTS_MOVE_TO_PERSONAL}`, () => {
+                    return HttpResponse.json(
+                        { project: DEFAULT_PROJECT, items: [], sections: [] },
+                        { status: 200 },
+                    )
+                }),
             )
             const api = getTarget()
 
