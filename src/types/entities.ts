@@ -644,3 +644,14 @@ export const WorkspaceSchema = z.object({
 })
 
 export type Workspace = z.infer<typeof WorkspaceSchema>
+
+export const FolderSchema = z.object({
+    id: z.string(),
+    name: z.string(),
+    workspaceId: z.string(),
+    defaultOrder: z.number().int(),
+    childOrder: z.number().int(),
+    isDeleted: z.boolean(),
+})
+
+export type Folder = z.infer<typeof FolderSchema>
