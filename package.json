@@ -42,7 +42,7 @@
         "prepare": "npm run build"
     },
     "dependencies": {
-        "camelcase": "6.3.0",
+        "camelcase": "9.0.0",
         "emoji-regex": "10.6.0",
         "form-data": "4.0.4",
         "ts-custom-error": "^3.2.0",
