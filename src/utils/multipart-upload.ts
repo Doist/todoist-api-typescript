@@ -1,6 +1,3 @@
-import FormData from 'form-data'
-import { createReadStream } from 'fs'
-import { basename } from 'path'
 import { fetchWithRetry } from './fetch-with-retry'
 import type { HttpResponse, CustomFetch } from '../types/http'
 
@@ -8,7 +5,7 @@ type UploadMultipartFileArgs = {
     baseUrl: string
     authToken: string
     endpoint: string
-    file: Buffer | NodeJS.ReadableStream | string
+    file: Buffer | NodeJS.ReadableStream | string | Blob
     fileName?: string
     additionalFields: Record<string, string | number | boolean>
     requestId?: string
@@ -45,11 +42,13 @@ function getContentTypeFromFileName(fileName: string): string {
  * This is a shared utility for uploading files to Todoist endpoints that require
  * multipart/form-data content type (e.g., file uploads, workspace logo uploads).
  *
+ * Supports both browser (Blob/File) and Node.js (Buffer/ReadableStream/path) environments.
+ *
  * @param baseUrl - The base API URL (e.g., https://api.todoist.com/api/v1/)
  * @param authToken - The authentication token
  * @param endpoint - The relative endpoint path (e.g., 'uploads', 'workspaces/logo')
- * @param file - The file content (Buffer, ReadableStream, or file system path)
- * @param fileName - Optional file name (required for Buffer/Stream, optional for paths)
+ * @param file - The file content (Blob/File for browser, or Buffer/ReadableStream/path for Node)
+ * @param fileName - Optional file name (required for Buffer/Stream, optional for paths and File objects)
  * @param additionalFields - Additional form fields to include (e.g., project_id, workspace_id)
  * @param requestId - Optional request ID for idempotency
  * @returns The response data from the server
@@ -89,53 +88,75 @@ export async function uploadMultipartFile<T>(args: UploadMultipartFileArgs): Pro
         requestId,
         customFetch,
     } = args
-    const form = new FormData()
-
-    // Determine file type and add to form data
-    if (typeof file === 'string') {
-        // File path - create read stream
-        const filePath = file
-        const resolvedFileName = fileName || basename(filePath)
-
-        form.append('file', createReadStream(filePath), resolvedFileName)
-    } else if (Buffer.isBuffer(file)) {
-        // Buffer - require fileName
-        if (!fileName) {
-            throw new Error('fileName is required when uploading from a Buffer')
-        }
-        // Detect content-type from filename extension
-        const contentType = getContentTypeFromFileName(fileName)
-
-        form.append('file', file, {
-            filename: fileName,
-            contentType: contentType,
-        })
-    } else {
-        // Stream - require fileName
-        if (!fileName) {
-            throw new Error('fileName is required when uploading from a stream')
-        }
-        form.append('file', file, fileName)
-    }
-
-    // Add additional fields to the form
-    for (const [key, value] of Object.entries(additionalFields)) {
-        if (value !== undefined && value !== null) {
-            form.append(key, value.toString())
-        }
-    }
 
     // Build the full URL
     const url = `${baseUrl}${endpoint}`
 
-    // Prepare headers
+    let body: BodyInit
     const headers: Record<string, string> = {
         Authorization: `Bearer ${authToken}`,
-        ...form.getHeaders(),
     }
 
     if (requestId) {
         headers['X-Request-Id'] = requestId
+    }
+
+    if (file instanceof Blob) {
+        // Browser path: use native FormData
+        const form = new globalThis.FormData()
+        const resolvedFileName =
+            fileName || (file instanceof File ? file.name : undefined) || 'upload'
+        form.append('file', file, resolvedFileName)
+
+        for (const [key, value] of Object.entries(additionalFields)) {
+            if (value !== undefined && value !== null) {
+                form.append(key, value.toString())
+            }
+        }
+
+        // Don't set Content-Type — let fetch set it with the correct multipart boundary
+        body = form
+    } else {
+        // Node path: dynamically import Node-only modules
+        const [FormDataModule, fsModule, pathModule] = await Promise.all([
+            import('form-data'),
+            import('fs'),
+            import('path'),
+        ])
+        const FormData = FormDataModule.default
+
+        const form = new FormData()
+
+        if (typeof file === 'string') {
+            // File path - create read stream
+            const resolvedFileName = fileName || pathModule.basename(file)
+            form.append('file', fsModule.createReadStream(file), resolvedFileName)
+        } else if (Buffer.isBuffer(file)) {
+            // Buffer - require fileName
+            if (!fileName) {
+                throw new Error('fileName is required when uploading from a Buffer')
+            }
+            const contentType = getContentTypeFromFileName(fileName)
+            form.append('file', file, {
+                filename: fileName,
+                contentType: contentType,
+            })
+        } else {
+            // Stream - require fileName
+            if (!fileName) {
+                throw new Error('fileName is required when uploading from a stream')
+            }
+            form.append('file', file, fileName)
+        }
+
+        for (const [key, value] of Object.entries(additionalFields)) {
+            if (value !== undefined && value !== null) {
+                form.append(key, value.toString())
+            }
+        }
+
+        Object.assign(headers, form.getHeaders())
+        body = form as unknown as BodyInit
     }
 
     // Make the request using fetch
@@ -143,7 +164,7 @@ export async function uploadMultipartFile<T>(args: UploadMultipartFileArgs): Pro
         url,
         options: {
             method: 'POST',
-            body: form as unknown as BodyInit, // FormData from 'form-data' package is compatible with fetch
+            body,
             headers,
             timeout: 30000, // 30 second timeout for file uploads
         },
