@@ -13,6 +13,7 @@ import {
     WorkspacePlanDetails,
     JoinWorkspaceResult,
     Workspace,
+    Folder,
 } from './types/entities'
 import {
     AddCommentArgs,
@@ -72,6 +73,10 @@ import {
     WorkspaceLogoResponse,
     MoveProjectToWorkspaceArgs,
     MoveProjectToPersonalArgs,
+    GetFoldersArgs,
+    GetFoldersResponse,
+    AddFolderArgs,
+    UpdateFolderArgs,
 } from './types/requests'
 import { CustomFetch } from './types/http'
 import { request, isSuccess } from './rest-client'
@@ -118,6 +123,7 @@ import {
     ENDPOINT_WORKSPACE_USERS,
     getWorkspaceActiveProjectsEndpoint,
     getWorkspaceArchivedProjectsEndpoint,
+    ENDPOINT_REST_FOLDERS,
 } from './consts/endpoints'
 import {
     validateAttachment,
@@ -141,6 +147,8 @@ import {
     validateWorkspacePlanDetails,
     validateJoinWorkspaceResult,
     validateWorkspaceArray,
+    validateFolder,
+    validateFolderArray,
 } from './utils/validators'
 import { formatDateToYYYYMMDD } from './utils/url-helpers'
 import { uploadMultipartFile } from './utils/multipart-upload'
@@ -1501,6 +1509,115 @@ export class TodoistApi {
             apiToken: this.authToken,
             customFetch: this.customFetch,
             payload: args,
+            requestId: requestId,
+        })
+        return isSuccess(response)
+    }
+
+    /* Folder methods */
+
+    /**
+     * Retrieves a paginated list of folders.
+     *
+     * @param args - Optional filter parameters such as workspace ID.
+     * @returns A promise that resolves to a paginated response of folders.
+     */
+    async getFolders(args?: GetFoldersArgs): Promise<GetFoldersResponse> {
+        const {
+            data: { results, nextCursor },
+        } = await request<GetFoldersResponse>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_REST_FOLDERS,
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
+            payload: args,
+        })
+
+        return {
+            results: validateFolderArray(results),
+            nextCursor,
+        }
+    }
+
+    /**
+     * Retrieves a single folder by its ID.
+     *
+     * @param id - The unique identifier of the folder.
+     * @returns A promise that resolves to the requested folder.
+     */
+    async getFolder(id: string): Promise<Folder> {
+        z.string().parse(id)
+        const response = await request<Folder>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: generatePath(ENDPOINT_REST_FOLDERS, id),
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
+        })
+
+        return validateFolder(response.data)
+    }
+
+    /**
+     * Creates a new folder.
+     *
+     * @param args - Folder creation parameters including name and workspace ID.
+     * @param requestId - Optional custom identifier for the request.
+     * @returns A promise that resolves to the created folder.
+     */
+    async addFolder(args: AddFolderArgs, requestId?: string): Promise<Folder> {
+        const response = await request<Folder>({
+            httpMethod: 'POST',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_REST_FOLDERS,
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
+            payload: args,
+            requestId: requestId,
+        })
+
+        return validateFolder(response.data)
+    }
+
+    /**
+     * Updates an existing folder by its ID.
+     *
+     * @param id - The unique identifier of the folder to update.
+     * @param args - Update parameters such as name or default order.
+     * @param requestId - Optional custom identifier for the request.
+     * @returns A promise that resolves to the updated folder.
+     */
+    async updateFolder(id: string, args: UpdateFolderArgs, requestId?: string): Promise<Folder> {
+        z.string().parse(id)
+        const response = await request<Folder>({
+            httpMethod: 'POST',
+            baseUri: this.syncApiBase,
+            relativePath: generatePath(ENDPOINT_REST_FOLDERS, id),
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
+            payload: args,
+            requestId: requestId,
+        })
+
+        return validateFolder(response.data)
+    }
+
+    /**
+     * Deletes a folder by its ID.
+     *
+     * @param id - The unique identifier of the folder to delete.
+     * @param requestId - Optional custom identifier for the request.
+     * @returns A promise that resolves to `true` if successful.
+     */
+    async deleteFolder(id: string, requestId?: string): Promise<boolean> {
+        z.string().parse(id)
+        const response = await request({
+            httpMethod: 'DELETE',
+            baseUri: this.syncApiBase,
+            relativePath: generatePath(ENDPOINT_REST_FOLDERS, id),
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
             requestId: requestId,
         })
         return isSuccess(response)
