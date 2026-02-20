@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.5.1](https://github.com/Doist/todoist-api-typescript/compare/v6.5.0...v6.5.1) (2026-02-20)
+
+
+### Bug Fixes
+
+* **deps:** update dependency form-data to v4.0.5 ([#448](https://github.com/Doist/todoist-api-typescript/issues/448)) ([9ba47ca](https://github.com/Doist/todoist-api-typescript/commit/9ba47ca81d4e7672d0200dd1925e198c5cd8aa1f))
+* **deps:** update dependency zod to v4.3.6 ([#455](https://github.com/Doist/todoist-api-typescript/issues/455)) ([d9ae6bb](https://github.com/Doist/todoist-api-typescript/commit/d9ae6bb536f381366603822c0ea7d728ad279523))
+* make multipart upload browser-compatible for Vite builds ([#458](https://github.com/Doist/todoist-api-typescript/issues/458)) ([b18f36d](https://github.com/Doist/todoist-api-typescript/commit/b18f36d500924b4debe300690ed041c29adbe7c6))
+
+
+### Miscellaneous
+
+* **deps:** update dependency lint-staged to v16.2.7 ([#449](https://github.com/Doist/todoist-api-typescript/issues/449)) ([6dd5b43](https://github.com/Doist/todoist-api-typescript/commit/6dd5b43f1e864abc65ca02253cc7a437689afefb))
+* **deps:** update dependency msw to v2.12.10 ([#450](https://github.com/Doist/todoist-api-typescript/issues/450)) ([bcbbf6d](https://github.com/Doist/todoist-api-typescript/commit/bcbbf6dff68a503535631b0c36ccfcc6a52644d5))
+* **deps:** update dependency obsidian to v1.12.0 ([#451](https://github.com/Doist/todoist-api-typescript/issues/451)) ([2495997](https://github.com/Doist/todoist-api-typescript/commit/249599791ffb8098921823cc0392ac59f61fa2ae))
+* **deps:** update dependency rimraf to v6.1.2 ([#452](https://github.com/Doist/todoist-api-typescript/issues/452)) ([91676c7](https://github.com/Doist/todoist-api-typescript/commit/91676c7702fb3a5ed27e26a029100d31256ef4aa))
+* **deps:** update dependency ts-jest to v29.4.6 ([#445](https://github.com/Doist/todoist-api-typescript/issues/445)) ([2891d25](https://github.com/Doist/todoist-api-typescript/commit/2891d25721d5896bfb9095a6dda1c2dc64047449))
+* **deps:** update dependency type-fest to v5 ([#456](https://github.com/Doist/todoist-api-typescript/issues/456)) ([856c4b8](https://github.com/Doist/todoist-api-typescript/commit/856c4b816439f10e7aaa86ba23db0d62c13ba8e7))
+* **deps:** update dependency undici to v7.22.0 ([#454](https://github.com/Doist/todoist-api-typescript/issues/454)) ([abb1431](https://github.com/Doist/todoist-api-typescript/commit/abb1431a024e18b9f5e5e08ca0a26d0bf407106a))
+
 ## [6.5.0](https://github.com/Doist/todoist-api-typescript/compare/v6.4.1...v6.5.0) (2026-02-14)
 
 
