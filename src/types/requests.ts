@@ -572,10 +572,10 @@ export type UploadFileArgs = {
      * - ReadableStream: File content as a stream (requires fileName)
      * - string: Path to a file on the filesystem (fileName is optional, will be inferred from path)
      */
-    file: Buffer | NodeJS.ReadableStream | string
+    file: Buffer | NodeJS.ReadableStream | string | Blob
     /**
      * The name of the file. Required for Buffer and Stream inputs.
-     * Optional for file path strings (will be inferred from the path if not provided).
+     * Optional for file path strings and File objects (will be inferred if not provided).
      */
     fileName?: string
     /**
@@ -680,7 +680,7 @@ export type WorkspaceLogoArgs = {
     /**
      * The image file to upload (Buffer, Stream, or file path).
      */
-    file?: Buffer | NodeJS.ReadableStream | string
+    file?: Buffer | NodeJS.ReadableStream | string | Blob
     /**
      * The file name (required for Buffer/Stream uploads).
      */
