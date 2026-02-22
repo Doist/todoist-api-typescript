@@ -6,6 +6,7 @@ import {
     UserSchema,
     CurrentUserSchema,
     TaskSchema,
+    FolderSchema,
     type Attachment,
     type Task,
     type Section,
@@ -13,6 +14,7 @@ import {
     type Comment,
     type User,
     type CurrentUser,
+    type Folder,
     type ProductivityStats,
     PersonalProjectSchema,
     WorkspaceProjectSchema,
@@ -164,4 +166,12 @@ export function validateWorkspace(input: unknown): Workspace {
 
 export function validateWorkspaceArray(input: unknown[]): Workspace[] {
     return input.map(validateWorkspace)
+}
+
+export function validateFolder(input: unknown): Folder {
+    return FolderSchema.parse(input)
+}
+
+export function validateFolderArray(input: unknown[]): Folder[] {
+    return input.map(validateFolder)
 }
