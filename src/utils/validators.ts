@@ -33,6 +33,41 @@ import {
     type Workspace,
 } from '../types/entities'
 
+import {
+    FilterSchema,
+    type Filter,
+    CollaboratorSchema,
+    type Collaborator,
+    CollaboratorStateSchema,
+    type CollaboratorState,
+    FolderSchema,
+    type Folder,
+    NoteSchema,
+    type Note,
+    TooltipsSchema,
+    type Tooltips,
+    WorkspaceFilterSchema,
+    type WorkspaceFilter,
+    WorkspaceGoalSchema,
+    type WorkspaceGoal,
+    CalendarSchema,
+    type Calendar,
+    CalendarAccountSchema,
+    type CalendarAccount,
+    ReminderSchema,
+    type Reminder,
+    CompletedInfoSchema,
+    type CompletedInfo,
+    ViewOptionsSchema,
+    type ViewOptions,
+    ProjectViewOptionsDefaultsSchema,
+    type ProjectViewOptionsDefaults,
+    UserPlanLimitsSchema,
+    type UserPlanLimits,
+    LiveNotificationSchema,
+    type LiveNotification,
+} from '../types/sync/resources'
+
 export function validateTask(input: unknown): Task {
     return TaskSchema.parse(input)
 }
@@ -164,4 +199,128 @@ export function validateWorkspace(input: unknown): Workspace {
 
 export function validateWorkspaceArray(input: unknown[]): Workspace[] {
     return input.map(validateWorkspace)
+}
+
+// Sync resource validators
+
+export function validateFilter(input: unknown): Filter {
+    return FilterSchema.parse(input)
+}
+
+export function validateFilterArray(input: unknown[]): Filter[] {
+    return input.map(validateFilter)
+}
+
+export function validateCollaborator(input: unknown): Collaborator {
+    return CollaboratorSchema.parse(input)
+}
+
+export function validateCollaboratorArray(input: unknown[]): Collaborator[] {
+    return input.map(validateCollaborator)
+}
+
+export function validateCollaboratorState(input: unknown): CollaboratorState {
+    return CollaboratorStateSchema.parse(input)
+}
+
+export function validateCollaboratorStateArray(input: unknown[]): CollaboratorState[] {
+    return input.map(validateCollaboratorState)
+}
+
+export function validateFolder(input: unknown): Folder {
+    return FolderSchema.parse(input)
+}
+
+export function validateFolderArray(input: unknown[]): Folder[] {
+    return input.map(validateFolder)
+}
+
+export function validateNote(input: unknown): Note {
+    return NoteSchema.parse(input)
+}
+
+export function validateNoteArray(input: unknown[]): Note[] {
+    return input.map(validateNote)
+}
+
+export function validateTooltips(input: unknown): Tooltips {
+    return TooltipsSchema.parse(input)
+}
+
+export function validateWorkspaceFilter(input: unknown): WorkspaceFilter {
+    return WorkspaceFilterSchema.parse(input)
+}
+
+export function validateWorkspaceFilterArray(input: unknown[]): WorkspaceFilter[] {
+    return input.map(validateWorkspaceFilter)
+}
+
+export function validateWorkspaceGoal(input: unknown): WorkspaceGoal {
+    return WorkspaceGoalSchema.parse(input)
+}
+
+export function validateWorkspaceGoalArray(input: unknown[]): WorkspaceGoal[] {
+    return input.map(validateWorkspaceGoal)
+}
+
+export function validateCalendar(input: unknown): Calendar {
+    return CalendarSchema.parse(input)
+}
+
+export function validateCalendarArray(input: unknown[]): Calendar[] {
+    return input.map(validateCalendar)
+}
+
+export function validateCalendarAccount(input: unknown): CalendarAccount {
+    return CalendarAccountSchema.parse(input)
+}
+
+export function validateCalendarAccountArray(input: unknown[]): CalendarAccount[] {
+    return input.map(validateCalendarAccount)
+}
+
+export function validateReminder(input: unknown): Reminder {
+    return ReminderSchema.parse(input)
+}
+
+export function validateReminderArray(input: unknown[]): Reminder[] {
+    return input.map(validateReminder)
+}
+
+export function validateCompletedInfo(input: unknown): CompletedInfo {
+    return CompletedInfoSchema.parse(input)
+}
+
+export function validateCompletedInfoArray(input: unknown[]): CompletedInfo[] {
+    return input.map(validateCompletedInfo)
+}
+
+export function validateViewOptions(input: unknown): ViewOptions {
+    return ViewOptionsSchema.parse(input)
+}
+
+export function validateViewOptionsArray(input: unknown[]): ViewOptions[] {
+    return input.map(validateViewOptions)
+}
+
+export function validateProjectViewOptionsDefaults(input: unknown): ProjectViewOptionsDefaults {
+    return ProjectViewOptionsDefaultsSchema.parse(input)
+}
+
+export function validateProjectViewOptionsDefaultsArray(
+    input: unknown[],
+): ProjectViewOptionsDefaults[] {
+    return input.map(validateProjectViewOptionsDefaults)
+}
+
+export function validateUserPlanLimits(input: unknown): UserPlanLimits {
+    return UserPlanLimitsSchema.parse(input)
+}
+
+export function validateLiveNotification(input: unknown): LiveNotification {
+    return LiveNotificationSchema.parse(input)
+}
+
+export function validateLiveNotificationArray(input: unknown[]): LiveNotification[] {
+    return input.map(validateLiveNotification)
 }

@@ -1,4 +1,22 @@
 import type { Task, Label, Section, PersonalProject, WorkspaceProject } from '../entities'
+import type {
+    Filter,
+    Collaborator,
+    CollaboratorState,
+    Folder,
+    Note,
+    Tooltips,
+    WorkspaceFilter,
+    WorkspaceGoal,
+    Calendar,
+    CalendarAccount,
+    Reminder,
+    CompletedInfo,
+    ViewOptions,
+    ProjectViewOptionsDefaults,
+    UserPlanLimits,
+    LiveNotification,
+} from './resources'
 
 export type SyncError = {
     error: string
@@ -17,32 +35,32 @@ export type SyncResponse = {
     projects?: (PersonalProject | WorkspaceProject)[]
     sections?: Section[]
     labels?: Label[]
-    notes?: Record<string, unknown>[]
-    projectNotes?: Record<string, unknown>[]
-    filters?: Record<string, unknown>[]
-    reminders?: Record<string, unknown>[]
+    notes?: Note[]
+    projectNotes?: Note[]
+    filters?: Filter[]
+    reminders?: Reminder[]
     remindersLocation?: Record<string, unknown>[]
     locations?: Record<string, unknown>[]
     user?: Record<string, unknown>
-    liveNotifications?: Record<string, unknown>[]
-    collaborators?: Record<string, unknown>[]
-    collaboratorStates?: Record<string, unknown>[]
+    liveNotifications?: LiveNotification[]
+    collaborators?: Collaborator[]
+    collaboratorStates?: CollaboratorState[]
     userSettings?: Record<string, unknown>
     notificationSettings?: Record<string, unknown>
-    userPlanLimits?: Record<string, unknown>
-    completedInfo?: Record<string, unknown>[]
+    userPlanLimits?: UserPlanLimits
+    completedInfo?: CompletedInfo[]
     stats?: Record<string, unknown>
     workspaces?: Record<string, unknown>
     workspaceUsers?: Record<string, unknown>[]
-    workspaceFilters?: Record<string, unknown>[]
-    viewOptions?: Record<string, unknown>[]
-    projectViewOptionsDefaults?: Record<string, unknown>[]
+    workspaceFilters?: WorkspaceFilter[]
+    viewOptions?: ViewOptions[]
+    projectViewOptionsDefaults?: ProjectViewOptionsDefaults[]
     roleActions?: Record<string, unknown>[]
-    folders?: Record<string, unknown>[]
-    workspaceGoals?: Record<string, unknown>[]
+    folders?: Folder[]
+    workspaceGoals?: WorkspaceGoal[]
     dayOrders?: Record<string, number>
-    calendars?: Record<string, unknown>[]
-    calendarAccounts?: Record<string, unknown>[]
+    calendars?: Calendar[]
+    calendarAccounts?: CalendarAccount[]
     suggestions?: Record<string, unknown>[]
-    tooltips?: Record<string, unknown>[]
+    tooltips?: Tooltips[]
 }
