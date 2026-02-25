@@ -24,6 +24,10 @@ import type {
     UserPlanLimits,
     LiveNotification,
     SyncWorkspace,
+    SyncUser,
+    UserSettings,
+    LocationReminder,
+    Suggestion,
 } from './resources'
 
 export type SyncError = {
@@ -47,14 +51,14 @@ export type SyncResponse = {
     projectNotes?: Note[]
     filters?: Filter[]
     reminders?: Reminder[]
-    remindersLocation?: Record<string, unknown>[]
+    remindersLocation?: LocationReminder[]
     locations?: Record<string, unknown>[]
-    user?: Record<string, unknown>
+    user?: SyncUser
     liveNotifications?: LiveNotification[]
     collaborators?: Collaborator[]
     collaboratorStates?: CollaboratorState[]
-    userSettings?: Record<string, unknown>
-    notificationSettings?: Record<string, unknown>
+    userSettings?: UserSettings
+    notificationSettings?: Record<string, boolean>
     userPlanLimits?: UserPlanLimits
     completedInfo?: CompletedInfo[]
     stats?: Record<string, unknown>
@@ -69,6 +73,6 @@ export type SyncResponse = {
     dayOrders?: Record<string, number>
     calendars?: Calendar[]
     calendarAccounts?: CalendarAccount[]
-    suggestions?: Record<string, unknown>[]
+    suggestions?: Suggestion[]
     tooltips?: Tooltips[]
 }

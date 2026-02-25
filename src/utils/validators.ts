@@ -68,6 +68,12 @@ import {
     type LiveNotification,
     SyncWorkspaceSchema,
     type SyncWorkspace,
+    SyncUserSchema,
+    type SyncUser,
+    UserSettingsSchema,
+    type UserSettings,
+    SuggestionSchema,
+    type Suggestion,
 } from '../types/sync/resources'
 
 export function validateTask(input: unknown): Task {
@@ -333,4 +339,20 @@ export function validateSyncWorkspace(input: unknown): SyncWorkspace {
 
 export function validateSyncWorkspaceArray(input: unknown[]): SyncWorkspace[] {
     return input.map(validateSyncWorkspace)
+}
+
+export function validateSyncUser(input: unknown): SyncUser {
+    return SyncUserSchema.parse(input)
+}
+
+export function validateUserSettings(input: unknown): UserSettings {
+    return UserSettingsSchema.parse(input)
+}
+
+export function validateSuggestion(input: unknown): Suggestion {
+    return SuggestionSchema.parse(input)
+}
+
+export function validateSuggestionArray(input: unknown[]): Suggestion[] {
+    return input.map(validateSuggestion)
 }

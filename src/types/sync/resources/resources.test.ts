@@ -13,6 +13,9 @@ import { ViewOptionsSchema, ProjectViewOptionsDefaultsSchema } from './view-opti
 import { UserPlanLimitsSchema, PlanLimitsSchema } from './user-plan-limits'
 import { LiveNotificationSchema } from './live-notifications'
 import { SyncWorkspaceSchema } from './workspaces'
+import { SyncUserSchema } from './user'
+import { UserSettingsSchema } from './user-settings'
+import { SuggestionSchema } from './suggestions'
 
 describe('Sync resource schemas', () => {
     describe('FilterSchema', () => {
@@ -593,6 +596,215 @@ describe('Sync resource schemas', () => {
             const withExtra = { ...validWorkspace, newFeatureFlag: true }
             const result = SyncWorkspaceSchema.parse(withExtra)
             expect(result).toHaveProperty('newFeatureFlag', true)
+        })
+    })
+
+    describe('SyncUserSchema', () => {
+        const validUser = {
+            id: 'user1',
+            email: 'test@example.com',
+            fullName: 'Test User',
+            activatedUser: true,
+            autoReminder: 0,
+            businessAccountId: null,
+            dailyGoal: 5,
+            dateFormat: 0,
+            dateistLang: null,
+            daysOff: [6, 7],
+            featureIdentifier: 'abc',
+            features: {
+                karmaDisabled: false,
+                restriction: 0,
+                karmaVacation: false,
+                dateistLang: null,
+                beta: 0,
+                hasPushReminders: true,
+                dateistInlineDisabled: false,
+            },
+            hasMagicNumber: false,
+            hasPassword: true,
+            imageId: null,
+            inboxProjectId: 'inbox1',
+            isCelebrationsEnabled: true,
+            isPremium: true,
+            joinableWorkspace: null,
+            joinedAt: '2020-01-01T00:00:00Z',
+            gettingStartedGuideProjects: null,
+            karma: 1000,
+            karmaTrend: 'up',
+            lang: 'en',
+            mobileHost: null,
+            mobileNumber: null,
+            nextWeek: 1,
+            premiumStatus: 'current_personal_plan' as const,
+            premiumUntil: null,
+            shareLimit: 25,
+            sortOrder: 0,
+            startDay: 1,
+            startPage: 'today',
+            themeId: '11',
+            timeFormat: 0,
+            token: 'abc123',
+            tzInfo: {
+                timezone: 'US/Eastern',
+                hours: -5,
+                minutes: 0,
+                isDst: 0,
+                gmtString: '-05:00',
+            },
+            uniquePrefix: 1,
+            verificationStatus: 'verified',
+            websocketUrl: 'wss://example.com',
+            weekendStartDay: 6,
+            weeklyGoal: 25,
+        }
+
+        test('validates valid data', () => {
+            expect(SyncUserSchema.parse(validUser)).toEqual(validUser)
+        })
+
+        test('validates with optional onboarding fields', () => {
+            const withOnboarding = {
+                ...validUser,
+                onboardingLevel: 'pro',
+                onboardingRole: 'ic',
+                onboardingPersona: 'tasks',
+                onboardingCompleted: true,
+                onboardingUseCases: ['solo', 'teamwork'],
+            }
+            const result = SyncUserSchema.parse(withOnboarding)
+            expect(result.onboardingLevel).toBe('pro')
+            expect(result.onboardingUseCases).toEqual(['solo', 'teamwork'])
+        })
+
+        test('throws on invalid data', () => {
+            expect(() => SyncUserSchema.parse({ id: 'user1' })).toThrow(ZodError)
+        })
+
+        test('preserves unknown fields via passthrough', () => {
+            const withExtra = { ...validUser, futureField: 'hello' }
+            const result = SyncUserSchema.parse(withExtra)
+            expect(result).toHaveProperty('futureField', 'hello')
+        })
+    })
+
+    describe('UserSettingsSchema', () => {
+        const validSettings = {
+            completedSoundDesktop: true,
+            completedSoundMobile: true,
+            debugLogSendingEnabledUntil: null,
+            legacyPricing: false,
+            navigation: {
+                countsShown: true,
+                features: [
+                    { name: 'inbox', shown: true },
+                    { name: 'today', shown: true },
+                ],
+            },
+            reminderDesktop: true,
+            reminderEmail: true,
+            reminderPush: true,
+            resetRecurringSubtasks: false,
+            aiEmailAssist: false,
+            quickAdd: {
+                labelsShown: true,
+                features: [
+                    { name: 'date', shown: true },
+                    { name: 'priority', shown: true },
+                ],
+            },
+        }
+
+        test('validates valid data', () => {
+            expect(UserSettingsSchema.parse(validSettings)).toEqual(validSettings)
+        })
+
+        test('validates with optional theme fields', () => {
+            const withTheme = { ...validSettings, theme: 'dark', syncTheme: true }
+            const result = UserSettingsSchema.parse(withTheme)
+            expect(result.theme).toBe('dark')
+        })
+
+        test('throws on invalid data', () => {
+            expect(() => UserSettingsSchema.parse({ completedSoundDesktop: 'yes' })).toThrow(
+                ZodError,
+            )
+        })
+
+        test('preserves unknown fields via passthrough', () => {
+            const withExtra = { ...validSettings, newSetting: true }
+            const result = UserSettingsSchema.parse(withExtra)
+            expect(result).toHaveProperty('newSetting', true)
+        })
+    })
+
+    describe('SuggestionSchema', () => {
+        test('validates template suggestions', () => {
+            const data = {
+                type: 'templates' as const,
+                content: {
+                    templates: [{ id: 't1', name: 'Getting Started', templateType: 'project' }],
+                    locale: 'en',
+                },
+                isDeleted: false,
+            }
+            expect(SuggestionSchema.parse(data)).toEqual(data)
+        })
+
+        test('validates most_used_user_templates suggestions', () => {
+            const data = {
+                type: 'most_used_user_templates' as const,
+                content: {
+                    templates: [{ id: 't2', name: 'My Template', templateType: 'setup' }],
+                    locale: 'en',
+                },
+                isDeleted: false,
+            }
+            expect(SuggestionSchema.parse(data)).toEqual(data)
+        })
+
+        test('validates workspace template suggestions', () => {
+            const data = {
+                type: 'most_used_workspace_templates' as const,
+                content: {
+                    templates: [
+                        {
+                            id: 't3',
+                            name: 'Team Onboarding',
+                            templateType: 'project',
+                            workspaceId: 'ws1',
+                        },
+                    ],
+                    locale: 'en',
+                },
+                isDeleted: false,
+            }
+            const result = SuggestionSchema.parse(data)
+            expect(result.type).toBe('most_used_workspace_templates')
+        })
+
+        test('throws on invalid type', () => {
+            expect(() =>
+                SuggestionSchema.parse({
+                    type: 'invalid',
+                    content: { templates: [], locale: 'en' },
+                    isDeleted: false,
+                }),
+            ).toThrow(ZodError)
+        })
+
+        test('preserves unknown fields via passthrough', () => {
+            const data = {
+                type: 'templates' as const,
+                content: {
+                    templates: [{ id: 't1', name: 'Test', templateType: 'project' }],
+                    locale: 'en',
+                },
+                isDeleted: false,
+                priority: 1,
+            }
+            const result = SuggestionSchema.parse(data)
+            expect(result).toHaveProperty('priority', 1)
         })
     })
 })
