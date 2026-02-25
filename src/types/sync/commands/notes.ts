@@ -8,6 +8,7 @@ export type NoteAddArgs = {
 }
 
 export type NoteUpdateArgs = {
+    id: string
     itemId?: string
     projectId?: string
     content?: string
