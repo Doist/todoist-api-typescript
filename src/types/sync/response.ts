@@ -74,5 +74,5 @@ export type SyncResponse = {
     calendars?: Calendar[]
     calendarAccounts?: CalendarAccount[]
     suggestions?: Suggestion[]
-    tooltips?: Tooltips[]
+    tooltips?: Tooltips
 }
