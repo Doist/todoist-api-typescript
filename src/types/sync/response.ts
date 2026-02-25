@@ -1,4 +1,11 @@
-import type { Task, Label, Section, PersonalProject, WorkspaceProject } from '../entities'
+import type {
+    Task,
+    Label,
+    Section,
+    PersonalProject,
+    WorkspaceProject,
+    WorkspaceUser,
+} from '../entities'
 import type {
     Filter,
     Collaborator,
@@ -16,6 +23,7 @@ import type {
     ProjectViewOptionsDefaults,
     UserPlanLimits,
     LiveNotification,
+    SyncWorkspace,
 } from './resources'
 
 export type SyncError = {
@@ -50,8 +58,8 @@ export type SyncResponse = {
     userPlanLimits?: UserPlanLimits
     completedInfo?: CompletedInfo[]
     stats?: Record<string, unknown>
-    workspaces?: Record<string, unknown>
-    workspaceUsers?: Record<string, unknown>[]
+    workspaces?: SyncWorkspace[]
+    workspaceUsers?: WorkspaceUser[]
     workspaceFilters?: WorkspaceFilter[]
     viewOptions?: ViewOptions[]
     projectViewOptionsDefaults?: ProjectViewOptionsDefaults[]

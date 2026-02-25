@@ -12,6 +12,7 @@ import { CompletedInfoSchema } from './completed-info'
 import { ViewOptionsSchema, ProjectViewOptionsDefaultsSchema } from './view-options'
 import { UserPlanLimitsSchema, PlanLimitsSchema } from './user-plan-limits'
 import { LiveNotificationSchema } from './live-notifications'
+import { SyncWorkspaceSchema } from './workspaces'
 
 describe('Sync resource schemas', () => {
     describe('FilterSchema', () => {
@@ -511,6 +512,87 @@ describe('Sync resource schemas', () => {
             const withExtra = { ...validNotification, karmaAmount: 5 }
             const result = LiveNotificationSchema.parse(withExtra)
             expect(result).toHaveProperty('karmaAmount', 5)
+        })
+    })
+
+    describe('SyncWorkspaceSchema', () => {
+        const validWorkspace = {
+            id: 'ws1',
+            name: 'My Team',
+            description: 'Team workspace',
+            creatorId: 'user1',
+            createdAt: '2024-01-01T00:00:00Z',
+            isDeleted: false,
+            isCollapsed: false,
+            role: 'ADMIN' as const,
+            plan: 'BUSINESS' as const,
+            limits: {
+                current: { maxProjects: 500 },
+                next: null,
+            },
+            currentActiveProjects: 42,
+            currentMemberCount: 10,
+            currentTemplateCount: 3,
+            adminSortingApplied: false,
+        }
+
+        test('validates valid data', () => {
+            expect(SyncWorkspaceSchema.parse(validWorkspace)).toEqual(validWorkspace)
+        })
+
+        test('validates with optional fields', () => {
+            const full = {
+                ...validWorkspace,
+                logoBig: 'https://example.com/logo.png',
+                inviteCode: 'abc123',
+                isLinkSharingEnabled: true,
+                isGuestAllowed: true,
+                pendingInvitations: ['user@example.com'],
+                domainName: 'example.com',
+                domainDiscovery: true,
+                restrictEmailDomains: false,
+                projectSortPreference: 'A_TO_Z',
+                defaultCollaborators: {
+                    predefinedGroupIds: ['group1'],
+                    userIds: [123],
+                },
+                properties: { industry: 'information_technology' },
+            }
+            const result = SyncWorkspaceSchema.parse(full)
+            expect(result.domainName).toBe('example.com')
+            expect(result.defaultCollaborators).toEqual({
+                predefinedGroupIds: ['group1'],
+                userIds: [123],
+            })
+        })
+
+        test('accepts null for nullable fields', () => {
+            const withNulls = {
+                ...validWorkspace,
+                inviteCode: null,
+                isLinkSharingEnabled: null,
+                isGuestAllowed: null,
+                currentActiveProjects: null,
+                currentMemberCount: null,
+                currentTemplateCount: null,
+            }
+            expect(SyncWorkspaceSchema.parse(withNulls).currentActiveProjects).toBeNull()
+        })
+
+        test('throws on invalid data', () => {
+            expect(() => SyncWorkspaceSchema.parse({ id: 'ws1' })).toThrow(ZodError)
+        })
+
+        test('throws on invalid plan', () => {
+            expect(() => SyncWorkspaceSchema.parse({ ...validWorkspace, plan: 'FREE' })).toThrow(
+                ZodError,
+            )
+        })
+
+        test('preserves unknown fields via passthrough', () => {
+            const withExtra = { ...validWorkspace, newFeatureFlag: true }
+            const result = SyncWorkspaceSchema.parse(withExtra)
+            expect(result).toHaveProperty('newFeatureFlag', true)
         })
     })
 })

@@ -66,6 +66,8 @@ import {
     type UserPlanLimits,
     LiveNotificationSchema,
     type LiveNotification,
+    SyncWorkspaceSchema,
+    type SyncWorkspace,
 } from '../types/sync/resources'
 
 export function validateTask(input: unknown): Task {
@@ -323,4 +325,12 @@ export function validateLiveNotification(input: unknown): LiveNotification {
 
 export function validateLiveNotificationArray(input: unknown[]): LiveNotification[] {
     return input.map(validateLiveNotification)
+}
+
+export function validateSyncWorkspace(input: unknown): SyncWorkspace {
+    return SyncWorkspaceSchema.parse(input)
+}
+
+export function validateSyncWorkspaceArray(input: unknown[]): SyncWorkspace[] {
+    return input.map(validateSyncWorkspace)
 }
