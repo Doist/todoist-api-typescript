@@ -53,7 +53,7 @@ import type {
     NoteReactionAddArgs,
     NoteReactionRemoveArgs,
 } from './notes'
-import type { ReminderAddArgs, ReminderDeleteArgs } from './reminders'
+import type { ReminderAddArgs, ReminderUpdateArgs, ReminderDeleteArgs } from './reminders'
 import type {
     WorkspaceAddArgs,
     WorkspaceUpdateArgs,
@@ -103,6 +103,8 @@ import type {
     DeleteCollaboratorArgs,
     IdMappingArgs,
     SuggestionDeleteArgs,
+    UserSettingsUpdateArgs,
+    UpdateGoalsArgs,
 } from './others'
 
 /**
@@ -176,6 +178,7 @@ export type SyncCommandsMap = {
 
     // Reminders
     reminder_add: ReminderAddArgs
+    reminder_update: ReminderUpdateArgs
     reminder_delete: ReminderDeleteArgs
 
     // Workspaces
@@ -233,6 +236,8 @@ export type SyncCommandsMap = {
 
     // Others
     user_update: UserUpdateArgs
+    user_settings_update: UserSettingsUpdateArgs
+    update_goals: UpdateGoalsArgs
     delete_collaborator: DeleteCollaboratorArgs
     id_mapping: IdMappingArgs
     suggestion_delete: SuggestionDeleteArgs
