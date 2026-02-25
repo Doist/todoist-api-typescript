@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.6.0](https://github.com/Doist/todoist-api-typescript/compare/v6.5.1...v6.6.0) (2026-02-25)
+
+
+### Features
+
+* Add strongly-typed Sync API command support ([#460](https://github.com/Doist/todoist-api-typescript/issues/460)) ([b8acec3](https://github.com/Doist/todoist-api-typescript/commit/b8acec3fad0f34a3981af65c380855f4bea30926))
+* Add Zod schemas for Sync API response resource types ([#462](https://github.com/Doist/todoist-api-typescript/issues/462)) ([e3f1f29](https://github.com/Doist/todoist-api-typescript/commit/e3f1f2924109a61934be30151a7103253b7b92e0))
+
+
+### Code Refactoring
+
+* replace boilerplate validators with generic factory functions ([#463](https://github.com/Doist/todoist-api-typescript/issues/463)) ([b42d16a](https://github.com/Doist/todoist-api-typescript/commit/b42d16ac627d9c905fe75105192511d7c4b0fa15))
+
 ## [6.5.1](https://github.com/Doist/todoist-api-typescript/compare/v6.5.0...v6.5.1) (2026-02-20)
 
 
