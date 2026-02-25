@@ -149,7 +149,7 @@ import { processTaskContent } from './utils/uncompletable-helpers'
 import { z } from 'zod'
 
 import { v4 as uuidv4 } from 'uuid'
-import { SyncResponse, type Command, type SyncRequest } from './types/sync'
+import { type SyncResponse, type SyncCommand, type SyncRequest } from './types/sync'
 import { TodoistRequestError } from './types'
 
 const MAX_COMMAND_COUNT = 100
@@ -275,6 +275,34 @@ export class TodoistApi {
         }
 
         return response.data
+    }
+
+    /**
+     * Executes a raw Sync API request.
+     *
+     * This method provides direct access to the Sync API, allowing you to send
+     * strongly-typed commands and request specific resource types.
+     *
+     * @param request - The sync request payload containing commands and/or resource types.
+     * @param requestId - Optional custom identifier for the request.
+     * @returns A promise that resolves to the sync response.
+     * @throws TodoistRequestError if the sync status contains errors.
+     *
+     * @example
+     * ```typescript
+     * import { createCommand } from '@doist/todoist-api-typescript'
+     *
+     * const response = await api.sync({
+     *     commands: [
+     *         createCommand('item_add', { content: 'Buy milk' }),
+     *     ],
+     *     resourceTypes: ['items'],
+     *     syncToken: '*',
+     * })
+     * ```
+     */
+    async sync(syncRequest: SyncRequest, requestId?: string): Promise<SyncResponse> {
+        return this.requestSync(syncRequest, requestId, Boolean(syncRequest.commands?.length))
     }
 
     /**
@@ -532,20 +560,20 @@ export class TodoistApi {
         if (ids.length > MAX_COMMAND_COUNT) {
             throw new TodoistRequestError(`Maximum number of items is ${MAX_COMMAND_COUNT}`, 400)
         }
-        const commands: Command[] = ids.map((id) => ({
+        const commands: SyncCommand[] = ids.map((id) => ({
             type: 'item_move',
             uuid: uuidv4(),
             args: {
                 id,
-                ...(args.projectId && { project_id: args.projectId }),
-                ...(args.sectionId && { section_id: args.sectionId }),
-                ...(args.parentId && { parent_id: args.parentId }),
+                ...(args.projectId ? { projectId: args.projectId } : {}),
+                ...(args.sectionId ? { sectionId: args.sectionId } : {}),
+                ...(args.parentId ? { parentId: args.parentId } : {}),
             },
         }))
 
         const syncRequest: SyncRequest = {
             commands,
-            resource_types: ['items'],
+            resourceTypes: ['items'],
         }
 
         const syncResponse = await this.requestSync(syncRequest, requestId, true)
@@ -1798,8 +1826,8 @@ export class TodoistApi {
      */
     async getWorkspaces(requestId?: string): Promise<Workspace[]> {
         const syncRequest: SyncRequest = {
-            sync_token: '*',
-            resource_types: ['workspaces'],
+            syncToken: '*',
+            resourceTypes: ['workspaces'],
         }
 
         const syncResponse = await this.requestSync(syncRequest, requestId, false)
