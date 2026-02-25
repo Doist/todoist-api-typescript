@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.7.0](https://github.com/Doist/todoist-api-typescript/compare/v6.6.0...v6.7.0) (2026-02-25)
+
+
+### Features
+
+* Add missing Sync API commands: reminder_update, user_settings_update, update_goals ([#464](https://github.com/Doist/todoist-api-typescript/issues/464)) ([ca0659f](https://github.com/Doist/todoist-api-typescript/commit/ca0659ff9b7d1d5ddc8321087b7d30f00c5d7290))
+
 ## [6.6.0](https://github.com/Doist/todoist-api-typescript/compare/v6.5.1...v6.6.0) (2026-02-25)
 
 
