@@ -1,3 +1,5 @@
+import { type ZodType } from 'zod'
+
 import {
     AttachmentSchema,
     SectionSchema,
@@ -6,83 +8,55 @@ import {
     UserSchema,
     CurrentUserSchema,
     TaskSchema,
-    type Attachment,
-    type Task,
-    type Section,
-    type Label,
-    type Comment,
-    type User,
-    type CurrentUser,
-    type ProductivityStats,
     PersonalProjectSchema,
     WorkspaceProjectSchema,
     type WorkspaceProject,
     type PersonalProject,
     ProductivityStatsSchema,
     ActivityEventSchema,
-    type ActivityEvent,
     WorkspaceUserSchema,
     type WorkspaceUser,
     WorkspaceInvitationSchema,
-    type WorkspaceInvitation,
     WorkspacePlanDetailsSchema,
-    type WorkspacePlanDetails,
     JoinWorkspaceResultSchema,
-    type JoinWorkspaceResult,
     WorkspaceSchema,
-    type Workspace,
 } from '../types/entities'
 
 import {
     FilterSchema,
-    type Filter,
     CollaboratorSchema,
-    type Collaborator,
     CollaboratorStateSchema,
-    type CollaboratorState,
     FolderSchema,
-    type Folder,
     NoteSchema,
-    type Note,
     TooltipsSchema,
-    type Tooltips,
     WorkspaceFilterSchema,
-    type WorkspaceFilter,
     WorkspaceGoalSchema,
-    type WorkspaceGoal,
     CalendarSchema,
-    type Calendar,
     CalendarAccountSchema,
-    type CalendarAccount,
     ReminderSchema,
-    type Reminder,
     CompletedInfoSchema,
-    type CompletedInfo,
     ViewOptionsSchema,
-    type ViewOptions,
     ProjectViewOptionsDefaultsSchema,
-    type ProjectViewOptionsDefaults,
     UserPlanLimitsSchema,
-    type UserPlanLimits,
     LiveNotificationSchema,
-    type LiveNotification,
     SyncWorkspaceSchema,
-    type SyncWorkspace,
     SyncUserSchema,
-    type SyncUser,
     UserSettingsSchema,
-    type UserSettings,
     SuggestionSchema,
-    type Suggestion,
 } from '../types/sync/resources'
 
-export function validateTask(input: unknown): Task {
-    return TaskSchema.parse(input)
+function createValidator<T>(schema: ZodType<T>): (input: unknown) => T {
+    return (input: unknown): T => schema.parse(input)
 }
 
-export function validateTaskArray(input: unknown[]): Task[] {
-    return input.map(validateTask)
+function createArrayValidator<T>(validateItem: (input: unknown) => T): (input: unknown[]) => T[] {
+    return (input: unknown[]): T[] => input.map(validateItem)
 }
+
+// Entity validators
+
+export const validateTask = createValidator(TaskSchema)
+export const validateTaskArray = createArrayValidator(validateTask)
 
 /**
  * Type guard to check if a project is a workspace project.
@@ -122,61 +96,28 @@ export function validateProjectArray(input: unknown[]): (PersonalProject | Works
     return input.map(validateProject)
 }
 
-export function validateSection(input: unknown): Section {
-    return SectionSchema.parse(input)
-}
+export const validateSection = createValidator(SectionSchema)
+export const validateSectionArray = createArrayValidator(validateSection)
 
-export function validateSectionArray(input: unknown[]): Section[] {
-    return input.map(validateSection)
-}
+export const validateLabel = createValidator(LabelSchema)
+export const validateLabelArray = createArrayValidator(validateLabel)
 
-export function validateLabel(input: unknown): Label {
-    return LabelSchema.parse(input)
-}
+export const validateComment = createValidator(CommentSchema)
+export const validateCommentArray = createArrayValidator(validateComment)
 
-export function validateLabelArray(input: unknown[]): Label[] {
-    return input.map(validateLabel)
-}
+export const validateUser = createValidator(UserSchema)
+export const validateUserArray = createArrayValidator(validateUser)
 
-export function validateComment(input: unknown): Comment {
-    return CommentSchema.parse(input)
-}
+export const validateProductivityStats = createValidator(ProductivityStatsSchema)
 
-export function validateCommentArray(input: unknown[]): Comment[] {
-    return input.map(validateComment)
-}
+export const validateCurrentUser = createValidator(CurrentUserSchema)
 
-export function validateUser(input: unknown): User {
-    return UserSchema.parse(input)
-}
+export const validateActivityEvent = createValidator(ActivityEventSchema)
+export const validateActivityEventArray = createArrayValidator(validateActivityEvent)
 
-export function validateUserArray(input: unknown[]): User[] {
-    return input.map(validateUser)
-}
+export const validateAttachment = createValidator(AttachmentSchema)
 
-export function validateProductivityStats(input: unknown): ProductivityStats {
-    return ProductivityStatsSchema.parse(input)
-}
-
-export function validateCurrentUser(input: unknown): CurrentUser {
-    return CurrentUserSchema.parse(input)
-}
-
-export function validateActivityEvent(input: unknown): ActivityEvent {
-    return ActivityEventSchema.parse(input)
-}
-
-export function validateActivityEventArray(input: unknown[]): ActivityEvent[] {
-    return input.map(validateActivityEvent)
-}
-
-export function validateAttachment(input: unknown): Attachment {
-    return AttachmentSchema.parse(input)
-}
-
-export function validateWorkspaceUser(input: unknown): WorkspaceUser {
-    return WorkspaceUserSchema.parse(input)
-}
+export const validateWorkspaceUser = createValidator(WorkspaceUserSchema)
 
 export function validateWorkspaceUserArray(input: unknown): WorkspaceUser[] {
     if (!Array.isArray(input)) {
@@ -185,174 +126,72 @@ export function validateWorkspaceUserArray(input: unknown): WorkspaceUser[] {
     return input.map(validateWorkspaceUser)
 }
 
-export function validateWorkspaceInvitation(input: unknown): WorkspaceInvitation {
-    return WorkspaceInvitationSchema.parse(input)
-}
+export const validateWorkspaceInvitation = createValidator(WorkspaceInvitationSchema)
+export const validateWorkspaceInvitationArray = createArrayValidator(validateWorkspaceInvitation)
 
-export function validateWorkspaceInvitationArray(input: unknown[]): WorkspaceInvitation[] {
-    return input.map(validateWorkspaceInvitation)
-}
+export const validateWorkspacePlanDetails = createValidator(WorkspacePlanDetailsSchema)
 
-export function validateWorkspacePlanDetails(input: unknown): WorkspacePlanDetails {
-    return WorkspacePlanDetailsSchema.parse(input)
-}
+export const validateJoinWorkspaceResult = createValidator(JoinWorkspaceResultSchema)
 
-export function validateJoinWorkspaceResult(input: unknown): JoinWorkspaceResult {
-    return JoinWorkspaceResultSchema.parse(input)
-}
-
-export function validateWorkspace(input: unknown): Workspace {
-    return WorkspaceSchema.parse(input)
-}
-
-export function validateWorkspaceArray(input: unknown[]): Workspace[] {
-    return input.map(validateWorkspace)
-}
+export const validateWorkspace = createValidator(WorkspaceSchema)
+export const validateWorkspaceArray = createArrayValidator(validateWorkspace)
 
 // Sync resource validators
 
-export function validateFilter(input: unknown): Filter {
-    return FilterSchema.parse(input)
-}
+export const validateFilter = createValidator(FilterSchema)
+export const validateFilterArray = createArrayValidator(validateFilter)
 
-export function validateFilterArray(input: unknown[]): Filter[] {
-    return input.map(validateFilter)
-}
+export const validateCollaborator = createValidator(CollaboratorSchema)
+export const validateCollaboratorArray = createArrayValidator(validateCollaborator)
 
-export function validateCollaborator(input: unknown): Collaborator {
-    return CollaboratorSchema.parse(input)
-}
+export const validateCollaboratorState = createValidator(CollaboratorStateSchema)
+export const validateCollaboratorStateArray = createArrayValidator(validateCollaboratorState)
 
-export function validateCollaboratorArray(input: unknown[]): Collaborator[] {
-    return input.map(validateCollaborator)
-}
+export const validateFolder = createValidator(FolderSchema)
+export const validateFolderArray = createArrayValidator(validateFolder)
 
-export function validateCollaboratorState(input: unknown): CollaboratorState {
-    return CollaboratorStateSchema.parse(input)
-}
+export const validateNote = createValidator(NoteSchema)
+export const validateNoteArray = createArrayValidator(validateNote)
 
-export function validateCollaboratorStateArray(input: unknown[]): CollaboratorState[] {
-    return input.map(validateCollaboratorState)
-}
+export const validateTooltips = createValidator(TooltipsSchema)
 
-export function validateFolder(input: unknown): Folder {
-    return FolderSchema.parse(input)
-}
+export const validateWorkspaceFilter = createValidator(WorkspaceFilterSchema)
+export const validateWorkspaceFilterArray = createArrayValidator(validateWorkspaceFilter)
 
-export function validateFolderArray(input: unknown[]): Folder[] {
-    return input.map(validateFolder)
-}
+export const validateWorkspaceGoal = createValidator(WorkspaceGoalSchema)
+export const validateWorkspaceGoalArray = createArrayValidator(validateWorkspaceGoal)
 
-export function validateNote(input: unknown): Note {
-    return NoteSchema.parse(input)
-}
+export const validateCalendar = createValidator(CalendarSchema)
+export const validateCalendarArray = createArrayValidator(validateCalendar)
 
-export function validateNoteArray(input: unknown[]): Note[] {
-    return input.map(validateNote)
-}
+export const validateCalendarAccount = createValidator(CalendarAccountSchema)
+export const validateCalendarAccountArray = createArrayValidator(validateCalendarAccount)
 
-export function validateTooltips(input: unknown): Tooltips {
-    return TooltipsSchema.parse(input)
-}
+export const validateReminder = createValidator(ReminderSchema)
+export const validateReminderArray = createArrayValidator(validateReminder)
 
-export function validateWorkspaceFilter(input: unknown): WorkspaceFilter {
-    return WorkspaceFilterSchema.parse(input)
-}
+export const validateCompletedInfo = createValidator(CompletedInfoSchema)
+export const validateCompletedInfoArray = createArrayValidator(validateCompletedInfo)
 
-export function validateWorkspaceFilterArray(input: unknown[]): WorkspaceFilter[] {
-    return input.map(validateWorkspaceFilter)
-}
+export const validateViewOptions = createValidator(ViewOptionsSchema)
+export const validateViewOptionsArray = createArrayValidator(validateViewOptions)
 
-export function validateWorkspaceGoal(input: unknown): WorkspaceGoal {
-    return WorkspaceGoalSchema.parse(input)
-}
+export const validateProjectViewOptionsDefaults = createValidator(ProjectViewOptionsDefaultsSchema)
+export const validateProjectViewOptionsDefaultsArray = createArrayValidator(
+    validateProjectViewOptionsDefaults,
+)
 
-export function validateWorkspaceGoalArray(input: unknown[]): WorkspaceGoal[] {
-    return input.map(validateWorkspaceGoal)
-}
+export const validateUserPlanLimits = createValidator(UserPlanLimitsSchema)
 
-export function validateCalendar(input: unknown): Calendar {
-    return CalendarSchema.parse(input)
-}
+export const validateLiveNotification = createValidator(LiveNotificationSchema)
+export const validateLiveNotificationArray = createArrayValidator(validateLiveNotification)
 
-export function validateCalendarArray(input: unknown[]): Calendar[] {
-    return input.map(validateCalendar)
-}
+export const validateSyncWorkspace = createValidator(SyncWorkspaceSchema)
+export const validateSyncWorkspaceArray = createArrayValidator(validateSyncWorkspace)
 
-export function validateCalendarAccount(input: unknown): CalendarAccount {
-    return CalendarAccountSchema.parse(input)
-}
+export const validateSyncUser = createValidator(SyncUserSchema)
 
-export function validateCalendarAccountArray(input: unknown[]): CalendarAccount[] {
-    return input.map(validateCalendarAccount)
-}
+export const validateUserSettings = createValidator(UserSettingsSchema)
 
-export function validateReminder(input: unknown): Reminder {
-    return ReminderSchema.parse(input)
-}
-
-export function validateReminderArray(input: unknown[]): Reminder[] {
-    return input.map(validateReminder)
-}
-
-export function validateCompletedInfo(input: unknown): CompletedInfo {
-    return CompletedInfoSchema.parse(input)
-}
-
-export function validateCompletedInfoArray(input: unknown[]): CompletedInfo[] {
-    return input.map(validateCompletedInfo)
-}
-
-export function validateViewOptions(input: unknown): ViewOptions {
-    return ViewOptionsSchema.parse(input)
-}
-
-export function validateViewOptionsArray(input: unknown[]): ViewOptions[] {
-    return input.map(validateViewOptions)
-}
-
-export function validateProjectViewOptionsDefaults(input: unknown): ProjectViewOptionsDefaults {
-    return ProjectViewOptionsDefaultsSchema.parse(input)
-}
-
-export function validateProjectViewOptionsDefaultsArray(
-    input: unknown[],
-): ProjectViewOptionsDefaults[] {
-    return input.map(validateProjectViewOptionsDefaults)
-}
-
-export function validateUserPlanLimits(input: unknown): UserPlanLimits {
-    return UserPlanLimitsSchema.parse(input)
-}
-
-export function validateLiveNotification(input: unknown): LiveNotification {
-    return LiveNotificationSchema.parse(input)
-}
-
-export function validateLiveNotificationArray(input: unknown[]): LiveNotification[] {
-    return input.map(validateLiveNotification)
-}
-
-export function validateSyncWorkspace(input: unknown): SyncWorkspace {
-    return SyncWorkspaceSchema.parse(input)
-}
-
-export function validateSyncWorkspaceArray(input: unknown[]): SyncWorkspace[] {
-    return input.map(validateSyncWorkspace)
-}
-
-export function validateSyncUser(input: unknown): SyncUser {
-    return SyncUserSchema.parse(input)
-}
-
-export function validateUserSettings(input: unknown): UserSettings {
-    return UserSettingsSchema.parse(input)
-}
-
-export function validateSuggestion(input: unknown): Suggestion {
-    return SuggestionSchema.parse(input)
-}
-
-export function validateSuggestionArray(input: unknown[]): Suggestion[] {
-    return input.map(validateSuggestion)
-}
+export const validateSuggestion = createValidator(SuggestionSchema)
+export const validateSuggestionArray = createArrayValidator(validateSuggestion)
