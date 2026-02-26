@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { DateFormatSchema, DayOfWeekSchema, TimeFormatSchema } from '../user-preferences'
 
 const FeaturesSchema = z
     .object({
@@ -61,7 +62,7 @@ export const SyncUserSchema = z
         avatarSmall: z.string().optional(),
         businessAccountId: z.string().nullable(),
         dailyGoal: z.number().int(),
-        dateFormat: z.number().int(),
+        dateFormat: DateFormatSchema,
         dateistLang: z.string().nullable(),
         daysOff: z.array(z.number().int()),
         featureIdentifier: z.string(),
@@ -83,7 +84,7 @@ export const SyncUserSchema = z
         mfaEnabled: z.boolean().optional(),
         mobileHost: z.string().nullable(),
         mobileNumber: z.string().nullable(),
-        nextWeek: z.number().int(),
+        nextWeek: DayOfWeekSchema,
         onboardingLevel: z.string().nullable().optional(),
         onboardingRole: z.string().nullable().optional(),
         onboardingPersona: z.string().nullable().optional(),
@@ -110,10 +111,10 @@ export const SyncUserSchema = z
             .optional(),
         shareLimit: z.number().int(),
         sortOrder: z.number().int(),
-        startDay: z.number().int(),
+        startDay: DayOfWeekSchema,
         startPage: z.string(),
         themeId: z.string(),
-        timeFormat: z.number().int(),
+        timeFormat: TimeFormatSchema,
         token: z.string(),
         tzInfo: TzInfoSchema,
         uniquePrefix: z.number().int(),

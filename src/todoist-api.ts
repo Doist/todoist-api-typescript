@@ -149,7 +149,15 @@ import { processTaskContent } from './utils/uncompletable-helpers'
 import { z } from 'zod'
 
 import { v4 as uuidv4 } from 'uuid'
-import { type SyncResponse, type SyncCommand, type SyncRequest } from './types/sync'
+import {
+    type SyncResponse,
+    type SyncCommand,
+    type SyncRequest,
+    DATE_FORMAT_TO_API,
+    TIME_FORMAT_TO_API,
+    DAY_OF_WEEK_TO_API,
+    type UserUpdateArgs,
+} from './types/sync'
 import { TodoistRequestError } from './types'
 
 const MAX_COMMAND_COUNT = 100
@@ -161,6 +169,23 @@ const MAX_COMMAND_COUNT = 100
  */
 function generatePath(...segments: string[]): string {
     return segments.join('/')
+}
+
+function serializeUserUpdateArgs(args: UserUpdateArgs): Record<string, unknown> {
+    return {
+        ...args,
+        ...(args.dateFormat !== undefined && { dateFormat: DATE_FORMAT_TO_API[args.dateFormat] }),
+        ...(args.timeFormat !== undefined && { timeFormat: TIME_FORMAT_TO_API[args.timeFormat] }),
+        ...(args.startDay !== undefined && { startDay: DAY_OF_WEEK_TO_API[args.startDay] }),
+        ...(args.nextWeek !== undefined && { nextWeek: DAY_OF_WEEK_TO_API[args.nextWeek] }),
+    }
+}
+
+function preprocessSyncCommands(commands: SyncCommand[]): SyncCommand[] {
+    return commands.map((cmd): SyncCommand => {
+        if (cmd.type !== 'user_update') return cmd
+        return { ...cmd, args: serializeUserUpdateArgs(cmd.args as UserUpdateArgs) }
+    })
 }
 
 /**
@@ -254,13 +279,16 @@ export class TodoistApi {
         requestId?: string,
         hasSyncCommands = false,
     ): Promise<SyncResponse> {
+        const processedRequest = syncRequest.commands?.length
+            ? { ...syncRequest, commands: preprocessSyncCommands(syncRequest.commands) }
+            : syncRequest
         const response = await request<SyncResponse>({
             httpMethod: 'POST',
             baseUri: this.syncApiBase,
             relativePath: ENDPOINT_SYNC,
             apiToken: this.authToken,
             customFetch: this.customFetch,
-            payload: syncRequest,
+            payload: processedRequest,
             requestId: requestId,
             hasSyncCommands: hasSyncCommands,
         })

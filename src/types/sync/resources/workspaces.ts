@@ -34,6 +34,13 @@ export const SyncWorkspaceSchema = z
         isGuestAllowed: z.boolean().nullable().optional(),
         currentActiveProjects: z.number().nullable(),
         currentMemberCount: z.number().nullable(),
+        memberCountByType: z
+            .object({
+                adminCount: z.number().int(),
+                guestCount: z.number().int(),
+                memberCount: z.number().int(),
+            })
+            .optional(),
         currentTemplateCount: z.number().nullable(),
         pendingInvitations: z.array(z.string()).nullable().optional(),
         domainName: z.string().optional(),
