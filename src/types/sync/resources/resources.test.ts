@@ -660,7 +660,19 @@ describe('Sync resource schemas', () => {
         }
 
         test('validates valid data', () => {
-            expect(SyncUserSchema.parse(validUser)).toEqual(validUser)
+            const result = SyncUserSchema.parse(validUser)
+            // Numeric fields are transformed to descriptive strings
+            expect(result.dateFormat).toBe('DD/MM/YYYY')
+            expect(result.timeFormat).toBe('24h')
+            expect(result.startDay).toBe('Monday')
+            expect(result.nextWeek).toBe('Monday')
+            // 0/1 fields are transformed to booleans
+            expect(result.features.beta).toBe(false)
+            expect(result.tzInfo.isDst).toBe(false)
+            // Non-transformed fields pass through unchanged
+            expect(result.id).toBe(validUser.id)
+            expect(result.email).toBe(validUser.email)
+            expect(result.fullName).toBe(validUser.fullName)
         })
 
         test('validates with optional onboarding fields', () => {

@@ -1,4 +1,16 @@
-export type UserUpdateArgs = Record<string, unknown>
+import type { DateFormat, DayOfWeek, TimeFormat } from '../user-preferences'
+
+export type UserUpdateArgs = {
+    fullName?: string
+    autoReminder?: number
+    dateFormat?: DateFormat
+    nextWeek?: DayOfWeek
+    startDay?: DayOfWeek
+    startPage?: string
+    themeId?: string
+    timeFormat?: TimeFormat
+    timezone?: string
+}
 
 export type DeleteCollaboratorArgs = {
     projectId: string
@@ -28,6 +40,6 @@ export type UpdateGoalsArgs = {
     dailyGoal?: number
     weeklyGoal?: number
     ignoreDays?: number[]
-    vacationMode?: 0 | 1
-    karmaDisabled?: 0 | 1
+    vacationMode?: boolean
+    karmaDisabled?: boolean
 }

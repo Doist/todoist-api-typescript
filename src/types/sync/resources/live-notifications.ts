@@ -22,6 +22,17 @@ export const LiveNotificationSchema = z
         itemContent: z.string().optional(),
         responsibleUid: z.string().optional(),
         assignedByUid: z.string().optional(),
+        fromUser: z
+            .object({
+                email: z.string(),
+                fullName: z.string(),
+                id: z.string(),
+                imageId: z.string().nullable(),
+            })
+            .optional(),
+        projectName: z.string().optional(),
+        isDeleted: z.boolean().optional(),
+        invitationSecret: z.string().optional(),
     })
     .passthrough()
 

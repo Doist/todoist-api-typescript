@@ -149,7 +149,17 @@ import { processTaskContent } from './utils/uncompletable-helpers'
 import { z } from 'zod'
 
 import { v4 as uuidv4 } from 'uuid'
-import { type SyncResponse, type SyncCommand, type SyncRequest } from './types/sync'
+import {
+    type SyncResponse,
+    type SyncCommand,
+    type SyncRequest,
+    DATE_FORMAT_TO_API,
+    TIME_FORMAT_TO_API,
+    DAY_OF_WEEK_TO_API,
+    type UserUpdateArgs,
+    type TaskUpdateDateCompleteArgs,
+    type UpdateGoalsArgs,
+} from './types/sync'
 import { TodoistRequestError } from './types'
 
 const MAX_COMMAND_COUNT = 100
@@ -161,6 +171,56 @@ const MAX_COMMAND_COUNT = 100
  */
 function generatePath(...segments: string[]): string {
     return segments.join('/')
+}
+
+function spreadIfDefined<T, V extends Record<string, unknown>>(
+    value: T | undefined,
+    fn: (v: T) => V,
+): V | Record<string, never> {
+    return value !== undefined ? fn(value) : {}
+}
+
+function serializeUserUpdateArgs(args: UserUpdateArgs): Record<string, unknown> {
+    return {
+        ...args,
+        ...spreadIfDefined(args.dateFormat, (v) => ({ dateFormat: DATE_FORMAT_TO_API[v] })),
+        ...spreadIfDefined(args.timeFormat, (v) => ({ timeFormat: TIME_FORMAT_TO_API[v] })),
+        ...spreadIfDefined(args.startDay, (v) => ({ startDay: DAY_OF_WEEK_TO_API[v] })),
+        ...spreadIfDefined(args.nextWeek, (v) => ({ nextWeek: DAY_OF_WEEK_TO_API[v] })),
+    }
+}
+
+function serializeTaskUpdateDateCompleteArgs(
+    args: TaskUpdateDateCompleteArgs,
+): Record<string, unknown> {
+    return {
+        ...args,
+        isForward: args.isForward ? 1 : 0,
+        ...spreadIfDefined(args.resetSubtasks, (v) => ({ resetSubtasks: v ? 1 : 0 })),
+    }
+}
+
+function serializeUpdateGoalsArgs(args: UpdateGoalsArgs): Record<string, unknown> {
+    return {
+        ...args,
+        ...spreadIfDefined(args.vacationMode, (v) => ({ vacationMode: v ? 1 : 0 })),
+        ...spreadIfDefined(args.karmaDisabled, (v) => ({ karmaDisabled: v ? 1 : 0 })),
+    }
+}
+
+function preprocessSyncCommands(commands: SyncCommand[]): SyncCommand[] {
+    return commands.map((cmd): SyncCommand => {
+        if (cmd.type === 'user_update')
+            return { ...cmd, args: serializeUserUpdateArgs(cmd.args as UserUpdateArgs) }
+        if (cmd.type === 'item_update_date_complete')
+            return {
+                ...cmd,
+                args: serializeTaskUpdateDateCompleteArgs(cmd.args as TaskUpdateDateCompleteArgs),
+            }
+        if (cmd.type === 'update_goals')
+            return { ...cmd, args: serializeUpdateGoalsArgs(cmd.args as UpdateGoalsArgs) }
+        return cmd
+    })
 }
 
 /**
@@ -254,13 +314,16 @@ export class TodoistApi {
         requestId?: string,
         hasSyncCommands = false,
     ): Promise<SyncResponse> {
+        const processedRequest = syncRequest.commands?.length
+            ? { ...syncRequest, commands: preprocessSyncCommands(syncRequest.commands) }
+            : syncRequest
         const response = await request<SyncResponse>({
             httpMethod: 'POST',
             baseUri: this.syncApiBase,
             relativePath: ENDPOINT_SYNC,
             apiToken: this.authToken,
             customFetch: this.customFetch,
-            payload: syncRequest,
+            payload: processedRequest,
             requestId: requestId,
             hasSyncCommands: hasSyncCommands,
         })
@@ -565,9 +628,9 @@ export class TodoistApi {
             uuid: uuidv4(),
             args: {
                 id,
-                ...(args.projectId ? { projectId: args.projectId } : {}),
-                ...(args.sectionId ? { sectionId: args.sectionId } : {}),
-                ...(args.parentId ? { parentId: args.parentId } : {}),
+                ...spreadIfDefined(args.projectId, (v) => ({ projectId: v })),
+                ...spreadIfDefined(args.sectionId, (v) => ({ sectionId: v })),
+                ...spreadIfDefined(args.parentId, (v) => ({ parentId: v })),
             },
         }))
 
@@ -607,9 +670,9 @@ export class TodoistApi {
             apiToken: this.authToken,
             customFetch: this.customFetch,
             payload: {
-                ...(args.projectId && { project_id: args.projectId }),
-                ...(args.sectionId && { section_id: args.sectionId }),
-                ...(args.parentId && { parent_id: args.parentId }),
+                ...spreadIfDefined(args.projectId, (v) => ({ project_id: v })),
+                ...spreadIfDefined(args.sectionId, (v) => ({ section_id: v })),
+                ...spreadIfDefined(args.parentId, (v) => ({ parent_id: v })),
             },
             requestId: requestId,
         })
@@ -1419,9 +1482,11 @@ export class TodoistApi {
         // Convert Date objects to YYYY-MM-DD strings and modern object types to legacy API types
         const processedArgs = {
             ...args,
-            ...(args.since instanceof Date && { since: formatDateToYYYYMMDD(args.since) }),
-            ...(args.until instanceof Date && { until: formatDateToYYYYMMDD(args.until) }),
-            ...(args.objectType && { objectType: normalizeObjectTypeForApi(args.objectType) }),
+            ...(args.since instanceof Date ? { since: formatDateToYYYYMMDD(args.since) } : {}),
+            ...(args.until instanceof Date ? { until: formatDateToYYYYMMDD(args.until) } : {}),
+            ...spreadIfDefined(args.objectType, (v) => ({
+                objectType: normalizeObjectTypeForApi(v),
+            })),
         }
 
         const {
