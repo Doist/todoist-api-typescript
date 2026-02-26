@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.8.0](https://github.com/Doist/todoist-api-typescript/compare/v6.7.0...v6.8.0) (2026-02-26)
+
+
+### Features
+
+* Typed Sync API user preferences + missing resource fields ([#466](https://github.com/Doist/todoist-api-typescript/issues/466)) ([be78d1d](https://github.com/Doist/todoist-api-typescript/commit/be78d1dda715dffae0b900cd39a1d8fd964c5e02))
+
 ## [6.7.0](https://github.com/Doist/todoist-api-typescript/compare/v6.6.0...v6.7.0) (2026-02-25)
 
 
