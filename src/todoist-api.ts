@@ -173,17 +173,20 @@ function generatePath(...segments: string[]): string {
     return segments.join('/')
 }
 
+function spreadIfDefined<T, V extends Record<string, unknown>>(
+    value: T | undefined,
+    fn: (v: T) => V,
+): V | Record<string, never> {
+    return value !== undefined ? fn(value) : {}
+}
+
 function serializeUserUpdateArgs(args: UserUpdateArgs): Record<string, unknown> {
     return {
         ...args,
-        ...(args.dateFormat !== undefined
-            ? { dateFormat: DATE_FORMAT_TO_API[args.dateFormat] }
-            : {}),
-        ...(args.timeFormat !== undefined
-            ? { timeFormat: TIME_FORMAT_TO_API[args.timeFormat] }
-            : {}),
-        ...(args.startDay !== undefined ? { startDay: DAY_OF_WEEK_TO_API[args.startDay] } : {}),
-        ...(args.nextWeek !== undefined ? { nextWeek: DAY_OF_WEEK_TO_API[args.nextWeek] } : {}),
+        ...spreadIfDefined(args.dateFormat, (v) => ({ dateFormat: DATE_FORMAT_TO_API[v] })),
+        ...spreadIfDefined(args.timeFormat, (v) => ({ timeFormat: TIME_FORMAT_TO_API[v] })),
+        ...spreadIfDefined(args.startDay, (v) => ({ startDay: DAY_OF_WEEK_TO_API[v] })),
+        ...spreadIfDefined(args.nextWeek, (v) => ({ nextWeek: DAY_OF_WEEK_TO_API[v] })),
     }
 }
 
@@ -193,15 +196,15 @@ function serializeTaskUpdateDateCompleteArgs(
     return {
         ...args,
         isForward: args.isForward ? 1 : 0,
-        ...(args.resetSubtasks !== undefined ? { resetSubtasks: args.resetSubtasks ? 1 : 0 } : {}),
+        ...spreadIfDefined(args.resetSubtasks, (v) => ({ resetSubtasks: v ? 1 : 0 })),
     }
 }
 
 function serializeUpdateGoalsArgs(args: UpdateGoalsArgs): Record<string, unknown> {
     return {
         ...args,
-        ...(args.vacationMode !== undefined ? { vacationMode: args.vacationMode ? 1 : 0 } : {}),
-        ...(args.karmaDisabled !== undefined ? { karmaDisabled: args.karmaDisabled ? 1 : 0 } : {}),
+        ...spreadIfDefined(args.vacationMode, (v) => ({ vacationMode: v ? 1 : 0 })),
+        ...spreadIfDefined(args.karmaDisabled, (v) => ({ karmaDisabled: v ? 1 : 0 })),
     }
 }
 
@@ -667,9 +670,9 @@ export class TodoistApi {
             apiToken: this.authToken,
             customFetch: this.customFetch,
             payload: {
-                ...(args.projectId ? { project_id: args.projectId } : {}),
-                ...(args.sectionId ? { section_id: args.sectionId } : {}),
-                ...(args.parentId ? { parent_id: args.parentId } : {}),
+                ...spreadIfDefined(args.projectId, (v) => ({ project_id: v })),
+                ...spreadIfDefined(args.sectionId, (v) => ({ section_id: v })),
+                ...spreadIfDefined(args.parentId, (v) => ({ parent_id: v })),
             },
             requestId: requestId,
         })
@@ -1481,7 +1484,9 @@ export class TodoistApi {
             ...args,
             ...(args.since instanceof Date ? { since: formatDateToYYYYMMDD(args.since) } : {}),
             ...(args.until instanceof Date ? { until: formatDateToYYYYMMDD(args.until) } : {}),
-            ...(args.objectType ? { objectType: normalizeObjectTypeForApi(args.objectType) } : {}),
+            ...spreadIfDefined(args.objectType, (v) => ({
+                objectType: normalizeObjectTypeForApi(v),
+            })),
         }
 
         const {
