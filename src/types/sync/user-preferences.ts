@@ -1,10 +1,7 @@
 import { z } from 'zod'
 
-/** 0 = DD/MM/YYYY, 1 = MM/DD/YYYY */
 export type DateFormat = 'DD/MM/YYYY' | 'MM/DD/YYYY'
-/** 0 = 24-hour, 1 = 12-hour */
 export type TimeFormat = '24h' | '12h'
-/** 1 = Monday … 7 = Sunday */
 export type DayOfWeek =
     | 'Monday'
     | 'Tuesday'
