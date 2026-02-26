@@ -666,6 +666,9 @@ describe('Sync resource schemas', () => {
             expect(result.timeFormat).toBe('24h')
             expect(result.startDay).toBe('Monday')
             expect(result.nextWeek).toBe('Monday')
+            // 0/1 fields are transformed to booleans
+            expect(result.features.beta).toBe(false)
+            expect(result.tzInfo.isDst).toBe(false)
             // Non-transformed fields pass through unchanged
             expect(result.id).toBe(validUser.id)
             expect(result.email).toBe(validUser.email)

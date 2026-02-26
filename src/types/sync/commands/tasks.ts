@@ -63,8 +63,8 @@ export type TaskUncompleteArgs = {
 export type TaskUpdateDateCompleteArgs = {
     id: string
     due: SyncDueDate
-    isForward: 0 | 1
-    resetSubtasks?: 0 | 1
+    isForward: boolean
+    resetSubtasks?: boolean
 }
 
 export type TaskDeleteArgs = {

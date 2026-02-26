@@ -40,6 +40,6 @@ export type UpdateGoalsArgs = {
     dailyGoal?: number
     weeklyGoal?: number
     ignoreDays?: number[]
-    vacationMode?: 0 | 1
-    karmaDisabled?: 0 | 1
+    vacationMode?: boolean
+    karmaDisabled?: boolean
 }

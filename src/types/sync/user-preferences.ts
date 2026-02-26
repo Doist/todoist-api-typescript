@@ -41,6 +41,11 @@ export const DAY_OF_WEEK_TO_API: Record<DayOfWeek, 1 | 2 | 3 | 4 | 5 | 6 | 7> = 
     Sunday: 7,
 }
 
+/** Zod read-schema: parse API 0/1 integer, emit boolean */
+export const BooleanFromZeroOneSchema = z
+    .union([z.literal(0), z.literal(1)])
+    .transform((v) => v === 1)
+
 /** Zod read-schemas: parse API numbers, emit descriptive strings */
 export const DateFormatSchema = z
     .union([z.literal(0), z.literal(1)])

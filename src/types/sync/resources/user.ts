@@ -1,5 +1,10 @@
 import { z } from 'zod'
-import { DateFormatSchema, DayOfWeekSchema, TimeFormatSchema } from '../user-preferences'
+import {
+    BooleanFromZeroOneSchema,
+    DateFormatSchema,
+    DayOfWeekSchema,
+    TimeFormatSchema,
+} from '../user-preferences'
 
 const FeaturesSchema = z
     .object({
@@ -7,7 +12,7 @@ const FeaturesSchema = z
         restriction: z.number().int(),
         karmaVacation: z.boolean(),
         dateistLang: z.any(),
-        beta: z.union([z.literal(0), z.literal(1)]),
+        beta: BooleanFromZeroOneSchema,
         hasPushReminders: z.boolean(),
         dateistInlineDisabled: z.boolean(),
         autoInviteDisabled: z.boolean().optional(),
@@ -21,7 +26,7 @@ const TzInfoSchema = z
         timezone: z.string(),
         hours: z.number().int(),
         minutes: z.number().int(),
-        isDst: z.union([z.literal(0), z.literal(1)]),
+        isDst: BooleanFromZeroOneSchema,
         gmtString: z.string(),
     })
     .passthrough()

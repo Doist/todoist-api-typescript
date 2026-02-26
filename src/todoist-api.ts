@@ -157,6 +157,8 @@ import {
     TIME_FORMAT_TO_API,
     DAY_OF_WEEK_TO_API,
     type UserUpdateArgs,
+    type TaskUpdateDateCompleteArgs,
+    type UpdateGoalsArgs,
 } from './types/sync'
 import { TodoistRequestError } from './types'
 
@@ -181,10 +183,36 @@ function serializeUserUpdateArgs(args: UserUpdateArgs): Record<string, unknown> 
     }
 }
 
+function serializeTaskUpdateDateCompleteArgs(
+    args: TaskUpdateDateCompleteArgs,
+): Record<string, unknown> {
+    return {
+        ...args,
+        isForward: args.isForward ? 1 : 0,
+        ...(args.resetSubtasks !== undefined && { resetSubtasks: args.resetSubtasks ? 1 : 0 }),
+    }
+}
+
+function serializeUpdateGoalsArgs(args: UpdateGoalsArgs): Record<string, unknown> {
+    return {
+        ...args,
+        ...(args.vacationMode !== undefined && { vacationMode: args.vacationMode ? 1 : 0 }),
+        ...(args.karmaDisabled !== undefined && { karmaDisabled: args.karmaDisabled ? 1 : 0 }),
+    }
+}
+
 function preprocessSyncCommands(commands: SyncCommand[]): SyncCommand[] {
     return commands.map((cmd): SyncCommand => {
-        if (cmd.type !== 'user_update') return cmd
-        return { ...cmd, args: serializeUserUpdateArgs(cmd.args as UserUpdateArgs) }
+        if (cmd.type === 'user_update')
+            return { ...cmd, args: serializeUserUpdateArgs(cmd.args as UserUpdateArgs) }
+        if (cmd.type === 'item_update_date_complete')
+            return {
+                ...cmd,
+                args: serializeTaskUpdateDateCompleteArgs(cmd.args as TaskUpdateDateCompleteArgs),
+            }
+        if (cmd.type === 'update_goals')
+            return { ...cmd, args: serializeUpdateGoalsArgs(cmd.args as UpdateGoalsArgs) }
+        return cmd
     })
 }
 
