@@ -176,10 +176,14 @@ function generatePath(...segments: string[]): string {
 function serializeUserUpdateArgs(args: UserUpdateArgs): Record<string, unknown> {
     return {
         ...args,
-        ...(args.dateFormat !== undefined && { dateFormat: DATE_FORMAT_TO_API[args.dateFormat] }),
-        ...(args.timeFormat !== undefined && { timeFormat: TIME_FORMAT_TO_API[args.timeFormat] }),
-        ...(args.startDay !== undefined && { startDay: DAY_OF_WEEK_TO_API[args.startDay] }),
-        ...(args.nextWeek !== undefined && { nextWeek: DAY_OF_WEEK_TO_API[args.nextWeek] }),
+        ...(args.dateFormat !== undefined
+            ? { dateFormat: DATE_FORMAT_TO_API[args.dateFormat] }
+            : {}),
+        ...(args.timeFormat !== undefined
+            ? { timeFormat: TIME_FORMAT_TO_API[args.timeFormat] }
+            : {}),
+        ...(args.startDay !== undefined ? { startDay: DAY_OF_WEEK_TO_API[args.startDay] } : {}),
+        ...(args.nextWeek !== undefined ? { nextWeek: DAY_OF_WEEK_TO_API[args.nextWeek] } : {}),
     }
 }
 
@@ -189,15 +193,15 @@ function serializeTaskUpdateDateCompleteArgs(
     return {
         ...args,
         isForward: args.isForward ? 1 : 0,
-        ...(args.resetSubtasks !== undefined && { resetSubtasks: args.resetSubtasks ? 1 : 0 }),
+        ...(args.resetSubtasks !== undefined ? { resetSubtasks: args.resetSubtasks ? 1 : 0 } : {}),
     }
 }
 
 function serializeUpdateGoalsArgs(args: UpdateGoalsArgs): Record<string, unknown> {
     return {
         ...args,
-        ...(args.vacationMode !== undefined && { vacationMode: args.vacationMode ? 1 : 0 }),
-        ...(args.karmaDisabled !== undefined && { karmaDisabled: args.karmaDisabled ? 1 : 0 }),
+        ...(args.vacationMode !== undefined ? { vacationMode: args.vacationMode ? 1 : 0 } : {}),
+        ...(args.karmaDisabled !== undefined ? { karmaDisabled: args.karmaDisabled ? 1 : 0 } : {}),
     }
 }
 
@@ -663,9 +667,9 @@ export class TodoistApi {
             apiToken: this.authToken,
             customFetch: this.customFetch,
             payload: {
-                ...(args.projectId && { project_id: args.projectId }),
-                ...(args.sectionId && { section_id: args.sectionId }),
-                ...(args.parentId && { parent_id: args.parentId }),
+                ...(args.projectId ? { project_id: args.projectId } : {}),
+                ...(args.sectionId ? { section_id: args.sectionId } : {}),
+                ...(args.parentId ? { parent_id: args.parentId } : {}),
             },
             requestId: requestId,
         })
@@ -1475,9 +1479,9 @@ export class TodoistApi {
         // Convert Date objects to YYYY-MM-DD strings and modern object types to legacy API types
         const processedArgs = {
             ...args,
-            ...(args.since instanceof Date && { since: formatDateToYYYYMMDD(args.since) }),
-            ...(args.until instanceof Date && { until: formatDateToYYYYMMDD(args.until) }),
-            ...(args.objectType && { objectType: normalizeObjectTypeForApi(args.objectType) }),
+            ...(args.since instanceof Date ? { since: formatDateToYYYYMMDD(args.since) } : {}),
+            ...(args.until instanceof Date ? { until: formatDateToYYYYMMDD(args.until) } : {}),
+            ...(args.objectType ? { objectType: normalizeObjectTypeForApi(args.objectType) } : {}),
         }
 
         const {
