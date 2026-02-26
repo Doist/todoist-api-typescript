@@ -628,9 +628,9 @@ export class TodoistApi {
             uuid: uuidv4(),
             args: {
                 id,
-                ...(args.projectId ? { projectId: args.projectId } : {}),
-                ...(args.sectionId ? { sectionId: args.sectionId } : {}),
-                ...(args.parentId ? { parentId: args.parentId } : {}),
+                ...spreadIfDefined(args.projectId, (v) => ({ projectId: v })),
+                ...spreadIfDefined(args.sectionId, (v) => ({ sectionId: v })),
+                ...spreadIfDefined(args.parentId, (v) => ({ parentId: v })),
             },
         }))
 
