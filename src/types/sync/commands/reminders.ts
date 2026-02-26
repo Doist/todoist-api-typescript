@@ -27,19 +27,32 @@ export type ReminderAddArgs =
           notifyUid?: string
       }
 
-export type ReminderUpdateArgs = {
-    id: string
-    notifyUid?: string
-    type?: 'relative' | 'absolute' | 'location'
-    due?: SyncDueDate
-    minuteOffset?: number
-    name?: string
-    locLat?: string
-    locLong?: string
-    locTrigger?: 'on_enter' | 'on_leave'
-    radius?: number
-    isDeleted?: boolean
-}
+export type ReminderUpdateArgs =
+    | {
+          id: string
+          type: 'absolute'
+          service?: ReminderService
+          notifyUid?: string
+          due?: SyncDueDate
+      }
+    | {
+          id: string
+          type: 'relative'
+          service?: ReminderService
+          notifyUid?: string
+          minuteOffset?: number
+          due?: SyncDueDate
+      }
+    | {
+          id: string
+          type: 'location'
+          name?: string
+          locLat?: string
+          locLong?: string
+          radius?: number
+          locTrigger?: 'on_enter' | 'on_leave'
+          notifyUid?: string
+      }
 
 export type ReminderDeleteArgs = {
     id: string
