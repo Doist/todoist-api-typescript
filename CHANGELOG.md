@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.9.0](https://github.com/Doist/todoist-api-typescript/compare/v6.8.1...v6.9.0) (2026-02-27)
+
+
+### Features
+
+* add ColorKey type and restrict color params to valid keys ([#471](https://github.com/Doist/todoist-api-typescript/issues/471)) ([608ff72](https://github.com/Doist/todoist-api-typescript/commit/608ff722068cb5fb31e00c7a01f7c0e500911814))
+
 ## [6.8.1](https://github.com/Doist/todoist-api-typescript/compare/v6.8.0...v6.8.1) (2026-02-27)
 
 
