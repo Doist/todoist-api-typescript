@@ -1,7 +1,9 @@
+import type { ColorKey } from '../../../utils/colors'
+
 export type FilterAddArgs = {
     name: string
     query: string
-    color?: string
+    color?: ColorKey
     itemOrder?: number
     isFavorite?: boolean
 }
@@ -10,7 +12,7 @@ export type FilterUpdateArgs = {
     id: string
     name?: string
     query?: string
-    color?: string
+    color?: ColorKey
     itemOrder?: number
     isFavorite?: boolean
 }

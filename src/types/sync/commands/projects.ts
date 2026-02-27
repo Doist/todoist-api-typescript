@@ -1,5 +1,6 @@
 import type { ProjectViewStyle, ProjectVisibility, WorkspaceRole } from '../../entities'
 import type { ProjectStatus, CollaboratorRole } from './shared'
+import type { ColorKey } from '../../../utils/colors'
 
 export type ProjectAccessConfig = {
     visibility: ProjectVisibility
@@ -16,7 +17,7 @@ export type ProjectAddArgs = {
     folderId?: string | null
     childOrder?: number
     defaultOrder?: number
-    color?: string
+    color?: ColorKey
     description?: string
     isFavorite?: boolean
     isInviteOnly?: boolean
@@ -31,7 +32,7 @@ export type ProjectUpdateArgs = {
     id: string
     folderId?: string | null
     name?: string
-    color?: string
+    color?: ColorKey
     description?: string
     isFavorite?: boolean
     isCollapsed?: boolean
