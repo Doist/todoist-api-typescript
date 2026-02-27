@@ -1,4 +1,8 @@
-import { normalizeObjectTypeForApi, denormalizeObjectTypeFromApi } from './activity-helpers'
+import {
+    normalizeObjectTypeForApi,
+    denormalizeObjectTypeFromApi,
+    normalizeObjectEventTypeForApi,
+} from './activity-helpers'
 
 describe('normalizeObjectTypeForApi', () => {
     test.each([
@@ -12,6 +16,24 @@ describe('normalizeObjectTypeForApi', () => {
 
     test('handles undefined', () => {
         expect(normalizeObjectTypeForApi(undefined)).toBe(undefined)
+    })
+})
+
+describe('normalizeObjectEventTypeForApi', () => {
+    test.each([
+        ['task:added', 'item:added'],
+        ['comment:added', 'note:added'],
+        ['task:', 'item:'],
+        ['comment:', 'note:'],
+        [':deleted', ':deleted'],
+        ['project:updated', 'project:updated'],
+        ['unknown:event', 'unknown:event'],
+        // no-colon edge case: treat whole string as object type
+        ['task', 'item'],
+        ['comment', 'note'],
+        ['project', 'project'],
+    ])('converts %s to %s', (input, expected) => {
+        expect(normalizeObjectEventTypeForApi(input)).toBe(expected)
     })
 })
 

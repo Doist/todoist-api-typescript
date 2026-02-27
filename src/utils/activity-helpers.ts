@@ -39,6 +39,9 @@ export function denormalizeObjectTypeFromApi(objectType: string | undefined): st
  */
 export function normalizeObjectEventTypeForApi(filter: string): string {
     const colonIndex = filter.indexOf(':')
+    if (colonIndex === -1) {
+        return normalizeObjectTypeForApi(filter) ?? filter
+    }
     const objectPart = filter.slice(0, colonIndex)
     const eventPart = filter.slice(colonIndex) // includes the colon
     return `${normalizeObjectTypeForApi(objectPart) ?? objectPart}${eventPart}`
