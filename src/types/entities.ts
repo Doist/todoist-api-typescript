@@ -459,6 +459,9 @@ export type ActivityEventType =
     | 'left'
     | (string & Record<string, never>)
 
+// `string & Record<string, never>` is a TypeScript trick that allows any string
+// to be passed (for forward compatibility) while still providing autocomplete
+// for the known literal values above.
 type ModernActivityObjectType = 'task' | 'comment' | 'project' | (string & Record<string, never>)
 
 /**
@@ -469,6 +472,10 @@ type ModernActivityObjectType = 'task' | 'comment' | 'project' | (string & Recor
  * - `'task:added'` — task additions only
  * - `'task:'` — all events for tasks
  * - `':deleted'` — all deleted events across all object types
+ *
+ * The final `string & Record<string, never>` member allows any arbitrary string
+ * to be passed for forward compatibility, while still providing autocomplete for
+ * the known combinations above.
  */
 export type ActivityObjectEventType =
     | `${ModernActivityObjectType}:${ActivityEventType}`
