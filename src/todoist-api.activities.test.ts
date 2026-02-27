@@ -1,4 +1,4 @@
-import { TodoistApi, type ActivityEvent } from '.'
+import { TodoistApi, type ActivityEvent, type ActivityObjectEventType } from '.'
 import { DEFAULT_AUTH_TOKEN } from './test-utils/test-defaults'
 import { getSyncBaseUri, ENDPOINT_REST_ACTIVITIES } from './consts/endpoints'
 import { server, http, HttpResponse } from './test-utils/msw-setup'
@@ -493,6 +493,124 @@ describe('TodoistApi activity endpoints', () => {
             })
 
             expect(result.results).toHaveLength(2)
+        })
+
+        describe('objectEventTypes parameter', () => {
+            function setupActivityHandler(onRequest?: (url: URL) => void) {
+                server.use(
+                    http.get(`${getSyncBaseUri()}${ENDPOINT_REST_ACTIVITIES}`, ({ request }) => {
+                        if (onRequest) onRequest(new URL(request.url))
+                        return HttpResponse.json(
+                            { results: DEFAULT_ACTIVITY_RESPONSE, nextCursor: null },
+                            { status: 200 },
+                        )
+                    }),
+                )
+            }
+
+            function getObjectEventTypes(url: URL): string[] | null {
+                const raw = url.searchParams.get('object_event_types')
+                return raw ? (JSON.parse(raw) as string[]) : null
+            }
+
+            test.each([
+                {
+                    description: 'single modern task value normalized to item',
+                    args: { objectEventTypes: 'task:added' as const },
+                    expectedValues: ['item:added'],
+                    absentParams: ['object_type', 'event_type'],
+                },
+                {
+                    description: 'comment type normalized to note',
+                    args: { objectEventTypes: 'comment:added' as const },
+                    expectedValues: ['note:added'],
+                    absentParams: [],
+                },
+                {
+                    description: 'partial filter with object only normalized',
+                    args: { objectEventTypes: 'task:' as const },
+                    expectedValues: ['item:'],
+                    absentParams: [],
+                },
+                {
+                    description: 'partial filter with event only passes through unchanged',
+                    args: { objectEventTypes: ':deleted' as const },
+                    expectedValues: [':deleted'],
+                    absentParams: [],
+                },
+                {
+                    description: 'array of values sent as JSON-encoded array',
+                    args: {
+                        objectEventTypes: [
+                            'task:added',
+                            'project:deleted',
+                        ] as ActivityObjectEventType[],
+                    },
+                    expectedValues: ['item:added', 'project:deleted'],
+                    absentParams: [],
+                },
+            ])('objectEventTypes: $description', async ({ args, expectedValues, absentParams }) => {
+                let capturedUrl: URL | null = null
+                setupActivityHandler((url) => {
+                    capturedUrl = url
+                })
+
+                await getTarget().getActivityLogs(args)
+
+                expect(capturedUrl).not.toBeNull()
+                expect(getObjectEventTypes(capturedUrl!)).toEqual(expectedValues)
+                for (const param of absentParams) {
+                    expect(capturedUrl!.searchParams.has(param)).toBe(false)
+                }
+            })
+
+            test.each([
+                {
+                    description:
+                        'objectType alone maps to object_event_types with empty event part',
+                    args: { objectType: 'task' as const },
+                    expectedValues: ['item:'],
+                    absentParams: ['object_type'],
+                },
+                {
+                    description: 'objectType + eventType maps to combined object_event_types',
+                    args: { objectType: 'task' as const, eventType: 'added' as const },
+                    expectedValues: ['item:added'],
+                    absentParams: ['object_type', 'event_type'],
+                },
+                {
+                    description:
+                        'eventType alone maps to object_event_types with empty object part',
+                    args: { eventType: 'completed' as const },
+                    expectedValues: [':completed'],
+                    absentParams: ['event_type'],
+                },
+            ])('legacy params: $description', async ({ args, expectedValues, absentParams }) => {
+                let capturedUrl: URL | null = null
+                setupActivityHandler((url) => {
+                    capturedUrl = url
+                })
+
+                await getTarget().getActivityLogs(args)
+
+                expect(capturedUrl).not.toBeNull()
+                expect(getObjectEventTypes(capturedUrl!)).toEqual(expectedValues)
+                for (const param of absentParams) {
+                    expect(capturedUrl!.searchParams.has(param)).toBe(false)
+                }
+            })
+
+            test('no filter params results in no object_event_types in URL', async () => {
+                let capturedUrl: URL | null = null
+                setupActivityHandler((url) => {
+                    capturedUrl = url
+                })
+
+                await getTarget().getActivityLogs()
+
+                expect(capturedUrl).not.toBeNull()
+                expect(capturedUrl!.searchParams.has('object_event_types')).toBe(false)
+            })
         })
     })
 })

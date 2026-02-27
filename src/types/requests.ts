@@ -3,6 +3,7 @@ import type { ColorKey } from '../utils/colors'
 import type {
     ActivityEvent,
     ActivityEventType,
+    ActivityObjectEventType,
     ActivityObjectType,
     Comment,
     Duration,
@@ -460,18 +461,9 @@ export type UpdateCommentArgs = {
 }
 
 /**
- * Arguments for retrieving activity logs.
+ * Common arguments for retrieving activity logs (excluding filter-type params).
  */
-type GetActivityLogsArgsBase = {
-    /**
-     * Type of object to filter by (e.g., 'task', 'comment', 'project').
-     * Accepts both modern naming ('task', 'comment') and legacy naming ('item', 'note').
-     */
-    objectType?: ActivityObjectType
-    /**
-     * Type of event to filter by (e.g., 'added', 'updated', 'deleted', 'completed', 'uncompleted', 'archived', 'unarchived', 'shared', 'left').
-     */
-    eventType?: ActivityEventType
+type GetActivityLogsArgsCommon = {
     /**
      * Filter by the ID of a specific object.
      */
@@ -534,7 +526,34 @@ type GetActivityLogsArgsBase = {
     dateTo?: Date | string
 }
 
-type GetActivityLogsArgsWithDate = GetActivityLogsArgsBase & {
+/** Use the legacy separate objectType/eventType params. Cannot be combined with objectEventTypes. */
+type GetActivityLogsArgsLegacy = GetActivityLogsArgsCommon & {
+    /**
+     * Type of object to filter by (e.g., 'task', 'comment', 'project').
+     * Accepts both modern naming ('task', 'comment') and legacy naming ('item', 'note').
+     * @deprecated Use `objectEventTypes` instead.
+     */
+    objectType?: ActivityObjectType
+    /**
+     * Type of event to filter by (e.g., 'added', 'updated', 'deleted').
+     * @deprecated Use `objectEventTypes` instead.
+     */
+    eventType?: ActivityEventType
+    objectEventTypes?: never
+}
+
+/** Use the modern combined objectEventTypes param. Cannot be combined with objectType/eventType. */
+type GetActivityLogsArgsModern = GetActivityLogsArgsCommon & {
+    /**
+     * One or more combined object:event filter strings, e.g. `'task:added'`, `'task:'`, `':deleted'`.
+     * Accepts a single value or an array of values for multi-type filtering.
+     */
+    objectEventTypes?: ActivityObjectEventType | ActivityObjectEventType[]
+    objectType?: never
+    eventType?: never
+}
+
+type GetActivityLogsArgsWithDate<TBase> = TBase & {
     /**
      * @deprecated Use `dateFrom` instead. Will be removed in the next major version.
      */
@@ -549,7 +568,7 @@ type GetActivityLogsArgsWithDate = GetActivityLogsArgsBase & {
  * @deprecated String dates (YYYY-MM-DD format) are deprecated. Use Date objects instead.
  * This type will be removed in the next major version.
  */
-type GetActivityLogsArgsWithString = GetActivityLogsArgsBase & {
+type GetActivityLogsArgsWithString<TBase> = TBase & {
     /**
      * @deprecated Use `dateFrom` instead. Will be removed in the next major version.
      */
@@ -560,7 +579,11 @@ type GetActivityLogsArgsWithString = GetActivityLogsArgsBase & {
     until?: string
 }
 
-export type GetActivityLogsArgs = GetActivityLogsArgsWithDate | GetActivityLogsArgsWithString
+export type GetActivityLogsArgs =
+    | GetActivityLogsArgsWithDate<GetActivityLogsArgsLegacy>
+    | GetActivityLogsArgsWithString<GetActivityLogsArgsLegacy>
+    | GetActivityLogsArgsWithDate<GetActivityLogsArgsModern>
+    | GetActivityLogsArgsWithString<GetActivityLogsArgsModern>
 
 /**
  * Response from retrieving activity logs.

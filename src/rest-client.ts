@@ -43,7 +43,7 @@ export function paramsSerializer(params: Record<string, unknown>) {
         const value = params[key]
         if (value != null) {
             if (Array.isArray(value)) {
-                qs.append(key, value.join(','))
+                qs.append(key, JSON.stringify(value))
             } else if (
                 typeof value === 'string' ||
                 typeof value === 'number' ||

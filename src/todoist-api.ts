@@ -144,7 +144,11 @@ import {
 } from './utils/validators'
 import { formatDateToYYYYMMDD } from './utils/url-helpers'
 import { uploadMultipartFile } from './utils/multipart-upload'
-import { normalizeObjectTypeForApi, denormalizeObjectTypeFromApi } from './utils/activity-helpers'
+import {
+    normalizeObjectTypeForApi,
+    normalizeObjectEventTypeForApi,
+    denormalizeObjectTypeFromApi,
+} from './utils/activity-helpers'
 import { processTaskContent } from './utils/uncompletable-helpers'
 import { z } from 'zod'
 
@@ -1488,16 +1492,46 @@ export class TodoistApi {
             rawDateFrom instanceof Date ? formatDateToYYYYMMDD(rawDateFrom) : rawDateFrom
         const dateTo = rawDateTo instanceof Date ? formatDateToYYYYMMDD(rawDateTo) : rawDateTo
 
-        // Destructure out deprecated and raw date fields so they don't leak into the payload
-        const { since: _since, until: _until, dateFrom: _dateFrom, dateTo: _dateTo, ...rest } = args
+        // Destructure out deprecated, raw date, and filter-type fields so they don't leak into payload
+        const {
+            since: _since,
+            until: _until,
+            dateFrom: _dateFrom,
+            dateTo: _dateTo,
+            objectType,
+            eventType,
+            objectEventTypes,
+            ...rest
+        } = args as {
+            since?: Date | string
+            until?: Date | string
+            dateFrom?: Date | string
+            dateTo?: Date | string
+            objectType?: string
+            eventType?: string
+            objectEventTypes?: string | string[]
+            [key: string]: unknown
+        }
+
+        // Build normalized objectEventTypes for the API
+        let normalizedObjectEventTypes: string[] | undefined
+        if (objectEventTypes !== undefined) {
+            const arr = Array.isArray(objectEventTypes) ? objectEventTypes : [objectEventTypes]
+            normalizedObjectEventTypes = arr.map(normalizeObjectEventTypeForApi)
+        } else if (objectType !== undefined || eventType !== undefined) {
+            // Synthesize combined filter from deprecated separate params
+            const objPart = normalizeObjectTypeForApi(objectType) ?? ''
+            const evtPart = eventType ?? ''
+            normalizedObjectEventTypes = [`${objPart}:${evtPart}`]
+        }
 
         const processedArgs = {
             ...rest,
             ...(dateFrom !== undefined ? { dateFrom } : {}),
             ...(dateTo !== undefined ? { dateTo } : {}),
-            ...spreadIfDefined(args.objectType, (v) => ({
-                objectType: normalizeObjectTypeForApi(v),
-            })),
+            ...(normalizedObjectEventTypes !== undefined
+                ? { objectEventTypes: normalizedObjectEventTypes }
+                : {}),
         }
 
         const {
