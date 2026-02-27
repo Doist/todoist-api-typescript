@@ -29,3 +29,20 @@ export function denormalizeObjectTypeFromApi(objectType: string | undefined): st
     if (objectType === 'note') return 'comment'
     return objectType
 }
+
+/**
+ * Normalizes an `ActivityObjectEventType` filter string for the API,
+ * converting modern object type names to legacy API names.
+ * e.g. 'task:added' -> 'item:added', 'comment:' -> 'note:', ':deleted' -> ':deleted'
+ *
+ * @internal
+ */
+export function normalizeObjectEventTypeForApi(filter: string): string {
+    const colonIndex = filter.indexOf(':')
+    if (colonIndex === -1) {
+        return normalizeObjectTypeForApi(filter) ?? filter
+    }
+    const objectPart = filter.slice(0, colonIndex)
+    const eventPart = filter.slice(colonIndex) // includes the colon
+    return `${normalizeObjectTypeForApi(objectPart) ?? objectPart}${eventPart}`
+}

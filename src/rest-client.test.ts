@@ -87,7 +87,7 @@ describe('restClient', () => {
         }
 
         const result = paramsSerializer(params)
-        expect(result).toBe('filter=today&ids=1%2C2%2C3')
+        expect(result).toBe('filter=today&ids=%5B1%2C2%2C3%5D')
     })
 
     test('GET request converts camelCase parameters to snake_case in URL', async () => {
