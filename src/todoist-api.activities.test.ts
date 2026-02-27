@@ -151,117 +151,71 @@ describe('TodoistApi activity endpoints', () => {
             })
         })
 
-        test('sends date_from and date_to query params when dateFrom/dateTo Date objects provided', async () => {
-            let capturedUrl: URL | null = null
-            server.use(
-                http.get(`${getSyncBaseUri()}${ENDPOINT_REST_ACTIVITIES}`, ({ request }) => {
-                    capturedUrl = new URL(request.url)
-                    return HttpResponse.json(
-                        {
-                            results: DEFAULT_ACTIVITY_RESPONSE,
-                            nextCursor: null,
-                        },
-                        { status: 200 },
-                    )
-                }),
-            )
+        test.each([
+            {
+                description: 'Date objects',
+                args: { dateFrom: new Date('2025-01-15T10:30:00Z'), dateTo: new Date('2025-01-20T15:45:00Z') },
+            },
+            {
+                description: 'string values',
+                args: { dateFrom: '2025-01-15', dateTo: '2025-01-20' },
+            },
+        ])(
+            'sends date_from and date_to query params when dateFrom/dateTo $description provided',
+            async ({ args }) => {
+                let capturedUrl: URL | null = null
+                server.use(
+                    http.get(`${getSyncBaseUri()}${ENDPOINT_REST_ACTIVITIES}`, ({ request }) => {
+                        capturedUrl = new URL(request.url)
+                        return HttpResponse.json(
+                            { results: DEFAULT_ACTIVITY_RESPONSE, nextCursor: null },
+                            { status: 200 },
+                        )
+                    }),
+                )
 
-            const api = getTarget()
-            await api.getActivityLogs({
-                dateFrom: new Date('2025-01-15T10:30:00Z'),
-                dateTo: new Date('2025-01-20T15:45:00Z'),
-            })
+                await getTarget().getActivityLogs(args)
 
-            expect(capturedUrl).not.toBeNull()
-            expect(capturedUrl!.searchParams.get('date_from')).toBe('2025-01-15')
-            expect(capturedUrl!.searchParams.get('date_to')).toBe('2025-01-20')
-            expect(capturedUrl!.searchParams.has('since')).toBe(false)
-            expect(capturedUrl!.searchParams.has('until')).toBe(false)
-        })
+                expect(capturedUrl).not.toBeNull()
+                expect(capturedUrl!.searchParams.get('date_from')).toBe('2025-01-15')
+                expect(capturedUrl!.searchParams.get('date_to')).toBe('2025-01-20')
+                expect(capturedUrl!.searchParams.has('since')).toBe(false)
+                expect(capturedUrl!.searchParams.has('until')).toBe(false)
+            },
+        )
 
-        test('sends date_from and date_to query params when dateFrom/dateTo strings provided', async () => {
-            let capturedUrl: URL | null = null
-            server.use(
-                http.get(`${getSyncBaseUri()}${ENDPOINT_REST_ACTIVITIES}`, ({ request }) => {
-                    capturedUrl = new URL(request.url)
-                    return HttpResponse.json(
-                        {
-                            results: DEFAULT_ACTIVITY_RESPONSE,
-                            nextCursor: null,
-                        },
-                        { status: 200 },
-                    )
-                }),
-            )
+        test.each([
+            {
+                description: 'Date objects',
+                args: { since: new Date('2025-01-15T10:30:00Z'), until: new Date('2025-01-20T15:45:00Z') },
+            },
+            {
+                description: 'string values',
+                args: { since: '2025-01-15', until: '2025-01-20' },
+            },
+        ])(
+            'deprecated since/until $description fall back to date_from/date_to in query params',
+            async ({ args }) => {
+                let capturedUrl: URL | null = null
+                server.use(
+                    http.get(`${getSyncBaseUri()}${ENDPOINT_REST_ACTIVITIES}`, ({ request }) => {
+                        capturedUrl = new URL(request.url)
+                        return HttpResponse.json(
+                            { results: DEFAULT_ACTIVITY_RESPONSE, nextCursor: null },
+                            { status: 200 },
+                        )
+                    }),
+                )
 
-            const api = getTarget()
-            await api.getActivityLogs({
-                dateFrom: '2025-01-15',
-                dateTo: '2025-01-20',
-            })
+                await getTarget().getActivityLogs(args)
 
-            expect(capturedUrl).not.toBeNull()
-            expect(capturedUrl!.searchParams.get('date_from')).toBe('2025-01-15')
-            expect(capturedUrl!.searchParams.get('date_to')).toBe('2025-01-20')
-            expect(capturedUrl!.searchParams.has('since')).toBe(false)
-            expect(capturedUrl!.searchParams.has('until')).toBe(false)
-        })
-
-        test('deprecated since/until Date objects fall back to date_from/date_to in query params', async () => {
-            let capturedUrl: URL | null = null
-            server.use(
-                http.get(`${getSyncBaseUri()}${ENDPOINT_REST_ACTIVITIES}`, ({ request }) => {
-                    capturedUrl = new URL(request.url)
-                    return HttpResponse.json(
-                        {
-                            results: DEFAULT_ACTIVITY_RESPONSE,
-                            nextCursor: null,
-                        },
-                        { status: 200 },
-                    )
-                }),
-            )
-
-            const api = getTarget()
-            await api.getActivityLogs({
-                since: new Date('2025-01-15T10:30:00Z'),
-                until: new Date('2025-01-20T15:45:00Z'),
-            })
-
-            expect(capturedUrl).not.toBeNull()
-            expect(capturedUrl!.searchParams.get('date_from')).toBe('2025-01-15')
-            expect(capturedUrl!.searchParams.get('date_to')).toBe('2025-01-20')
-            expect(capturedUrl!.searchParams.has('since')).toBe(false)
-            expect(capturedUrl!.searchParams.has('until')).toBe(false)
-        })
-
-        test('deprecated since/until string values fall back to date_from/date_to in query params', async () => {
-            let capturedUrl: URL | null = null
-            server.use(
-                http.get(`${getSyncBaseUri()}${ENDPOINT_REST_ACTIVITIES}`, ({ request }) => {
-                    capturedUrl = new URL(request.url)
-                    return HttpResponse.json(
-                        {
-                            results: DEFAULT_ACTIVITY_RESPONSE,
-                            nextCursor: null,
-                        },
-                        { status: 200 },
-                    )
-                }),
-            )
-
-            const api = getTarget()
-            await api.getActivityLogs({
-                since: '2025-01-15',
-                until: '2025-01-20',
-            })
-
-            expect(capturedUrl).not.toBeNull()
-            expect(capturedUrl!.searchParams.get('date_from')).toBe('2025-01-15')
-            expect(capturedUrl!.searchParams.get('date_to')).toBe('2025-01-20')
-            expect(capturedUrl!.searchParams.has('since')).toBe(false)
-            expect(capturedUrl!.searchParams.has('until')).toBe(false)
-        })
+                expect(capturedUrl).not.toBeNull()
+                expect(capturedUrl!.searchParams.get('date_from')).toBe('2025-01-15')
+                expect(capturedUrl!.searchParams.get('date_to')).toBe('2025-01-20')
+                expect(capturedUrl!.searchParams.has('since')).toBe(false)
+                expect(capturedUrl!.searchParams.has('until')).toBe(false)
+            },
+        )
 
         test('dateFrom takes precedence over deprecated since when both provided', async () => {
             let capturedUrl: URL | null = null
@@ -312,50 +266,6 @@ describe('TodoistApi activity endpoints', () => {
             expect(capturedUrl!.searchParams.has('date_to')).toBe(false)
             expect(capturedUrl!.searchParams.has('since')).toBe(false)
             expect(capturedUrl!.searchParams.has('until')).toBe(false)
-        })
-
-        test('converts Date objects to YYYY-MM-DD strings (dateFrom/dateTo)', async () => {
-            server.use(
-                http.get(`${getSyncBaseUri()}${ENDPOINT_REST_ACTIVITIES}`, () => {
-                    return HttpResponse.json(
-                        {
-                            results: DEFAULT_ACTIVITY_RESPONSE,
-                            nextCursor: null,
-                        },
-                        { status: 200 },
-                    )
-                }),
-            )
-
-            const api = getTarget()
-            const result = await api.getActivityLogs({
-                dateFrom: new Date('2025-01-15T10:30:00Z'),
-                dateTo: new Date('2025-01-20T15:45:00Z'),
-            })
-
-            expect(result.results).toHaveLength(2)
-        })
-
-        test('leaves string dates as-is for backward compatibility (dateFrom/dateTo)', async () => {
-            server.use(
-                http.get(`${getSyncBaseUri()}${ENDPOINT_REST_ACTIVITIES}`, () => {
-                    return HttpResponse.json(
-                        {
-                            results: DEFAULT_ACTIVITY_RESPONSE,
-                            nextCursor: null,
-                        },
-                        { status: 200 },
-                    )
-                }),
-            )
-
-            const api = getTarget()
-            const result = await api.getActivityLogs({
-                dateFrom: '2025-01-15',
-                dateTo: '2025-01-20',
-            })
-
-            expect(result.results).toHaveLength(2)
         })
 
         test('converts Date objects with correct timezone handling (dateFrom)', async () => {
