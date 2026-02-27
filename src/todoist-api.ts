@@ -1484,7 +1484,8 @@ export class TodoistApi {
         const rawDateTo = args.dateTo ?? args.until
 
         // Convert Date objects to YYYY-MM-DD strings
-        const dateFrom = rawDateFrom instanceof Date ? formatDateToYYYYMMDD(rawDateFrom) : rawDateFrom
+        const dateFrom =
+            rawDateFrom instanceof Date ? formatDateToYYYYMMDD(rawDateFrom) : rawDateFrom
         const dateTo = rawDateTo instanceof Date ? formatDateToYYYYMMDD(rawDateTo) : rawDateTo
 
         // Destructure out deprecated and raw date fields so they don't leak into the payload

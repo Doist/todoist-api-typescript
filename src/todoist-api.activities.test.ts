@@ -154,7 +154,10 @@ describe('TodoistApi activity endpoints', () => {
         test.each([
             {
                 description: 'Date objects',
-                args: { dateFrom: new Date('2025-01-15T10:30:00Z'), dateTo: new Date('2025-01-20T15:45:00Z') },
+                args: {
+                    dateFrom: new Date('2025-01-15T10:30:00Z'),
+                    dateTo: new Date('2025-01-20T15:45:00Z'),
+                },
             },
             {
                 description: 'string values',
@@ -187,7 +190,10 @@ describe('TodoistApi activity endpoints', () => {
         test.each([
             {
                 description: 'Date objects',
-                args: { since: new Date('2025-01-15T10:30:00Z'), until: new Date('2025-01-20T15:45:00Z') },
+                args: {
+                    since: new Date('2025-01-15T10:30:00Z'),
+                    until: new Date('2025-01-20T15:45:00Z'),
+                },
             },
             {
                 description: 'string values',
