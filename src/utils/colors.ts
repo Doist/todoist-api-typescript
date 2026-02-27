@@ -1,6 +1,6 @@
-import { Color } from '../types'
+import type { Color } from '../types/entities'
 
-export const berryRed: Color = {
+export const berryRed = {
     id: 30,
     key: 'berry_red',
     displayName: 'Berry Red',
@@ -8,7 +8,7 @@ export const berryRed: Color = {
     hexValue: '#b8255f',
     value: '#b8255f',
 } as const
-export const red: Color = {
+export const red = {
     id: 31,
     key: 'red',
     displayName: 'Red',
@@ -16,7 +16,7 @@ export const red: Color = {
     hexValue: '#db4035',
     value: '#db4035',
 } as const
-export const orange: Color = {
+export const orange = {
     id: 32,
     key: 'orange',
     displayName: 'Orange',
@@ -24,7 +24,7 @@ export const orange: Color = {
     hexValue: '#ff9933',
     value: '#ff9933',
 } as const
-export const yellow: Color = {
+export const yellow = {
     id: 33,
     key: 'yellow',
     displayName: 'Yellow',
@@ -32,7 +32,7 @@ export const yellow: Color = {
     hexValue: '#fad000',
     value: '#fad000',
 } as const
-export const oliveGreen: Color = {
+export const oliveGreen = {
     id: 34,
     key: 'olive_green',
     displayName: 'Olive Green',
@@ -40,7 +40,7 @@ export const oliveGreen: Color = {
     hexValue: '#afb83b',
     value: '#afb83b',
 } as const
-export const limeGreen: Color = {
+export const limeGreen = {
     id: 35,
     key: 'lime_green',
     displayName: 'Lime Green',
@@ -48,7 +48,7 @@ export const limeGreen: Color = {
     hexValue: '#7ecc49',
     value: '#7ecc49',
 } as const
-export const green: Color = {
+export const green = {
     id: 36,
     key: 'green',
     displayName: 'Green',
@@ -56,7 +56,7 @@ export const green: Color = {
     hexValue: '#299438',
     value: '#299438',
 } as const
-export const mintGreen: Color = {
+export const mintGreen = {
     id: 37,
     key: 'mint_green',
     displayName: 'Mint Green',
@@ -64,7 +64,7 @@ export const mintGreen: Color = {
     hexValue: '#6accbc',
     value: '#6accbc',
 } as const
-export const turquoise: Color = {
+export const turquoise = {
     id: 38,
     key: 'turquoise',
     displayName: 'Turquoise',
@@ -72,7 +72,7 @@ export const turquoise: Color = {
     hexValue: '#158fad',
     value: '#158fad',
 } as const
-export const skyBlue: Color = {
+export const skyBlue = {
     id: 39,
     key: 'sky_blue',
     displayName: 'Sky Blue',
@@ -80,7 +80,7 @@ export const skyBlue: Color = {
     hexValue: '#14aaf5',
     value: '#14aaf5',
 } as const
-export const lightBlue: Color = {
+export const lightBlue = {
     id: 40,
     key: 'light_blue',
     displayName: 'Light Blue',
@@ -88,7 +88,7 @@ export const lightBlue: Color = {
     hexValue: '#96c3eb',
     value: '#96c3eb',
 } as const
-export const blue: Color = {
+export const blue = {
     id: 41,
     key: 'blue',
     displayName: 'Blue',
@@ -96,7 +96,7 @@ export const blue: Color = {
     hexValue: '#4073ff',
     value: '#4073ff',
 } as const
-export const grape: Color = {
+export const grape = {
     id: 42,
     key: 'grape',
     displayName: 'Grape',
@@ -104,7 +104,7 @@ export const grape: Color = {
     hexValue: '#884dff',
     value: '#884dff',
 } as const
-export const violet: Color = {
+export const violet = {
     id: 43,
     key: 'violet',
     displayName: 'Violet',
@@ -112,7 +112,7 @@ export const violet: Color = {
     hexValue: '#af38eb',
     value: '#af38eb',
 } as const
-export const lavender: Color = {
+export const lavender = {
     id: 44,
     key: 'lavender',
     displayName: 'Lavender',
@@ -120,7 +120,7 @@ export const lavender: Color = {
     hexValue: '#eb96eb',
     value: '#eb96eb',
 } as const
-export const magenta: Color = {
+export const magenta = {
     id: 45,
     key: 'magenta',
     displayName: 'Magenta',
@@ -128,7 +128,7 @@ export const magenta: Color = {
     hexValue: '#e05194',
     value: '#e05194',
 } as const
-export const salmon: Color = {
+export const salmon = {
     id: 46,
     key: 'salmon',
     displayName: 'Salmon',
@@ -136,7 +136,7 @@ export const salmon: Color = {
     hexValue: '#ff8d85',
     value: '#ff8d85',
 } as const
-export const charcoal: Color = {
+export const charcoal = {
     id: 47,
     key: 'charcoal',
     displayName: 'Charcoal',
@@ -144,7 +144,7 @@ export const charcoal: Color = {
     hexValue: '#808080',
     value: '#808080',
 } as const
-export const gray: Color = {
+export const gray = {
     id: 48,
     key: 'gray',
     displayName: 'Gray',
@@ -152,7 +152,7 @@ export const gray: Color = {
     hexValue: '#b8b8b8',
     value: '#b8b8b8',
 } as const
-export const taupe: Color = {
+export const taupe = {
     id: 49,
     key: 'taupe',
     displayName: 'Taupe',
@@ -183,6 +183,8 @@ export const colors = [
     gray,
     taupe,
 ] as const
+
+export type ColorKey = (typeof colors)[number]['key']
 
 export const defaultColor: Color = charcoal
 

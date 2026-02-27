@@ -1,6 +1,8 @@
+import type { ColorKey } from '../../../utils/colors'
+
 export type LabelAddArgs = {
     name: string
-    color?: string
+    color?: ColorKey
     itemOrder?: number
     isFavorite?: boolean
 }
@@ -13,7 +15,7 @@ export type LabelRenameArgs = {
 export type LabelUpdateArgs = {
     id: string
     name?: string
-    color?: string
+    color?: ColorKey
     itemOrder?: number
     isFavorite?: boolean
 }

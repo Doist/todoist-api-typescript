@@ -1,4 +1,5 @@
 import type { RequireAllOrNone, RequireOneOrNone, RequireExactlyOne } from 'type-fest'
+import type { ColorKey } from '../utils/colors'
 import type {
     ActivityEvent,
     ActivityEventType,
@@ -234,7 +235,7 @@ export type GetArchivedProjectsResponse = {
 export type AddProjectArgs = {
     name: string
     parentId?: string
-    color?: string | number
+    color?: ColorKey
     isFavorite?: boolean
     viewStyle?: ProjectViewStyle
 }
@@ -245,7 +246,7 @@ export type AddProjectArgs = {
  */
 export type UpdateProjectArgs = {
     name?: string
-    color?: string
+    color?: ColorKey
     isFavorite?: boolean
     viewStyle?: ProjectViewStyle
 }
@@ -340,7 +341,7 @@ export type GetLabelsResponse = {
 export type AddLabelArgs = {
     name: string
     order?: number | null
-    color?: string | number
+    color?: ColorKey
     isFavorite?: boolean
 }
 
@@ -351,7 +352,7 @@ export type AddLabelArgs = {
 export type UpdateLabelArgs = {
     name?: string
     order?: number | null
-    color?: string
+    color?: ColorKey
     isFavorite?: boolean
 }
 
