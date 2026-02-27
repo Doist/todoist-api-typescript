@@ -1479,11 +1479,21 @@ export class TodoistApi {
      * @returns A promise that resolves to a paginated response of activity events.
      */
     async getActivityLogs(args: GetActivityLogsArgs = {}): Promise<GetActivityLogsResponse> {
-        // Convert Date objects to YYYY-MM-DD strings and modern object types to legacy API types
+        // Resolve dateFrom: prefer new param, fall back to deprecated `since`
+        const rawDateFrom = args.dateFrom ?? args.since
+        const rawDateTo = args.dateTo ?? args.until
+
+        // Convert Date objects to YYYY-MM-DD strings
+        const dateFrom = rawDateFrom instanceof Date ? formatDateToYYYYMMDD(rawDateFrom) : rawDateFrom
+        const dateTo = rawDateTo instanceof Date ? formatDateToYYYYMMDD(rawDateTo) : rawDateTo
+
+        // Destructure out deprecated and raw date fields so they don't leak into the payload
+        const { since: _since, until: _until, dateFrom: _dateFrom, dateTo: _dateTo, ...rest } = args
+
         const processedArgs = {
-            ...args,
-            ...(args.since instanceof Date ? { since: formatDateToYYYYMMDD(args.since) } : {}),
-            ...(args.until instanceof Date ? { until: formatDateToYYYYMMDD(args.until) } : {}),
+            ...rest,
+            ...(dateFrom !== undefined ? { dateFrom } : {}),
+            ...(dateTo !== undefined ? { dateTo } : {}),
             ...spreadIfDefined(args.objectType, (v) => ({
                 objectType: normalizeObjectTypeForApi(v),
             })),
