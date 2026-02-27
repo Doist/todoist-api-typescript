@@ -521,15 +521,25 @@ type GetActivityLogsArgsBase = {
      * Maximum number of results to return per page.
      */
     limit?: number
+    /**
+     * Start date for filtering events (inclusive). Replaces deprecated `since`.
+     * Accepts a Date object or YYYY-MM-DD string.
+     */
+    dateFrom?: Date | string
+    /**
+     * End date for filtering events (inclusive). Replaces deprecated `until`.
+     * Accepts a Date object or YYYY-MM-DD string.
+     */
+    dateTo?: Date | string
 }
 
 type GetActivityLogsArgsWithDate = GetActivityLogsArgsBase & {
     /**
-     * Start date for filtering events (inclusive).
+     * @deprecated Use `dateFrom` instead. Will be removed in the next major version.
      */
     since?: Date
     /**
-     * End date for filtering events (inclusive).
+     * @deprecated Use `dateTo` instead. Will be removed in the next major version.
      */
     until?: Date
 }
@@ -540,13 +550,11 @@ type GetActivityLogsArgsWithDate = GetActivityLogsArgsBase & {
  */
 type GetActivityLogsArgsWithString = GetActivityLogsArgsBase & {
     /**
-     * Start date for filtering events in YYYY-MM-DD format (inclusive).
-     * @deprecated Use Date object instead. String format will be removed in the next major version.
+     * @deprecated Use `dateFrom` instead. Will be removed in the next major version.
      */
     since?: string
     /**
-     * End date for filtering events in YYYY-MM-DD format (inclusive).
-     * @deprecated Use Date object instead. String format will be removed in the next major version.
+     * @deprecated Use `dateTo` instead. Will be removed in the next major version.
      */
     until?: string
 }
