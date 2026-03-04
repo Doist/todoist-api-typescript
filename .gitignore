@@ -4,6 +4,8 @@ node_modules/
 .npm
 .eslintcache
 scratch.ts
+.env
+.env.local
 
 .vscode/
 .DS_Store

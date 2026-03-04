@@ -135,6 +135,30 @@ api.getProjects()
     .catch((error) => console.error(error))
 ```
 
+### Local API Requests With .env
+
+For live API verification, you can run raw requests with a local token:
+
+1. Copy `.env.example` to `.env`.
+2. Set `TODOIST_API_TOKEN` in `.env`.
+3. Run requests with `npm run api:request -- ...`.
+4. Optional: set `TODOIST_API_BASE_URL` in `.env` (defaults to `https://api.todoist.com`).
+
+Examples:
+
+```bash
+npm run api:request -- --path /api/v1/tasks
+npm run api:request -- --method POST --path /api/v1/tasks --body '{"content":"API smoke test"}'
+npm run api:request -- --method POST --path /api/v1/tasks/123 --body '{"due_string":"no date"}'
+npm run api:request -- --path /api/v1/tasks --query '{"project_id":"123","limit":10}'
+```
+
+To see all options:
+
+```bash
+npm run api:request -- --help
+```
+
 ## Releases
 
 This project uses [Release Please](https://github.com/googleapis/release-please) to automate releases. Releases are created automatically based on [Conventional Commits](https://www.conventionalcommits.org/).
