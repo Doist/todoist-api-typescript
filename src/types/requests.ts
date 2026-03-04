@@ -137,9 +137,17 @@ export type UpdateTaskArgs = {
     description?: string
     labels?: string[]
     priority?: number
-    dueString?: string
+    /**
+     * Natural language due date.
+     * Use `"no date"` to clear a due date, or `null` as an SDK alias for the same behavior.
+     */
+    dueString?: string | null
     dueLang?: string | null
     assigneeId?: string | null
+    /**
+     * Deadline date in `YYYY-MM-DD` format.
+     * Use `null` to clear a task deadline.
+     */
     deadlineDate?: string | null
     deadlineLang?: string | null
     isUncompletable?: boolean

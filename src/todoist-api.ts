@@ -489,18 +489,28 @@ export class TodoistApi {
      * Updates an existing task by its ID with the provided parameters.
      *
      * @param id - The unique identifier of the task to update.
-     * @param args - Update parameters such as content, priority, or due date.
+     * @param args - Update parameters such as content, priority, or due date. Pass
+     * `dueString: null` (or `"no date"`) to clear the due date.
      * @param requestId - Optional custom identifier for the request.
      * @returns A promise that resolves to the updated task.
      */
     async updateTask(id: string, args: UpdateTaskArgs, requestId?: string): Promise<Task> {
         z.string().parse(id)
 
+        // Translate SDK alias for due-date clearing to Todoist's accepted payload value.
+        const normalizedArgs = args.dueString === null ? { ...args, dueString: 'no date' } : args
+
         // Process content if both content and isUncompletable are provided
         const processedArgs =
-            args.content && args.isUncompletable !== undefined
-                ? { ...args, content: processTaskContent(args.content, args.isUncompletable) }
-                : args
+            normalizedArgs.content && normalizedArgs.isUncompletable !== undefined
+                ? {
+                      ...normalizedArgs,
+                      content: processTaskContent(
+                          normalizedArgs.content,
+                          normalizedArgs.isUncompletable,
+                      ),
+                  }
+                : normalizedArgs
 
         const response = await request<Task>({
             httpMethod: 'POST',
