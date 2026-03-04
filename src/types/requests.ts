@@ -141,7 +141,7 @@ export type UpdateTaskArgs = {
      * Natural language due date.
      * Use `"no date"` to clear a due date, or `null` as an SDK alias for the same behavior.
      */
-    dueString?: string | null
+    dueString?: 'no date' | (string & Record<string, never>) | null
     dueLang?: string | null
     assigneeId?: string | null
     /**
