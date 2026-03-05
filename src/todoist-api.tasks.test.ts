@@ -205,6 +205,50 @@ describe('TodoistApi task endpoints', () => {
 
             expect(response.isUncompletable).toBe(false)
         })
+
+        test('translates dueString null to "no date"', async () => {
+            const returnedTask = {
+                ...DEFAULT_TASK,
+                due: null,
+            }
+
+            server.use(
+                http.post(`${getSyncBaseUri()}${ENDPOINT_REST_TASKS}/123`, async ({ request }) => {
+                    const body = (await request.json()) as Record<string, unknown>
+                    expect(body.due_string).toBe('no date')
+                    return HttpResponse.json(returnedTask, { status: 200 })
+                }),
+            )
+            const api = getTarget()
+
+            const response = await api.updateTask('123', {
+                dueString: null,
+            })
+
+            expect(response.due).toBeNull()
+        })
+
+        test('keeps deadlineDate null in payload', async () => {
+            const returnedTask = {
+                ...DEFAULT_TASK,
+                deadline: null,
+            }
+
+            server.use(
+                http.post(`${getSyncBaseUri()}${ENDPOINT_REST_TASKS}/123`, async ({ request }) => {
+                    const body = (await request.json()) as Record<string, unknown>
+                    expect(body.deadline_date).toBeNull()
+                    return HttpResponse.json(returnedTask, { status: 200 })
+                }),
+            )
+            const api = getTarget()
+
+            const response = await api.updateTask('123', {
+                deadlineDate: null,
+            })
+
+            expect(response.deadline).toBeNull()
+        })
     })
 
     describe('closeTask', () => {
