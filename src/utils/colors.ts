@@ -64,11 +64,11 @@ export const mintGreen = {
     hexValue: '#6accbc',
     value: '#6accbc',
 } as const
-export const turquoise = {
+export const teal = {
     id: 38,
-    key: 'turquoise',
-    displayName: 'Turquoise',
-    name: 'Turquoise',
+    key: 'teal',
+    displayName: 'Teal',
+    name: 'Teal',
     hexValue: '#158fad',
     value: '#158fad',
 } as const
@@ -144,11 +144,11 @@ export const charcoal = {
     hexValue: '#808080',
     value: '#808080',
 } as const
-export const gray = {
+export const grey = {
     id: 48,
-    key: 'gray',
-    displayName: 'Gray',
-    name: 'Gray',
+    key: 'grey',
+    displayName: 'Grey',
+    name: 'Grey',
     hexValue: '#b8b8b8',
     value: '#b8b8b8',
 } as const
@@ -170,7 +170,7 @@ export const colors = [
     limeGreen,
     green,
     mintGreen,
-    turquoise,
+    teal,
     skyBlue,
     lightBlue,
     blue,
@@ -180,7 +180,7 @@ export const colors = [
     magenta,
     salmon,
     charcoal,
-    gray,
+    grey,
     taupe,
 ] as const
 
