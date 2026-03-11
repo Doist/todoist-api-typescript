@@ -7,7 +7,6 @@ import {
     getSyncBaseUri,
     ENDPOINT_AUTHORIZATION,
     ENDPOINT_GET_TOKEN,
-    ENDPOINT_REVOKE_TOKEN,
     ENDPOINT_REVOKE,
 } from './consts/endpoints'
 
@@ -47,16 +46,6 @@ export type AuthTokenRequestArgs = {
 export type AuthTokenResponse = {
     accessToken: string
     tokenType: string
-}
-
-/**
- * Parameters required to revoke an access token.
- * @see https://todoist.com/api/v1/docs#tag/Authorization/operation/revoke_access_token_api_api_v1_access_tokens_delete
- */
-export type RevokeAuthTokenRequestArgs = {
-    clientId: string
-    clientSecret: string
-    accessToken: string
 }
 
 /**
@@ -149,35 +138,12 @@ export function getAuthorizationUrl({
  * @returns The access token response
  * @throws {@link TodoistRequestError} If the token exchange fails
  */
-// Function overloads for backward compatibility
-/**
- * @deprecated Use options object instead: getAuthToken(args, { baseUrl, customFetch })
- */
-export async function getAuthToken(
-    args: AuthTokenRequestArgs,
-    baseUrl: string,
-): Promise<AuthTokenResponse>
-export async function getAuthToken(args: AuthTokenRequestArgs): Promise<AuthTokenResponse>
 export async function getAuthToken(
     args: AuthTokenRequestArgs,
     options?: AuthOptions,
-): Promise<AuthTokenResponse>
-export async function getAuthToken(
-    args: AuthTokenRequestArgs,
-    baseUrlOrOptions?: string | AuthOptions,
 ): Promise<AuthTokenResponse> {
-    let baseUrl: string | undefined
-    let customFetch: CustomFetch | undefined
-
-    if (typeof baseUrlOrOptions === 'string') {
-        // Legacy signature: (args, baseUrl)
-        baseUrl = baseUrlOrOptions
-        customFetch = undefined
-    } else if (baseUrlOrOptions) {
-        // New signature: (args, options)
-        baseUrl = baseUrlOrOptions.baseUrl
-        customFetch = baseUrlOrOptions.customFetch
-    }
+    const baseUrl = options?.baseUrl
+    const customFetch = options?.customFetch
 
     try {
         const response = await request<AuthTokenResponse>({
@@ -210,63 +176,6 @@ export async function getAuthToken(
 }
 
 /**
- * Revokes an access token, making it invalid for future use.
- *
- * @example
- * ```typescript
- * await revokeAuthToken({
- *   clientId: 'your-client-id',
- *   clientSecret: 'your-client-secret',
- *   accessToken: token
- * })
- * ```
- *
- * @deprecated Use {@link revokeToken} instead. This function uses a legacy endpoint that will be removed in a future version. The new function uses the RFC 7009 compliant endpoint.
- * @returns True if revocation was successful
- * @see https://todoist.com/api/v1/docs#tag/Authorization/operation/revoke_access_token_api_api_v1_access_tokens_delete
- */
-// Function overloads for backward compatibility
-/**
- * @deprecated Use options object instead: revokeAuthToken(args, { baseUrl, customFetch })
- */
-export async function revokeAuthToken(
-    args: RevokeAuthTokenRequestArgs,
-    baseUrl: string,
-): Promise<boolean>
-export async function revokeAuthToken(args: RevokeAuthTokenRequestArgs): Promise<boolean>
-export async function revokeAuthToken(
-    args: RevokeAuthTokenRequestArgs,
-    options?: AuthOptions,
-): Promise<boolean>
-export async function revokeAuthToken(
-    args: RevokeAuthTokenRequestArgs,
-    baseUrlOrOptions?: string | AuthOptions,
-): Promise<boolean> {
-    let baseUrl: string | undefined
-    let customFetch: CustomFetch | undefined
-
-    if (typeof baseUrlOrOptions === 'string') {
-        // Legacy signature: (args, baseUrl)
-        baseUrl = baseUrlOrOptions
-        customFetch = undefined
-    } else if (baseUrlOrOptions) {
-        // New signature: (args, options)
-        baseUrl = baseUrlOrOptions.baseUrl
-        customFetch = baseUrlOrOptions.customFetch
-    }
-    const response = await request({
-        httpMethod: 'POST',
-        baseUri: getSyncBaseUri(baseUrl),
-        relativePath: ENDPOINT_REVOKE_TOKEN,
-        apiToken: undefined,
-        payload: args,
-        customFetch,
-    })
-
-    return isSuccess(response)
-}
-
-/**
  * Revokes a token using the RFC 7009 OAuth 2.0 Token Revocation standard.
  *
  * This function uses HTTP Basic Authentication with client credentials and follows
@@ -285,32 +194,13 @@ export async function revokeAuthToken(
  * @see https://datatracker.ietf.org/doc/html/rfc7009
  * @see https://todoist.com/api/v1/docs#tag/Authorization
  */
-// Function overloads for backward compatibility
-/**
- * @deprecated Use options object instead: revokeToken(args, { baseUrl, customFetch })
- */
-export async function revokeToken(args: RevokeTokenRequestArgs, baseUrl: string): Promise<boolean>
-export async function revokeToken(args: RevokeTokenRequestArgs): Promise<boolean>
 export async function revokeToken(
     args: RevokeTokenRequestArgs,
     options?: AuthOptions,
-): Promise<boolean>
-export async function revokeToken(
-    args: RevokeTokenRequestArgs,
-    baseUrlOrOptions?: string | AuthOptions,
 ): Promise<boolean> {
-    let baseUrl: string | undefined
-    let customFetch: CustomFetch | undefined
+    const baseUrl = options?.baseUrl
+    const customFetch = options?.customFetch
 
-    if (typeof baseUrlOrOptions === 'string') {
-        // Legacy signature: (args, baseUrl)
-        baseUrl = baseUrlOrOptions
-        customFetch = undefined
-    } else if (baseUrlOrOptions) {
-        // New signature: (args, options)
-        baseUrl = baseUrlOrOptions.baseUrl
-        customFetch = baseUrlOrOptions.customFetch
-    }
     const { clientId, clientSecret, token } = args
 
     // Create Basic Auth header as per RFC 7009

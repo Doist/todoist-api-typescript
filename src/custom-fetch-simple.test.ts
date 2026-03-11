@@ -53,15 +53,6 @@ describe('Custom Fetch Core Functionality', () => {
             })
             expect(api).toBeInstanceOf(TodoistApi)
         })
-
-        it('should show deprecation warning for old constructor', () => {
-            const consoleSpy = jest.spyOn(console, 'warn').mockImplementation()
-            const api = new TodoistApi(DEFAULT_AUTH_TOKEN, 'https://custom.api.com')
-
-            expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('deprecated'))
-            expect(api).toBeInstanceOf(TodoistApi)
-            consoleSpy.mockRestore()
-        })
     })
 
     describe('Custom Fetch Usage', () => {

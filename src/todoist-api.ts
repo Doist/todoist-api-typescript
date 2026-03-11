@@ -145,7 +145,6 @@ import {
 import { formatDateToYYYYMMDD } from './utils/url-helpers'
 import { uploadMultipartFile } from './utils/multipart-upload'
 import {
-    normalizeObjectTypeForApi,
     normalizeObjectEventTypeForApi,
     denormalizeObjectTypeFromApi,
 } from './utils/activity-helpers'
@@ -268,40 +267,20 @@ export class TodoistApi {
     private syncApiBase: string
     private customFetch?: CustomFetch
 
-    // Constructor overloads for backward compatibility
-    /**
-     * @deprecated Use options object instead: new TodoistApi(token, { baseUrl, customFetch })
-     */
-    constructor(authToken: string, baseUrl: string)
-    constructor(authToken: string)
-    constructor(authToken: string, options?: TodoistApiOptions)
     constructor(
         /**
          * Your Todoist API token.
          */
         authToken: string,
         /**
-         * Optional custom API base URL or options object
+         * Optional configuration options
          */
-        baseUrlOrOptions?: string | TodoistApiOptions,
+        options?: TodoistApiOptions,
     ) {
         this.authToken = authToken
-
-        // Handle backward compatibility
-        if (typeof baseUrlOrOptions === 'string') {
-            // Legacy constructor: (authToken, baseUrl)
-            // eslint-disable-next-line no-console
-            console.warn(
-                'TodoistApi constructor with baseUrl as second parameter is deprecated. Use options object instead: new TodoistApi(token, { baseUrl, customFetch })',
-            )
-            this.syncApiBase = getSyncBaseUri(baseUrlOrOptions)
-            this.customFetch = undefined
-        } else {
-            // New constructor: (authToken, options)
-            const options: TodoistApiOptions = (baseUrlOrOptions as TodoistApiOptions) || {}
-            this.syncApiBase = getSyncBaseUri(options.baseUrl)
-            this.customFetch = options.customFetch
-        }
+        const opts = options || {}
+        this.syncApiBase = getSyncBaseUri(opts.baseUrl)
+        this.customFetch = opts.customFetch
     }
 
     /**
@@ -631,7 +610,6 @@ export class TodoistApi {
      * @param args - The paramets that should contain only one of projectId, sectionId, or parentId
      * @param requestId - Optional custom identifier for the request.
      * @returns - A promise that resolves to an array of the updated tasks.
-     * @deprecated Use `moveTask` for single task operations. This method uses the Sync API and may be removed in a future version.
      */
     async moveTasks(ids: string[], args: MoveTaskArgs, requestId?: string): Promise<Task[]> {
         if (ids.length > MAX_COMMAND_COUNT) {
@@ -1493,46 +1471,19 @@ export class TodoistApi {
      * @returns A promise that resolves to a paginated response of activity events.
      */
     async getActivityLogs(args: GetActivityLogsArgs = {}): Promise<GetActivityLogsResponse> {
-        // Resolve dateFrom: prefer new param, fall back to deprecated `since`
-        const rawDateFrom = args.dateFrom ?? args.since
-        const rawDateTo = args.dateTo ?? args.until
-
         // Convert Date objects to YYYY-MM-DD strings
         const dateFrom =
-            rawDateFrom instanceof Date ? formatDateToYYYYMMDD(rawDateFrom) : rawDateFrom
-        const dateTo = rawDateTo instanceof Date ? formatDateToYYYYMMDD(rawDateTo) : rawDateTo
+            args.dateFrom instanceof Date ? formatDateToYYYYMMDD(args.dateFrom) : args.dateFrom
+        const dateTo = args.dateTo instanceof Date ? formatDateToYYYYMMDD(args.dateTo) : args.dateTo
 
-        // Destructure out deprecated, raw date, and filter-type fields so they don't leak into payload
-        const {
-            since: _since,
-            until: _until,
-            dateFrom: _dateFrom,
-            dateTo: _dateTo,
-            objectType,
-            eventType,
-            objectEventTypes,
-            ...rest
-        } = args as {
-            since?: Date | string
-            until?: Date | string
-            dateFrom?: Date | string
-            dateTo?: Date | string
-            objectType?: string
-            eventType?: string
-            objectEventTypes?: string | string[]
-            [key: string]: unknown
-        }
+        // Destructure out raw date and filter-type fields so they don't leak into payload
+        const { dateFrom: _dateFrom, dateTo: _dateTo, objectEventTypes, ...rest } = args
 
         // Build normalized objectEventTypes for the API
         let normalizedObjectEventTypes: string[] | undefined
         if (objectEventTypes !== undefined) {
             const arr = Array.isArray(objectEventTypes) ? objectEventTypes : [objectEventTypes]
             normalizedObjectEventTypes = arr.map(normalizeObjectEventTypeForApi)
-        } else if (objectType !== undefined || eventType !== undefined) {
-            // Synthesize combined filter from deprecated separate params
-            const objPart = normalizeObjectTypeForApi(objectType) ?? ''
-            const evtPart = eventType ?? ''
-            normalizedObjectEventTypes = [`${objPart}:${evtPart}`]
         }
 
         const processedArgs = {

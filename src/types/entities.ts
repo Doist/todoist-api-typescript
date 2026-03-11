@@ -61,10 +61,6 @@ export const TaskSchema = z
         childOrder: z.number().int(),
         content: z.string(),
         description: z.string(),
-        /**
-         * @deprecated This field is deprecated and will always return 0. It will be removed in a future version. Do not use or rely on this field.
-         */
-        noteCount: z.number().int(),
         dayOrder: z.number().int(),
         isCollapsed: z.boolean(),
         isUncompletable: z.boolean().default(false),
@@ -399,20 +395,12 @@ export const ProductivityStatsSchema = z.object({
 export type ProductivityStats = z.infer<typeof ProductivityStatsSchema>
 
 export const ColorSchema = z.object({
-    /** @deprecated No longer used */
-    id: z.number(),
     /** The key of the color (i.e. 'berry_red') */
     key: z.string(),
     /** The display name of the color (i.e. 'Berry Red') */
     displayName: z.string(),
-    /** @deprecated Use {@link Color.displayName} instead */
-    name: z.string(),
     /** The hex value of the color (i.e. '#b8255f') */
     hexValue: z.string(),
-    /**
-     * @deprecated Use {@link Color.hexValue} instead
-     */
-    value: z.string(),
 })
 /**
  * Represents a color in Todoist.
@@ -421,28 +409,9 @@ export const ColorSchema = z.object({
 export type Color = z.infer<typeof ColorSchema>
 
 /**
- * @deprecated Use 'task' instead. This will be removed in the next major version.
- */
-type DeprecatedItem = 'item'
-
-/**
- * @deprecated Use 'comment' instead. This will be removed in the next major version.
- */
-type DeprecatedNote = 'note'
-
-/**
  * Type hints for known object types. Accepts any string for forward compatibility.
- * Supports both modern naming ('task', 'comment') and legacy naming ('item', 'note').
- *
- * **Note**: The legacy values 'item' and 'note' are deprecated. Use 'task' and 'comment' instead.
  */
-export type ActivityObjectType =
-    | 'task'
-    | 'comment'
-    | 'project'
-    | DeprecatedItem
-    | DeprecatedNote
-    | (string & Record<string, never>)
+export type ActivityObjectType = 'task' | 'comment' | 'project' | (string & Record<string, never>)
 
 /**
  * Type hints for known event types. Accepts any string for forward compatibility.

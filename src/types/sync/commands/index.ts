@@ -279,11 +279,6 @@ export type SyncCommand<Type extends SyncCommandType | string = string> = {
     tempId?: string
 }
 
-/**
- * @deprecated Use `SyncCommand` instead.
- */
-export type Command = SyncCommand<string>
-
 // Re-export all domain types
 export * from './shared'
 export * from './tasks'
