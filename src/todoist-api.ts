@@ -277,6 +277,11 @@ export class TodoistApi {
          */
         options?: TodoistApiOptions,
     ) {
+        if (typeof options === 'string') {
+            throw new TypeError(
+                'Passing baseUrl as a string is no longer supported. Use an options object instead: new TodoistApi(token, { baseUrl })',
+            )
+        }
         this.authToken = authToken
         const opts = options || {}
         this.syncApiBase = getSyncBaseUri(opts.baseUrl)
@@ -1476,8 +1481,17 @@ export class TodoistApi {
             args.dateFrom instanceof Date ? formatDateToYYYYMMDD(args.dateFrom) : args.dateFrom
         const dateTo = args.dateTo instanceof Date ? formatDateToYYYYMMDD(args.dateTo) : args.dateTo
 
-        // Destructure out raw date and filter-type fields so they don't leak into payload
-        const { dateFrom: _dateFrom, dateTo: _dateTo, objectEventTypes, ...rest } = args
+        // Destructure out raw date, filter-type, and removed legacy fields so they don't leak into payload
+        const {
+            dateFrom: _dateFrom,
+            dateTo: _dateTo,
+            objectEventTypes,
+            objectType: _objectType,
+            eventType: _eventType,
+            since: _since,
+            until: _until,
+            ...rest
+        } = args as GetActivityLogsArgs & Record<string, unknown>
 
         // Build normalized objectEventTypes for the API
         let normalizedObjectEventTypes: string[] | undefined

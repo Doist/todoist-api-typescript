@@ -142,6 +142,11 @@ export async function getAuthToken(
     args: AuthTokenRequestArgs,
     options?: AuthOptions,
 ): Promise<AuthTokenResponse> {
+    if (typeof options === 'string') {
+        throw new TypeError(
+            'Passing baseUrl as a string is no longer supported. Use an options object instead: getAuthToken(args, { baseUrl })',
+        )
+    }
     const baseUrl = options?.baseUrl
     const customFetch = options?.customFetch
 
@@ -198,6 +203,11 @@ export async function revokeToken(
     args: RevokeTokenRequestArgs,
     options?: AuthOptions,
 ): Promise<boolean> {
+    if (typeof options === 'string') {
+        throw new TypeError(
+            'Passing baseUrl as a string is no longer supported. Use an options object instead: revokeToken(args, { baseUrl })',
+        )
+    }
     const baseUrl = options?.baseUrl
     const customFetch = options?.customFetch
 

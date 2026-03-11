@@ -534,6 +534,14 @@ type GetActivityLogsArgsCommon = {
 
 export type GetActivityLogsArgs = GetActivityLogsArgsCommon & {
     objectEventTypes?: ActivityObjectEventType | ActivityObjectEventType[]
+    /** @removed Use `objectEventTypes` instead. */
+    objectType?: never
+    /** @removed Use `objectEventTypes` instead. */
+    eventType?: never
+    /** @removed Use `dateFrom` instead. */
+    since?: never
+    /** @removed Use `dateTo` instead. */
+    until?: never
 }
 
 /**
