@@ -35,7 +35,6 @@ const DEFAULT_USER_EMAIL = 'atestuser@doist.com'
 const DEFAULT_COMMENT_ID = '4'
 const DEFAULT_COMMENT_CONTENT = 'A comment'
 const DEFAULT_COMMENT_REACTIONS = { '👍': ['1234', '5678'] }
-const DEFAULT_NOTE_COUNT = 0
 const DEFAULT_CAN_ASSIGN_TASKS = true
 const DEFAULT_IS_ARCHIVED = false
 const DEFAULT_IS_DELETED = false
@@ -92,7 +91,6 @@ export const DEFAULT_TASK: Task = {
     childOrder: DEFAULT_ORDER,
     content: DEFAULT_TASK_CONTENT,
     description: DEFAULT_TASK_DESCRIPTION,
-    noteCount: DEFAULT_NOTE_COUNT,
     dayOrder: DEFAULT_ORDER,
     isCollapsed: DEFAULT_IS_COLLAPSED,
     isUncompletable: false,
@@ -129,7 +127,6 @@ export const TASK_WITH_OPTIONALS_AS_NULL: Task = {
     dayOrder: DEFAULT_ORDER,
     isCollapsed: DEFAULT_IS_COLLAPSED,
     isUncompletable: false,
-    noteCount: DEFAULT_NOTE_COUNT,
     url: DEFAULT_TASK_URL,
 }
 

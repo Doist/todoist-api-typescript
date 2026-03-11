@@ -2,9 +2,7 @@ import type { RequireAllOrNone, RequireOneOrNone, RequireExactlyOne } from 'type
 import type { ColorKey } from '../utils/colors'
 import type {
     ActivityEvent,
-    ActivityEventType,
     ActivityObjectEventType,
-    ActivityObjectType,
     Comment,
     Duration,
     Label,
@@ -534,64 +532,17 @@ type GetActivityLogsArgsCommon = {
     dateTo?: Date | string
 }
 
-/** Use the legacy separate objectType/eventType params. Cannot be combined with objectEventTypes. */
-type GetActivityLogsArgsLegacy = GetActivityLogsArgsCommon & {
-    /**
-     * Type of object to filter by (e.g., 'task', 'comment', 'project').
-     * Accepts both modern naming ('task', 'comment') and legacy naming ('item', 'note').
-     * @deprecated Use `objectEventTypes` instead.
-     */
-    objectType?: ActivityObjectType
-    /**
-     * Type of event to filter by (e.g., 'added', 'updated', 'deleted').
-     * @deprecated Use `objectEventTypes` instead.
-     */
-    eventType?: ActivityEventType
-    objectEventTypes?: never
-}
-
-/** Use the modern combined objectEventTypes param. Cannot be combined with objectType/eventType. */
-type GetActivityLogsArgsModern = GetActivityLogsArgsCommon & {
-    /**
-     * One or more combined object:event filter strings, e.g. `'task:added'`, `'task:'`, `':deleted'`.
-     * Accepts a single value or an array of values for multi-type filtering.
-     */
+export type GetActivityLogsArgs = GetActivityLogsArgsCommon & {
     objectEventTypes?: ActivityObjectEventType | ActivityObjectEventType[]
+    /** @removed Use `objectEventTypes` instead. */
     objectType?: never
+    /** @removed Use `objectEventTypes` instead. */
     eventType?: never
+    /** @removed Use `dateFrom` instead. */
+    since?: never
+    /** @removed Use `dateTo` instead. */
+    until?: never
 }
-
-type GetActivityLogsArgsWithDate<TBase> = TBase & {
-    /**
-     * @deprecated Use `dateFrom` instead. Will be removed in the next major version.
-     */
-    since?: Date
-    /**
-     * @deprecated Use `dateTo` instead. Will be removed in the next major version.
-     */
-    until?: Date
-}
-
-/**
- * @deprecated String dates (YYYY-MM-DD format) are deprecated. Use Date objects instead.
- * This type will be removed in the next major version.
- */
-type GetActivityLogsArgsWithString<TBase> = TBase & {
-    /**
-     * @deprecated Use `dateFrom` instead. Will be removed in the next major version.
-     */
-    since?: string
-    /**
-     * @deprecated Use `dateTo` instead. Will be removed in the next major version.
-     */
-    until?: string
-}
-
-export type GetActivityLogsArgs =
-    | GetActivityLogsArgsWithDate<GetActivityLogsArgsLegacy>
-    | GetActivityLogsArgsWithString<GetActivityLogsArgsLegacy>
-    | GetActivityLogsArgsWithDate<GetActivityLogsArgsModern>
-    | GetActivityLogsArgsWithString<GetActivityLogsArgsModern>
 
 /**
  * Response from retrieving activity logs.

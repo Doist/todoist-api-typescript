@@ -1,10 +1,4 @@
-import {
-    getAuthorizationUrl,
-    getAuthToken,
-    revokeAuthToken,
-    revokeToken,
-    Permission,
-} from './authentication'
+import { getAuthorizationUrl, getAuthToken, revokeToken, Permission } from './authentication'
 import { server, http, HttpResponse } from './test-utils/msw-setup'
 import { assertInstance } from './test-utils/asserts'
 import { TodoistRequestError } from './types'
@@ -130,26 +124,6 @@ describe('authentication', () => {
                 expect(e.message).toEqual('Authentication token exchange failed.')
                 expect(e.responseData).toEqual(missingTokenResponse)
             }
-        })
-    })
-
-    describe('revokeAuthToken', () => {
-        const revokeTokenRequest = {
-            clientId: 'SomeId',
-            clientSecret: 'ASecret',
-            accessToken: 'AToken',
-        }
-
-        test('returns true when revocation succeeds', async () => {
-            server.use(
-                http.post(`${getSyncBaseUri()}access_tokens/revoke`, () => {
-                    return HttpResponse.json(undefined, { status: 200 })
-                }),
-            )
-
-            const isSuccess = await revokeAuthToken(revokeTokenRequest)
-
-            expect(isSuccess).toEqual(true)
         })
     })
 

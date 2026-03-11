@@ -103,29 +103,6 @@ describe('TodoistApi activity endpoints', () => {
             expect(result.nextCursor).toBe('next_cursor_token')
         })
 
-        test('handles filter parameters', async () => {
-            server.use(
-                http.get(`${getSyncBaseUri()}${ENDPOINT_REST_ACTIVITIES}`, () => {
-                    return HttpResponse.json(
-                        {
-                            results: DEFAULT_ACTIVITY_RESPONSE,
-                            nextCursor: null,
-                        },
-                        { status: 200 },
-                    )
-                }),
-            )
-
-            const api = getTarget()
-            const result = await api.getActivityLogs({
-                objectType: 'item',
-                eventType: 'completed',
-                parentProjectId: '789',
-            })
-
-            expect(result.results).toHaveLength(2)
-        })
-
         test('handles unknown event types and fields without crashing', async () => {
             server.use(
                 http.get(`${getSyncBaseUri()}${ENDPOINT_REST_ACTIVITIES}`, () => {
@@ -182,74 +159,10 @@ describe('TodoistApi activity endpoints', () => {
                 expect(capturedUrl).not.toBeNull()
                 expect(capturedUrl!.searchParams.get('date_from')).toBe('2025-01-15')
                 expect(capturedUrl!.searchParams.get('date_to')).toBe('2025-01-20')
-                expect(capturedUrl!.searchParams.has('since')).toBe(false)
-                expect(capturedUrl!.searchParams.has('until')).toBe(false)
             },
         )
 
-        test.each([
-            {
-                description: 'Date objects',
-                args: {
-                    since: new Date('2025-01-15T10:30:00Z'),
-                    until: new Date('2025-01-20T15:45:00Z'),
-                },
-            },
-            {
-                description: 'string values',
-                args: { since: '2025-01-15', until: '2025-01-20' },
-            },
-        ])(
-            'deprecated since/until $description fall back to date_from/date_to in query params',
-            async ({ args }) => {
-                let capturedUrl: URL | null = null
-                server.use(
-                    http.get(`${getSyncBaseUri()}${ENDPOINT_REST_ACTIVITIES}`, ({ request }) => {
-                        capturedUrl = new URL(request.url)
-                        return HttpResponse.json(
-                            { results: DEFAULT_ACTIVITY_RESPONSE, nextCursor: null },
-                            { status: 200 },
-                        )
-                    }),
-                )
-
-                await getTarget().getActivityLogs(args)
-
-                expect(capturedUrl).not.toBeNull()
-                expect(capturedUrl!.searchParams.get('date_from')).toBe('2025-01-15')
-                expect(capturedUrl!.searchParams.get('date_to')).toBe('2025-01-20')
-                expect(capturedUrl!.searchParams.has('since')).toBe(false)
-                expect(capturedUrl!.searchParams.has('until')).toBe(false)
-            },
-        )
-
-        test('dateFrom takes precedence over deprecated since when both provided', async () => {
-            let capturedUrl: URL | null = null
-            server.use(
-                http.get(`${getSyncBaseUri()}${ENDPOINT_REST_ACTIVITIES}`, ({ request }) => {
-                    capturedUrl = new URL(request.url)
-                    return HttpResponse.json(
-                        {
-                            results: DEFAULT_ACTIVITY_RESPONSE,
-                            nextCursor: null,
-                        },
-                        { status: 200 },
-                    )
-                }),
-            )
-
-            const api = getTarget()
-            await api.getActivityLogs({
-                dateFrom: '2025-03-01',
-                since: new Date('2025-01-15T10:30:00Z'),
-            })
-
-            expect(capturedUrl).not.toBeNull()
-            expect(capturedUrl!.searchParams.get('date_from')).toBe('2025-03-01')
-            expect(capturedUrl!.searchParams.has('since')).toBe(false)
-        })
-
-        test('no date params results in neither date_from, date_to, since, nor until in URL', async () => {
+        test('no date params results in no date_from or date_to in URL', async () => {
             let capturedUrl: URL | null = null
             server.use(
                 http.get(`${getSyncBaseUri()}${ENDPOINT_REST_ACTIVITIES}`, ({ request }) => {
@@ -270,8 +183,6 @@ describe('TodoistApi activity endpoints', () => {
             expect(capturedUrl).not.toBeNull()
             expect(capturedUrl!.searchParams.has('date_from')).toBe(false)
             expect(capturedUrl!.searchParams.has('date_to')).toBe(false)
-            expect(capturedUrl!.searchParams.has('since')).toBe(false)
-            expect(capturedUrl!.searchParams.has('until')).toBe(false)
         })
 
         test('converts Date objects with correct timezone handling (dateFrom)', async () => {
@@ -292,69 +203,6 @@ describe('TodoistApi activity endpoints', () => {
 
             const result = await api.getActivityLogs({
                 dateFrom,
-            })
-
-            expect(result.results).toHaveLength(2)
-        })
-
-        test('converts modern objectType "task" to legacy "item" in API request', async () => {
-            server.use(
-                http.get(`${getSyncBaseUri()}${ENDPOINT_REST_ACTIVITIES}`, () => {
-                    return HttpResponse.json(
-                        {
-                            results: DEFAULT_ACTIVITY_RESPONSE,
-                            nextCursor: null,
-                        },
-                        { status: 200 },
-                    )
-                }),
-            )
-
-            const api = getTarget()
-            const result = await api.getActivityLogs({
-                objectType: 'task',
-            })
-
-            expect(result.results).toHaveLength(2)
-        })
-
-        test('converts modern objectType "comment" to legacy "note" in API request', async () => {
-            server.use(
-                http.get(`${getSyncBaseUri()}${ENDPOINT_REST_ACTIVITIES}`, () => {
-                    return HttpResponse.json(
-                        {
-                            results: DEFAULT_ACTIVITY_RESPONSE,
-                            nextCursor: null,
-                        },
-                        { status: 200 },
-                    )
-                }),
-            )
-
-            const api = getTarget()
-            const result = await api.getActivityLogs({
-                objectType: 'comment',
-            })
-
-            expect(result.results).toHaveLength(2)
-        })
-
-        test('leaves project objectType unchanged', async () => {
-            server.use(
-                http.get(`${getSyncBaseUri()}${ENDPOINT_REST_ACTIVITIES}`, () => {
-                    return HttpResponse.json(
-                        {
-                            results: DEFAULT_ACTIVITY_RESPONSE,
-                            nextCursor: null,
-                        },
-                        { status: 200 },
-                    )
-                }),
-            )
-
-            const api = getTarget()
-            const result = await api.getActivityLogs({
-                objectType: 'project',
             })
 
             expect(result.results).toHaveLength(2)
@@ -453,48 +301,6 @@ describe('TodoistApi activity endpoints', () => {
             expect(result.results[0].objectType).toBe('project')
         })
 
-        test('supports backward compatibility with legacy "item" in request', async () => {
-            server.use(
-                http.get(`${getSyncBaseUri()}${ENDPOINT_REST_ACTIVITIES}`, () => {
-                    return HttpResponse.json(
-                        {
-                            results: DEFAULT_ACTIVITY_RESPONSE,
-                            nextCursor: null,
-                        },
-                        { status: 200 },
-                    )
-                }),
-            )
-
-            const api = getTarget()
-            const result = await api.getActivityLogs({
-                objectType: 'item',
-            })
-
-            expect(result.results).toHaveLength(2)
-        })
-
-        test('supports backward compatibility with legacy "note" in request', async () => {
-            server.use(
-                http.get(`${getSyncBaseUri()}${ENDPOINT_REST_ACTIVITIES}`, () => {
-                    return HttpResponse.json(
-                        {
-                            results: DEFAULT_ACTIVITY_RESPONSE,
-                            nextCursor: null,
-                        },
-                        { status: 200 },
-                    )
-                }),
-            )
-
-            const api = getTarget()
-            const result = await api.getActivityLogs({
-                objectType: 'note',
-            })
-
-            expect(result.results).toHaveLength(2)
-        })
-
         describe('objectEventTypes parameter', () => {
             function setupActivityHandler(onRequest?: (url: URL) => void) {
                 server.use(
@@ -550,42 +356,6 @@ describe('TodoistApi activity endpoints', () => {
                     absentParams: [],
                 },
             ])('objectEventTypes: $description', async ({ args, expectedValues, absentParams }) => {
-                let capturedUrl: URL | null = null
-                setupActivityHandler((url) => {
-                    capturedUrl = url
-                })
-
-                await getTarget().getActivityLogs(args)
-
-                expect(capturedUrl).not.toBeNull()
-                expect(getObjectEventTypes(capturedUrl!)).toEqual(expectedValues)
-                for (const param of absentParams) {
-                    expect(capturedUrl!.searchParams.has(param)).toBe(false)
-                }
-            })
-
-            test.each([
-                {
-                    description:
-                        'objectType alone maps to object_event_types with empty event part',
-                    args: { objectType: 'task' as const },
-                    expectedValues: ['item:'],
-                    absentParams: ['object_type'],
-                },
-                {
-                    description: 'objectType + eventType maps to combined object_event_types',
-                    args: { objectType: 'task' as const, eventType: 'added' as const },
-                    expectedValues: ['item:added'],
-                    absentParams: ['object_type', 'event_type'],
-                },
-                {
-                    description:
-                        'eventType alone maps to object_event_types with empty object part',
-                    args: { eventType: 'completed' as const },
-                    expectedValues: [':completed'],
-                    absentParams: ['event_type'],
-                },
-            ])('legacy params: $description', async ({ args, expectedValues, absentParams }) => {
                 let capturedUrl: URL | null = null
                 setupActivityHandler((url) => {
                     capturedUrl = url

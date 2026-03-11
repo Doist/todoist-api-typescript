@@ -54,7 +54,7 @@ const task = await api.addTask({
 -   [`getAuthStateParameter()`](./api/functions/getAuthStateParameter) - Creates secure state parameter
 -   [`getAuthorizationUrl()`](./api/functions/getAuthorizationUrl) - Generates OAuth2 authorization URL
 -   [`getAuthToken()`](./api/functions/getAuthToken) - Exchanges code for access token
--   [`revokeAuthToken()`](./api/functions/revokeAuthToken) - Revokes an access token
+-   [`revokeToken()`](./api/functions/revokeToken) - Revokes an access token (RFC 7009)
 
 ## Available Scopes
 
