@@ -5,6 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.0.0](https://github.com/Doist/todoist-api-typescript/compare/v6.10.0...v7.0.0) (2026-03-11)
+
+
+### ⚠ BREAKING CHANGES
+
+* remove all deprecated code for major version ([#482](https://github.com/Doist/todoist-api-typescript/issues/482))
+* correct color keys to match backend (turquoise→teal, gray→grey) ([#481](https://github.com/Doist/todoist-api-typescript/issues/481))
+
+### Features
+
+* remove all deprecated code for major version ([#482](https://github.com/Doist/todoist-api-typescript/issues/482)) ([51c22c4](https://github.com/Doist/todoist-api-typescript/commit/51c22c47f8d2963e8b1cc5958444e182ed4b1324))
+* support null alias for task due clearing ([#478](https://github.com/Doist/todoist-api-typescript/issues/478)) ([af0077e](https://github.com/Doist/todoist-api-typescript/commit/af0077e499648dd5f0cfb5196be95d7cb2455445))
+
+
+### Bug Fixes
+
+* correct color keys to match backend (turquoise→teal, gray→grey) ([#481](https://github.com/Doist/todoist-api-typescript/issues/481)) ([af1e364](https://github.com/Doist/todoist-api-typescript/commit/af1e364f57a2409f99f325cf242d3e8d6c2b3b70))
+
+
+### Miscellaneous
+
+* add CLI for raw Todoist API requests via .env ([#477](https://github.com/Doist/todoist-api-typescript/issues/477)) ([3ad6e6b](https://github.com/Doist/todoist-api-typescript/commit/3ad6e6b4249093be971b887e4e64457b485b81bd))
+* **deps:** bump minimatch ([#476](https://github.com/Doist/todoist-api-typescript/issues/476)) ([84e4135](https://github.com/Doist/todoist-api-typescript/commit/84e4135837b0cebff6007b68f20a52c957971eaf))
+
 ## [6.10.0](https://github.com/Doist/todoist-api-typescript/compare/v6.9.0...v6.10.0) (2026-02-27)
 
 
