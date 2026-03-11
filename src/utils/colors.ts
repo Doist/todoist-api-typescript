@@ -184,12 +184,6 @@ export const colors = [
     taupe,
 ] as const
 
-/** @deprecated Use {@link teal} instead. Will be removed in the next major version. */
-export const turquoise = teal
-
-/** @deprecated Use {@link grey} instead. Will be removed in the next major version. */
-export const gray = grey
-
 export type ColorKey = (typeof colors)[number]['key']
 
 export const defaultColor: Color = charcoal
