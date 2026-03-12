@@ -13,7 +13,7 @@ describe('TodoistApi sync endpoint', () => {
         test('returns a sync response', async () => {
             server.use(
                 http.post(`${getSyncBaseUri()}${ENDPOINT_SYNC}`, () => {
-                    return HttpResponse.json({ syncToken: 'token123' }, { status: 200 })
+                    return HttpResponse.json({ sync_token: 'token123' }, { status: 200 })
                 }),
             )
             const api = getTarget()
@@ -28,12 +28,15 @@ describe('TodoistApi sync endpoint', () => {
         })
 
         test('sends the command type and args in the request body', async () => {
-            let capturedBody: { commands: Array<{ type: string; args: unknown }> } | undefined
+            let capturedBody:
+                | { commands: Array<{ type: string; args: unknown }> }
+                | null
+                | undefined
 
             server.use(
                 http.post(`${getSyncBaseUri()}${ENDPOINT_SYNC}`, async ({ request }) => {
-                    capturedBody = await request.json()
-                    return HttpResponse.json({ syncToken: 'token123' }, { status: 200 })
+                    capturedBody = (await request.json()) as typeof capturedBody
+                    return HttpResponse.json({ sync_token: 'token123' }, { status: 200 })
                 }),
             )
             const api = getTarget()
@@ -59,7 +62,7 @@ describe('TodoistApi sync endpoint', () => {
             await api.sync({
                 commands: [
                     // @ts-expect-error invalid command name
-                    createCommand('task_add', { name: 'Buy milk' }),
+                    createCommand('task_add', { content: 'Buy milk' }),
                 ],
                 resourceTypes: ['items'],
                 syncToken: '*',

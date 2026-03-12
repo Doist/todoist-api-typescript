@@ -18,7 +18,7 @@ describe('createCommand', () => {
     })
 
     test('passes args through correctly', () => {
-        const args = { content: 'Buy milk', priority: 2 }
+        const args = { content: 'Buy milk', priority: 2 as const }
         const cmd = createCommand('item_add', args)
         expect(cmd.args).toEqual(args)
     })
