@@ -1,8 +1,8 @@
 import { jest } from '@jest/globals'
-import { request, isSuccess, paramsSerializer } from './rest-client'
-import { TodoistRequestError } from './types/errors'
-import type { HttpResponse as TodoistHttpResponse } from './types/http'
-import { server, http, HttpResponse, getLastRequest, captureRequest } from './test-utils/msw-setup'
+import { TodoistRequestError } from '../types/errors'
+import type { HttpResponse as TodoistHttpResponse } from '../types/http'
+import { captureRequest, getLastRequest, HttpResponse, http, server } from '../test-utils/msw-setup'
+import { isSuccess, paramsSerializer, request } from './http-client'
 
 const RANDOM_ID = 'SomethingRandom'
 
@@ -18,7 +18,7 @@ const DEFAULT_PAYLOAD = {
 
 const DEFAULT_RESPONSE_DATA = DEFAULT_PAYLOAD
 
-describe('restClient', () => {
+describe('httpClient', () => {
     test('request makes GET request with correct URL and headers', async () => {
         const url = `${DEFAULT_BASE_URI}${DEFAULT_ENDPOINT}`
 
@@ -41,14 +41,12 @@ describe('restClient', () => {
             relativePath: DEFAULT_ENDPOINT,
         })
 
-        // Verify the request was made
         const capturedRequest = getLastRequest()
         expect(capturedRequest).toBeDefined()
         expect(capturedRequest?.url).toBe(url)
         expect(capturedRequest?.method).toBe('GET')
         expect(capturedRequest?.headers['content-type']).toBe('application/json')
 
-        // Verify the response structure
         expect(result.data).toEqual(DEFAULT_RESPONSE_DATA)
         expect(result.status).toBe(200)
         expect(result.statusText).toBe('OK')
@@ -71,7 +69,6 @@ describe('restClient', () => {
             apiToken: DEFAULT_AUTH_TOKEN,
         })
 
-        // Verify the request included the authorization header
         const capturedRequest = getLastRequest()
         expect(capturedRequest).toBeDefined()
         expect(capturedRequest?.headers['authorization']).toBe(`Bearer ${DEFAULT_AUTH_TOKEN}`)
@@ -111,7 +108,6 @@ describe('restClient', () => {
             },
         })
 
-        // Verify all camelCase parameters were converted to snake_case in the URL
         const capturedRequest = getLastRequest()
         expect(capturedRequest).toBeDefined()
         expect(capturedRequest?.url).toContain('project_id=123')
@@ -138,7 +134,6 @@ describe('restClient', () => {
             payload: DEFAULT_PAYLOAD,
         })
 
-        // Verify the request body was converted to snake_case
         const capturedRequest = getLastRequest()
         expect(capturedRequest).toBeDefined()
         expect(capturedRequest?.method).toBe('POST')

@@ -1,4 +1,4 @@
-import { fetchWithRetry } from './fetch-with-retry'
+import { fetchWithRetry } from '../transport/fetch-with-retry'
 import type { HttpResponse, CustomFetch } from '../types/http'
 
 type UploadMultipartFileArgs = {

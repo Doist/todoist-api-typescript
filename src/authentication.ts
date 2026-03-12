@@ -1,4 +1,4 @@
-import { request, isSuccess } from './rest-client'
+import { request, isSuccess } from './transport/http-client'
 import { v4 as uuid } from 'uuid'
 import { TodoistRequestError } from './types'
 import { CustomFetch } from './types/http'
