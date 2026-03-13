@@ -595,13 +595,18 @@ export class TodoistApi {
                   }
                 : normalizedArgs
 
+        // Remap `order` → `childOrder` so snakeCaseKeys() produces `child_order`
+        const { order, ...argsWithoutOrder } = processedArgs
+        const remappedArgs =
+            order !== undefined ? { ...argsWithoutOrder, childOrder: order } : argsWithoutOrder
+
         const response = await request<Task>({
             httpMethod: 'POST',
             baseUri: this.syncApiBase,
             relativePath: generatePath(ENDPOINT_REST_TASKS, id),
             apiToken: this.authToken,
             customFetch: this.customFetch,
-            payload: processedArgs,
+            payload: remappedArgs,
             requestId: requestId,
         })
 
