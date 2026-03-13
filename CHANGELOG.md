@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.1.0](https://github.com/Doist/todoist-api-typescript/compare/v7.0.0...v7.1.0) (2026-03-13)
+
+
+### Features
+
+* **tasks:** expose order field in updateTask, mapped to child_order ([#488](https://github.com/Doist/todoist-api-typescript/issues/488)) ([845ff70](https://github.com/Doist/todoist-api-typescript/commit/845ff70a3c004ddd6462834959df76dac13a0df9))
+
+
+### Miscellaneous
+
+* **deps:** bump serialize-javascript and terser-webpack-plugin ([#484](https://github.com/Doist/todoist-api-typescript/issues/484)) ([55f73dc](https://github.com/Doist/todoist-api-typescript/commit/55f73dcdde4de80c24c976c59855be116c8e1cf6))
+
 ## [7.0.0](https://github.com/Doist/todoist-api-typescript/compare/v6.10.0...v7.0.0) (2026-03-11)
 
 
