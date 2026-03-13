@@ -228,6 +228,37 @@ describe('TodoistApi task endpoints', () => {
             expect(response.due).toBeNull()
         })
 
+        test('remaps order to child_order in payload', async () => {
+            const returnedTask = { ...DEFAULT_TASK }
+
+            server.use(
+                http.post(`${getSyncBaseUri()}${ENDPOINT_REST_TASKS}/123`, async ({ request }) => {
+                    const body = (await request.json()) as Record<string, unknown>
+                    expect(body.child_order).toBe(3)
+                    expect(body.order).toBeUndefined()
+                    return HttpResponse.json(returnedTask, { status: 200 })
+                }),
+            )
+            const api = getTarget()
+
+            await api.updateTask('123', { order: 3 })
+        })
+
+        test('does not send child_order when order is not provided', async () => {
+            const returnedTask = { ...DEFAULT_TASK }
+
+            server.use(
+                http.post(`${getSyncBaseUri()}${ENDPOINT_REST_TASKS}/123`, async ({ request }) => {
+                    const body = (await request.json()) as Record<string, unknown>
+                    expect(body.child_order).toBeUndefined()
+                    return HttpResponse.json(returnedTask, { status: 200 })
+                }),
+            )
+            const api = getTarget()
+
+            await api.updateTask('123', { content: 'some content' })
+        })
+
         test('keeps deadlineDate null in payload', async () => {
             const returnedTask = {
                 ...DEFAULT_TASK,

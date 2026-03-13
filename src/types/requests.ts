@@ -139,6 +139,11 @@ export type UpdateTaskArgs = {
     labels?: string[]
     priority?: number
     /**
+     * Sort order of the task within its parent/project.
+     * Internally mapped to `child_order` in the API payload.
+     */
+    order?: number
+    /**
      * Natural language due date.
      * Use `"no date"` to clear a due date, or `null` as an SDK alias for the same behavior.
      */
