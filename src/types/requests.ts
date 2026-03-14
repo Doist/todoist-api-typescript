@@ -250,6 +250,7 @@ export type AddProjectArgs = {
     color?: ColorKey
     isFavorite?: boolean
     viewStyle?: ProjectViewStyle
+    workspaceId?: string
 }
 
 /**
