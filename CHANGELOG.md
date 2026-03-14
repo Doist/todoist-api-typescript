@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.1.1](https://github.com/Doist/todoist-api-typescript/compare/v7.1.0...v7.1.1) (2026-03-14)
+
+
+### Bug Fixes
+
+* **projects:** add workspaceId to AddProjectArgs ([#492](https://github.com/Doist/todoist-api-typescript/issues/492)) ([cb136e1](https://github.com/Doist/todoist-api-typescript/commit/cb136e1ad2be92639a767c5ccab41c3082059411))
+
+
+### Miscellaneous
+
+* **deps:** update dependency undici to v7.24.0 [security] ([#490](https://github.com/Doist/todoist-api-typescript/issues/490)) ([5a28e2d](https://github.com/Doist/todoist-api-typescript/commit/5a28e2dde5812c87dcd5c4344243e53db34cc7aa))
+
 ## [7.1.0](https://github.com/Doist/todoist-api-typescript/compare/v7.0.0...v7.1.0) (2026-03-13)
 
 
