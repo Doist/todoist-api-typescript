@@ -70,13 +70,15 @@ export type HttpError = Error & {
  * Type guard to check if an error is a network error
  */
 export function isNetworkError(error: Error): error is NetworkError {
-    // Network errors in fetch are typically TypeError with specific messages
+    // Network errors in fetch are typically TypeError with specific messages.
+    // Timeout errors are created by fetch-with-retry with the TimeoutError name.
     return (
         (error instanceof TypeError &&
             (error.message.includes('fetch') ||
                 error.message.includes('network') ||
                 error.message.includes('Failed to fetch') ||
                 error.message.includes('NetworkError'))) ||
+        error.name === 'TimeoutError' ||
         (error as NetworkError).isNetworkError === true
     )
 }

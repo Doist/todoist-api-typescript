@@ -15,6 +15,14 @@ const DEFAULT_RETRY_CONFIG: RetryConfig = {
     },
 }
 
+const TIMEOUT_ERROR_NAME = 'TimeoutError'
+
+function createTimeoutError(timeoutMs: number): Error {
+    const error = new Error(`Request timeout after ${timeoutMs}ms`)
+    error.name = TIMEOUT_ERROR_NAME
+    return error
+}
+
 /**
  * Converts Headers object to a plain object
  */
@@ -41,7 +49,7 @@ function createTimeoutSignal(
 
     // Timeout logic
     const timeoutId = setTimeout(() => {
-        controller.abort(new Error(`Request timeout after ${timeoutMs}ms`))
+        controller.abort(createTimeoutError(timeoutMs))
     }, timeoutMs)
     let abortHandler: (() => void) | undefined
 

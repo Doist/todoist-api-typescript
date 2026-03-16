@@ -94,6 +94,52 @@ describe('fetchWithRetry', () => {
         expect(response.data).toEqual({ retried: true })
     })
 
+    test('retries timeout errors when configured', async () => {
+        jest.useFakeTimers()
+
+        const fetchMock: jest.MockedFunction<typeof fetch> = jest.fn()
+        fetchMock
+            .mockImplementationOnce(
+                (_url: Parameters<typeof fetch>[0], options?: Parameters<typeof fetch>[1]) =>
+                    new Promise<Response>((_resolve, reject) => {
+                        options?.signal?.addEventListener(
+                            'abort',
+                            () => {
+                                const reason = options.signal?.reason
+                                reject(
+                                    reason instanceof Error
+                                        ? reason
+                                        : new Error(String(reason ?? 'Request aborted')),
+                                )
+                            },
+                            { once: true },
+                        )
+                    }),
+            )
+            .mockResolvedValueOnce(
+                new Response(JSON.stringify({ ok: true }), {
+                    status: 200,
+                    statusText: 'OK',
+                }),
+            )
+        global.fetch = fetchMock
+
+        const requestPromise = fetchWithRetry<{ ok: boolean }>({
+            url: 'https://api.todoist.com/api/v1/tasks',
+            options: { method: 'GET', timeout: 20 },
+            retryConfig: {
+                retries: 1,
+                retryDelay: () => 0,
+            },
+        })
+
+        await jest.advanceTimersByTimeAsync(20)
+
+        const response = await requestPromise
+
+        expect(fetchMock).toHaveBeenCalledTimes(2)
+        expect(response.data).toEqual({ ok: true })
+    })
     test('aborts built-in fetch requests when the timeout is reached', async () => {
         jest.useFakeTimers()
 
