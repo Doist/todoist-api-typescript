@@ -43,9 +43,13 @@ function createTimeoutSignal(
     const timeoutId = setTimeout(() => {
         controller.abort(new Error(`Request timeout after ${timeoutMs}ms`))
     }, timeoutMs)
+    let abortHandler: (() => void) | undefined
 
     function clear() {
         clearTimeout(timeoutId)
+        if (existingSignal && abortHandler) {
+            existingSignal.removeEventListener('abort', abortHandler)
+        }
     }
 
     // If there's an existing signal, forward its abort
@@ -54,14 +58,11 @@ function createTimeoutSignal(
             clearTimeout(timeoutId)
             controller.abort(existingSignal.reason)
         } else {
-            existingSignal.addEventListener(
-                'abort',
-                () => {
-                    clearTimeout(timeoutId)
-                    controller.abort(existingSignal.reason)
-                },
-                { once: true },
-            )
+            abortHandler = () => {
+                clearTimeout(timeoutId)
+                controller.abort(existingSignal.reason)
+            }
+            existingSignal.addEventListener('abort', abortHandler, { once: true })
         }
     }
 
