@@ -384,7 +384,7 @@ describe('TodoistApi workspaces', () => {
             },
         ]
 
-        // Mock response with snake_case keys (will be converted to camelCase by rest-client)
+        // Mock response with snake_case keys (will be converted to camelCase by http-client)
         const mockResponse = {
             has_more: false,
             next_cursor: undefined,

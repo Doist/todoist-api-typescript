@@ -53,11 +53,15 @@ describe('Obsidian Custom Fetch Integration', () => {
                 json = null
             }
 
+            const responseHeaders: Record<string, string> = {}
+            responseClone.headers.forEach((value, key) => {
+                responseHeaders[key] = value
+            })
+
             // Return Obsidian-shaped response (properties, not methods)
             return {
                 status: responseClone.status,
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-call
-                headers: Object.fromEntries(responseClone.headers.entries()),
+                headers: responseHeaders,
                 arrayBuffer: await responseClone.arrayBuffer(),
                 json,
                 text,

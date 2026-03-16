@@ -1,5 +1,6 @@
-import type { HttpResponse, RetryConfig, CustomFetch, CustomFetchResponse } from '../types/http'
+import type { CustomFetch, CustomFetchResponse, HttpResponse, RetryConfig } from '../types/http'
 import { isNetworkError } from '../types/http'
+import { getDefaultDispatcher } from './http-dispatcher'
 
 /**
  * Default retry configuration matching the original axios-retry behavior
@@ -14,40 +15,12 @@ const DEFAULT_RETRY_CONFIG: RetryConfig = {
     },
 }
 
-/**
- * Type for the undici Agent - represents what we need from the Agent instance
- * We don't need to match all properties, just what's required for the dispatcher
- */
-type UndiciAgent = {
-    // This is an opaque type - we just need to be able to pass it as a dispatcher
-    readonly [key: string]: unknown
-}
+const TIMEOUT_ERROR_NAME = 'TimeoutError'
 
-/**
- * Cached HTTP agent to prevent creating multiple agents
- * null = not initialized, undefined = browser env, UndiciAgent = Node.js env
- */
-let httpAgent: UndiciAgent | undefined | null = null
-
-/**
- * Gets the HTTP agent for Node.js environments or undefined for browser environments.
- * Uses dynamic import to avoid loading undici in browser environments.
- */
-async function getHttpAgent(): Promise<UndiciAgent | undefined> {
-    if (httpAgent === null) {
-        if (typeof process !== 'undefined' && process.versions?.node) {
-            // We're in Node.js - dynamically import undici
-            const { Agent } = await import('undici')
-            httpAgent = new Agent({
-                keepAliveTimeout: 1, // Close connections after 1ms of idle time
-                keepAliveMaxTimeout: 1, // Maximum time to keep connections alive
-            }) as unknown as UndiciAgent
-        } else {
-            // We're in browser - no agent needed
-            httpAgent = undefined
-        }
-    }
-    return httpAgent
+function createTimeoutError(timeoutMs: number): Error {
+    const error = new Error(`Request timeout after ${timeoutMs}ms`)
+    error.name = TIMEOUT_ERROR_NAME
+    return error
 }
 
 /**
@@ -76,11 +49,15 @@ function createTimeoutSignal(
 
     // Timeout logic
     const timeoutId = setTimeout(() => {
-        controller.abort(new Error(`Request timeout after ${timeoutMs}ms`))
+        controller.abort(createTimeoutError(timeoutMs))
     }, timeoutMs)
+    let abortHandler: (() => void) | undefined
 
     function clear() {
         clearTimeout(timeoutId)
+        if (existingSignal && abortHandler) {
+            existingSignal.removeEventListener('abort', abortHandler)
+        }
     }
 
     // If there's an existing signal, forward its abort
@@ -89,14 +66,11 @@ function createTimeoutSignal(
             clearTimeout(timeoutId)
             controller.abort(existingSignal.reason)
         } else {
-            existingSignal.addEventListener(
-                'abort',
-                () => {
-                    clearTimeout(timeoutId)
-                    controller.abort(existingSignal.reason)
-                },
-                { once: true },
-            )
+            abortHandler = () => {
+                clearTimeout(timeoutId)
+                controller.abort(existingSignal.reason)
+            }
+            existingSignal.addEventListener('abort', abortHandler, { once: true })
         }
     }
 
@@ -163,12 +137,18 @@ export async function fetchWithRetry<T = unknown>(args: {
                     timeout,
                 })
             } else {
-                const nativeResponse = await fetch(url, {
+                const dispatcher = await getDefaultDispatcher()
+                const nativeFetchOptions = {
                     ...fetchOptions,
                     signal: requestSignal,
+                }
+
+                if (dispatcher !== undefined) {
                     // @ts-expect-error - dispatcher is a valid option for Node.js fetch but not in the TS types
-                    dispatcher: await getHttpAgent(),
-                })
+                    nativeFetchOptions.dispatcher = dispatcher
+                }
+
+                const nativeResponse = await fetch(url, nativeFetchOptions)
                 fetchResponse = convertResponseToCustomFetch(nativeResponse)
             }
 
@@ -231,6 +211,10 @@ export async function fetchWithRetry<T = unknown>(args: {
                 headers: fetchResponse.headers,
             }
         } catch (error) {
+            if (clearTimeoutFn) {
+                clearTimeoutFn()
+            }
+
             lastError = error as Error
 
             // Check if this error should trigger a retry
@@ -243,10 +227,6 @@ export async function fetchWithRetry<T = unknown>(args: {
                     networkError.isNetworkError = true
                 }
 
-                if (clearTimeoutFn) {
-                    clearTimeoutFn()
-                }
-
                 throw lastError
             }
 
@@ -254,11 +234,6 @@ export async function fetchWithRetry<T = unknown>(args: {
             const delay = config.retryDelay(attempt + 1)
             if (delay > 0) {
                 await new Promise((resolve) => setTimeout(resolve, delay))
-            }
-
-            // Retry path – ensure this attempt's timeout is cleared before looping
-            if (clearTimeoutFn) {
-                clearTimeoutFn()
             }
         }
     }

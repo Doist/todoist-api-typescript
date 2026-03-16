@@ -4,6 +4,8 @@ This is the official TypeScript API client for the Todoist REST API.
 
 ## Installation
 
+Requires Node 20.18.1+.
+
 ```
 npm install @doist/todoist-api-typescript
 ```

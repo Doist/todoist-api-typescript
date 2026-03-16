@@ -1,9 +1,10 @@
-import { TodoistRequestError } from './types/errors'
-import { HttpMethod, HttpResponse, isNetworkError, isHttpError, CustomFetch } from './types/http'
 import { v4 as uuidv4 } from 'uuid'
-import { API_BASE_URI } from './consts/endpoints'
-import { camelCaseKeys, snakeCaseKeys } from './utils/case-conversion'
-import { fetchWithRetry } from './utils/fetch-with-retry'
+import { API_BASE_URI } from '../consts/endpoints'
+import { TodoistRequestError } from '../types/errors'
+import type { CustomFetch, HttpMethod, HttpResponse } from '../types/http'
+import { isHttpError, isNetworkError } from '../types/http'
+import { camelCaseKeys, snakeCaseKeys } from '../utils/case-conversion'
+import { fetchWithRetry } from './fetch-with-retry'
 
 type GetTodoistRequestErrorArgs = {
     error: Error
