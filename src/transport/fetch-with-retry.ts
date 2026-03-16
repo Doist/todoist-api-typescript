@@ -203,6 +203,10 @@ export async function fetchWithRetry<T = unknown>(args: {
                 headers: fetchResponse.headers,
             }
         } catch (error) {
+            if (clearTimeoutFn) {
+                clearTimeoutFn()
+            }
+
             lastError = error as Error
 
             // Check if this error should trigger a retry
@@ -215,10 +219,6 @@ export async function fetchWithRetry<T = unknown>(args: {
                     networkError.isNetworkError = true
                 }
 
-                if (clearTimeoutFn) {
-                    clearTimeoutFn()
-                }
-
                 throw lastError
             }
 
@@ -226,11 +226,6 @@ export async function fetchWithRetry<T = unknown>(args: {
             const delay = config.retryDelay(attempt + 1)
             if (delay > 0) {
                 await new Promise((resolve) => setTimeout(resolve, delay))
-            }
-
-            // Retry path – ensure this attempt's timeout is cleared before looping
-            if (clearTimeoutFn) {
-                clearTimeoutFn()
             }
         }
     }
