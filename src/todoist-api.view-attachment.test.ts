@@ -138,6 +138,49 @@ describe('TodoistApi viewAttachment', () => {
         })
     })
 
+    describe('URL validation', () => {
+        test('allows files.todoist.com URLs', async () => {
+            server.use(
+                http.get(FILE_URL, () => {
+                    return new HttpResponse('data', { status: 200 })
+                }),
+            )
+
+            const api = new TodoistApi('test-token')
+            const response = await api.viewAttachment(FILE_URL)
+            expect(response.ok).toBe(true)
+        })
+
+        test('allows subdomains of todoist.com', async () => {
+            const url = 'https://cdn.todoist.com/uploads/file.png'
+            server.use(
+                http.get(url, () => {
+                    return new HttpResponse('data', { status: 200 })
+                }),
+            )
+
+            const api = new TodoistApi('test-token')
+            const response = await api.viewAttachment(url)
+            expect(response.ok).toBe(true)
+        })
+
+        test('rejects non-todoist.com URLs', async () => {
+            const api = new TodoistApi('test-token')
+
+            await expect(
+                api.viewAttachment('https://evil.com/steal-token'),
+            ).rejects.toThrow('Attachment URLs must be on a todoist.com domain')
+        })
+
+        test('rejects URLs with todoist.com as a suffix of another domain', async () => {
+            const api = new TodoistApi('test-token')
+
+            await expect(
+                api.viewAttachment('https://nottodoist.com/file.png'),
+            ).rejects.toThrow('Attachment URLs must be on a todoist.com domain')
+        })
+    })
+
     describe('with custom fetch', () => {
         test('uses custom fetch when provided', async () => {
             const mockCustomFetch = jest.fn<Promise<CustomFetchResponse>, [string, RequestInit?]>()

@@ -1676,6 +1676,14 @@ export class TodoistApi {
             fileUrl = commentOrUrl.fileAttachment.fileUrl
         }
 
+        // Validate the URL belongs to Todoist to prevent leaking the auth token
+        const urlHostname = new URL(fileUrl).hostname
+        if (!urlHostname.endsWith('.todoist.com')) {
+            throw new Error(
+                'Attachment URLs must be on a todoist.com domain',
+            )
+        }
+
         const fetchOptions: RequestInit = {
             method: 'GET',
             headers: { Authorization: `Bearer ${this.authToken}` },
