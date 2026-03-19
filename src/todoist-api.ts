@@ -1679,9 +1679,7 @@ export class TodoistApi {
         // Validate the URL belongs to Todoist to prevent leaking the auth token
         const urlHostname = new URL(fileUrl).hostname
         if (!urlHostname.endsWith('.todoist.com')) {
-            throw new Error(
-                'Attachment URLs must be on a todoist.com domain',
-            )
+            throw new Error('Attachment URLs must be on a todoist.com domain')
         }
 
         const fetchOptions: RequestInit = {
@@ -1716,9 +1714,7 @@ export class TodoistApi {
         const response = await fetch(fileUrl, fetchOptions)
 
         if (!response.ok) {
-            throw new Error(
-                `Failed to fetch attachment: ${response.status} ${response.statusText}`,
-            )
+            throw new Error(`Failed to fetch attachment: ${response.status} ${response.statusText}`)
         }
 
         return {

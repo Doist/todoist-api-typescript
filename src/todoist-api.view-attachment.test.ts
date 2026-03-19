@@ -167,17 +167,17 @@ describe('TodoistApi viewAttachment', () => {
         test('rejects non-todoist.com URLs', async () => {
             const api = new TodoistApi('test-token')
 
-            await expect(
-                api.viewAttachment('https://evil.com/steal-token'),
-            ).rejects.toThrow('Attachment URLs must be on a todoist.com domain')
+            await expect(api.viewAttachment('https://evil.com/steal-token')).rejects.toThrow(
+                'Attachment URLs must be on a todoist.com domain',
+            )
         })
 
         test('rejects URLs with todoist.com as a suffix of another domain', async () => {
             const api = new TodoistApi('test-token')
 
-            await expect(
-                api.viewAttachment('https://nottodoist.com/file.png'),
-            ).rejects.toThrow('Attachment URLs must be on a todoist.com domain')
+            await expect(api.viewAttachment('https://nottodoist.com/file.png')).rejects.toThrow(
+                'Attachment URLs must be on a todoist.com domain',
+            )
         })
     })
 
