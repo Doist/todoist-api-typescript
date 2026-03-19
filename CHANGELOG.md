@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.2.0](https://github.com/Doist/todoist-api-typescript/compare/v7.1.1...v7.2.0) (2026-03-19)
+
+
+### Features
+
+* add viewAttachment method to TodoistApi ([#493](https://github.com/Doist/todoist-api-typescript/issues/493)) ([e0bb6db](https://github.com/Doist/todoist-api-typescript/commit/e0bb6db12f555d894ddaaa24f38dbea9a2aac4d7))
+
 ## [7.1.1](https://github.com/Doist/todoist-api-typescript/compare/v7.1.0...v7.1.1) (2026-03-14)
 
 
