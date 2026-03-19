@@ -1,6 +1,7 @@
 import { TodoistApi } from './todoist-api'
 import { server, http, HttpResponse, getLastRequest, captureRequest } from './test-utils/msw-setup'
 import type { Comment } from './types/entities'
+import type { CustomFetchResponse } from './types/http'
 
 const FILE_URL = 'https://files.todoist.com/user_upload/v2/123/file.png'
 
@@ -54,7 +55,7 @@ describe('TodoistApi viewAttachment', () => {
             expect(capturedRequest).toBeDefined()
             expect(capturedRequest?.headers['authorization']).toBe('Bearer test-token')
             expect(response.ok).toBe(true)
-            expect(response.headers.get('content-type')).toBe('image/png')
+            expect(response.headers['content-type']).toBe('image/png')
         })
 
         test('returns response that can be read as ArrayBuffer', async () => {
@@ -133,6 +134,65 @@ describe('TodoistApi viewAttachment', () => {
 
             await expect(api.viewAttachment(comment)).rejects.toThrow(
                 'Comment does not have a file attachment',
+            )
+        })
+    })
+
+    describe('with custom fetch', () => {
+        test('uses custom fetch when provided', async () => {
+            const mockCustomFetch = jest.fn<Promise<CustomFetchResponse>, [string, RequestInit?]>()
+            mockCustomFetch.mockResolvedValue({
+                ok: true,
+                status: 200,
+                statusText: 'OK',
+                headers: { 'content-type': 'text/plain' },
+                text: () => Promise.resolve('custom fetch content'),
+                json: () => Promise.resolve({}),
+            })
+
+            const api = new TodoistApi('test-token', { customFetch: mockCustomFetch })
+            const response = await api.viewAttachment(FILE_URL)
+
+            expect(mockCustomFetch).toHaveBeenCalledWith(FILE_URL, {
+                method: 'GET',
+                headers: { Authorization: 'Bearer test-token' },
+            })
+            expect(await response.text()).toBe('custom fetch content')
+        })
+
+        test('provides arrayBuffer from custom fetch text response', async () => {
+            const mockCustomFetch = jest.fn<Promise<CustomFetchResponse>, [string, RequestInit?]>()
+            mockCustomFetch.mockResolvedValue({
+                ok: true,
+                status: 200,
+                statusText: 'OK',
+                headers: { 'content-type': 'text/plain' },
+                text: () => Promise.resolve('hello'),
+                json: () => Promise.resolve({}),
+            })
+
+            const api = new TodoistApi('test-token', { customFetch: mockCustomFetch })
+            const response = await api.viewAttachment(FILE_URL)
+            const buffer = await response.arrayBuffer()
+
+            expect(new TextDecoder().decode(buffer)).toBe('hello')
+        })
+
+        test('throws on error response from custom fetch', async () => {
+            const mockCustomFetch = jest.fn<Promise<CustomFetchResponse>, [string, RequestInit?]>()
+            mockCustomFetch.mockResolvedValue({
+                ok: false,
+                status: 404,
+                statusText: 'Not Found',
+                headers: {},
+                text: () => Promise.resolve(''),
+                json: () => Promise.resolve({}),
+            })
+
+            const api = new TodoistApi('test-token', { customFetch: mockCustomFetch })
+
+            await expect(api.viewAttachment(FILE_URL)).rejects.toThrow(
+                'Failed to fetch attachment: 404 Not Found',
             )
         })
     })

@@ -249,6 +249,14 @@ function preprocessSyncCommands(commands: SyncCommand[]): SyncCommand[] {
  */
 
 /**
+ * Response from viewAttachment, extending CustomFetchResponse with
+ * arrayBuffer() support for binary file content.
+ */
+export type ViewAttachmentResponse = CustomFetchResponse & {
+    arrayBuffer(): Promise<ArrayBuffer>
+}
+
+/**
  * Configuration options for the TodoistApi constructor
  */
 export type TodoistApiOptions = {
@@ -1648,7 +1656,7 @@ export class TodoistApi {
      * const text = await response.text()
      * ```
      */
-    async viewAttachment(commentOrUrl: Comment | string): Promise<Response> {
+    async viewAttachment(commentOrUrl: Comment | string): Promise<ViewAttachmentResponse> {
         let fileUrl: string
 
         if (typeof commentOrUrl === 'string') {
@@ -1660,15 +1668,50 @@ export class TodoistApi {
             fileUrl = commentOrUrl.fileAttachment.fileUrl
         }
 
-        const response = await fetch(fileUrl, {
+        const fetchOptions: RequestInit = {
+            method: 'GET',
             headers: { Authorization: `Bearer ${this.authToken}` },
-        })
-
-        if (!response.ok) {
-            throw new Error(`Failed to fetch attachment: ${response.status} ${response.statusText}`)
         }
 
-        return response
+        if (this.customFetch) {
+            const response = await this.customFetch(fileUrl, fetchOptions)
+
+            if (!response.ok) {
+                throw new Error(
+                    `Failed to fetch attachment: ${response.status} ${response.statusText}`,
+                )
+            }
+
+            // Convert text to ArrayBuffer for custom fetch implementations that lack arrayBuffer()
+            const text = await response.text()
+            const buffer = new TextEncoder().encode(text).buffer
+
+            return {
+                ok: response.ok,
+                status: response.status,
+                statusText: response.statusText,
+                headers: response.headers,
+                text: () => Promise.resolve(text),
+                arrayBuffer: () => Promise.resolve(buffer),
+            }
+        }
+
+        const response = await fetch(fileUrl, fetchOptions)
+
+        if (!response.ok) {
+            throw new Error(
+                `Failed to fetch attachment: ${response.status} ${response.statusText}`,
+            )
+        }
+
+        return {
+            ok: response.ok,
+            status: response.status,
+            statusText: response.statusText,
+            headers: Object.fromEntries(response.headers.entries()),
+            text: () => response.text(),
+            arrayBuffer: () => response.arrayBuffer(),
+        }
     }
 
     /* Workspace methods */
