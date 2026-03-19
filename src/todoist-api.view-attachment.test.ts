@@ -39,7 +39,7 @@ describe('TodoistApi viewAttachment', () => {
         test('fetches attachment with authorization header', async () => {
             const imageData = new Uint8Array([137, 80, 78, 71])
             server.use(
-                http.get(FILE_URL, async ({ request }) => {
+                http.get(FILE_URL, ({ request }) => {
                     captureRequest({ request, body: null })
                     return new HttpResponse(imageData, {
                         status: 200,
@@ -98,7 +98,7 @@ describe('TodoistApi viewAttachment', () => {
     describe('with a Comment object', () => {
         test('extracts fileUrl from comment attachment', async () => {
             server.use(
-                http.get(FILE_URL, async ({ request }) => {
+                http.get(FILE_URL, ({ request }) => {
                     captureRequest({ request, body: null })
                     return new HttpResponse('data', { status: 200 })
                 }),
