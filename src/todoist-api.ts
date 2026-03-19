@@ -1624,6 +1624,53 @@ export class TodoistApi {
         return isSuccess(response)
     }
 
+    /**
+     * Fetches the content of a file attachment from a Todoist comment.
+     *
+     * Accepts either a Comment object (extracts the file URL from its attachment)
+     * or a direct file URL string. Returns the raw Response object so the caller
+     * can read the body in the appropriate format (.arrayBuffer(), .text(), etc.).
+     *
+     * @param commentOrUrl - A Comment object with a file attachment, or a file URL string.
+     * @returns The raw fetch Response for the file content.
+     * @throws Error if a Comment is provided without a file attachment or file URL.
+     *
+     * @example
+     * ```typescript
+     * // From a comment object
+     * const comments = await api.getComments({ taskId: '12345' })
+     * const comment = comments.results[0]
+     * const response = await api.viewAttachment(comment)
+     * const imageData = await response.arrayBuffer()
+     *
+     * // From a URL string
+     * const response = await api.viewAttachment('https://files.todoist.com/...')
+     * const text = await response.text()
+     * ```
+     */
+    async viewAttachment(commentOrUrl: Comment | string): Promise<Response> {
+        let fileUrl: string
+
+        if (typeof commentOrUrl === 'string') {
+            fileUrl = commentOrUrl
+        } else {
+            if (!commentOrUrl.fileAttachment?.fileUrl) {
+                throw new Error('Comment does not have a file attachment')
+            }
+            fileUrl = commentOrUrl.fileAttachment.fileUrl
+        }
+
+        const response = await fetch(fileUrl, {
+            headers: { Authorization: `Bearer ${this.authToken}` },
+        })
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch attachment: ${response.status} ${response.statusText}`)
+        }
+
+        return response
+    }
+
     /* Workspace methods */
 
     /**
