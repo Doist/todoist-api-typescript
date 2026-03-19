@@ -73,7 +73,7 @@ import {
     MoveProjectToWorkspaceArgs,
     MoveProjectToPersonalArgs,
 } from './types/requests'
-import { CustomFetch } from './types/http'
+import { CustomFetch, CustomFetchResponse } from './types/http'
 import { request, isSuccess } from './rest-client'
 import {
     getSyncBaseUri,
@@ -247,6 +247,14 @@ function preprocessSyncCommands(commands: SyncCommand[]): SyncCommand[] {
  * For more information about the Todoist API v1, see the [official documentation](https://todoist.com/api/v1).
  * If you're migrating from v9, please refer to the [migration guide](https://todoist.com/api/v1/docs#tag/Migrating-from-v9).
  */
+
+function headersToRecord(headers: Headers): Record<string, string> {
+    const result: Record<string, string> = {}
+    headers.forEach((value, key) => {
+        result[key] = value
+    })
+    return result
+}
 
 /**
  * Response from viewAttachment, extending CustomFetchResponse with
@@ -1692,6 +1700,7 @@ export class TodoistApi {
                 statusText: response.statusText,
                 headers: response.headers,
                 text: () => Promise.resolve(text),
+                json: () => response.json(),
                 arrayBuffer: () => Promise.resolve(buffer),
             }
         }
@@ -1708,8 +1717,9 @@ export class TodoistApi {
             ok: response.ok,
             status: response.status,
             statusText: response.statusText,
-            headers: Object.fromEntries(response.headers.entries()),
+            headers: headersToRecord(response.headers),
             text: () => response.text(),
+            json: () => response.json(),
             arrayBuffer: () => response.arrayBuffer(),
         }
     }
