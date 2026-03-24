@@ -1,7 +1,13 @@
-import type { ViewMode, GroupedBy, SortedBy, SortOrder } from './view-options'
+import type {
+    ViewMode,
+    GroupedBy,
+    SortedBy,
+    SortOrder,
+    CalendarLayout,
+} from '../resources/view-options'
 
 export type CalendarSettings = {
-    layout?: 'WEEK' | 'MONTH'
+    layout?: CalendarLayout
 }
 
 export type ProjectViewOptionsDefaultsSetArgs = {

@@ -19,9 +19,14 @@ export const DueDateSchema = z
  */
 export type DueDate = z.infer<typeof DueDateSchema>
 
+/** Available duration units for task deadlines. */
+export const DURATION_UNITS = ['minute', 'day'] as const
+/** Unit of time for a task duration. */
+export type DurationUnit = (typeof DURATION_UNITS)[number]
+
 export const DurationSchema = z.object({
     amount: z.number().positive('Value should be greater than zero'),
-    unit: z.enum(['minute', 'day']),
+    unit: z.enum(DURATION_UNITS),
 })
 /**
  * Represents a duration for a task deadline.
@@ -116,8 +121,12 @@ export const PersonalProjectSchema = BaseProjectSchema.extend({
     }
 })
 
-export const ProjectVisibilitySchema = z.enum(['restricted', 'team', 'public'])
-export type ProjectVisibility = z.infer<typeof ProjectVisibilitySchema>
+/** Available project visibility levels. */
+export const PROJECT_VISIBILITIES = ['restricted', 'team', 'public'] as const
+/** Visibility level of a workspace project. */
+export type ProjectVisibility = (typeof PROJECT_VISIBILITIES)[number]
+
+export const ProjectVisibilitySchema = z.enum(PROJECT_VISIBILITIES)
 
 /**
  * Schema for workspace projects in Todoist.
@@ -195,6 +204,11 @@ export const LabelSchema = z.object({
  */
 export type Label = z.infer<typeof LabelSchema>
 
+/** Available file attachment upload states. */
+export const UPLOAD_STATES = ['pending', 'completed'] as const
+/** Upload state of a file attachment. */
+export type UploadState = (typeof UPLOAD_STATES)[number]
+
 export const AttachmentSchema = z
     .object({
         resourceType: z.string(),
@@ -205,7 +219,7 @@ export const AttachmentSchema = z
         fileType: z.string().nullable().optional(),
         fileUrl: z.string().nullable().optional(),
         fileDuration: z.number().int().nullable().optional(),
-        uploadState: z.enum(['pending', 'completed']).nullable().optional(),
+        uploadState: z.enum(UPLOAD_STATES).nullable().optional(),
         image: z.string().nullable().optional(),
         imageWidth: z.number().int().nullable().optional(),
         imageHeight: z.number().int().nullable().optional(),
@@ -283,6 +297,16 @@ export const TimezoneInfoSchema = z.object({
     timezone: z.string(),
 })
 
+/** Available user premium statuses. */
+export const PREMIUM_STATUSES = [
+    'not_premium',
+    'current_personal_plan',
+    'legacy_personal_plan',
+    'teams_business_member',
+] as const
+/** Premium subscription status of a user. */
+export type PremiumStatus = (typeof PREMIUM_STATUSES)[number]
+
 export const CurrentUserSchema = z.object({
     id: z.string(),
     email: z.string(),
@@ -293,12 +317,7 @@ export const CurrentUserSchema = z.object({
     avatarSmall: z.string().nullish(),
     businessAccountId: z.string().nullable(),
     isPremium: z.boolean(),
-    premiumStatus: z.enum([
-        'not_premium',
-        'current_personal_plan',
-        'legacy_personal_plan',
-        'teams_business_member',
-    ]),
+    premiumStatus: z.enum(PREMIUM_STATUSES),
     dateFormat: z.number().int(),
     timeFormat: z.number().int(),
     weeklyGoal: z.number().int(),
@@ -322,23 +341,23 @@ export const CurrentUserSchema = z.object({
  */
 export type CurrentUser = z.infer<typeof CurrentUserSchema>
 
-const StreakSchema = z.object({
+export const StreakSchema = z.object({
     count: z.number(),
     start: z.string(),
     end: z.string(),
 })
 
-const CompletedItemSchema = z.object({
+export const CompletedItemSchema = z.object({
     id: z.string(),
     completed: z.number(),
 })
 
-const ItemsWithDateSchema = z.object({
+export const ItemsWithDateSchema = z.object({
     items: z.array(CompletedItemSchema),
     totalCompleted: z.number(),
 })
 
-const KarmaUpdateSchema = z.object({
+export const KarmaUpdateSchema = z.object({
     time: z.string(),
     newKarma: z.number(),
     positiveKarma: z.number(),
@@ -549,10 +568,25 @@ export const FormattedPriceListingSchema = z.object({
  */
 export type FormattedPriceListing = z.infer<typeof FormattedPriceListingSchema>
 
+/** Available workspace plan names. */
+export const WORKSPACE_CURRENT_PLANS = ['Business', 'Starter'] as const
+/** Display name of a workspace plan. */
+export type WorkspaceCurrentPlan = (typeof WORKSPACE_CURRENT_PLANS)[number]
+
+/** Available workspace plan statuses. */
+export const WORKSPACE_PLAN_STATUSES = [
+    'Active',
+    'Downgraded',
+    'Cancelled',
+    'NeverSubscribed',
+] as const
+/** Subscription status of a workspace plan. */
+export type WorkspacePlanStatus = (typeof WORKSPACE_PLAN_STATUSES)[number]
+
 export const WorkspacePlanDetailsSchema = z.object({
     currentMemberCount: z.number(),
-    currentPlan: z.enum(['Business', 'Starter']),
-    currentPlanStatus: z.enum(['Active', 'Downgraded', 'Cancelled', 'NeverSubscribed']),
+    currentPlan: z.enum(WORKSPACE_CURRENT_PLANS),
+    currentPlanStatus: z.enum(WORKSPACE_PLAN_STATUSES),
     downgradeAt: z.string().nullable(),
     currentActiveProjects: z.number(),
     maximumActiveProjects: z.number(),

@@ -1,6 +1,7 @@
 import { z } from 'zod'
 
-const ViewTypeSchema = z.enum([
+/** Available view types. */
+export const VIEW_TYPES = [
     'TODAY',
     'UPCOMING',
     'PROJECT',
@@ -14,42 +15,67 @@ const ViewTypeSchema = z.enum([
     'ASSIGNED',
     'OVERDUE',
     'WORKSPACE_OVERVIEW',
-])
+] as const
+/** Type of view in the Todoist UI. */
+export type ViewType = (typeof VIEW_TYPES)[number]
 
-const ViewModeSchema = z.enum(['LIST', 'BOARD', 'CALENDAR'])
+export const ViewTypeSchema = z.enum(VIEW_TYPES)
 
-const GroupedBySchema = z
-    .enum([
-        'ASSIGNEE',
-        'ADDED_DATE',
-        'DUE_DATE',
-        'DEADLINE',
-        'LABEL',
-        'PRIORITY',
-        'PROJECT',
-        'WORKSPACE',
-    ])
-    .nullable()
+/** Available view modes. */
+export const VIEW_MODES = ['LIST', 'BOARD', 'CALENDAR'] as const
+/** Display mode for a view. */
+export type ViewMode = (typeof VIEW_MODES)[number]
 
-const SortedBySchema = z
-    .enum([
-        'MANUAL',
-        'ALPHABETICALLY',
-        'ASSIGNEE',
-        'DUE_DATE',
-        'DEADLINE',
-        'ADDED_DATE',
-        'PRIORITY',
-        'PROJECT',
-        'WORKSPACE',
-    ])
-    .nullable()
+export const ViewModeSchema = z.enum(VIEW_MODES)
 
-const SortOrderSchema = z.enum(['ASC', 'DESC']).nullable()
+/** Available grouping options. */
+export const GROUPED_BY_OPTIONS = [
+    'ASSIGNEE',
+    'ADDED_DATE',
+    'DUE_DATE',
+    'DEADLINE',
+    'LABEL',
+    'PRIORITY',
+    'PROJECT',
+    'WORKSPACE',
+] as const
+/** Field to group tasks by. */
+export type GroupedBy = (typeof GROUPED_BY_OPTIONS)[number]
 
-const CalendarSettingsSchema = z
+export const GroupedBySchema = z.enum(GROUPED_BY_OPTIONS).nullable()
+
+/** Available sorting options. */
+export const SORTED_BY_OPTIONS = [
+    'MANUAL',
+    'ALPHABETICALLY',
+    'ASSIGNEE',
+    'DUE_DATE',
+    'DEADLINE',
+    'ADDED_DATE',
+    'PRIORITY',
+    'PROJECT',
+    'WORKSPACE',
+] as const
+/** Field to sort tasks by. */
+export type SortedBy = (typeof SORTED_BY_OPTIONS)[number]
+
+export const SortedBySchema = z.enum(SORTED_BY_OPTIONS).nullable()
+
+/** Available sort directions. */
+export const SORT_ORDERS = ['ASC', 'DESC'] as const
+/** Sort direction. */
+export type SortOrder = (typeof SORT_ORDERS)[number]
+
+export const SortOrderSchema = z.enum(SORT_ORDERS).nullable()
+
+/** Available calendar layout modes. */
+export const CALENDAR_LAYOUTS = ['WEEK', 'MONTH'] as const
+/** Calendar layout mode. */
+export type CalendarLayout = (typeof CALENDAR_LAYOUTS)[number]
+
+export const CalendarSettingsSchema = z
     .object({
-        layout: z.enum(['WEEK', 'MONTH']).optional(),
+        layout: z.enum(CALENDAR_LAYOUTS).optional(),
     })
     .passthrough()
 

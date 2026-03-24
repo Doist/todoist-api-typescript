@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { PREMIUM_STATUSES } from '../../entities'
 import {
     BooleanFromZeroOneSchema,
     DateFormatSchema,
@@ -6,7 +7,7 @@ import {
     TimeFormatSchema,
 } from '../user-preferences'
 
-const FeaturesSchema = z
+export const FeaturesSchema = z
     .object({
         karmaDisabled: z.boolean(),
         restriction: z.number().int(),
@@ -21,7 +22,7 @@ const FeaturesSchema = z
     })
     .passthrough()
 
-const TzInfoSchema = z
+export const TzInfoSchema = z
     .object({
         timezone: z.string(),
         hours: z.number().int(),
@@ -31,7 +32,7 @@ const TzInfoSchema = z
     })
     .passthrough()
 
-const JoinableWorkspaceSchema = z
+export const JoinableWorkspaceSchema = z
     .object({
         workspaceId: z.string(),
         workspaceName: z.string(),
@@ -39,7 +40,7 @@ const JoinableWorkspaceSchema = z
     })
     .passthrough()
 
-const GettingStartedGuideProjectSchema = z
+export const GettingStartedGuideProjectSchema = z
     .object({
         onboardingUseCase: z.string(),
         projectId: z.string(),
@@ -98,12 +99,7 @@ export const SyncUserSchema = z
         onboardingSkipped: z.boolean().optional(),
         onboardingTeamMode: z.boolean().nullable().optional(),
         onboardingUseCases: z.array(z.string()).nullable().optional(),
-        premiumStatus: z.enum([
-            'not_premium',
-            'current_personal_plan',
-            'legacy_personal_plan',
-            'teams_business_member',
-        ]),
+        premiumStatus: z.enum(PREMIUM_STATUSES),
         premiumUntil: z.string().nullable(),
         rambleSessionsUsage: z
             .object({

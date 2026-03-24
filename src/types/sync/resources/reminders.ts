@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { DueDateSchema } from '../../entities'
 
-const ReminderBaseSchema = z.object({
+export const ReminderBaseSchema = z.object({
     id: z.string(),
     notifyUid: z.string(),
     itemId: z.string(),
@@ -9,12 +9,17 @@ const ReminderBaseSchema = z.object({
     isDeleted: z.boolean(),
 })
 
+/** Available location reminder triggers. */
+export const LOCATION_TRIGGERS = ['on_enter', 'on_leave'] as const
+/** Trigger condition for a location-based reminder. */
+export type LocationTrigger = (typeof LOCATION_TRIGGERS)[number]
+
 export const LocationReminderSchema = ReminderBaseSchema.extend({
     type: z.literal('location'),
     name: z.string(),
     locLat: z.string(),
     locLong: z.string(),
-    locTrigger: z.enum(['on_enter', 'on_leave']),
+    locTrigger: z.enum(LOCATION_TRIGGERS),
     radius: z.number().int(),
 }).passthrough()
 
