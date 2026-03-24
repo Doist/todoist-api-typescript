@@ -45,8 +45,19 @@
         "typescript/restrict-plus-operands": "error",
         "typescript/require-await": "error",
         "typescript/prefer-promise-reject-errors": "error",
+        "typescript/no-explicit-any": "error",
         "typescript/no-duplicate-type-constituents": "off",
         "typescript/no-redundant-type-constituents": "off"
     },
+    "overrides": [
+        {
+            "files": ["**/*.test.ts", "**/*.test.tsx"],
+            "rules": {
+                "max-params": "off",
+                "typescript/no-unsafe-assignment": "off",
+                "typescript/unbound-method": "off"
+            }
+        }
+    ],
     "ignorePatterns": ["dist/**", "node_modules/**", "vitest.config.ts"]
 }
