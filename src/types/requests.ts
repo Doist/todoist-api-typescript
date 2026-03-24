@@ -511,57 +511,32 @@ export type AddAbsoluteReminderArgs = ReminderTaskArgs & {
     due: ReminderDueDate
 } & TimeBasedReminderArgs
 
-export type AddLocationReminderArgs = ReminderTaskArgs & {
-    reminderType: 'location'
-} & AddLocationReminderFields
+export type AddLocationReminderArgs = ReminderTaskArgs & AddLocationReminderFields
 
 /**
  * Arguments for creating a new reminder.
  * @see https://developer.todoist.com/api/v1/#tag/Reminders/operation/create_reminder_api_v1_reminders_post
  */
-export type AddReminderArgs =
-    | AddRelativeReminderArgs
-    | AddAbsoluteReminderArgs
-    | AddLocationReminderArgs
+export type AddReminderArgs = AddRelativeReminderArgs | AddAbsoluteReminderArgs
 
-type UpdateReminderIdentifierArgs = {
-    id: string
-}
-
-export type ReminderIdentifierArgs = UpdateReminderIdentifierArgs & {
-    type: 'relative' | 'absolute' | 'location'
-}
-
-export type UpdateRelativeReminderArgs = UpdateReminderIdentifierArgs & {
-    type: 'relative'
+export type UpdateRelativeReminderArgs = {
+    reminderType: 'relative'
 } & Partial<Omit<AddRelativeReminderArgs, 'taskId' | 'reminderType'>>
 
-export type UpdateAbsoluteReminderArgs = UpdateReminderIdentifierArgs & {
-    type: 'absolute'
+export type UpdateAbsoluteReminderArgs = {
+    reminderType: 'absolute'
 } & Partial<Omit<AddAbsoluteReminderArgs, 'taskId' | 'reminderType'>>
-
-export type UpdateLocationReminderArgs = UpdateReminderIdentifierArgs & {
-    type: 'location'
-} & Partial<Omit<AddLocationReminderArgs, 'taskId' | 'reminderType'>>
 
 /**
  * Arguments for updating an existing reminder.
  * @see https://developer.todoist.com/api/v1/#tag/Reminders/operation/update_reminder_api_v1_reminders__reminder_id__post
  */
-export type UpdateReminderArgs =
-    | UpdateRelativeReminderArgs
-    | UpdateAbsoluteReminderArgs
-    | UpdateLocationReminderArgs
+export type UpdateReminderArgs = UpdateRelativeReminderArgs | UpdateAbsoluteReminderArgs
 
 /**
- * Arguments for retrieving an existing reminder.
+ * Arguments for updating an existing location reminder.
  */
-export type GetReminderArgs = ReminderIdentifierArgs
-
-/**
- * Arguments for deleting an existing reminder.
- */
-export type DeleteReminderArgs = ReminderIdentifierArgs
+export type UpdateLocationReminderArgs = Partial<Omit<AddLocationReminderArgs, 'taskId'>>
 
 /**
  * Common arguments for retrieving activity logs (excluding filter-type params).

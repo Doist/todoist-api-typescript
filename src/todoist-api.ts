@@ -17,6 +17,7 @@ import {
 import {
     AddCommentArgs,
     AddLabelArgs,
+    AddLocationReminderArgs,
     AddProjectArgs,
     AddReminderArgs,
     AddSectionArgs,
@@ -27,6 +28,7 @@ import {
     GetTasksByFilterArgs,
     UpdateCommentArgs,
     UpdateLabelArgs,
+    UpdateLocationReminderArgs,
     UpdateProjectArgs,
     UpdateReminderArgs,
     UpdateSectionArgs,
@@ -60,8 +62,6 @@ import {
     GetActivityLogsResponse,
     UploadFileArgs,
     DeleteUploadArgs,
-    DeleteReminderArgs,
-    GetReminderArgs,
     GetWorkspaceInvitationsArgs,
     DeleteWorkspaceInvitationArgs,
     WorkspaceInvitationActionArgs,
@@ -264,28 +264,21 @@ function headersToRecord(headers: Headers): Record<string, string> {
     return result
 }
 
-function usesLocationReminderEndpoint(
-    args: AddReminderArgs,
-): args is Extract<AddReminderArgs, { reminderType: 'location' }> {
-    return 'reminderType' in args && args.reminderType === 'location'
-}
-
-function usesLocationReminderType(type: UpdateReminderArgs['type']): boolean {
-    return type === 'location'
-}
-
 const ReminderDeliveryServiceSchema = z.enum(['email', 'push'])
-const ReminderIdentifierArgsSchema = z
+const ReminderIdSchema = z.string()
+const ReminderDueDateSchema = z
     .object({
-        id: z.string(),
-        type: z.enum(['relative', 'absolute', 'location']),
+        date: z.string().optional(),
+        string: z.string().optional(),
+        timezone: z.string().nullable().optional(),
+        lang: z.string().optional(),
+        isRecurring: z.boolean().optional(),
     })
     .strict()
 
 const UpdateRelativeReminderArgsSchema = z
     .object({
-        id: ReminderIdentifierArgsSchema.shape.id,
-        type: z.literal('relative'),
+        reminderType: z.literal('relative'),
         minuteOffset: z.number().optional(),
         notifyUid: z.string().optional(),
         service: ReminderDeliveryServiceSchema.optional(),
@@ -295,18 +288,8 @@ const UpdateRelativeReminderArgsSchema = z
 
 const UpdateAbsoluteReminderArgsSchema = z
     .object({
-        id: ReminderIdentifierArgsSchema.shape.id,
-        type: z.literal('absolute'),
-        due: z
-            .object({
-                date: z.string().optional(),
-                string: z.string().optional(),
-                timezone: z.string().nullable().optional(),
-                lang: z.string().optional(),
-                isRecurring: z.boolean().optional(),
-            })
-            .strict()
-            .optional(),
+        reminderType: z.literal('absolute'),
+        due: ReminderDueDateSchema.optional(),
         notifyUid: z.string().optional(),
         service: ReminderDeliveryServiceSchema.optional(),
         isUrgent: z.boolean().optional(),
@@ -315,8 +298,6 @@ const UpdateAbsoluteReminderArgsSchema = z
 
 const UpdateLocationReminderArgsSchema = z
     .object({
-        id: ReminderIdentifierArgsSchema.shape.id,
-        type: z.literal('location'),
         notifyUid: z.string().optional(),
         name: z.string().optional(),
         locLat: z.string().optional(),
@@ -325,14 +306,16 @@ const UpdateLocationReminderArgsSchema = z
         radius: z.number().optional(),
     })
     .strict()
+    .refine((args) => Object.keys(args).length > 0, {
+        message: 'At least one reminder field must be provided to updateLocationReminder',
+    })
 
 const UpdateReminderArgsSchema = z
-    .discriminatedUnion('type', [
+    .discriminatedUnion('reminderType', [
         UpdateRelativeReminderArgsSchema,
         UpdateAbsoluteReminderArgsSchema,
-        UpdateLocationReminderArgsSchema,
     ])
-    .refine((args) => Object.keys(args).length > 2, {
+    .refine((args) => Object.keys(args).length > 1, {
         message: 'At least one reminder field must be provided to updateReminder',
     })
 
@@ -1556,21 +1539,18 @@ export class TodoistApi {
     }
 
     /**
-     * Retrieves a specific reminder.
+     * Retrieves a time-based reminder by its ID.
      *
-     * @param args - Reminder identification parameters.
+     * @param id - The unique identifier of the reminder to retrieve.
      * @returns A promise that resolves to the requested reminder.
      */
-    async getReminder(args: GetReminderArgs): Promise<Reminder> {
-        const { id, type } = ReminderIdentifierArgsSchema.parse(args)
-        const relativePath = usesLocationReminderType(type)
-            ? generatePath(ENDPOINT_REST_LOCATION_REMINDERS, id)
-            : generatePath(ENDPOINT_REST_REMINDERS, id)
+    async getReminder(id: string): Promise<Reminder> {
+        ReminderIdSchema.parse(id)
         try {
             const response = await request<Reminder>({
                 httpMethod: 'GET',
                 baseUri: this.syncApiBase,
-                relativePath,
+                relativePath: generatePath(ENDPOINT_REST_REMINDERS, id),
                 apiToken: this.authToken,
                 customFetch: this.customFetch,
             })
@@ -1582,26 +1562,52 @@ export class TodoistApi {
             }
 
             throw new TodoistArgumentError(
-                `Reminder ${id} was not found on the ${type} reminder endpoint. Ensure the reminder exists and that args.type matches the existing reminder type.`,
+                `Reminder ${id} was not found on the time-based reminder endpoint. If this is a location reminder, use getLocationReminder instead.`,
             )
         }
     }
 
     /**
-     * Creates a reminder for a task.
+     * Retrieves a location reminder by its ID.
      *
-     * @param args - Reminder creation parameters for relative, absolute, or location reminders.
+     * @param id - The unique identifier of the location reminder to retrieve.
+     * @returns A promise that resolves to the requested reminder.
+     */
+    async getLocationReminder(id: string): Promise<Reminder> {
+        ReminderIdSchema.parse(id)
+        try {
+            const response = await request<Reminder>({
+                httpMethod: 'GET',
+                baseUri: this.syncApiBase,
+                relativePath: generatePath(ENDPOINT_REST_LOCATION_REMINDERS, id),
+                apiToken: this.authToken,
+                customFetch: this.customFetch,
+            })
+
+            return validateReminder(response.data)
+        } catch (error) {
+            if (!(error instanceof TodoistRequestError) || error.httpStatusCode !== 404) {
+                throw error
+            }
+
+            throw new TodoistArgumentError(
+                `Location reminder ${id} was not found on the location reminder endpoint. If this is a time-based reminder, use getReminder instead.`,
+            )
+        }
+    }
+
+    /**
+     * Creates a time-based reminder for a task.
+     *
+     * @param args - Reminder creation parameters for relative or absolute reminders.
      * @param requestId - Optional custom identifier for the request.
      * @returns A promise that resolves to the created reminder.
      */
     async addReminder(args: AddReminderArgs, requestId?: string): Promise<Reminder> {
-        const relativePath = usesLocationReminderEndpoint(args)
-            ? ENDPOINT_REST_LOCATION_REMINDERS
-            : ENDPOINT_REST_REMINDERS
         const response = await request<Reminder>({
             httpMethod: 'POST',
             baseUri: this.syncApiBase,
-            relativePath,
+            relativePath: ENDPOINT_REST_REMINDERS,
             apiToken: this.authToken,
             customFetch: this.customFetch,
             payload: args,
@@ -1612,22 +1618,52 @@ export class TodoistApi {
     }
 
     /**
-     * Updates an existing reminder.
+     * Creates a location reminder for a task.
      *
-     * @param args - Reminder identification and update parameters.
+     * @param args - Location reminder creation parameters.
+     * @param requestId - Optional custom identifier for the request.
+     * @returns A promise that resolves to the created reminder.
+     */
+    async addLocationReminder(
+        args: AddLocationReminderArgs,
+        requestId?: string,
+    ): Promise<Reminder> {
+        const response = await request<Reminder>({
+            httpMethod: 'POST',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_REST_LOCATION_REMINDERS,
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
+            payload: {
+                ...args,
+                reminderType: 'location',
+            },
+            requestId: requestId,
+        })
+
+        return validateReminder(response.data)
+    }
+
+    /**
+     * Updates an existing time-based reminder.
+     *
+     * @param id - The unique identifier of the reminder to update.
+     * @param args - Reminder update parameters.
      * @param requestId - Optional custom identifier for the request.
      * @returns A promise that resolves to the updated reminder.
      */
-    async updateReminder(args: UpdateReminderArgs, requestId?: string): Promise<Reminder> {
-        const { id, type, ...payload } = UpdateReminderArgsSchema.parse(args)
-        const relativePath = usesLocationReminderType(type)
-            ? generatePath(ENDPOINT_REST_LOCATION_REMINDERS, id)
-            : generatePath(ENDPOINT_REST_REMINDERS, id)
+    async updateReminder(
+        id: string,
+        args: UpdateReminderArgs,
+        requestId?: string,
+    ): Promise<Reminder> {
+        ReminderIdSchema.parse(id)
+        const payload = UpdateReminderArgsSchema.parse(args)
         try {
             const response = await request<Reminder>({
                 httpMethod: 'POST',
                 baseUri: this.syncApiBase,
-                relativePath,
+                relativePath: generatePath(ENDPOINT_REST_REMINDERS, id),
                 apiToken: this.authToken,
                 customFetch: this.customFetch,
                 payload,
@@ -1641,28 +1677,63 @@ export class TodoistApi {
             }
 
             throw new TodoistArgumentError(
-                `Reminder ${id} was not found on the ${type} reminder endpoint. Ensure the reminder exists and that args.type matches the existing reminder type.`,
+                `Reminder ${id} was not found on the time-based reminder endpoint. If this is a location reminder, use updateLocationReminder instead.`,
             )
         }
     }
 
     /**
-     * Deletes a reminder.
+     * Updates an existing location reminder.
      *
-     * @param args - Reminder identification parameters.
+     * @param id - The unique identifier of the location reminder to update.
+     * @param args - Location reminder update parameters.
+     * @param requestId - Optional custom identifier for the request.
+     * @returns A promise that resolves to the updated reminder.
+     */
+    async updateLocationReminder(
+        id: string,
+        args: UpdateLocationReminderArgs,
+        requestId?: string,
+    ): Promise<Reminder> {
+        ReminderIdSchema.parse(id)
+        const payload = UpdateLocationReminderArgsSchema.parse(args)
+        try {
+            const response = await request<Reminder>({
+                httpMethod: 'POST',
+                baseUri: this.syncApiBase,
+                relativePath: generatePath(ENDPOINT_REST_LOCATION_REMINDERS, id),
+                apiToken: this.authToken,
+                customFetch: this.customFetch,
+                payload,
+                requestId: requestId,
+            })
+
+            return validateReminder(response.data)
+        } catch (error) {
+            if (!(error instanceof TodoistRequestError) || error.httpStatusCode !== 404) {
+                throw error
+            }
+
+            throw new TodoistArgumentError(
+                `Location reminder ${id} was not found on the location reminder endpoint. If this is a time-based reminder, use updateReminder instead.`,
+            )
+        }
+    }
+
+    /**
+     * Deletes a time-based reminder by its ID.
+     *
+     * @param id - The unique identifier of the reminder to delete.
      * @param requestId - Optional custom identifier for the request.
      * @returns A promise that resolves to `true` if successful.
      */
-    async deleteReminder(args: DeleteReminderArgs, requestId?: string): Promise<boolean> {
-        const { id, type } = ReminderIdentifierArgsSchema.parse(args)
-        const relativePath = usesLocationReminderType(type)
-            ? generatePath(ENDPOINT_REST_LOCATION_REMINDERS, id)
-            : generatePath(ENDPOINT_REST_REMINDERS, id)
+    async deleteReminder(id: string, requestId?: string): Promise<boolean> {
+        ReminderIdSchema.parse(id)
         try {
             const response = await request({
                 httpMethod: 'DELETE',
                 baseUri: this.syncApiBase,
-                relativePath,
+                relativePath: generatePath(ENDPOINT_REST_REMINDERS, id),
                 apiToken: this.authToken,
                 customFetch: this.customFetch,
                 requestId: requestId,
@@ -1674,7 +1745,37 @@ export class TodoistApi {
             }
 
             throw new TodoistArgumentError(
-                `Reminder ${id} was not found on the ${type} reminder endpoint. Ensure the reminder exists and that args.type matches the existing reminder type.`,
+                `Reminder ${id} was not found on the time-based reminder endpoint. If this is a location reminder, use deleteLocationReminder instead.`,
+            )
+        }
+    }
+
+    /**
+     * Deletes a location reminder by its ID.
+     *
+     * @param id - The unique identifier of the location reminder to delete.
+     * @param requestId - Optional custom identifier for the request.
+     * @returns A promise that resolves to `true` if successful.
+     */
+    async deleteLocationReminder(id: string, requestId?: string): Promise<boolean> {
+        ReminderIdSchema.parse(id)
+        try {
+            const response = await request({
+                httpMethod: 'DELETE',
+                baseUri: this.syncApiBase,
+                relativePath: generatePath(ENDPOINT_REST_LOCATION_REMINDERS, id),
+                apiToken: this.authToken,
+                customFetch: this.customFetch,
+                requestId: requestId,
+            })
+            return isSuccess(response)
+        } catch (error) {
+            if (!(error instanceof TodoistRequestError) || error.httpStatusCode !== 404) {
+                throw error
+            }
+
+            throw new TodoistArgumentError(
+                `Location reminder ${id} was not found on the location reminder endpoint. If this is a time-based reminder, use deleteReminder instead.`,
             )
         }
     }
