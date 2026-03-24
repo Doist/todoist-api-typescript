@@ -13,11 +13,14 @@ export const CollaboratorSchema = z
 
 export type Collaborator = z.infer<typeof CollaboratorSchema>
 
+export const COLLABORATOR_STATUSES = ['active', 'invited'] as const
+export type CollaboratorStatus = (typeof COLLABORATOR_STATUSES)[number]
+
 export const CollaboratorStateSchema = z
     .object({
         userId: z.string(),
         projectId: z.string(),
-        state: z.enum(['active', 'invited']),
+        state: z.enum(COLLABORATOR_STATUSES),
         isDeleted: z.boolean(),
         workspaceRole: WorkspaceRoleSchema.optional(),
     })

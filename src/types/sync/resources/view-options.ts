@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-const ViewTypeSchema = z.enum([
+export const VIEW_TYPES = [
     'TODAY',
     'UPCOMING',
     'PROJECT',
@@ -14,42 +14,56 @@ const ViewTypeSchema = z.enum([
     'ASSIGNED',
     'OVERDUE',
     'WORKSPACE_OVERVIEW',
-])
+] as const
+export type ViewType = (typeof VIEW_TYPES)[number]
 
-const ViewModeSchema = z.enum(['LIST', 'BOARD', 'CALENDAR'])
+export const ViewTypeSchema = z.enum(VIEW_TYPES)
 
-const GroupedBySchema = z
-    .enum([
-        'ASSIGNEE',
-        'ADDED_DATE',
-        'DUE_DATE',
-        'DEADLINE',
-        'LABEL',
-        'PRIORITY',
-        'PROJECT',
-        'WORKSPACE',
-    ])
-    .nullable()
+export const VIEW_MODES = ['LIST', 'BOARD', 'CALENDAR'] as const
+export type ViewMode = (typeof VIEW_MODES)[number]
 
-const SortedBySchema = z
-    .enum([
-        'MANUAL',
-        'ALPHABETICALLY',
-        'ASSIGNEE',
-        'DUE_DATE',
-        'DEADLINE',
-        'ADDED_DATE',
-        'PRIORITY',
-        'PROJECT',
-        'WORKSPACE',
-    ])
-    .nullable()
+export const ViewModeSchema = z.enum(VIEW_MODES)
 
-const SortOrderSchema = z.enum(['ASC', 'DESC']).nullable()
+export const GROUPED_BY_OPTIONS = [
+    'ASSIGNEE',
+    'ADDED_DATE',
+    'DUE_DATE',
+    'DEADLINE',
+    'LABEL',
+    'PRIORITY',
+    'PROJECT',
+    'WORKSPACE',
+] as const
+export type GroupedBy = (typeof GROUPED_BY_OPTIONS)[number]
 
-const CalendarSettingsSchema = z
+export const GroupedBySchema = z.enum(GROUPED_BY_OPTIONS).nullable()
+
+export const SORTED_BY_OPTIONS = [
+    'MANUAL',
+    'ALPHABETICALLY',
+    'ASSIGNEE',
+    'DUE_DATE',
+    'DEADLINE',
+    'ADDED_DATE',
+    'PRIORITY',
+    'PROJECT',
+    'WORKSPACE',
+] as const
+export type SortedBy = (typeof SORTED_BY_OPTIONS)[number]
+
+export const SortedBySchema = z.enum(SORTED_BY_OPTIONS).nullable()
+
+export const SORT_ORDERS = ['ASC', 'DESC'] as const
+export type SortOrder = (typeof SORT_ORDERS)[number]
+
+export const SortOrderSchema = z.enum(SORT_ORDERS).nullable()
+
+export const CALENDAR_LAYOUTS = ['WEEK', 'MONTH'] as const
+export type CalendarLayout = (typeof CALENDAR_LAYOUTS)[number]
+
+export const CalendarSettingsSchema = z
     .object({
-        layout: z.enum(['WEEK', 'MONTH']).optional(),
+        layout: z.enum(CALENDAR_LAYOUTS).optional(),
     })
     .passthrough()
 

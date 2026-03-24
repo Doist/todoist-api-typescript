@@ -1,11 +1,11 @@
 import { z } from 'zod'
 
-const NavigationFeatureSchema = z.object({
+export const NavigationFeatureSchema = z.object({
     name: z.string(),
     shown: z.boolean(),
 })
 
-const QuickAddFeatureSchema = z.object({
+export const QuickAddFeatureSchema = z.object({
     name: z.string(),
     shown: z.boolean(),
 })
