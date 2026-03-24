@@ -57,7 +57,7 @@ describe('TodoistApi moveTasks', () => {
 
         // Critical: Verify unique UUIDs (see https://github.com/Doist/todoist-api-typescript/issues/310)
         expect(capturedPayload).not.toBeNull()
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        // oxlint-disable-next-line no-non-null-assertion
         const payload = capturedPayload!
 
         const commands: SyncCommand[] = payload.commands
@@ -96,7 +96,7 @@ describe('TodoistApi moveTasks', () => {
         await api.moveTasks(['123'], { sectionId: '888' })
 
         expect(capturedPayload).not.toBeNull()
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        // oxlint-disable-next-line no-non-null-assertion
         const payload = capturedPayload!
 
         const commands: SyncCommand[] = payload.commands
@@ -127,7 +127,7 @@ describe('TodoistApi moveTasks', () => {
         await api.moveTasks(['123'], { parentId: '777' })
 
         expect(capturedPayload).not.toBeNull()
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        // oxlint-disable-next-line no-non-null-assertion
         const payload = capturedPayload!
 
         const commands: SyncCommand[] = payload.commands

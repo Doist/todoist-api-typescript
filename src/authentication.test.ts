@@ -39,6 +39,7 @@ describe('authentication', () => {
 
         test.each(authUrlTheories)(
             'Formatting %p with arguments %p returns %p',
+            // oxlint-disable-next-line max-params
             (clientId, state, permissions, baseUrl, expected) => {
                 const url = getAuthorizationUrl({ clientId, permissions, state, baseUrl })
                 expect(url).toEqual(expected)

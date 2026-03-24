@@ -1,0 +1,52 @@
+{
+    "plugins": ["typescript", "import", "oxc", "unicorn"],
+    "categories": {
+        "correctness": "error"
+    },
+    "rules": {
+        "array-callback-return": "error",
+        "eqeqeq": "error",
+        "func-style": ["error", "declaration"],
+        "no-console": "error",
+        "no-implicit-coercion": "error",
+        "no-use-before-define": ["error", { "functions": false }],
+        "no-var": "error",
+        "no-void": "error",
+        "no-useless-return": "error",
+        "no-useless-constructor": "error",
+        "max-params": ["error", { "max": 3 }],
+        "no-unused-vars": [
+            "error",
+            {
+                "args": "all",
+                "argsIgnorePattern": "^_",
+                "ignoreRestSiblings": true
+            }
+        ],
+        "import/first": "error",
+        "import/no-duplicates": "error",
+        "import/no-default-export": "error",
+        "import/no-named-as-default": "error",
+        "import/no-named-as-default-member": "error",
+        "typescript/consistent-type-assertions": "error",
+        "typescript/prefer-optional-chain": "error",
+        "typescript/prefer-includes": "error",
+        "typescript/prefer-reduce-type-parameter": "error",
+        "typescript/only-throw-error": "error",
+        "typescript/no-misused-promises": "error",
+        "typescript/no-unnecessary-type-assertion": "error",
+        "typescript/no-unnecessary-type-constraint": "error",
+        "typescript/no-unsafe-argument": "error",
+        "typescript/no-unsafe-assignment": "error",
+        "typescript/no-unsafe-call": "error",
+        "typescript/no-unsafe-member-access": "error",
+        "typescript/no-unsafe-return": "error",
+        "typescript/no-unsafe-enum-comparison": "error",
+        "typescript/restrict-plus-operands": "error",
+        "typescript/require-await": "error",
+        "typescript/prefer-promise-reject-errors": "error",
+        "typescript/no-duplicate-type-constituents": "off",
+        "typescript/no-redundant-type-constituents": "off"
+    },
+    "ignorePatterns": ["dist/**", "node_modules/**", "vitest.config.ts"]
+}

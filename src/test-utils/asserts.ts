@@ -1,5 +1,5 @@
 // Has to use 'any' to express constructor type
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line no-explicit-any
 export function assertInstance<T extends new (...args: any) => any>(
     value: unknown,
     type: T,
