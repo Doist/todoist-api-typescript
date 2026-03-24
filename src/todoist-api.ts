@@ -15,6 +15,7 @@ import {
     JoinWorkspaceResult,
     Workspace,
 } from './types/entities'
+import { LOCATION_TRIGGERS } from './types/sync/resources/reminders'
 import {
     AddCommentArgs,
     AddLabelArgs,
@@ -39,7 +40,6 @@ import {
     RenameSharedLabelArgs,
     RemoveSharedLabelArgs,
     REMINDER_DELIVERY_SERVICES,
-    REMINDER_LOCATION_TRIGGERS,
     GetProjectsArgs,
     SearchProjectsArgs,
     GetProjectCollaboratorsArgs,
@@ -305,7 +305,7 @@ const UpdateLocationReminderArgsSchema = z
         name: z.string().optional(),
         locLat: z.string().optional(),
         locLong: z.string().optional(),
-        locTrigger: z.enum(REMINDER_LOCATION_TRIGGERS).optional(),
+        locTrigger: z.enum(LOCATION_TRIGGERS).optional(),
         radius: z.number().optional(),
     })
     .strict()

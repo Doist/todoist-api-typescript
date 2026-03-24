@@ -15,6 +15,7 @@ import type {
     User,
     WorkspaceProject,
 } from './entities'
+import type { LocationTrigger } from './sync/resources/reminders'
 
 /**
  * Arguments for creating a new task.
@@ -473,10 +474,9 @@ export type UpdateCommentArgs = {
     content: string
 }
 
-export const REMINDER_LOCATION_TRIGGERS = ['on_enter', 'on_leave'] as const
-export type ReminderLocationTrigger = (typeof REMINDER_LOCATION_TRIGGERS)[number]
-
+/** Available reminder delivery services. */
 export const REMINDER_DELIVERY_SERVICES = ['email', 'push'] as const
+/** Delivery service for a reminder notification. */
 export type ReminderDeliveryService = (typeof REMINDER_DELIVERY_SERVICES)[number]
 export type ReminderDueDate = Partial<
     Pick<DueDate, 'date' | 'string' | 'timezone' | 'lang' | 'isRecurring'>
@@ -497,7 +497,7 @@ type AddLocationReminderFields = {
     name: string
     locLat: string
     locLong: string
-    locTrigger: ReminderLocationTrigger
+    locTrigger: LocationTrigger
     radius?: number
 }
 
