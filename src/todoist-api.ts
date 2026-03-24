@@ -272,6 +272,62 @@ function usesLocationReminderType(type: UpdateReminderArgs['type']): boolean {
     return type === 'location'
 }
 
+const ReminderDeliveryServiceSchema = z.enum(['email', 'push'])
+
+const UpdateRelativeReminderArgsSchema = z
+    .object({
+        id: z.string(),
+        type: z.literal('relative'),
+        minuteOffset: z.number().optional(),
+        notifyUid: z.string().optional(),
+        service: ReminderDeliveryServiceSchema.optional(),
+        isUrgent: z.boolean().optional(),
+    })
+    .strict()
+
+const UpdateAbsoluteReminderArgsSchema = z
+    .object({
+        id: z.string(),
+        type: z.literal('absolute'),
+        due: z
+            .object({
+                date: z.string().optional(),
+                string: z.string().optional(),
+                timezone: z.string().nullable().optional(),
+                lang: z.string().optional(),
+                isRecurring: z.boolean().optional(),
+            })
+            .strict()
+            .optional(),
+        notifyUid: z.string().optional(),
+        service: ReminderDeliveryServiceSchema.optional(),
+        isUrgent: z.boolean().optional(),
+    })
+    .strict()
+
+const UpdateLocationReminderArgsSchema = z
+    .object({
+        id: z.string(),
+        type: z.literal('location'),
+        notifyUid: z.string().optional(),
+        name: z.string().optional(),
+        locLat: z.string().optional(),
+        locLong: z.string().optional(),
+        locTrigger: z.enum(['on_enter', 'on_leave']).optional(),
+        radius: z.number().optional(),
+    })
+    .strict()
+
+const UpdateReminderArgsSchema = z
+    .discriminatedUnion('type', [
+        UpdateRelativeReminderArgsSchema,
+        UpdateAbsoluteReminderArgsSchema,
+        UpdateLocationReminderArgsSchema,
+    ])
+    .refine((args) => Object.keys(args).length > 2, {
+        message: 'At least one reminder field must be provided to updateReminder',
+    })
+
 /**
  * Response from viewAttachment, extending CustomFetchResponse with
  * arrayBuffer() support for binary file content.
@@ -1558,8 +1614,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the updated reminder.
      */
     async updateReminder(args: UpdateReminderArgs, requestId?: string): Promise<Reminder> {
-        const { id, type, ...payload } = args
-        z.string().parse(id)
+        const { id, type, ...payload } = UpdateReminderArgsSchema.parse(args)
         const relativePath = usesLocationReminderType(type)
             ? generatePath(ENDPOINT_REST_LOCATION_REMINDERS, id)
             : generatePath(ENDPOINT_REST_REMINDERS, id)

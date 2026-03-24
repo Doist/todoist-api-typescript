@@ -295,6 +295,54 @@ describe('TodoistApi reminder endpoints', () => {
                 }),
             ).rejects.toThrow(TodoistArgumentError)
         })
+
+        test('rejects missing type before making a request', async () => {
+            let postCalled = false
+
+            server.use(
+                http.post(
+                    `${getSyncBaseUri()}${ENDPOINT_REST_REMINDERS}/${DEFAULT_REMINDER_ID}`,
+                    () => {
+                        postCalled = true
+                        return HttpResponse.json(DEFAULT_RELATIVE_REMINDER, { status: 200 })
+                    },
+                ),
+                http.post(
+                    `${getSyncBaseUri()}${ENDPOINT_REST_LOCATION_REMINDERS}/${DEFAULT_REMINDER_ID}`,
+                    () => {
+                        postCalled = true
+                        return HttpResponse.json(DEFAULT_LOCATION_REMINDER, { status: 200 })
+                    },
+                ),
+            )
+            const api = getTarget()
+
+            await expect(api.updateReminder({ id: DEFAULT_REMINDER_ID } as never)).rejects.toThrow()
+            expect(postCalled).toBe(false)
+        })
+
+        test('rejects updates without mutable fields before making a request', async () => {
+            let postCalled = false
+
+            server.use(
+                http.post(
+                    `${getSyncBaseUri()}${ENDPOINT_REST_REMINDERS}/${DEFAULT_REMINDER_ID}`,
+                    () => {
+                        postCalled = true
+                        return HttpResponse.json(DEFAULT_RELATIVE_REMINDER, { status: 200 })
+                    },
+                ),
+            )
+            const api = getTarget()
+
+            await expect(
+                api.updateReminder({
+                    id: DEFAULT_REMINDER_ID,
+                    type: 'relative',
+                }),
+            ).rejects.toThrow('At least one reminder field must be provided to updateReminder')
+            expect(postCalled).toBe(false)
+        })
     })
 
     describe('deleteReminder', () => {
