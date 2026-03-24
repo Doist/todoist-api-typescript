@@ -31,17 +31,16 @@ describe('TodoistApi reminder endpoints', () => {
             )
             const api = getTarget()
 
-            const reminder = await api.getReminder(DEFAULT_REMINDER_ID)
+            const reminder = await api.getReminder({
+                id: DEFAULT_REMINDER_ID,
+                type: 'absolute',
+            })
 
             expect(reminder).toEqual(DEFAULT_ABSOLUTE_REMINDER)
         })
 
-        test('falls back to location reminder endpoint', async () => {
+        test('returns a location reminder from the location endpoint', async () => {
             server.use(
-                http.get(
-                    `${getSyncBaseUri()}${ENDPOINT_REST_REMINDERS}/${DEFAULT_REMINDER_ID}`,
-                    () => HttpResponse.json({ error: 'Reminder not found' }, { status: 404 }),
-                ),
                 http.get(
                     `${getSyncBaseUri()}${ENDPOINT_REST_LOCATION_REMINDERS}/${DEFAULT_REMINDER_ID}`,
                     () => HttpResponse.json(DEFAULT_LOCATION_REMINDER, { status: 200 }),
@@ -49,9 +48,37 @@ describe('TodoistApi reminder endpoints', () => {
             )
             const api = getTarget()
 
-            const reminder = await api.getReminder(DEFAULT_REMINDER_ID)
+            const reminder = await api.getReminder({
+                id: DEFAULT_REMINDER_ID,
+                type: 'location',
+            })
 
             expect(reminder).toEqual(DEFAULT_LOCATION_REMINDER)
+        })
+
+        test('rejects missing type before making a request', async () => {
+            let getCalled = false
+
+            server.use(
+                http.get(
+                    `${getSyncBaseUri()}${ENDPOINT_REST_REMINDERS}/${DEFAULT_REMINDER_ID}`,
+                    () => {
+                        getCalled = true
+                        return HttpResponse.json(DEFAULT_ABSOLUTE_REMINDER, { status: 200 })
+                    },
+                ),
+                http.get(
+                    `${getSyncBaseUri()}${ENDPOINT_REST_LOCATION_REMINDERS}/${DEFAULT_REMINDER_ID}`,
+                    () => {
+                        getCalled = true
+                        return HttpResponse.json(DEFAULT_LOCATION_REMINDER, { status: 200 })
+                    },
+                ),
+            )
+            const api = getTarget()
+
+            await expect(api.getReminder({ id: DEFAULT_REMINDER_ID } as never)).rejects.toThrow()
+            expect(getCalled).toBe(false)
         })
     })
 
@@ -355,17 +382,16 @@ describe('TodoistApi reminder endpoints', () => {
             )
             const api = getTarget()
 
-            const result = await api.deleteReminder(DEFAULT_REMINDER_ID)
+            const result = await api.deleteReminder({
+                id: DEFAULT_REMINDER_ID,
+                type: 'absolute',
+            })
 
             expect(result).toBe(true)
         })
 
-        test('falls back to location reminder endpoint', async () => {
+        test('deletes a location reminder from the location endpoint', async () => {
             server.use(
-                http.delete(
-                    `${getSyncBaseUri()}${ENDPOINT_REST_REMINDERS}/${DEFAULT_REMINDER_ID}`,
-                    () => HttpResponse.json({ error: 'Reminder not found' }, { status: 404 }),
-                ),
                 http.delete(
                     `${getSyncBaseUri()}${ENDPOINT_REST_LOCATION_REMINDERS}/${DEFAULT_REMINDER_ID}`,
                     () => HttpResponse.json(undefined, { status: 204 }),
@@ -373,9 +399,37 @@ describe('TodoistApi reminder endpoints', () => {
             )
             const api = getTarget()
 
-            const result = await api.deleteReminder(DEFAULT_REMINDER_ID)
+            const result = await api.deleteReminder({
+                id: DEFAULT_REMINDER_ID,
+                type: 'location',
+            })
 
             expect(result).toBe(true)
+        })
+
+        test('rejects missing type before making a request', async () => {
+            let deleteCalled = false
+
+            server.use(
+                http.delete(
+                    `${getSyncBaseUri()}${ENDPOINT_REST_REMINDERS}/${DEFAULT_REMINDER_ID}`,
+                    () => {
+                        deleteCalled = true
+                        return HttpResponse.json(undefined, { status: 204 })
+                    },
+                ),
+                http.delete(
+                    `${getSyncBaseUri()}${ENDPOINT_REST_LOCATION_REMINDERS}/${DEFAULT_REMINDER_ID}`,
+                    () => {
+                        deleteCalled = true
+                        return HttpResponse.json(undefined, { status: 204 })
+                    },
+                ),
+            )
+            const api = getTarget()
+
+            await expect(api.deleteReminder({ id: DEFAULT_REMINDER_ID } as never)).rejects.toThrow()
+            expect(deleteCalled).toBe(false)
         })
     })
 })

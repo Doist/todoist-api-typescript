@@ -528,6 +528,10 @@ type UpdateReminderIdentifierArgs = {
     id: string
 }
 
+export type ReminderIdentifierArgs = UpdateReminderIdentifierArgs & {
+    type: 'relative' | 'absolute' | 'location'
+}
+
 export type UpdateRelativeReminderArgs = UpdateReminderIdentifierArgs & {
     type: 'relative'
 } & Partial<Omit<AddRelativeReminderArgs, 'taskId' | 'reminderType'>>
@@ -548,6 +552,16 @@ export type UpdateReminderArgs =
     | UpdateRelativeReminderArgs
     | UpdateAbsoluteReminderArgs
     | UpdateLocationReminderArgs
+
+/**
+ * Arguments for retrieving an existing reminder.
+ */
+export type GetReminderArgs = ReminderIdentifierArgs
+
+/**
+ * Arguments for deleting an existing reminder.
+ */
+export type DeleteReminderArgs = ReminderIdentifierArgs
 
 /**
  * Common arguments for retrieving activity logs (excluding filter-type params).
