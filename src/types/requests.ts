@@ -1,5 +1,6 @@
 import type { RequireAllOrNone, RequireOneOrNone, RequireExactlyOne } from 'type-fest'
 import type { ColorKey } from '../utils/colors'
+import type { SyncDueDate } from './sync/commands/shared'
 import type {
     ActivityEvent,
     ActivityObjectEventType,
@@ -471,6 +472,67 @@ export type AddCommentArgs = {
 export type UpdateCommentArgs = {
     content: string
 }
+
+export type ReminderLocationTrigger = 'on_enter' | 'on_leave'
+export type ReminderDeliveryService = 'email' | 'push'
+
+type TimeBasedReminderArgs = {
+    service?: ReminderDeliveryService
+    notifyUid?: string
+    isUrgent?: boolean
+}
+
+type LocationReminderArgs = {
+    notifyUid?: string
+    name?: string
+    locLat: string
+    locLong: string
+    locTrigger?: ReminderLocationTrigger
+    radius?: number
+}
+
+/**
+ * Arguments for creating a new reminder.
+ * @see https://developer.todoist.com/api/v1/#tag/Reminders/operation/create_reminder_api_v1_reminders_post
+ */
+export type AddReminderArgs =
+    | ({
+          taskId: string
+          reminderType?: 'relative'
+          minuteOffset: number
+      } & TimeBasedReminderArgs)
+    | ({
+          taskId: string
+          reminderType: 'absolute'
+          due: NonNullable<SyncDueDate>
+      } & TimeBasedReminderArgs)
+    | ({
+          taskId: string
+          reminderType: 'location'
+      } & LocationReminderArgs)
+
+/**
+ * Arguments for updating an existing reminder.
+ * @see https://developer.todoist.com/api/v1/#tag/Reminders/operation/update_reminder_api_v1_reminders__reminder_id__post
+ */
+export type UpdateReminderArgs =
+    | ({
+          reminderType?: 'relative'
+          minuteOffset?: number | null
+      } & TimeBasedReminderArgs)
+    | ({
+          reminderType: 'absolute'
+          due?: SyncDueDate
+      } & TimeBasedReminderArgs)
+    | {
+          reminderType: 'location'
+          notifyUid?: string
+          name?: string
+          locLat?: string
+          locLong?: string
+          locTrigger?: ReminderLocationTrigger
+          radius?: number
+      }
 
 /**
  * Common arguments for retrieving activity logs (excluding filter-type params).

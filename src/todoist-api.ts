@@ -18,6 +18,7 @@ import {
     AddCommentArgs,
     AddLabelArgs,
     AddProjectArgs,
+    AddReminderArgs,
     AddSectionArgs,
     AddTaskArgs,
     GetProjectCommentsArgs,
@@ -27,6 +28,7 @@ import {
     UpdateCommentArgs,
     UpdateLabelArgs,
     UpdateProjectArgs,
+    UpdateReminderArgs,
     UpdateSectionArgs,
     UpdateTaskArgs,
     QuickAddTaskArgs,
@@ -75,6 +77,7 @@ import {
 } from './types/requests'
 import { CustomFetch, CustomFetchResponse } from './types/http'
 import { request, isSuccess } from './transport/http-client'
+import type { Reminder } from './types'
 import {
     getSyncBaseUri,
     ENDPOINT_REST_TASKS,
@@ -94,6 +97,8 @@ import {
     ENDPOINT_REST_SECTIONS,
     ENDPOINT_REST_SECTIONS_SEARCH,
     ENDPOINT_REST_COMMENTS,
+    ENDPOINT_REST_LOCATION_REMINDERS,
+    ENDPOINT_REST_REMINDERS,
     ENDPOINT_REST_LABELS_SHARED,
     ENDPOINT_REST_LABELS_SHARED_RENAME,
     ENDPOINT_REST_LABELS_SHARED_REMOVE,
@@ -134,6 +139,7 @@ import {
     validateTaskArray,
     validateUserArray,
     validateProductivityStats,
+    validateReminder,
     validateActivityEventArray,
     validateWorkspaceUserArray,
     validateWorkspaceInvitation,
@@ -254,6 +260,12 @@ function headersToRecord(headers: Headers): Record<string, string> {
         result[key] = value
     })
     return result
+}
+
+function usesLocationReminderEndpoint(
+    args: AddReminderArgs | UpdateReminderArgs,
+): args is Extract<AddReminderArgs | UpdateReminderArgs, { reminderType: 'location' }> {
+    return 'reminderType' in args && args.reminderType === 'location'
 }
 
 /**
@@ -1474,6 +1486,132 @@ export class TodoistApi {
         })
         return isSuccess(response)
     }
+
+    /**
+     * Retrieves a specific reminder by its ID.
+     *
+     * @param id - The unique identifier of the reminder to retrieve.
+     * @returns A promise that resolves to the requested reminder.
+     */
+    async getReminder(id: string): Promise<Reminder> {
+        z.string().parse(id)
+        try {
+            const response = await request<Reminder>({
+                httpMethod: 'GET',
+                baseUri: this.syncApiBase,
+                relativePath: generatePath(ENDPOINT_REST_REMINDERS, id),
+                apiToken: this.authToken,
+                customFetch: this.customFetch,
+            })
+
+            return validateReminder(response.data)
+        } catch (error) {
+            if (!(error instanceof TodoistRequestError) || error.httpStatusCode !== 404) {
+                throw error
+            }
+
+            const response = await request<Reminder>({
+                httpMethod: 'GET',
+                baseUri: this.syncApiBase,
+                relativePath: generatePath(ENDPOINT_REST_LOCATION_REMINDERS, id),
+                apiToken: this.authToken,
+                customFetch: this.customFetch,
+            })
+
+            return validateReminder(response.data)
+        }
+    }
+
+    /**
+     * Creates a reminder for a task.
+     *
+     * @param args - Reminder creation parameters for relative, absolute, or location reminders.
+     * @param requestId - Optional custom identifier for the request.
+     * @returns A promise that resolves to the created reminder.
+     */
+    async addReminder(args: AddReminderArgs, requestId?: string): Promise<Reminder> {
+        const relativePath = usesLocationReminderEndpoint(args)
+            ? ENDPOINT_REST_LOCATION_REMINDERS
+            : ENDPOINT_REST_REMINDERS
+        const response = await request<Reminder>({
+            httpMethod: 'POST',
+            baseUri: this.syncApiBase,
+            relativePath,
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
+            payload: args,
+            requestId: requestId,
+        })
+
+        return validateReminder(response.data)
+    }
+
+    /**
+     * Updates an existing reminder by its ID.
+     *
+     * @param id - The unique identifier of the reminder to update.
+     * @param args - Reminder update parameters.
+     * @param requestId - Optional custom identifier for the request.
+     * @returns A promise that resolves to the updated reminder.
+     */
+    async updateReminder(
+        id: string,
+        args: UpdateReminderArgs,
+        requestId?: string,
+    ): Promise<Reminder> {
+        z.string().parse(id)
+        const relativePath = usesLocationReminderEndpoint(args)
+            ? generatePath(ENDPOINT_REST_LOCATION_REMINDERS, id)
+            : generatePath(ENDPOINT_REST_REMINDERS, id)
+        const response = await request<Reminder>({
+            httpMethod: 'POST',
+            baseUri: this.syncApiBase,
+            relativePath,
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
+            payload: args,
+            requestId: requestId,
+        })
+
+        return validateReminder(response.data)
+    }
+
+    /**
+     * Deletes a reminder by its ID.
+     *
+     * @param id - The unique identifier of the reminder to delete.
+     * @param requestId - Optional custom identifier for the request.
+     * @returns A promise that resolves to `true` if successful.
+     */
+    async deleteReminder(id: string, requestId?: string): Promise<boolean> {
+        z.string().parse(id)
+        try {
+            const response = await request({
+                httpMethod: 'DELETE',
+                baseUri: this.syncApiBase,
+                relativePath: generatePath(ENDPOINT_REST_REMINDERS, id),
+                apiToken: this.authToken,
+                customFetch: this.customFetch,
+                requestId: requestId,
+            })
+            return isSuccess(response)
+        } catch (error) {
+            if (!(error instanceof TodoistRequestError) || error.httpStatusCode !== 404) {
+                throw error
+            }
+
+            const response = await request({
+                httpMethod: 'DELETE',
+                baseUri: this.syncApiBase,
+                relativePath: generatePath(ENDPOINT_REST_LOCATION_REMINDERS, id),
+                apiToken: this.authToken,
+                customFetch: this.customFetch,
+                requestId: requestId,
+            })
+            return isSuccess(response)
+        }
+    }
+
     /**
      * Retrieves productivity stats for the authenticated user.
      *
