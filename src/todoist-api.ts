@@ -8,6 +8,7 @@ import {
     Task,
     CurrentUser,
     ProductivityStats,
+    DueDateSchema,
     WorkspaceUser,
     WorkspaceInvitation,
     WorkspacePlanDetails,
@@ -266,14 +267,14 @@ function headersToRecord(headers: Headers): Record<string, string> {
 
 const ReminderDeliveryServiceSchema = z.enum(['email', 'push'])
 const ReminderIdSchema = z.string()
-const ReminderDueDateSchema = z
-    .object({
-        date: z.string().optional(),
-        string: z.string().optional(),
-        timezone: z.string().nullable().optional(),
-        lang: z.string().optional(),
-        isRecurring: z.boolean().optional(),
-    })
+const ReminderDueDateSchema = DueDateSchema.pick({
+    date: true,
+    string: true,
+    timezone: true,
+    lang: true,
+    isRecurring: true,
+})
+    .partial()
     .strict()
 
 const UpdateRelativeReminderArgsSchema = z

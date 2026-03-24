@@ -4,6 +4,7 @@ import type {
     ActivityEvent,
     ActivityObjectEventType,
     Comment,
+    DueDate,
     Duration,
     Label,
     PersonalProject,
@@ -474,13 +475,9 @@ export type UpdateCommentArgs = {
 
 export type ReminderLocationTrigger = 'on_enter' | 'on_leave'
 export type ReminderDeliveryService = 'email' | 'push'
-export type ReminderDueDate = {
-    date?: string
-    string?: string
-    timezone?: string | null
-    lang?: string
-    isRecurring?: boolean
-}
+export type ReminderDueDate = Partial<
+    Pick<DueDate, 'date' | 'string' | 'timezone' | 'lang' | 'isRecurring'>
+>
 
 type ReminderTaskArgs = {
     taskId: string
