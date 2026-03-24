@@ -217,6 +217,41 @@ describe('TodoistApi reminder endpoints', () => {
                 locTrigger: 'on_leave',
             })
         })
+
+        test('falls back to location reminder endpoint for shared-field updates', async () => {
+            server.use(
+                http.post(
+                    `${getSyncBaseUri()}${ENDPOINT_REST_REMINDERS}/${DEFAULT_REMINDER_ID}`,
+                    () => HttpResponse.json({ error: 'Reminder not found' }, { status: 404 }),
+                ),
+                http.post(
+                    `${getSyncBaseUri()}${ENDPOINT_REST_LOCATION_REMINDERS}/${DEFAULT_REMINDER_ID}`,
+                    async ({ request }) => {
+                        const body = (await request.json()) as Record<string, unknown>
+                        expect(body).toEqual({
+                            notify_uid: 'user-123',
+                        })
+                        return HttpResponse.json(
+                            {
+                                ...DEFAULT_LOCATION_REMINDER,
+                                notifyUid: 'user-123',
+                            },
+                            { status: 200 },
+                        )
+                    },
+                ),
+            )
+            const api = getTarget()
+
+            const reminder = await api.updateReminder(DEFAULT_REMINDER_ID, {
+                notifyUid: 'user-123',
+            })
+
+            expect(reminder).toEqual({
+                ...DEFAULT_LOCATION_REMINDER,
+                notifyUid: 'user-123',
+            })
+        })
     })
 
     describe('deleteReminder', () => {

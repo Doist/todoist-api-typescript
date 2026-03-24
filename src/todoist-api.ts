@@ -1563,17 +1563,38 @@ export class TodoistApi {
         const relativePath = usesLocationReminderEndpoint(args)
             ? generatePath(ENDPOINT_REST_LOCATION_REMINDERS, id)
             : generatePath(ENDPOINT_REST_REMINDERS, id)
-        const response = await request<Reminder>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-            requestId: requestId,
-        })
+        try {
+            const response = await request<Reminder>({
+                httpMethod: 'POST',
+                baseUri: this.syncApiBase,
+                relativePath,
+                apiToken: this.authToken,
+                customFetch: this.customFetch,
+                payload: args,
+                requestId: requestId,
+            })
 
-        return validateReminder(response.data)
+            return validateReminder(response.data)
+        } catch (error) {
+            if (!(error instanceof TodoistRequestError) || error.httpStatusCode !== 404) {
+                throw error
+            }
+
+            const fallbackPath = usesLocationReminderEndpoint(args)
+                ? generatePath(ENDPOINT_REST_REMINDERS, id)
+                : generatePath(ENDPOINT_REST_LOCATION_REMINDERS, id)
+            const response = await request<Reminder>({
+                httpMethod: 'POST',
+                baseUri: this.syncApiBase,
+                relativePath: fallbackPath,
+                apiToken: this.authToken,
+                customFetch: this.customFetch,
+                payload: args,
+                requestId: requestId,
+            })
+
+            return validateReminder(response.data)
+        }
     }
 
     /**
