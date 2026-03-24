@@ -13,7 +13,9 @@ export const CollaboratorSchema = z
 
 export type Collaborator = z.infer<typeof CollaboratorSchema>
 
+/** Available collaborator statuses. */
 export const COLLABORATOR_STATUSES = ['active', 'invited'] as const
+/** Status of a project collaborator. */
 export type CollaboratorStatus = (typeof COLLABORATOR_STATUSES)[number]
 
 export const CollaboratorStateSchema = z

@@ -13,10 +13,14 @@ export const CalendarSchema = z
 
 export type Calendar = z.infer<typeof CalendarSchema>
 
+/** Available calendar account provider types. */
 export const CALENDAR_ACCOUNT_TYPES = ['google', 'microsoft', 'apple'] as const
+/** Calendar account provider type. */
 export type CalendarAccountType = (typeof CALENDAR_ACCOUNT_TYPES)[number]
 
+/** Available calendar sync states. */
 export const CALENDAR_SYNC_STATES = ['synced', 'syncing', 'error'] as const
+/** Sync state of a calendar account. */
 export type CalendarSyncState = (typeof CALENDAR_SYNC_STATES)[number]
 
 export const CalendarAccountSchema = z

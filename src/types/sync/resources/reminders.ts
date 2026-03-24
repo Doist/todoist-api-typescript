@@ -9,7 +9,9 @@ export const ReminderBaseSchema = z.object({
     isDeleted: z.boolean(),
 })
 
+/** Available location reminder triggers. */
 export const LOCATION_TRIGGERS = ['on_enter', 'on_leave'] as const
+/** Trigger condition for a location-based reminder. */
 export type LocationTrigger = (typeof LOCATION_TRIGGERS)[number]
 
 export const LocationReminderSchema = ReminderBaseSchema.extend({

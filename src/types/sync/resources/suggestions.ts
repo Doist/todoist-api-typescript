@@ -1,6 +1,8 @@
 import { z } from 'zod'
 
+/** Available template types. */
 export const TEMPLATE_TYPES = ['project', 'setup'] as const
+/** Type of template suggestion. */
 export type TemplateType = (typeof TEMPLATE_TYPES)[number]
 
 export const TemplateSuggestionSchema = z
@@ -19,7 +21,9 @@ export const WorkspaceTemplateSuggestionSchema = TemplateSuggestionSchema.extend
 
 export type WorkspaceTemplateSuggestion = z.infer<typeof WorkspaceTemplateSuggestionSchema>
 
+/** Available suggestion section types. */
 export const SUGGESTION_SECTION_TYPES = ['templates', 'most_used_user_templates'] as const
+/** Type of suggestion section. */
 export type SuggestionSectionType = (typeof SUGGESTION_SECTION_TYPES)[number]
 
 export const SyncTemplateSuggestionsSchema = z

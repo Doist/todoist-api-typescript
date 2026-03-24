@@ -21,6 +21,7 @@ z.enum(EXAMPLE_VALUES)
 -   **Chaining**: Never put `.nullable()` or `.optional()` on the const array — chain those on the schema after `z.enum()`
 -   **Placement**: Place the const array and type immediately above the first usage
 -   **Reuse**: If the same values appear in multiple files, define the const array once and import it elsewhere
+-   **JSDoc**: Add a brief JSDoc comment to both the const array and the derived type so IDE hover shows documentation on each
 
 ## Zod Schemas
 
