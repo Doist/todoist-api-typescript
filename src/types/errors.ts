@@ -3,7 +3,6 @@ import { CustomError } from 'ts-custom-error'
 const authenticationErrorCodes = [401, 403]
 
 export class TodoistRequestError extends CustomError {
-    // eslint-disable-next-line max-params
     public constructor(
         public message: string,
         public httpStatusCode?: number,

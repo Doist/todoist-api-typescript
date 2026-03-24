@@ -25,7 +25,7 @@ function removeStyleFormatting(input: string): string {
         return input
     }
 
-    function removeMarkdown(match: string, prefix: string, text: string) {
+    function removeMarkdown(_match: string, prefix: string, text: string) {
         return `${prefix}${text}`
     }
 
@@ -37,7 +37,7 @@ function removeStyleFormatting(input: string): string {
 }
 
 function removeCodeFormatting(input: string): string {
-    function removeMarkdown(match: string, text: string) {
+    function removeMarkdown(_match: string, text: string) {
         return text
     }
 
@@ -64,7 +64,7 @@ function removeMarkdownLinks(input: string) {
         return input
     }
 
-    function removeMarkdown(match: string, text: string) {
+    function removeMarkdown(_match: string, text: string) {
         return text
     }
 
@@ -76,7 +76,7 @@ function removeTodoistLinks(input: string) {
         return input
     }
 
-    function removeMarkdown(match: string, url: string, text: string) {
+    function removeMarkdown(_match: string, _url: string, text: string) {
         return text
     }
 
@@ -85,15 +85,15 @@ function removeTodoistLinks(input: string) {
 
 function removeAppLinks(input: string) {
     if (input.includes('gmail')) {
-        input = input.replace(GMAIL_LINK, (match: string, id: string, text: string) => text)
+        input = input.replace(GMAIL_LINK, (_match: string, _id: string, text: string) => text)
     }
 
     if (input.includes('outlook')) {
-        input = input.replace(OUTLOOK_LINK, (match: string, id: string, text: string) => text)
+        input = input.replace(OUTLOOK_LINK, (_match: string, _id: string, text: string) => text)
     }
 
     if (input.includes('thunderbird')) {
-        input = input.replace(THUNDERBIRD_LINK, (match: string, text: string) => text)
+        input = input.replace(THUNDERBIRD_LINK, (_match: string, text: string) => text)
     }
 
     return input

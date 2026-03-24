@@ -58,7 +58,7 @@ describe('Obsidian Custom Fetch Integration', () => {
             // Return Obsidian-shaped response (properties, not methods)
             return {
                 status: responseClone.status,
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-call
+                // oxlint-disable-next-line no-unsafe-argument, no-unsafe-call
                 headers: Object.fromEntries(responseClone.headers.entries()),
                 arrayBuffer: await responseClone.arrayBuffer(),
                 json,

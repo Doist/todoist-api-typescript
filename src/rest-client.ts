@@ -41,7 +41,7 @@ export function paramsSerializer(params: Record<string, unknown>) {
 
     Object.keys(params).forEach((key) => {
         const value = params[key]
-        if (value != null) {
+        if (value !== null && value !== undefined) {
             if (Array.isArray(value)) {
                 qs.append(key, JSON.stringify(value))
             } else if (

@@ -1205,7 +1205,7 @@ export class TodoistApi {
      */
     async getLabels(args: GetLabelsArgs = {}): Promise<GetLabelsResponse> {
         const {
-            data: { results, nextCursor: nextCursor },
+            data: { results, nextCursor },
         } = await request<GetLabelsResponse>({
             httpMethod: 'GET',
             baseUri: this.syncApiBase,
@@ -1316,7 +1316,7 @@ export class TodoistApi {
      */
     async getSharedLabels(args?: GetSharedLabelsArgs): Promise<GetSharedLabelsResponse> {
         const {
-            data: { results, nextCursor: nextCursor },
+            data: { results, nextCursor },
         } = await request<GetSharedLabelsResponse>({
             httpMethod: 'GET',
             baseUri: this.syncApiBase,
@@ -2064,15 +2064,15 @@ export class TodoistApi {
             requestId: requestId,
         })
 
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+        // oxlint-disable-next-line no-unsafe-assignment, no-unsafe-call, no-unsafe-member-access
         const validatedProjects = response.data.results?.map((project: unknown) =>
             validateProject(project),
         )
 
         return {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            // oxlint-disable-next-line no-unsafe-assignment
             ...response.data,
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            // oxlint-disable-next-line no-unsafe-assignment
             results: validatedProjects || [],
         } as GetProjectsResponse
     }
@@ -2106,15 +2106,15 @@ export class TodoistApi {
             requestId: requestId,
         })
 
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+        // oxlint-disable-next-line no-unsafe-assignment, no-unsafe-call, no-unsafe-member-access
         const validatedProjects = response.data.results?.map((project: unknown) =>
             validateProject(project),
         )
 
         return {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            // oxlint-disable-next-line no-unsafe-assignment
             ...response.data,
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            // oxlint-disable-next-line no-unsafe-assignment
             results: validatedProjects || [],
         } as GetProjectsResponse
     }
