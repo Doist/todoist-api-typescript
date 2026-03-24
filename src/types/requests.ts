@@ -524,15 +524,21 @@ export type AddReminderArgs =
     | AddAbsoluteReminderArgs
     | AddLocationReminderArgs
 
-export type UpdateRelativeReminderArgs = Partial<Omit<AddRelativeReminderArgs, 'taskId'>>
-
-export type UpdateAbsoluteReminderArgs = Partial<Omit<AddAbsoluteReminderArgs, 'taskId'>> & {
-    reminderType: 'absolute'
+type UpdateReminderIdentifierArgs = {
+    id: string
 }
 
-export type UpdateLocationReminderArgs = Partial<Omit<AddLocationReminderArgs, 'taskId'>> & {
-    reminderType: 'location'
-}
+export type UpdateRelativeReminderArgs = UpdateReminderIdentifierArgs & {
+    type: 'relative'
+} & Partial<Omit<AddRelativeReminderArgs, 'taskId' | 'reminderType'>>
+
+export type UpdateAbsoluteReminderArgs = UpdateReminderIdentifierArgs & {
+    type: 'absolute'
+} & Partial<Omit<AddAbsoluteReminderArgs, 'taskId' | 'reminderType'>>
+
+export type UpdateLocationReminderArgs = UpdateReminderIdentifierArgs & {
+    type: 'location'
+} & Partial<Omit<AddLocationReminderArgs, 'taskId' | 'reminderType'>>
 
 /**
  * Arguments for updating an existing reminder.

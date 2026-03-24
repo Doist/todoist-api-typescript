@@ -155,10 +155,6 @@ describe('TodoistApi reminder endpoints', () => {
     describe('updateReminder', () => {
         test('updates a relative reminder', async () => {
             server.use(
-                http.get(
-                    `${getSyncBaseUri()}${ENDPOINT_REST_REMINDERS}/${DEFAULT_REMINDER_ID}`,
-                    () => HttpResponse.json(DEFAULT_RELATIVE_REMINDER, { status: 200 }),
-                ),
                 http.post(
                     `${getSyncBaseUri()}${ENDPOINT_REST_REMINDERS}/${DEFAULT_REMINDER_ID}`,
                     async ({ request }) => {
@@ -177,7 +173,9 @@ describe('TodoistApi reminder endpoints', () => {
             )
             const api = getTarget()
 
-            const reminder = await api.updateReminder(DEFAULT_REMINDER_ID, {
+            const reminder = await api.updateReminder({
+                id: DEFAULT_REMINDER_ID,
+                type: 'relative',
                 minuteOffset: 15,
                 service: 'email',
                 isUrgent: false,
@@ -188,20 +186,11 @@ describe('TodoistApi reminder endpoints', () => {
 
         test('updates a location reminder', async () => {
             server.use(
-                http.get(
-                    `${getSyncBaseUri()}${ENDPOINT_REST_REMINDERS}/${DEFAULT_REMINDER_ID}`,
-                    () => HttpResponse.json({ error: 'Reminder not found' }, { status: 404 }),
-                ),
-                http.get(
-                    `${getSyncBaseUri()}${ENDPOINT_REST_LOCATION_REMINDERS}/${DEFAULT_REMINDER_ID}`,
-                    () => HttpResponse.json(DEFAULT_LOCATION_REMINDER, { status: 200 }),
-                ),
                 http.post(
                     `${getSyncBaseUri()}${ENDPOINT_REST_LOCATION_REMINDERS}/${DEFAULT_REMINDER_ID}`,
                     async ({ request }) => {
                         const body = (await request.json()) as Record<string, unknown>
                         expect(body).toEqual({
-                            reminder_type: 'location',
                             name: 'Office',
                             loc_trigger: 'on_leave',
                         })
@@ -218,8 +207,9 @@ describe('TodoistApi reminder endpoints', () => {
             )
             const api = getTarget()
 
-            const reminder = await api.updateReminder(DEFAULT_REMINDER_ID, {
-                reminderType: 'location',
+            const reminder = await api.updateReminder({
+                id: DEFAULT_REMINDER_ID,
+                type: 'location',
                 name: 'Office',
                 locTrigger: 'on_leave',
             })
@@ -233,14 +223,6 @@ describe('TodoistApi reminder endpoints', () => {
 
         test('updates shared fields on a location reminder', async () => {
             server.use(
-                http.get(
-                    `${getSyncBaseUri()}${ENDPOINT_REST_REMINDERS}/${DEFAULT_REMINDER_ID}`,
-                    () => HttpResponse.json({ error: 'Reminder not found' }, { status: 404 }),
-                ),
-                http.get(
-                    `${getSyncBaseUri()}${ENDPOINT_REST_LOCATION_REMINDERS}/${DEFAULT_REMINDER_ID}`,
-                    () => HttpResponse.json(DEFAULT_LOCATION_REMINDER, { status: 200 }),
-                ),
                 http.post(
                     `${getSyncBaseUri()}${ENDPOINT_REST_LOCATION_REMINDERS}/${DEFAULT_REMINDER_ID}`,
                     async ({ request }) => {
@@ -260,7 +242,9 @@ describe('TodoistApi reminder endpoints', () => {
             )
             const api = getTarget()
 
-            const reminder = await api.updateReminder(DEFAULT_REMINDER_ID, {
+            const reminder = await api.updateReminder({
+                id: DEFAULT_REMINDER_ID,
+                type: 'location',
                 notifyUid: 'user-123',
             })
 
@@ -271,81 +255,45 @@ describe('TodoistApi reminder endpoints', () => {
         })
 
         test('rejects changing a time-based reminder to location', async () => {
-            let postCalled = false
-
             server.use(
-                http.get(
-                    `${getSyncBaseUri()}${ENDPOINT_REST_REMINDERS}/${DEFAULT_REMINDER_ID}`,
-                    () => HttpResponse.json(DEFAULT_ABSOLUTE_REMINDER, { status: 200 }),
-                ),
-                http.post(
-                    `${getSyncBaseUri()}${ENDPOINT_REST_REMINDERS}/${DEFAULT_REMINDER_ID}`,
-                    () => {
-                        postCalled = true
-                        return HttpResponse.json(DEFAULT_ABSOLUTE_REMINDER, { status: 200 })
-                    },
-                ),
                 http.post(
                     `${getSyncBaseUri()}${ENDPOINT_REST_LOCATION_REMINDERS}/${DEFAULT_REMINDER_ID}`,
-                    () => {
-                        postCalled = true
-                        return HttpResponse.json(DEFAULT_LOCATION_REMINDER, { status: 200 })
-                    },
+                    () => HttpResponse.json({ error: 'Reminder not found' }, { status: 404 }),
                 ),
             )
             const api = getTarget()
 
             await expect(
-                api.updateReminder(DEFAULT_REMINDER_ID, {
-                    reminderType: 'location',
+                api.updateReminder({
+                    id: DEFAULT_REMINDER_ID,
+                    type: 'location',
                     name: 'Office',
                     locLat: '41.148581',
                     locLong: '-8.610945000000015',
                     locTrigger: 'on_enter',
                 }),
             ).rejects.toThrow(TodoistArgumentError)
-            expect(postCalled).toBe(false)
         })
 
         test('rejects changing a location reminder to time-based', async () => {
-            let postCalled = false
-
             server.use(
-                http.get(
+                http.post(
                     `${getSyncBaseUri()}${ENDPOINT_REST_REMINDERS}/${DEFAULT_REMINDER_ID}`,
                     () => HttpResponse.json({ error: 'Reminder not found' }, { status: 404 }),
-                ),
-                http.get(
-                    `${getSyncBaseUri()}${ENDPOINT_REST_LOCATION_REMINDERS}/${DEFAULT_REMINDER_ID}`,
-                    () => HttpResponse.json(DEFAULT_LOCATION_REMINDER, { status: 200 }),
-                ),
-                http.post(
-                    `${getSyncBaseUri()}${ENDPOINT_REST_REMINDERS}/${DEFAULT_REMINDER_ID}`,
-                    () => {
-                        postCalled = true
-                        return HttpResponse.json(DEFAULT_ABSOLUTE_REMINDER, { status: 200 })
-                    },
-                ),
-                http.post(
-                    `${getSyncBaseUri()}${ENDPOINT_REST_LOCATION_REMINDERS}/${DEFAULT_REMINDER_ID}`,
-                    () => {
-                        postCalled = true
-                        return HttpResponse.json(DEFAULT_LOCATION_REMINDER, { status: 200 })
-                    },
                 ),
             )
             const api = getTarget()
 
             await expect(
-                api.updateReminder(DEFAULT_REMINDER_ID, {
-                    reminderType: 'absolute',
+                api.updateReminder({
+                    id: DEFAULT_REMINDER_ID,
+                    type: 'absolute',
                     due: {
                         date: '2026-03-25T09:00:00Z',
                         timezone: 'UTC',
                     },
                 }),
             ).rejects.toThrow(TodoistArgumentError)
-            expect(postCalled).toBe(false)
         })
     })
 

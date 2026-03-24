@@ -263,31 +263,13 @@ function headersToRecord(headers: Headers): Record<string, string> {
 }
 
 function usesLocationReminderEndpoint(
-    args: AddReminderArgs | UpdateReminderArgs,
-): args is Extract<AddReminderArgs | UpdateReminderArgs, { reminderType: 'location' }> {
+    args: AddReminderArgs,
+): args is Extract<AddReminderArgs, { reminderType: 'location' }> {
     return 'reminderType' in args && args.reminderType === 'location'
 }
 
-function usesTimeBasedReminderFields(args: UpdateReminderArgs): boolean {
-    return (
-        ('reminderType' in args && args.reminderType === 'absolute') ||
-        'due' in args ||
-        'minuteOffset' in args ||
-        'service' in args ||
-        'isUrgent' in args
-    )
-}
-
-function getReminderFamily(reminder: Reminder): 'time-based' | 'location' {
-    return reminder.type === 'location' ? 'location' : 'time-based'
-}
-
-function getRequestedReminderFamily(args: UpdateReminderArgs): 'time-based' | 'location' | null {
-    if (usesLocationReminderEndpoint(args)) {
-        return 'location'
-    }
-
-    return usesTimeBasedReminderFields(args) ? 'time-based' : null
+function usesLocationReminderType(type: UpdateReminderArgs['type']): boolean {
+    return type === 'location'
 }
 
 /**
@@ -1569,44 +1551,39 @@ export class TodoistApi {
     }
 
     /**
-     * Updates an existing reminder by its ID.
+     * Updates an existing reminder.
      *
-     * @param id - The unique identifier of the reminder to update.
-     * @param args - Reminder update parameters.
+     * @param args - Reminder identification and update parameters.
      * @param requestId - Optional custom identifier for the request.
      * @returns A promise that resolves to the updated reminder.
      */
-    async updateReminder(
-        id: string,
-        args: UpdateReminderArgs,
-        requestId?: string,
-    ): Promise<Reminder> {
+    async updateReminder(args: UpdateReminderArgs, requestId?: string): Promise<Reminder> {
+        const { id, type, ...payload } = args
         z.string().parse(id)
-        const currentReminder = await this.getReminder(id)
-        const currentFamily = getReminderFamily(currentReminder)
-        const requestedFamily = getRequestedReminderFamily(args)
+        const relativePath = usesLocationReminderType(type)
+            ? generatePath(ENDPOINT_REST_LOCATION_REMINDERS, id)
+            : generatePath(ENDPOINT_REST_REMINDERS, id)
+        try {
+            const response = await request<Reminder>({
+                httpMethod: 'POST',
+                baseUri: this.syncApiBase,
+                relativePath,
+                apiToken: this.authToken,
+                customFetch: this.customFetch,
+                payload,
+                requestId: requestId,
+            })
 
-        if (requestedFamily && requestedFamily !== currentFamily) {
+            return validateReminder(response.data)
+        } catch (error) {
+            if (!(error instanceof TodoistRequestError) || error.httpStatusCode !== 404) {
+                throw error
+            }
+
             throw new TodoistArgumentError(
-                `Cannot update a ${currentFamily} reminder using ${requestedFamily} reminder arguments. Create a new reminder instead.`,
+                `Reminder ${id} was not found on the ${type} reminder endpoint. Ensure the reminder exists and that args.type matches the existing reminder type.`,
             )
         }
-
-        const relativePath =
-            currentFamily === 'location'
-                ? generatePath(ENDPOINT_REST_LOCATION_REMINDERS, id)
-                : generatePath(ENDPOINT_REST_REMINDERS, id)
-        const response = await request<Reminder>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-            requestId: requestId,
-        })
-
-        return validateReminder(response.data)
     }
 
     /**
