@@ -8,6 +8,7 @@
  * This addresses issue #381: https://github.com/Doist/todoist-api-typescript/issues/381
  */
 
+import { vi } from 'vitest'
 import type { RequestUrlParam, RequestUrlResponse } from 'obsidian'
 import { TodoistApi, type CurrentUser } from '.'
 import { createObsidianFetchAdapter } from './test-utils/obsidian-fetch-adapter'
@@ -23,10 +24,11 @@ import { DEFAULT_AUTH_TOKEN, DEFAULT_TASK, DEFAULT_LABEL } from './test-utils/te
 
 describe('Obsidian Custom Fetch Integration', () => {
     // Mock Obsidian's requestUrl function
-    const mockRequestUrl = jest.fn<Promise<RequestUrlResponse>, [RequestUrlParam | string]>()
+    const mockRequestUrl =
+        vi.fn<(request: RequestUrlParam | string) => Promise<RequestUrlResponse>>()
 
     beforeEach(() => {
-        jest.clearAllMocks()
+        vi.clearAllMocks()
 
         // Configure mock to call through to MSW and return Obsidian-shaped responses
         mockRequestUrl.mockImplementation(async (request: RequestUrlParam | string) => {

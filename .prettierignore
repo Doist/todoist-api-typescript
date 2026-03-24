@@ -6,3 +6,6 @@ CHANGELOG.md
 
 # Ignore build output directories
 dist
+
+# Ignore Claude Code settings
+.claude

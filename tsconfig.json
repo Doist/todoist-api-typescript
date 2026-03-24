@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+        "types": ["vitest/globals"],
         "target": "es2017",
         "lib": ["dom", "es2017"],
         "module": "commonjs",
@@ -24,5 +25,5 @@
         "baseUrl": "./src"
     },
     "include": ["src"],
-    "exclude": ["node_modules", "dist", "**/testData", "**/*.test.ts"]
+    "exclude": ["node_modules", "dist", "**/testData"]
 }

@@ -1,3 +1,4 @@
+import { vi } from 'vitest'
 import { TodoistApi } from './todoist-api'
 import { server, http, HttpResponse, getLastRequest, captureRequest } from './test-utils/msw-setup'
 import type { Comment } from './types/entities'
@@ -183,7 +184,8 @@ describe('TodoistApi viewAttachment', () => {
 
     describe('with custom fetch', () => {
         test('uses custom fetch when provided', async () => {
-            const mockCustomFetch = jest.fn<Promise<CustomFetchResponse>, [string, RequestInit?]>()
+            const mockCustomFetch =
+                vi.fn<(url: string, init?: RequestInit) => Promise<CustomFetchResponse>>()
             mockCustomFetch.mockResolvedValue({
                 ok: true,
                 status: 200,
@@ -204,7 +206,8 @@ describe('TodoistApi viewAttachment', () => {
         })
 
         test('provides arrayBuffer from custom fetch text response', async () => {
-            const mockCustomFetch = jest.fn<Promise<CustomFetchResponse>, [string, RequestInit?]>()
+            const mockCustomFetch =
+                vi.fn<(url: string, init?: RequestInit) => Promise<CustomFetchResponse>>()
             mockCustomFetch.mockResolvedValue({
                 ok: true,
                 status: 200,
@@ -222,7 +225,8 @@ describe('TodoistApi viewAttachment', () => {
         })
 
         test('throws on error response from custom fetch', async () => {
-            const mockCustomFetch = jest.fn<Promise<CustomFetchResponse>, [string, RequestInit?]>()
+            const mockCustomFetch =
+                vi.fn<(url: string, init?: RequestInit) => Promise<CustomFetchResponse>>()
             mockCustomFetch.mockResolvedValue({
                 ok: false,
                 status: 404,

@@ -109,7 +109,7 @@ const config: Config = {
                 entryFileName: '',
                 outputFileStrategy: 'members',
                 readme: 'none',
-                tsconfig: '../tsconfig.json',
+                tsconfig: '../tsconfig.docs.json',
                 useCodeBlocks: true,
                 sanitizeComments: true,
                 sidebar: { autoConfiguration: true },

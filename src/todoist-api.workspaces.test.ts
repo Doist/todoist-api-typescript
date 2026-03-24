@@ -1,20 +1,18 @@
-import { jest } from '@jest/globals'
+import { vi } from 'vitest'
 import { TodoistApi } from './todoist-api'
 import { server, http, HttpResponse } from './test-utils/msw-setup'
 import { getSyncBaseUri } from './consts/endpoints'
 import { uploadMultipartFile } from './utils/multipart-upload'
 
 // Mock the multipart upload helper
-jest.mock('./utils/multipart-upload')
-const mockedUploadMultipartFile = uploadMultipartFile as jest.MockedFunction<
-    typeof uploadMultipartFile
->
+vi.mock('./utils/multipart-upload')
+const mockedUploadMultipartFile = vi.mocked(uploadMultipartFile)
 
 describe('TodoistApi workspaces', () => {
     const api = new TodoistApi('token')
 
     beforeEach(() => {
-        jest.clearAllMocks()
+        vi.clearAllMocks()
     })
 
     // Test fixtures
