@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.3.0](https://github.com/Doist/todoist-api-typescript/compare/v7.2.0...v7.3.0) (2026-03-24)
+
+
+### Features
+
+* **types:** Extract z.enum arrays to const arrays with derived types ([#498](https://github.com/Doist/todoist-api-typescript/issues/498)) ([08bede2](https://github.com/Doist/todoist-api-typescript/commit/08bede2af61dbafd60816a9eb4e89b2ac518e7a8))
+
+
+### Miscellaneous
+
+* **deps-dev:** bump flatted from 3.1.1 to 3.4.2 ([#495](https://github.com/Doist/todoist-api-typescript/issues/495)) ([6443f81](https://github.com/Doist/todoist-api-typescript/commit/6443f81ddd2c4c231ea402c776b8d39a73746343))
+* migrate test runner from Jest to Vitest ([#499](https://github.com/Doist/todoist-api-typescript/issues/499)) ([d0ec312](https://github.com/Doist/todoist-api-typescript/commit/d0ec312b87351a798817cea1d30b9112c9b7c5c4))
+
 ## [7.2.0](https://github.com/Doist/todoist-api-typescript/compare/v7.1.1...v7.2.0) (2026-03-19)
 
 
