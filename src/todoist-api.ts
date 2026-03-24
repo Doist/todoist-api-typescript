@@ -38,6 +38,8 @@ import {
     GetSharedLabelsArgs,
     RenameSharedLabelArgs,
     RemoveSharedLabelArgs,
+    REMINDER_DELIVERY_SERVICES,
+    REMINDER_LOCATION_TRIGGERS,
     GetProjectsArgs,
     SearchProjectsArgs,
     GetProjectCollaboratorsArgs,
@@ -265,7 +267,7 @@ function headersToRecord(headers: Headers): Record<string, string> {
     return result
 }
 
-const ReminderDeliveryServiceSchema = z.enum(['email', 'push'])
+const ReminderDeliveryServiceSchema = z.enum(REMINDER_DELIVERY_SERVICES)
 const ReminderIdSchema = z.string()
 const ReminderDueDateSchema = DueDateSchema.pick({
     date: true,
@@ -303,7 +305,7 @@ const UpdateLocationReminderArgsSchema = z
         name: z.string().optional(),
         locLat: z.string().optional(),
         locLong: z.string().optional(),
-        locTrigger: z.enum(['on_enter', 'on_leave']).optional(),
+        locTrigger: z.enum(REMINDER_LOCATION_TRIGGERS).optional(),
         radius: z.number().optional(),
     })
     .strict()

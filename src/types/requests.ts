@@ -473,8 +473,11 @@ export type UpdateCommentArgs = {
     content: string
 }
 
-export type ReminderLocationTrigger = 'on_enter' | 'on_leave'
-export type ReminderDeliveryService = 'email' | 'push'
+export const REMINDER_LOCATION_TRIGGERS = ['on_enter', 'on_leave'] as const
+export type ReminderLocationTrigger = (typeof REMINDER_LOCATION_TRIGGERS)[number]
+
+export const REMINDER_DELIVERY_SERVICES = ['email', 'push'] as const
+export type ReminderDeliveryService = (typeof REMINDER_DELIVERY_SERVICES)[number]
 export type ReminderDueDate = Partial<
     Pick<DueDate, 'date' | 'string' | 'timezone' | 'lang' | 'isRecurring'>
 >
