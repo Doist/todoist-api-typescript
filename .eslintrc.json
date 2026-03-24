@@ -6,10 +6,9 @@
     },
     "extends": ["@doist/eslint-config/recommended-type-checked"],
     "env": {
-        "browser": true,
-        "jest": true
+        "browser": true
     },
-    "ignorePatterns": ["dist/", "jest.config.js"],
+    "ignorePatterns": ["dist/", "vitest.config.ts"],
     "rules": {
         "max-params": ["error", 3]
     },

@@ -1,3 +1,4 @@
+import { vi } from 'vitest'
 import { TodoistApi, type CurrentUser } from '.'
 import { CustomFetch, CustomFetchResponse } from './types/http'
 import { server, http, HttpResponse } from './test-utils/msw-setup'
@@ -42,12 +43,12 @@ const MOCK_CURRENT_USER: CurrentUser = {
 
 describe('Custom Fetch Core Functionality', () => {
     beforeEach(() => {
-        jest.clearAllMocks()
+        vi.clearAllMocks()
     })
 
     describe('Constructor Options', () => {
         it('should accept customFetch in options', () => {
-            const mockCustomFetch: CustomFetch = jest.fn()
+            const mockCustomFetch: CustomFetch = vi.fn()
             const api = new TodoistApi(DEFAULT_AUTH_TOKEN, {
                 customFetch: mockCustomFetch,
             })
@@ -57,7 +58,7 @@ describe('Custom Fetch Core Functionality', () => {
 
     describe('Custom Fetch Usage', () => {
         it('should call custom fetch when provided', async () => {
-            const mockCustomFetch = jest.fn().mockResolvedValue({
+            const mockCustomFetch = vi.fn().mockResolvedValue({
                 ok: true,
                 status: 200,
                 statusText: 'OK',

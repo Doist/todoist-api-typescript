@@ -1,4 +1,4 @@
-import { jest } from '@jest/globals'
+import { vi } from 'vitest'
 import { request, isSuccess, paramsSerializer } from './rest-client'
 import { TodoistRequestError } from './types/errors'
 import type { HttpResponse as TodoistHttpResponse } from './types/http'
@@ -6,7 +6,7 @@ import { server, http, HttpResponse, getLastRequest, captureRequest } from './te
 
 const RANDOM_ID = 'SomethingRandom'
 
-jest.mock('uuid', () => ({ v4: () => RANDOM_ID }))
+vi.mock('uuid', () => ({ v4: () => RANDOM_ID }))
 
 const DEFAULT_BASE_URI = 'https://someapi.com/'
 const DEFAULT_ENDPOINT = 'endpoint'

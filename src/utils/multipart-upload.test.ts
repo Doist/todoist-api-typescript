@@ -1,12 +1,12 @@
-import { jest } from '@jest/globals'
+import { vi } from 'vitest'
 import { uploadMultipartFile } from './multipart-upload'
 import * as fs from 'fs'
 import { Readable } from 'stream'
 import { server, http, HttpResponse, getLastRequest, captureRequest } from '../test-utils/msw-setup'
 
 // Mock fs
-jest.mock('fs')
-const mockedFs = fs as jest.Mocked<typeof fs>
+vi.mock('fs')
+const mockedFs = vi.mocked(fs)
 
 describe('uploadMultipartFile', () => {
     const baseUrl = 'https://api.todoist.com/api/v1/'
