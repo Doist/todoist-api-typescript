@@ -159,11 +159,13 @@ export type PersonalProject = z.infer<typeof PersonalProjectSchema>
  */
 export type WorkspaceProject = z.infer<typeof WorkspaceProjectSchema>
 
-// This allows us to accept any string during validation, but provide intellisense for the two possible values in request args
+/** Available project view styles. */
+export const PROJECT_VIEW_STYLES = ['list', 'board', 'calendar'] as const
 /**
+ * View style for a project.
  * @see https://todoist.com/api/v1/docs#tag/Projects
  */
-export type ProjectViewStyle = 'list' | 'board' | 'calendar'
+export type ProjectViewStyle = (typeof PROJECT_VIEW_STYLES)[number]
 
 export const SectionSchema = z
     .object({
