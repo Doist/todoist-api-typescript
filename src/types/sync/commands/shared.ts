@@ -37,7 +37,13 @@ export type SyncDuration = {
 export type TaskPriority = 1 | 2 | 3 | 4
 
 /** Available project workflow statuses. */
-export const PROJECT_STATUSES = ['PLANNED', 'IN_PROGRESS', 'PAUSED', 'COMPLETED', 'CANCELED'] as const
+export const PROJECT_STATUSES = [
+    'PLANNED',
+    'IN_PROGRESS',
+    'PAUSED',
+    'COMPLETED',
+    'CANCELED',
+] as const
 /** Project workflow status. */
 export type ProjectStatus = (typeof PROJECT_STATUSES)[number]
 

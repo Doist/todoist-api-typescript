@@ -23,9 +23,15 @@ export const DAYS_OF_WEEK = [
 /** Day of the week. */
 export type DayOfWeek = (typeof DAYS_OF_WEEK)[number]
 
-export const DATE_FORMAT_FROM_API: Record<0 | 1, DateFormat> = { 0: 'DD/MM/YYYY', 1: 'MM/DD/YYYY' }
-export const TIME_FORMAT_FROM_API: Record<0 | 1, TimeFormat> = { 0: '24h', 1: '12h' }
-export const DAY_OF_WEEK_FROM_API: Record<1 | 2 | 3 | 4 | 5 | 6 | 7, DayOfWeek> = {
+export const DATE_FORMAT_FROM_API = {
+    0: 'DD/MM/YYYY',
+    1: 'MM/DD/YYYY',
+} as const satisfies Readonly<Record<0 | 1, DateFormat>>
+export const TIME_FORMAT_FROM_API = {
+    0: '24h',
+    1: '12h',
+} as const satisfies Readonly<Record<0 | 1, TimeFormat>>
+export const DAY_OF_WEEK_FROM_API = {
     1: 'Monday',
     2: 'Tuesday',
     3: 'Wednesday',
@@ -33,7 +39,7 @@ export const DAY_OF_WEEK_FROM_API: Record<1 | 2 | 3 | 4 | 5 | 6 | 7, DayOfWeek> 
     5: 'Friday',
     6: 'Saturday',
     7: 'Sunday',
-}
+} as const satisfies Readonly<Record<1 | 2 | 3 | 4 | 5 | 6 | 7, DayOfWeek>>
 
 export const DATE_FORMAT_TO_API: Record<DateFormat, 0 | 1> = {
     'DD/MM/YYYY': 0,
