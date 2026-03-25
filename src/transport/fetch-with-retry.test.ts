@@ -1,4 +1,4 @@
-import { jest } from '@jest/globals'
+import { afterEach, describe, expect, test, vi } from 'vitest'
 import type { CustomFetch, CustomFetchResponse } from '../types/http'
 import * as httpDispatcher from './http-dispatcher'
 import { fetchWithRetry } from './fetch-with-retry'
@@ -8,14 +8,14 @@ describe('fetchWithRetry', () => {
 
     afterEach(async () => {
         global.fetch = originalFetch
-        jest.useRealTimers()
-        jest.restoreAllMocks()
-        jest.clearAllMocks()
+        vi.useRealTimers()
+        vi.restoreAllMocks()
+        vi.clearAllMocks()
         await httpDispatcher.resetDefaultDispatcherForTests()
     })
 
     test('uses the default dispatcher when customFetch is not provided', async () => {
-        const fetchMock: jest.MockedFunction<typeof fetch> = jest.fn()
+        const fetchMock = vi.fn<typeof fetch>()
         fetchMock.mockResolvedValue(
             new Response(JSON.stringify({ ok: true }), {
                 status: 200,
@@ -43,11 +43,11 @@ describe('fetchWithRetry', () => {
     })
 
     test('prefers customFetch over the built-in fetch path', async () => {
-        const fetchMock: jest.MockedFunction<typeof fetch> = jest.fn()
+        const fetchMock = vi.fn<typeof fetch>()
         global.fetch = fetchMock
 
-        const getDefaultDispatcherSpy = jest.spyOn(httpDispatcher, 'getDefaultDispatcher')
-        const customFetch: jest.MockedFunction<CustomFetch> = jest.fn()
+        const getDefaultDispatcherSpy = vi.spyOn(httpDispatcher, 'getDefaultDispatcher')
+        const customFetch = vi.fn<CustomFetch>()
         customFetch.mockResolvedValue(createResponse('{"ok":true}'))
 
         const response = await fetchWithRetry<{ ok: boolean }>({
@@ -75,7 +75,7 @@ describe('fetchWithRetry', () => {
     })
 
     test('retries network errors using the configured retry policy', async () => {
-        const customFetch: jest.MockedFunction<CustomFetch> = jest.fn()
+        const customFetch = vi.fn<CustomFetch>()
         customFetch
             .mockRejectedValueOnce(new TypeError('Failed to fetch'))
             .mockRejectedValueOnce(new TypeError('Failed to fetch'))
@@ -95,9 +95,9 @@ describe('fetchWithRetry', () => {
     })
 
     test('retries timeout errors when configured', async () => {
-        jest.useFakeTimers()
+        vi.useFakeTimers()
 
-        const fetchMock: jest.MockedFunction<typeof fetch> = jest.fn()
+        const fetchMock = vi.fn<typeof fetch>()
         fetchMock
             .mockImplementationOnce(
                 (_url: Parameters<typeof fetch>[0], options?: Parameters<typeof fetch>[1]) =>
@@ -133,17 +133,18 @@ describe('fetchWithRetry', () => {
             },
         })
 
-        await jest.advanceTimersByTimeAsync(20)
+        await vi.advanceTimersByTimeAsync(20)
 
         const response = await requestPromise
 
         expect(fetchMock).toHaveBeenCalledTimes(2)
         expect(response.data).toEqual({ ok: true })
     })
-    test('aborts built-in fetch requests when the timeout is reached', async () => {
-        jest.useFakeTimers()
 
-        const fetchMock: jest.MockedFunction<typeof fetch> = jest.fn()
+    test('aborts built-in fetch requests when the timeout is reached', async () => {
+        vi.useFakeTimers()
+
+        const fetchMock = vi.fn<typeof fetch>()
         fetchMock.mockImplementation(
             (_url: Parameters<typeof fetch>[0], options?: Parameters<typeof fetch>[1]) =>
                 new Promise<Response>((_resolve, reject) => {
@@ -163,7 +164,7 @@ describe('fetchWithRetry', () => {
         )
         global.fetch = fetchMock
 
-        const getDefaultDispatcherSpy = jest.spyOn(httpDispatcher, 'getDefaultDispatcher')
+        const getDefaultDispatcherSpy = vi.spyOn(httpDispatcher, 'getDefaultDispatcher')
 
         const requestPromise = fetchWithRetry({
             url: 'https://api.todoist.com/api/v1/tasks',
@@ -174,7 +175,7 @@ describe('fetchWithRetry', () => {
             'Request timeout after 20ms',
         )
 
-        await jest.advanceTimersByTimeAsync(20)
+        await vi.advanceTimersByTimeAsync(20)
 
         await requestExpectation
 
@@ -189,7 +190,7 @@ describe('fetchWithRetry', () => {
     })
 
     test('returns raw text when the response body is not JSON', async () => {
-        const customFetch: jest.MockedFunction<CustomFetch> = jest.fn()
+        const customFetch = vi.fn<CustomFetch>()
         customFetch.mockResolvedValue(createResponse('plain text response'))
 
         const response = await fetchWithRetry<string>({
