@@ -74,7 +74,7 @@ import {
     MoveProjectToPersonalArgs,
 } from './types/requests'
 import { CustomFetch, CustomFetchResponse } from './types/http'
-import { request, isSuccess } from './rest-client'
+import { request, isSuccess } from './transport/http-client'
 import {
     getSyncBaseUri,
     ENDPOINT_REST_TASKS,
