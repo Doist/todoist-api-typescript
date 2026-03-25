@@ -112,7 +112,7 @@ export function getAuthorizationUrl({
     baseUrl,
 }: {
     clientId: string
-    permissions: Permission[]
+    permissions: readonly Permission[]
     state: string
     baseUrl?: string
 }): string {
