@@ -36,14 +36,32 @@ export type SyncDuration = {
 /** Task priority: 1 = normal, 2 = medium, 3 = high, 4 = urgent. */
 export type TaskPriority = 1 | 2 | 3 | 4
 
+/** Available project workflow statuses. */
+export const PROJECT_STATUSES = [
+    'PLANNED',
+    'IN_PROGRESS',
+    'PAUSED',
+    'COMPLETED',
+    'CANCELED',
+] as const
 /** Project workflow status. */
-export type ProjectStatus = 'PLANNED' | 'IN_PROGRESS' | 'PAUSED' | 'COMPLETED' | 'CANCELED'
+export type ProjectStatus = (typeof PROJECT_STATUSES)[number]
 
+/** Available default collaborator roles. */
+export const COLLABORATOR_ROLES = [
+    'CREATOR',
+    'ADMIN',
+    'READ_WRITE',
+    'EDIT_ONLY',
+    'COMPLETE_ONLY',
+] as const
 /** Default collaborator role for a project. */
-export type CollaboratorRole = 'CREATOR' | 'ADMIN' | 'READ_WRITE' | 'EDIT_ONLY' | 'COMPLETE_ONLY'
+export type CollaboratorRole = (typeof COLLABORATOR_ROLES)[number]
 
+/** Available reminder notification services. */
+export const REMINDER_SERVICES = ['default', 'email', 'mobile', 'push', 'no_default'] as const
 /** Reminder notification service. */
-export type ReminderService = 'default' | 'email' | 'mobile' | 'push' | 'no_default'
+export type ReminderService = (typeof REMINDER_SERVICES)[number]
 
 /**
  * Default access level for workspaces.
@@ -51,5 +69,7 @@ export type ReminderService = 'default' | 'email' | 'mobile' | 'push' | 'no_defa
  */
 export { type ProjectVisibility as DefaultAccessLevel } from '../../entities'
 
+/** Available workspace project sort orders. */
+export const WORKSPACE_PROJECT_SORT_ORDERS = ['MANUAL', 'A_TO_Z', 'Z_TO_A'] as const
 /** Workspace project sort order preference. */
-export type WorkspaceProjectSortOrder = 'MANUAL' | 'A_TO_Z' | 'Z_TO_A'
+export type WorkspaceProjectSortOrder = (typeof WORKSPACE_PROJECT_SORT_ORDERS)[number]

@@ -24,9 +24,14 @@ export type LabelUpdateOrdersArgs = {
     idOrderMapping: Record<string, number>
 }
 
+/** Available label delete cascade modes. */
+export const LABEL_DELETE_CASCADE_MODES = ['none', 'all'] as const
+/** Cascade mode when deleting a label. */
+export type LabelDeleteCascadeMode = (typeof LABEL_DELETE_CASCADE_MODES)[number]
+
 export type LabelDeleteArgs = {
     id: string
-    cascade?: 'none' | 'all'
+    cascade?: LabelDeleteCascadeMode
 }
 
 export type LabelDeleteOccurrencesArgs = {

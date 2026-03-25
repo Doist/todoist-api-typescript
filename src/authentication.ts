@@ -18,17 +18,20 @@ export type AuthOptions = {
     customFetch?: CustomFetch
 }
 
+/** Available OAuth2 permission scopes. */
+export const PERMISSIONS = [
+    'task:add',
+    'data:read',
+    'data:read_write',
+    'data:delete',
+    'project:delete',
+    'backups:read',
+] as const
 /**
- * Permission scopes that can be requested during OAuth2 authorization.
+ * Permission scope that can be requested during OAuth2 authorization.
  * @see {@link https://todoist.com/api/v1/docs#tag/Authorization}
  */
-export type Permission =
-    | 'task:add'
-    | 'data:read'
-    | 'data:read_write'
-    | 'data:delete'
-    | 'project:delete'
-    | 'backups:read'
+export type Permission = (typeof PERMISSIONS)[number]
 
 /**
  * Parameters required to exchange an authorization code for an access token.
@@ -109,7 +112,7 @@ export function getAuthorizationUrl({
     baseUrl,
 }: {
     clientId: string
-    permissions: Permission[]
+    permissions: readonly Permission[]
     state: string
     baseUrl?: string
 }): string {

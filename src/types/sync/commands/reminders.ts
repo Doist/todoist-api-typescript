@@ -1,4 +1,5 @@
 import type { SyncDueDate, ReminderService } from './shared'
+import type { LocationTrigger } from '../resources/reminders'
 
 export type ReminderAddArgs =
     | {
@@ -23,7 +24,7 @@ export type ReminderAddArgs =
           locLat: string
           locLong: string
           radius?: number
-          locTrigger?: 'on_enter' | 'on_leave'
+          locTrigger?: LocationTrigger
           notifyUid?: string
       }
 
@@ -50,7 +51,7 @@ export type ReminderUpdateArgs =
           locLat?: string
           locLong?: string
           radius?: number
-          locTrigger?: 'on_enter' | 'on_leave'
+          locTrigger?: LocationTrigger
           notifyUid?: string
       }
 
