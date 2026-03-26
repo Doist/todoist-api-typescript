@@ -420,7 +420,7 @@ const UpdateReminderArgsSchema = z
  * Response from viewAttachment, extending CustomFetchResponse with
  * arrayBuffer() support for binary file content.
  */
-export type ViewAttachmentResponse = CustomFetchResponse & {
+export type FileResponse = CustomFetchResponse & {
     arrayBuffer(): Promise<ArrayBuffer>
 }
 
@@ -2399,7 +2399,7 @@ export class TodoistApi {
      * const text = await response.text()
      * ```
      */
-    async viewAttachment(commentOrUrl: Comment | string): Promise<ViewAttachmentResponse> {
+    async viewAttachment(commentOrUrl: Comment | string): Promise<FileResponse> {
         let fileUrl: string
 
         if (typeof commentOrUrl === 'string') {
@@ -2484,21 +2484,50 @@ export class TodoistApi {
     }
 
     /**
-     * Downloads a backup file.
+     * Downloads a backup file as binary data.
      *
-     * @param args - Arguments including the backup file URL.
-     * @returns A promise that resolves to the backup download response.
+     * @param args - Arguments including the backup file URL (from getBackups).
+     * @returns A promise that resolves to a response with binary data accessible via arrayBuffer().
      */
-    async downloadBackup(args: DownloadBackupArgs): Promise<boolean> {
-        const response = await request({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_BACKUPS_DOWNLOAD,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-        })
-        return isSuccess(response)
+    async downloadBackup(args: DownloadBackupArgs): Promise<FileResponse> {
+        const url = `${this.syncApiBase}${ENDPOINT_REST_BACKUPS_DOWNLOAD}?file=${encodeURIComponent(args.file)}`
+        const fetchOptions = {
+            headers: { Authorization: `Bearer ${this.authToken}` },
+        }
+
+        if (this.customFetch) {
+            const response = await this.customFetch(url, fetchOptions)
+            if (!response.ok) {
+                throw new Error(
+                    `Failed to download backup: ${response.status} ${response.statusText}`,
+                )
+            }
+            const text = await response.text()
+            const buffer = new TextEncoder().encode(text).buffer
+            return {
+                ok: response.ok,
+                status: response.status,
+                statusText: response.statusText,
+                headers: response.headers,
+                text: () => Promise.resolve(text),
+                json: () => response.json(),
+                arrayBuffer: () => Promise.resolve(buffer),
+            }
+        }
+
+        const response = await fetch(url, fetchOptions)
+        if (!response.ok) {
+            throw new Error(`Failed to download backup: ${response.status} ${response.statusText}`)
+        }
+        return {
+            ok: response.ok,
+            status: response.status,
+            statusText: response.statusText,
+            headers: headersToRecord(response.headers),
+            text: () => response.text(),
+            json: () => response.json(),
+            arrayBuffer: () => response.arrayBuffer(),
+        }
     }
 
     // ── Emails ──
@@ -2534,13 +2563,16 @@ export class TodoistApi {
      * @returns A promise that resolves to `true` if successful.
      */
     async disableEmailForwarding(args: DisableEmailArgs, requestId?: string): Promise<boolean> {
+        const queryParams = new URLSearchParams({
+            obj_type: args.objType,
+            obj_id: args.objId,
+        })
         const response = await request({
             httpMethod: 'DELETE',
             baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_EMAILS,
+            relativePath: `${ENDPOINT_REST_EMAILS}?${queryParams.toString()}`,
             apiToken: this.authToken,
             customFetch: this.customFetch,
-            payload: args,
             requestId: requestId,
         })
         return isSuccess(response)

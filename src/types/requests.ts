@@ -786,7 +786,9 @@ export type DownloadBackupArgs = {
 // Email forwarding types
 
 /** Object types that support email forwarding. */
-export type EmailObjectType = 'project' | 'project_comments' | 'task'
+export const EMAIL_OBJECT_TYPES = ['project', 'project_comments', 'task'] as const
+/** Object type that supports email forwarding. */
+export type EmailObjectType = (typeof EMAIL_OBJECT_TYPES)[number]
 
 /**
  * Arguments for getting or creating an email forwarding address.
@@ -820,21 +822,27 @@ export type DisableEmailArgs = {
 // ID mapping types
 
 /** Object types that support ID mappings. */
-export type IdMappingObjectType =
-    | 'sections'
-    | 'tasks'
-    | 'comments'
-    | 'reminders'
-    | 'location_reminders'
-    | 'projects'
+export const ID_MAPPING_OBJECT_TYPES = [
+    'sections',
+    'tasks',
+    'comments',
+    'reminders',
+    'location_reminders',
+    'projects',
+] as const
+/** Object type that supports ID mappings. */
+export type IdMappingObjectType = (typeof ID_MAPPING_OBJECT_TYPES)[number]
 
 /** Object types that support moved ID lookups. */
-export type MovedIdObjectType =
-    | 'sections'
-    | 'tasks'
-    | 'comments'
-    | 'reminders'
-    | 'location_reminders'
+export const MOVED_ID_OBJECT_TYPES = [
+    'sections',
+    'tasks',
+    'comments',
+    'reminders',
+    'location_reminders',
+] as const
+/** Object type that supports moved ID lookups. */
+export type MovedIdObjectType = (typeof MOVED_ID_OBJECT_TYPES)[number]
 
 /**
  * Arguments for getting ID mappings between old and new IDs.
@@ -844,7 +852,7 @@ export type GetIdMappingsArgs = {
     /** The type of object to look up. */
     objName: IdMappingObjectType
     /** Array of IDs to look up. */
-    objIds: string[]
+    objIds: [string, ...string[]]
 }
 
 /**

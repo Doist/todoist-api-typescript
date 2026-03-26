@@ -32,17 +32,20 @@ describe('TodoistApi backups endpoints', () => {
     })
 
     describe('downloadBackup', () => {
-        test('returns success from rest client', async () => {
+        test('returns file response from rest client', async () => {
             server.use(
                 http.get(`${getSyncBaseUri()}backups/download`, () => {
-                    return HttpResponse.json(undefined, { status: 200 })
+                    return new HttpResponse('binary-content', { status: 200 })
                 }),
             )
             const api = getTarget()
 
             const result = await api.downloadBackup({ file: 'backup123.zip' })
 
-            expect(result).toBe(true)
+            expect(result.ok).toBe(true)
+            expect(result.status).toBe(200)
+            const text = await result.text()
+            expect(text).toBe('binary-content')
         })
     })
 })
