@@ -1163,10 +1163,7 @@ export class TodoistApi {
      * @param requestId - Optional custom identifier for the request.
      * @returns A promise that resolves to the joined project.
      */
-    async joinProject(
-        id: string,
-        requestId?: string,
-    ): Promise<PersonalProject | WorkspaceProject> {
+    async joinProject(id: string, requestId?: string): Promise<PersonalProject | WorkspaceProject> {
         z.string().parse(id)
         const response = await request<Record<string, unknown>>({
             httpMethod: 'POST',

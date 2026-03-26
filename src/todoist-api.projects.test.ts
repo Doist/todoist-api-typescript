@@ -278,12 +278,8 @@ describe('TodoistApi project endpoints', () => {
     describe('getProjectPermissions', () => {
         test('returns permissions from rest client', async () => {
             const permissions = {
-                projectCollaboratorActions: [
-                    { name: 'ADMIN', actions: [{ name: 'edit' }] },
-                ],
-                workspaceCollaboratorActions: [
-                    { name: 'MEMBER', actions: [{ name: 'view' }] },
-                ],
+                projectCollaboratorActions: [{ name: 'ADMIN', actions: [{ name: 'edit' }] }],
+                workspaceCollaboratorActions: [{ name: 'MEMBER', actions: [{ name: 'view' }] }],
             }
             server.use(
                 http.get(`${getSyncBaseUri()}${ENDPOINT_REST_PROJECTS_PERMISSIONS}`, () => {
