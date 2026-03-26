@@ -14,7 +14,6 @@ import {
     WorkspacePlanDetails,
     JoinWorkspaceResult,
     Workspace,
-    WorkspaceUserView,
 } from './types/entities'
 import { LOCATION_TRIGGERS } from './types/sync/resources/reminders'
 import {
@@ -182,7 +181,6 @@ import {
     validateWorkspaceArray,
     validateMemberActivityInfoArray,
     validateWorkspaceUserTaskArray,
-    validateWorkspaceUserView,
 } from './utils/validators'
 import { formatDateToYYYYMMDD } from './utils/url-helpers'
 import { uploadMultipartFile } from './utils/multipart-upload'
@@ -2672,9 +2670,9 @@ export class TodoistApi {
     async updateWorkspaceUser(
         args: UpdateWorkspaceUserArgs,
         requestId?: string,
-    ): Promise<WorkspaceUserView> {
+    ): Promise<JoinWorkspaceResult> {
         const { workspaceId, userId, ...payload } = args
-        const response = await request<WorkspaceUserView>({
+        const response = await request<JoinWorkspaceResult>({
             httpMethod: 'POST',
             baseUri: this.syncApiBase,
             relativePath: getWorkspaceUserEndpoint(workspaceId, userId),
@@ -2683,7 +2681,7 @@ export class TodoistApi {
             payload: payload,
             requestId: requestId,
         })
-        return validateWorkspaceUserView(response.data)
+        return validateJoinWorkspaceResult(response.data)
     }
 
     /**

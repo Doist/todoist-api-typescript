@@ -819,7 +819,7 @@ export type UpdateWorkspaceArgs = {
  */
 export type GetWorkspaceMembersActivityArgs = {
     /** The workspace ID. */
-    workspaceId: number
+    workspaceId: string
     /** Comma-separated list of user IDs to filter by. */
     userIds?: string | null
     /** Comma-separated list of project IDs to filter by. */
@@ -839,9 +839,9 @@ export type GetWorkspaceMembersActivityResponse = {
  */
 export type GetWorkspaceUserTasksArgs = {
     /** The workspace ID. */
-    workspaceId: number
+    workspaceId: string
     /** The user ID. */
-    userId: number
+    userId: string
     /** Comma-separated list of project IDs to filter by. */
     projectIds?: string | null
 }
@@ -859,7 +859,7 @@ export type GetWorkspaceUserTasksResponse = {
  */
 export type InviteWorkspaceUsersArgs = {
     /** The workspace ID. */
-    workspaceId: number
+    workspaceId: string
     /** List of user emails to invite. */
     emailList: string[]
     /** Role assigned to invited users. */
@@ -879,9 +879,9 @@ export type InviteWorkspaceUsersResponse = {
  */
 export type UpdateWorkspaceUserArgs = {
     /** The workspace ID. */
-    workspaceId: number
+    workspaceId: string
     /** The user ID. */
-    userId: number
+    userId: string
     /** Updated role for the user. */
     role: WorkspaceRole
 }
@@ -892,9 +892,9 @@ export type UpdateWorkspaceUserArgs = {
  */
 export type RemoveWorkspaceUserArgs = {
     /** The workspace ID. */
-    workspaceId: number
+    workspaceId: string
     /** The user ID. */
-    userId: number
+    userId: string
 }
 
 /**

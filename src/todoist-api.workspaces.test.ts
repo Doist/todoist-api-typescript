@@ -641,8 +641,8 @@ describe('TodoistApi workspaces', () => {
         test('gets workspace members activity', async () => {
             const mockResponse = {
                 members: [
-                    { userId: '123', tasksAssigned: 5, tasksOverdue: 2 },
-                    { userId: '456', tasksAssigned: 3, tasksOverdue: 0 },
+                    { user_id: '123', tasks_assigned: 5, tasks_overdue: 2 },
+                    { user_id: '456', tasks_assigned: 3, tasks_overdue: 0 },
                 ],
             }
             server.use(
@@ -651,7 +651,7 @@ describe('TodoistApi workspaces', () => {
                 }),
             )
 
-            const result = await api.getWorkspaceMembersActivity({ workspaceId: 123 })
+            const result = await api.getWorkspaceMembersActivity({ workspaceId: '123' })
 
             expect(result.members).toHaveLength(2)
             expect(result.members[0]).toMatchObject({
@@ -669,16 +669,16 @@ describe('TodoistApi workspaces', () => {
                     {
                         id: '1',
                         content: 'Test task',
-                        responsibleUid: '123',
+                        responsible_uid: '123',
                         due: null,
                         deadline: null,
                         labels: ['work'],
-                        notesCount: 0,
-                        projectId: 'proj1',
-                        projectName: 'Project 1',
+                        notes_count: 0,
+                        project_id: 'proj1',
+                        project_name: 'Project 1',
                         priority: 1,
                         description: '',
-                        isOverdue: false,
+                        is_overdue: false,
                     },
                 ],
             }
@@ -689,8 +689,8 @@ describe('TodoistApi workspaces', () => {
             )
 
             const result = await api.getWorkspaceUserTasks({
-                workspaceId: 123,
-                userId: 456,
+                workspaceId: '123',
+                userId: '456',
             })
 
             expect(result.tasks).toHaveLength(1)
@@ -704,7 +704,7 @@ describe('TodoistApi workspaces', () => {
     describe('inviteWorkspaceUsers', () => {
         test('invites users to a workspace', async () => {
             const mockResponse = {
-                invitedEmails: ['user1@example.com', 'user2@example.com'],
+                invited_emails: ['user1@example.com', 'user2@example.com'],
             }
             server.use(
                 http.post(`${getSyncBaseUri()}workspaces/123/users/invite`, () => {
@@ -713,7 +713,7 @@ describe('TodoistApi workspaces', () => {
             )
 
             const result = await api.inviteWorkspaceUsers({
-                workspaceId: 123,
+                workspaceId: '123',
                 emailList: ['user1@example.com', 'user2@example.com'],
             })
 
@@ -724,11 +724,11 @@ describe('TodoistApi workspaces', () => {
     describe('updateWorkspaceUser', () => {
         test('updates a workspace user role', async () => {
             const mockResponse = {
-                userId: '456',
-                workspaceId: '123',
+                user_id: '456',
+                workspace_id: '123',
                 role: 'ADMIN',
-                customSortingApplied: false,
-                projectSortPreference: 'MANUAL',
+                custom_sorting_applied: false,
+                project_sort_preference: 'MANUAL',
             }
             server.use(
                 http.post(`${getSyncBaseUri()}workspaces/123/users/456`, () => {
@@ -737,8 +737,8 @@ describe('TodoistApi workspaces', () => {
             )
 
             const result = await api.updateWorkspaceUser({
-                workspaceId: 123,
-                userId: 456,
+                workspaceId: '123',
+                userId: '456',
                 role: 'ADMIN',
             })
 
@@ -759,8 +759,8 @@ describe('TodoistApi workspaces', () => {
             )
 
             const result = await api.removeWorkspaceUser({
-                workspaceId: 123,
-                userId: 456,
+                workspaceId: '123',
+                userId: '456',
             })
 
             expect(result).toEqual(true)

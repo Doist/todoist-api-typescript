@@ -713,20 +713,3 @@ export const WorkspaceUserTaskSchema = z.object({
  * Represents a task assigned to a workspace user.
  */
 export type WorkspaceUserTask = z.infer<typeof WorkspaceUserTaskSchema>
-
-/** Available workspace project sort preferences. */
-export const PROJECT_SORT_PREFERENCES = ['MANUAL', 'ALPHABETICAL'] as const
-/** Sort preference for projects in a workspace. */
-export type ProjectSortPreference = (typeof PROJECT_SORT_PREFERENCES)[number]
-
-export const WorkspaceUserViewSchema = z.object({
-    userId: z.string(),
-    workspaceId: z.string(),
-    role: WorkspaceRoleSchema,
-    customSortingApplied: z.boolean().default(false),
-    projectSortPreference: z.enum(PROJECT_SORT_PREFERENCES).default('MANUAL'),
-})
-/**
- * Represents a workspace user view (returned from user management endpoints).
- */
-export type WorkspaceUserView = z.infer<typeof WorkspaceUserViewSchema>
