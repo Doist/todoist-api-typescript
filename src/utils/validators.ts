@@ -27,6 +27,9 @@ import {
     ProjectHealthContextSchema,
     ProjectProgressSchema,
     WorkspaceInsightsSchema,
+    BackupSchema,
+    IdMappingSchema,
+    MovedIdSchema,
 } from '../types/entities'
 
 import {
@@ -155,6 +158,15 @@ export const validateProjectHealth = createValidator(ProjectHealthSchema)
 export const validateProjectHealthContext = createValidator(ProjectHealthContextSchema)
 export const validateProjectProgress = createValidator(ProjectProgressSchema)
 export const validateWorkspaceInsights = createValidator(WorkspaceInsightsSchema)
+
+export const validateBackup = createValidator(BackupSchema)
+export const validateBackupArray = createArrayValidator(validateBackup)
+
+export const validateIdMapping = createValidator(IdMappingSchema)
+export const validateIdMappingArray = createArrayValidator(validateIdMapping)
+
+export const validateMovedId = createValidator(MovedIdSchema)
+export const validateMovedIdArray = createArrayValidator(validateMovedId)
 
 // Sync resource validators
 

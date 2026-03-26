@@ -14,6 +14,9 @@ import {
     WorkspacePlanDetails,
     JoinWorkspaceResult,
     Workspace,
+    Backup,
+    IdMapping,
+    MovedId,
     ProjectActivityStats,
     ProjectHealth,
     ProjectHealthContext,
@@ -115,6 +118,13 @@ import {
     ImportTemplateIntoProjectArgs,
     ImportTemplateFromIdArgs,
     ImportTemplateResponse,
+    GetBackupsArgs,
+    DownloadBackupArgs,
+    GetOrCreateEmailArgs,
+    GetOrCreateEmailResponse,
+    DisableEmailArgs,
+    GetIdMappingsArgs,
+    GetMovedIdsArgs,
 } from './types/requests'
 import { CustomFetch, CustomFetchResponse } from './types/http'
 import { request, isSuccess } from './transport/http-client'
@@ -171,6 +181,11 @@ import {
     getProjectInsightsProgressEndpoint,
     getProjectInsightsHealthAnalyzeEndpoint,
     getWorkspaceInsightsEndpoint,
+    ENDPOINT_REST_BACKUPS,
+    ENDPOINT_REST_BACKUPS_DOWNLOAD,
+    ENDPOINT_REST_EMAILS,
+    ENDPOINT_REST_ID_MAPPINGS,
+    ENDPOINT_REST_MOVED_IDS,
     ENDPOINT_REST_WORKSPACES,
     ENDPOINT_WORKSPACE_MEMBERS,
     getWorkspaceUserTasksEndpoint,
@@ -221,6 +236,9 @@ import {
     validateProjectHealthContext,
     validateProjectProgress,
     validateWorkspaceInsights,
+    validateBackupArray,
+    validateIdMappingArray,
+    validateMovedIdArray,
 } from './utils/validators'
 import { formatDateToYYYYMMDD } from './utils/url-helpers'
 import { uploadMultipartFile } from './utils/multipart-upload'
@@ -2443,6 +2461,130 @@ export class TodoistApi {
             json: () => response.json(),
             arrayBuffer: () => response.arrayBuffer(),
         }
+    }
+
+    // ── Backups ──
+
+    /**
+     * Retrieves a list of available backups.
+     *
+     * @param args - Optional parameters including MFA token.
+     * @returns A promise that resolves to an array of backups.
+     */
+    async getBackups(args: GetBackupsArgs = {}): Promise<Backup[]> {
+        const response = await request<unknown[]>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_REST_BACKUPS,
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
+            payload: args,
+        })
+        return validateBackupArray(response.data)
+    }
+
+    /**
+     * Downloads a backup file.
+     *
+     * @param args - Arguments including the backup file URL.
+     * @returns A promise that resolves to the backup download response.
+     */
+    async downloadBackup(args: DownloadBackupArgs): Promise<boolean> {
+        const response = await request({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_REST_BACKUPS_DOWNLOAD,
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
+            payload: args,
+        })
+        return isSuccess(response)
+    }
+
+    // ── Emails ──
+
+    /**
+     * Gets or creates an email forwarding address for an object.
+     *
+     * @param args - Arguments including object type and ID.
+     * @param requestId - Optional custom identifier for the request.
+     * @returns A promise that resolves to the email address.
+     */
+    async getOrCreateEmailForwarding(
+        args: GetOrCreateEmailArgs,
+        requestId?: string,
+    ): Promise<GetOrCreateEmailResponse> {
+        const { data } = await request<GetOrCreateEmailResponse>({
+            httpMethod: 'PUT',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_REST_EMAILS,
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
+            payload: args,
+            requestId: requestId,
+        })
+        return data
+    }
+
+    /**
+     * Disables email forwarding for an object.
+     *
+     * @param args - Arguments including object type and ID.
+     * @param requestId - Optional custom identifier for the request.
+     * @returns A promise that resolves to `true` if successful.
+     */
+    async disableEmailForwarding(args: DisableEmailArgs, requestId?: string): Promise<boolean> {
+        const response = await request({
+            httpMethod: 'DELETE',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_REST_EMAILS,
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
+            payload: args,
+            requestId: requestId,
+        })
+        return isSuccess(response)
+    }
+
+    // ── ID Mappings ──
+
+    /**
+     * Retrieves ID mappings between old and new IDs.
+     *
+     * @param args - Arguments including object type and IDs to look up.
+     * @returns A promise that resolves to an array of ID mappings.
+     */
+    async getIdMappings(args: GetIdMappingsArgs): Promise<IdMapping[]> {
+        const response = await request<unknown[]>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: generatePath(
+                ENDPOINT_REST_ID_MAPPINGS,
+                args.objName,
+                args.objIds.join(','),
+            ),
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
+        })
+        return validateIdMappingArray(response.data)
+    }
+
+    /**
+     * Retrieves moved IDs for objects that have been migrated.
+     *
+     * @param args - Arguments including object type and optional old IDs to look up.
+     * @returns A promise that resolves to an array of moved ID pairs.
+     */
+    async getMovedIds(args: GetMovedIdsArgs): Promise<MovedId[]> {
+        const response = await request<unknown[]>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: generatePath(ENDPOINT_REST_MOVED_IDS, args.objName),
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
+            payload: args.oldIds ? { oldIds: args.oldIds.join(',') } : undefined,
+        })
+        return validateMovedIdArray(response.data)
     }
 
     // ── Templates ──
