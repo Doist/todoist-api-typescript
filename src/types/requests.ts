@@ -684,8 +684,6 @@ export type MoveProjectToPersonalArgs = {
     projectId: string
 }
 
-// Section archive/unarchive - no special args needed (just id param)
-
 // Project extras
 
 /**
