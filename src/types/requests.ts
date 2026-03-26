@@ -3,6 +3,7 @@ import type { ColorKey } from '../utils/colors'
 import type {
     ActivityEvent,
     ActivityObjectEventType,
+    CollaboratorRole,
     Comment,
     DueDate,
     Duration,
@@ -14,6 +15,7 @@ import type {
     Task,
     User,
     WorkspaceProject,
+    WorkspaceRole,
 } from './entities'
 import type { LocationTrigger } from './sync/resources/reminders'
 
@@ -680,6 +682,81 @@ export type MoveProjectToWorkspaceArgs = {
 export type MoveProjectToPersonalArgs = {
     /** The ID of the project to move. */
     projectId: string
+}
+
+// Project extras
+
+/**
+ * Arguments for counting archived projects.
+ * @see https://todoist.com/api/v1/docs#tag/Projects/operation/count_projects_archived_api_v1_projects_archived_count_get
+ */
+export type GetArchivedProjectsCountArgs = {
+    workspaceId?: number | null
+    joined?: boolean | null
+}
+
+/**
+ * Response from counting archived projects.
+ * @see https://todoist.com/api/v1/docs#tag/Projects/operation/count_projects_archived_api_v1_projects_archived_count_get
+ */
+export type GetArchivedProjectsCountResponse = {
+    count: number
+}
+
+/**
+ * An action permitted for a role.
+ */
+export type ActionView = {
+    name: string
+}
+
+/**
+ * A project collaborator role with its permitted actions.
+ */
+export type ProjectRoleView = {
+    name: CollaboratorRole
+    actions: ActionView[]
+}
+
+/**
+ * A workspace role with its permitted actions.
+ */
+export type WorkspaceRoleView = {
+    name: WorkspaceRole
+    actions: ActionView[]
+}
+
+/**
+ * Response from getting project permissions (role-to-action mappings).
+ * @see https://todoist.com/api/v1/docs#tag/Projects/operation/permissions_api_v1_projects_permissions_get
+ */
+export type GetProjectPermissionsResponse = {
+    projectCollaboratorActions: ProjectRoleView[]
+    workspaceCollaboratorActions: WorkspaceRoleView[]
+}
+
+/**
+ * Arguments for getting full project data.
+ * @see https://todoist.com/api/v1/docs#tag/Projects/operation/projects_full_data_api_v1_projects__project_id__full_get
+ */
+export type GetFullProjectArgs = {
+    /**
+     * Required to access the public project without authentication.
+     */
+    publicKey?: string | null
+}
+
+/**
+ * Response from getting full project data.
+ * @see https://todoist.com/api/v1/docs#tag/Projects/operation/projects_full_data_api_v1_projects__project_id__full_get
+ */
+export type GetFullProjectResponse = {
+    project: (PersonalProject | WorkspaceProject) | null
+    commentsCount: number
+    tasks: Task[]
+    sections: Section[]
+    collaborators: User[]
+    notes: Comment[]
 }
 
 // Workspace-related types

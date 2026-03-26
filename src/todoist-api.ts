@@ -79,6 +79,11 @@ import {
     WorkspaceLogoResponse,
     MoveProjectToWorkspaceArgs,
     MoveProjectToPersonalArgs,
+    GetArchivedProjectsCountArgs,
+    GetArchivedProjectsCountResponse,
+    GetProjectPermissionsResponse,
+    GetFullProjectArgs,
+    GetFullProjectResponse,
 } from './types/requests'
 import { CustomFetch, CustomFetchResponse } from './types/http'
 import { request, isSuccess } from './transport/http-client'
@@ -113,6 +118,12 @@ import {
     ENDPOINT_REST_PROJECTS_MOVE_TO_WORKSPACE,
     ENDPOINT_REST_PROJECTS_MOVE_TO_PERSONAL,
     ENDPOINT_REST_PROJECTS_ARCHIVED,
+    ENDPOINT_REST_PROJECTS_ARCHIVED_COUNT,
+    ENDPOINT_REST_PROJECTS_PERMISSIONS,
+    ENDPOINT_REST_PROJECT_FULL,
+    ENDPOINT_REST_PROJECT_JOIN,
+    SECTION_ARCHIVE,
+    SECTION_UNARCHIVE,
     ENDPOINT_REST_USER,
     ENDPOINT_REST_PRODUCTIVITY,
     ENDPOINT_REST_ACTIVITIES,
@@ -1087,6 +1098,92 @@ export class TodoistApi {
     }
 
     /**
+     * Counts the number of archived projects.
+     *
+     * @param args - Optional parameters to filter the count.
+     * @returns A promise that resolves to the count of archived projects.
+     */
+    async getArchivedProjectsCount(
+        args: GetArchivedProjectsCountArgs = {},
+    ): Promise<GetArchivedProjectsCountResponse> {
+        const { data } = await request<GetArchivedProjectsCountResponse>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_REST_PROJECTS_ARCHIVED_COUNT,
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
+            payload: args,
+        })
+        return data
+    }
+
+    /**
+     * Retrieves the role-to-action permission mappings for projects.
+     *
+     * @returns A promise that resolves to the permission mappings.
+     */
+    async getProjectPermissions(): Promise<GetProjectPermissionsResponse> {
+        const { data } = await request<GetProjectPermissionsResponse>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_REST_PROJECTS_PERMISSIONS,
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
+        })
+        return data
+    }
+
+    /**
+     * Retrieves full project data including tasks, sections, collaborators, and notes.
+     *
+     * @param id - The unique identifier of the project.
+     * @param args - Optional parameters.
+     * @returns A promise that resolves to the full project data.
+     */
+    async getFullProject(
+        id: string,
+        args: GetFullProjectArgs = {},
+    ): Promise<GetFullProjectResponse> {
+        z.string().parse(id)
+        const { data } = await request<Record<string, unknown>>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: generatePath(ENDPOINT_REST_PROJECTS, id, ENDPOINT_REST_PROJECT_FULL),
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
+            payload: args,
+        })
+        return {
+            project: data.project ? validateProject(data.project) : null,
+            commentsCount: data.commentsCount as number,
+            tasks: validateTaskArray(data.tasks as unknown[]),
+            sections: validateSectionArray(data.sections as unknown[]),
+            collaborators: validateUserArray(data.collaborators as unknown[]),
+            notes: validateCommentArray(data.notes as unknown[]),
+        }
+    }
+
+    /**
+     * Joins a shared project by its ID.
+     *
+     * @param id - The unique identifier of the project to join.
+     * @param requestId - Optional custom identifier for the request.
+     * @returns A promise that resolves to the joined project.
+     */
+    async joinProject(id: string, requestId?: string): Promise<PersonalProject | WorkspaceProject> {
+        z.string().parse(id)
+        const response = await request<Record<string, unknown>>({
+            httpMethod: 'POST',
+            baseUri: this.syncApiBase,
+            relativePath: generatePath(ENDPOINT_REST_PROJECTS, id, ENDPOINT_REST_PROJECT_JOIN),
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
+            requestId: requestId,
+        })
+        return validateProject(response.data)
+    }
+
+    /**
      * Retrieves a list of collaborators for a specific project.
      *
      * @param projectId - The unique identifier of the project.
@@ -1248,6 +1345,46 @@ export class TodoistApi {
             requestId: requestId,
         })
         return isSuccess(response)
+    }
+
+    /**
+     * Archives a section by its ID.
+     *
+     * @param id - The unique identifier of the section to archive.
+     * @param requestId - Optional custom identifier for the request.
+     * @returns A promise that resolves to the updated section.
+     */
+    async archiveSection(id: string, requestId?: string): Promise<Section> {
+        z.string().parse(id)
+        const response = await request<Section>({
+            httpMethod: 'POST',
+            baseUri: this.syncApiBase,
+            relativePath: generatePath(ENDPOINT_REST_SECTIONS, id, SECTION_ARCHIVE),
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
+            requestId: requestId,
+        })
+        return validateSection(response.data)
+    }
+
+    /**
+     * Unarchives a section by its ID.
+     *
+     * @param id - The unique identifier of the section to unarchive.
+     * @param requestId - Optional custom identifier for the request.
+     * @returns A promise that resolves to the updated section.
+     */
+    async unarchiveSection(id: string, requestId?: string): Promise<Section> {
+        z.string().parse(id)
+        const response = await request<Section>({
+            httpMethod: 'POST',
+            baseUri: this.syncApiBase,
+            relativePath: generatePath(ENDPOINT_REST_SECTIONS, id, SECTION_UNARCHIVE),
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
+            requestId: requestId,
+        })
+        return validateSection(response.data)
     }
 
     /**

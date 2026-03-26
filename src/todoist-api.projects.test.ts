@@ -5,6 +5,9 @@ import {
     DEFAULT_USER,
     PROJECT_WITH_OPTIONALS_AS_NULL,
     DEFAULT_PROJECT_ID,
+    DEFAULT_TASK,
+    DEFAULT_SECTION,
+    DEFAULT_RAW_COMMENT,
 } from './test-utils/test-defaults'
 import {
     getSyncBaseUri,
@@ -15,6 +18,10 @@ import {
     PROJECT_UNARCHIVE,
     ENDPOINT_REST_PROJECTS_MOVE_TO_WORKSPACE,
     ENDPOINT_REST_PROJECTS_MOVE_TO_PERSONAL,
+    ENDPOINT_REST_PROJECTS_ARCHIVED_COUNT,
+    ENDPOINT_REST_PROJECTS_PERMISSIONS,
+    ENDPOINT_REST_PROJECT_FULL,
+    ENDPOINT_REST_PROJECT_JOIN,
 } from './consts/endpoints'
 import { server, http, HttpResponse } from './test-utils/msw-setup'
 import { getProjectUrl } from './utils/url-helpers'
@@ -251,6 +258,89 @@ describe('TodoistApi project endpoints', () => {
             const api = getTarget()
 
             const project = await api.moveProjectToPersonal({ projectId: '123' })
+
+            expect(project).toEqual(DEFAULT_PROJECT)
+        })
+    })
+
+    describe('getArchivedProjectsCount', () => {
+        test('returns count from rest client', async () => {
+            server.use(
+                http.get(`${getSyncBaseUri()}${ENDPOINT_REST_PROJECTS_ARCHIVED_COUNT}`, () => {
+                    return HttpResponse.json({ count: 42 }, { status: 200 })
+                }),
+            )
+            const api = getTarget()
+
+            const result = await api.getArchivedProjectsCount()
+
+            expect(result).toEqual({ count: 42 })
+        })
+    })
+
+    describe('getProjectPermissions', () => {
+        test('returns permissions from rest client', async () => {
+            const permissions = {
+                projectCollaboratorActions: [{ name: 'ADMIN', actions: [{ name: 'edit' }] }],
+                workspaceCollaboratorActions: [{ name: 'MEMBER', actions: [{ name: 'view' }] }],
+            }
+            server.use(
+                http.get(`${getSyncBaseUri()}${ENDPOINT_REST_PROJECTS_PERMISSIONS}`, () => {
+                    return HttpResponse.json(permissions, { status: 200 })
+                }),
+            )
+            const api = getTarget()
+
+            const result = await api.getProjectPermissions()
+
+            expect(result).toEqual(permissions)
+        })
+    })
+
+    describe('getFullProject', () => {
+        test('returns full project data from rest client', async () => {
+            const fullData = {
+                project: DEFAULT_PROJECT,
+                commentsCount: 5,
+                tasks: [DEFAULT_TASK],
+                sections: [DEFAULT_SECTION],
+                collaborators: [DEFAULT_USER],
+                notes: [DEFAULT_RAW_COMMENT],
+            }
+            server.use(
+                http.get(
+                    `${getSyncBaseUri()}${ENDPOINT_REST_PROJECTS}/123/${ENDPOINT_REST_PROJECT_FULL}`,
+                    () => {
+                        return HttpResponse.json(fullData, { status: 200 })
+                    },
+                ),
+            )
+            const api = getTarget()
+
+            const result = await api.getFullProject('123')
+
+            expect(result.project).toEqual(DEFAULT_PROJECT)
+            expect(result.commentsCount).toBe(5)
+            expect(result.tasks).toHaveLength(1)
+            expect(result.sections).toHaveLength(1)
+            expect(result.collaborators).toHaveLength(1)
+            expect(result.notes).toHaveLength(1)
+        })
+    })
+
+    describe('joinProject', () => {
+        test('returns project from rest client', async () => {
+            server.use(
+                http.post(
+                    `${getSyncBaseUri()}${ENDPOINT_REST_PROJECTS}/123/${ENDPOINT_REST_PROJECT_JOIN}`,
+                    () => {
+                        return HttpResponse.json(DEFAULT_PROJECT, { status: 200 })
+                    },
+                ),
+            )
+            const api = getTarget()
+
+            const project = await api.joinProject('123')
 
             expect(project).toEqual(DEFAULT_PROJECT)
         })
