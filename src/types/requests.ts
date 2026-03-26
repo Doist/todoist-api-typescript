@@ -8,14 +8,18 @@ import type {
     DueDate,
     Duration,
     Label,
+    MemberActivityInfo,
     PersonalProject,
     ProjectViewStyle,
     ProjectVisibility,
     Section,
     Task,
     User,
+    WorkspaceInvitation,
     WorkspaceProject,
     WorkspaceRole,
+    WorkspaceUser,
+    WorkspaceUserTask,
 } from './entities'
 import type { LocationTrigger } from './sync/resources/reminders'
 
@@ -810,6 +814,90 @@ export type UpdateWorkspaceArgs = {
 }
 
 /**
+ * Arguments for getting workspace members activity.
+ * @see https://todoist.com/api/v1/docs#tag/Workspace/operation/get_workspace_members_activity_api_v1_workspaces_members_get
+ */
+export type GetWorkspaceMembersActivityArgs = {
+    /** The workspace ID. */
+    workspaceId: string
+    /** Comma-separated list of user IDs to filter by. */
+    userIds?: string | null
+    /** Comma-separated list of project IDs to filter by. */
+    projectIds?: string | null
+}
+
+/**
+ * Response from getting workspace members activity.
+ */
+export type GetWorkspaceMembersActivityResponse = {
+    members: MemberActivityInfo[]
+}
+
+/**
+ * Arguments for getting tasks assigned to a workspace user.
+ * @see https://todoist.com/api/v1/docs#tag/Workspace/operation/get_workspace_user_tasks_api_v1_workspaces__workspace_id__users__user_id__tasks_get
+ */
+export type GetWorkspaceUserTasksArgs = {
+    /** The workspace ID. */
+    workspaceId: string
+    /** The user ID. */
+    userId: string
+    /** Comma-separated list of project IDs to filter by. */
+    projectIds?: string | null
+}
+
+/**
+ * Response from getting workspace user tasks.
+ */
+export type GetWorkspaceUserTasksResponse = {
+    tasks: WorkspaceUserTask[]
+}
+
+/**
+ * Arguments for inviting users to a workspace.
+ * @see https://todoist.com/api/v1/docs#tag/Workspace/operation/invite_workspace_users_api_v1_workspaces__workspace_id__users_invite_post
+ */
+export type InviteWorkspaceUsersArgs = {
+    /** The workspace ID. */
+    workspaceId: string
+    /** List of user emails to invite. */
+    emailList: string[]
+    /** Role assigned to invited users. */
+    role?: WorkspaceRole
+}
+
+/**
+ * Response from inviting workspace users.
+ */
+export type InviteWorkspaceUsersResponse = {
+    invitedEmails: string[]
+}
+
+/**
+ * Arguments for updating a workspace user's role.
+ * @see https://todoist.com/api/v1/docs#tag/Workspace/operation/update_workspace_user_api_v1_workspaces__workspace_id__users__user_id__post
+ */
+export type UpdateWorkspaceUserArgs = {
+    /** The workspace ID. */
+    workspaceId: string
+    /** The user ID. */
+    userId: string
+    /** Updated role for the user. */
+    role: WorkspaceRole
+}
+
+/**
+ * Arguments for removing a user from a workspace.
+ * @see https://todoist.com/api/v1/docs#tag/Workspace/operation/remove_workspace_user_api_v1_workspaces__workspace_id__users__user_id__delete
+ */
+export type RemoveWorkspaceUserArgs = {
+    /** The workspace ID. */
+    workspaceId: string
+    /** The user ID. */
+    userId: string
+}
+
+/**
  * Arguments for getting workspace invitations.
  */
 export type GetWorkspaceInvitationsArgs = {
@@ -940,7 +1028,7 @@ export type GetWorkspaceUsersResponse = {
     /**
      * Array of workspace users.
      */
-    workspaceUsers: import('./entities').WorkspaceUser[]
+    workspaceUsers: WorkspaceUser[]
 }
 
 /**
@@ -951,7 +1039,7 @@ export type WorkspaceInvitationsResponse = string[]
 /**
  * Response type for all workspace invitations endpoint (detailed objects).
  */
-export type AllWorkspaceInvitationsResponse = import('./entities').WorkspaceInvitation[]
+export type AllWorkspaceInvitationsResponse = WorkspaceInvitation[]
 
 /**
  * Response type for workspace logo upload.

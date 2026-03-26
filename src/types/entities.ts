@@ -684,3 +684,32 @@ export const WorkspaceSchema = z.object({
 })
 
 export type Workspace = z.infer<typeof WorkspaceSchema>
+
+export const MemberActivityInfoSchema = z.object({
+    userId: z.string(),
+    tasksAssigned: z.number().int(),
+    tasksOverdue: z.number().int(),
+})
+/**
+ * Represents activity information for a workspace member.
+ */
+export type MemberActivityInfo = z.infer<typeof MemberActivityInfoSchema>
+
+export const WorkspaceUserTaskSchema = z.object({
+    id: z.string(),
+    content: z.string(),
+    responsibleUid: z.string().nullable(),
+    due: DueDateSchema.nullable(),
+    deadline: DeadlineSchema.nullable(),
+    labels: z.array(z.string()),
+    notesCount: z.number().int(),
+    projectId: z.string(),
+    projectName: z.string(),
+    priority: z.number().int(),
+    description: z.string(),
+    isOverdue: z.boolean(),
+})
+/**
+ * Represents a task assigned to a workspace user.
+ */
+export type WorkspaceUserTask = z.infer<typeof WorkspaceUserTaskSchema>

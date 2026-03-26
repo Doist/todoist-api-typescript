@@ -86,6 +86,14 @@ import {
     GetFullProjectResponse,
     AddWorkspaceArgs,
     UpdateWorkspaceArgs,
+    GetWorkspaceMembersActivityArgs,
+    GetWorkspaceMembersActivityResponse,
+    GetWorkspaceUserTasksArgs,
+    GetWorkspaceUserTasksResponse,
+    InviteWorkspaceUsersArgs,
+    InviteWorkspaceUsersResponse,
+    UpdateWorkspaceUserArgs,
+    RemoveWorkspaceUserArgs,
 } from './types/requests'
 import { CustomFetch, CustomFetchResponse } from './types/http'
 import { request, isSuccess } from './transport/http-client'
@@ -131,6 +139,10 @@ import {
     ENDPOINT_REST_ACTIVITIES,
     ENDPOINT_REST_UPLOADS,
     ENDPOINT_REST_WORKSPACES,
+    ENDPOINT_WORKSPACE_MEMBERS,
+    getWorkspaceUserTasksEndpoint,
+    getWorkspaceInviteUsersEndpoint,
+    getWorkspaceUserEndpoint,
     ENDPOINT_WORKSPACE_INVITATIONS,
     ENDPOINT_WORKSPACE_INVITATIONS_ALL,
     ENDPOINT_WORKSPACE_INVITATIONS_DELETE,
@@ -167,6 +179,8 @@ import {
     validateJoinWorkspaceResult,
     validateWorkspace,
     validateWorkspaceArray,
+    validateMemberActivityInfoArray,
+    validateWorkspaceUserTaskArray,
 } from './utils/validators'
 import { formatDateToYYYYMMDD } from './utils/url-helpers'
 import { uploadMultipartFile } from './utils/multipart-upload'
@@ -2563,6 +2577,126 @@ export class TodoistApi {
             httpMethod: 'DELETE',
             baseUri: this.syncApiBase,
             relativePath: generatePath(ENDPOINT_REST_WORKSPACES, id),
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
+            requestId: requestId,
+        })
+        return isSuccess(response)
+    }
+
+    /**
+     * Retrieves activity information for workspace members.
+     *
+     * @param args - Arguments including workspace ID and optional user/project filters.
+     * @param requestId - Optional custom identifier for the request.
+     * @returns A promise that resolves to workspace members activity data.
+     */
+    async getWorkspaceMembersActivity(
+        args: GetWorkspaceMembersActivityArgs,
+        requestId?: string,
+    ): Promise<GetWorkspaceMembersActivityResponse> {
+        const { workspaceId, ...queryParams } = args
+        const { data } = await request<{ members: unknown[] }>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_WORKSPACE_MEMBERS,
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
+            payload: { workspaceId, ...queryParams },
+            requestId: requestId,
+        })
+        return {
+            members: validateMemberActivityInfoArray(data.members),
+        }
+    }
+
+    /**
+     * Retrieves tasks assigned to a specific user in a workspace.
+     *
+     * @param args - Arguments including workspace ID, user ID, and optional project filter.
+     * @param requestId - Optional custom identifier for the request.
+     * @returns A promise that resolves to workspace user tasks.
+     */
+    async getWorkspaceUserTasks(
+        args: GetWorkspaceUserTasksArgs,
+        requestId?: string,
+    ): Promise<GetWorkspaceUserTasksResponse> {
+        const { workspaceId, userId, ...queryParams } = args
+        const { data } = await request<{ tasks: unknown[] }>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: getWorkspaceUserTasksEndpoint(workspaceId, userId),
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
+            payload: queryParams,
+            requestId: requestId,
+        })
+        return {
+            tasks: validateWorkspaceUserTaskArray(data.tasks),
+        }
+    }
+
+    /**
+     * Invites users to a workspace by email.
+     *
+     * @param args - Arguments including workspace ID, email list, and optional role.
+     * @param requestId - Optional custom identifier for the request.
+     * @returns A promise that resolves to the list of invited emails.
+     */
+    async inviteWorkspaceUsers(
+        args: InviteWorkspaceUsersArgs,
+        requestId?: string,
+    ): Promise<InviteWorkspaceUsersResponse> {
+        const { workspaceId, ...payload } = args
+        const { data } = await request<InviteWorkspaceUsersResponse>({
+            httpMethod: 'POST',
+            baseUri: this.syncApiBase,
+            relativePath: getWorkspaceInviteUsersEndpoint(workspaceId),
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
+            payload: payload,
+            requestId: requestId,
+        })
+        return data
+    }
+
+    /**
+     * Updates a workspace user's role.
+     *
+     * @param args - Arguments including workspace ID, user ID, and new role.
+     * @param requestId - Optional custom identifier for the request.
+     * @returns A promise that resolves to the updated workspace user view.
+     */
+    async updateWorkspaceUser(
+        args: UpdateWorkspaceUserArgs,
+        requestId?: string,
+    ): Promise<JoinWorkspaceResult> {
+        const { workspaceId, userId, ...payload } = args
+        const response = await request<JoinWorkspaceResult>({
+            httpMethod: 'POST',
+            baseUri: this.syncApiBase,
+            relativePath: getWorkspaceUserEndpoint(workspaceId, userId),
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
+            payload: payload,
+            requestId: requestId,
+        })
+        return validateJoinWorkspaceResult(response.data)
+    }
+
+    /**
+     * Removes a user from a workspace.
+     *
+     * @param args - Arguments including workspace ID and user ID.
+     * @param requestId - Optional custom identifier for the request.
+     * @returns A promise that resolves to `true` if successful.
+     */
+    async removeWorkspaceUser(args: RemoveWorkspaceUserArgs, requestId?: string): Promise<boolean> {
+        const { workspaceId, userId } = args
+        const response = await request({
+            httpMethod: 'DELETE',
+            baseUri: this.syncApiBase,
+            relativePath: getWorkspaceUserEndpoint(workspaceId, userId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
             requestId: requestId,
