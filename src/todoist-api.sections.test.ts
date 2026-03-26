@@ -4,6 +4,8 @@ import {
     getSyncBaseUri,
     ENDPOINT_REST_SECTIONS,
     ENDPOINT_REST_SECTIONS_SEARCH,
+    SECTION_ARCHIVE,
+    SECTION_UNARCHIVE,
 } from './consts/endpoints'
 import { server, http, HttpResponse } from './test-utils/msw-setup'
 import { getSectionUrl } from './utils/url-helpers'
@@ -124,6 +126,47 @@ describe('TodoistApi section endpoints', () => {
             const response = await api.deleteSection('123')
 
             expect(response).toEqual(true)
+        })
+    })
+
+    describe('archiveSection', () => {
+        test('returns result from rest client', async () => {
+            const archivedSection = {
+                ...DEFAULT_SECTION,
+                isArchived: true,
+                archivedAt: '2025-03-28T14:01:23.334881Z',
+            }
+            server.use(
+                http.post(
+                    `${getSyncBaseUri()}${ENDPOINT_REST_SECTIONS}/123/${SECTION_ARCHIVE}`,
+                    () => {
+                        return HttpResponse.json(archivedSection, { status: 200 })
+                    },
+                ),
+            )
+            const api = getTarget()
+
+            const section = await api.archiveSection('123')
+
+            expect(section).toEqual(archivedSection)
+        })
+    })
+
+    describe('unarchiveSection', () => {
+        test('returns result from rest client', async () => {
+            server.use(
+                http.post(
+                    `${getSyncBaseUri()}${ENDPOINT_REST_SECTIONS}/123/${SECTION_UNARCHIVE}`,
+                    () => {
+                        return HttpResponse.json(DEFAULT_SECTION, { status: 200 })
+                    },
+                ),
+            )
+            const api = getTarget()
+
+            const section = await api.unarchiveSection('123')
+
+            expect(section).toEqual(DEFAULT_SECTION)
         })
     })
 })

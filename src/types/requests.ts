@@ -682,6 +682,72 @@ export type MoveProjectToPersonalArgs = {
     projectId: string
 }
 
+// Section archive/unarchive - no special args needed (just id param)
+
+// Project extras
+
+/**
+ * Arguments for counting archived projects.
+ * @see https://todoist.com/api/v1/docs#tag/Projects/operation/count_projects_archived_api_v1_projects_archived_count_get
+ */
+export type GetArchivedProjectsCountArgs = {
+    workspaceId?: number | null
+    joined?: boolean | null
+}
+
+/**
+ * Response from counting archived projects.
+ * @see https://todoist.com/api/v1/docs#tag/Projects/operation/count_projects_archived_api_v1_projects_archived_count_get
+ */
+export type GetArchivedProjectsCountResponse = {
+    count: number
+}
+
+/**
+ * An action permitted for a role.
+ */
+export type ActionView = {
+    name: string
+}
+
+/**
+ * A role with its permitted actions.
+ */
+export type RoleView = {
+    name: string
+    actions: ActionView[]
+}
+
+/**
+ * Response from getting project permissions (role-to-action mappings).
+ * @see https://todoist.com/api/v1/docs#tag/Projects/operation/permissions_api_v1_projects_permissions_get
+ */
+export type GetProjectPermissionsResponse = {
+    projectCollaboratorActions: RoleView[]
+    workspaceCollaboratorActions: RoleView[]
+}
+
+/**
+ * Arguments for getting full project data.
+ * @see https://todoist.com/api/v1/docs#tag/Projects/operation/projects_full_data_api_v1_projects__project_id__full_get
+ */
+export type GetFullProjectArgs = {
+    publicKey?: string | null
+}
+
+/**
+ * Response from getting full project data.
+ * @see https://todoist.com/api/v1/docs#tag/Projects/operation/projects_full_data_api_v1_projects__project_id__full_get
+ */
+export type GetFullProjectResponse = {
+    project: (PersonalProject | WorkspaceProject) | null
+    commentsCount: number
+    tasks: Record<string, unknown>[]
+    sections: Record<string, unknown>[]
+    collaborators: Record<string, unknown>[]
+    notes: Record<string, unknown>[]
+}
+
 // Workspace-related types
 
 /**
