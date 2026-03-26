@@ -282,7 +282,7 @@ const ReminderDueDateSchema = DueDateSchema.pick({
 const UpdateRelativeReminderArgsSchema = z
     .object({
         reminderType: z.literal('relative'),
-        minuteOffset: z.number().optional(),
+        minuteOffset: z.number().int().optional(),
         notifyUid: z.string().optional(),
         service: ReminderDeliveryServiceSchema.optional(),
         isUrgent: z.boolean().optional(),
@@ -306,10 +306,10 @@ const UpdateLocationReminderArgsSchema = z
         locLat: z.string().optional(),
         locLong: z.string().optional(),
         locTrigger: z.enum(LOCATION_TRIGGERS).optional(),
-        radius: z.number().optional(),
+        radius: z.number().int().optional(),
     })
     .strict()
-    .refine((args) => Object.keys(args).length > 0, {
+    .refine((args) => Object.values(args).some((value) => value !== undefined), {
         message: 'At least one reminder field must be provided to updateLocationReminder',
     })
 
@@ -318,9 +318,15 @@ const UpdateReminderArgsSchema = z
         UpdateRelativeReminderArgsSchema,
         UpdateAbsoluteReminderArgsSchema,
     ])
-    .refine((args) => Object.keys(args).length > 1, {
-        message: 'At least one reminder field must be provided to updateReminder',
-    })
+    .refine(
+        (args) =>
+            Object.entries(args).some(
+                ([key, value]) => key !== 'reminderType' && value !== undefined,
+            ),
+        {
+            message: 'At least one reminder field must be provided to updateReminder',
+        },
+    )
 
 /**
  * Response from viewAttachment, extending CustomFetchResponse with
