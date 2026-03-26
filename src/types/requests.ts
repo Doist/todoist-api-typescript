@@ -740,6 +740,9 @@ export type GetProjectPermissionsResponse = {
  * @see https://todoist.com/api/v1/docs#tag/Projects/operation/projects_full_data_api_v1_projects__project_id__full_get
  */
 export type GetFullProjectArgs = {
+    /**
+     * Required to access the public project without authentication.
+     */
     publicKey?: string | null
 }
 
