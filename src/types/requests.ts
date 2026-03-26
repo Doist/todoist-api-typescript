@@ -8,14 +8,18 @@ import type {
     DueDate,
     Duration,
     Label,
+    MemberActivityInfo,
     PersonalProject,
     ProjectViewStyle,
     ProjectVisibility,
     Section,
     Task,
     User,
+    WorkspaceInvitation,
     WorkspaceProject,
     WorkspaceRole,
+    WorkspaceUser,
+    WorkspaceUserTask,
 } from './entities'
 import type { LocationTrigger } from './sync/resources/reminders'
 
@@ -826,7 +830,7 @@ export type GetWorkspaceMembersActivityArgs = {
  * Response from getting workspace members activity.
  */
 export type GetWorkspaceMembersActivityResponse = {
-    members: import('./entities').MemberActivityInfo[]
+    members: MemberActivityInfo[]
 }
 
 /**
@@ -846,7 +850,7 @@ export type GetWorkspaceUserTasksArgs = {
  * Response from getting workspace user tasks.
  */
 export type GetWorkspaceUserTasksResponse = {
-    tasks: import('./entities').WorkspaceUserTask[]
+    tasks: WorkspaceUserTask[]
 }
 
 /**
@@ -859,7 +863,7 @@ export type InviteWorkspaceUsersArgs = {
     /** List of user emails to invite. */
     emailList: string[]
     /** Role assigned to invited users. */
-    role?: import('./entities').WorkspaceRole
+    role?: WorkspaceRole
 }
 
 /**
@@ -879,7 +883,7 @@ export type UpdateWorkspaceUserArgs = {
     /** The user ID. */
     userId: number
     /** Updated role for the user. */
-    role: import('./entities').WorkspaceRole
+    role: WorkspaceRole
 }
 
 /**
@@ -1024,7 +1028,7 @@ export type GetWorkspaceUsersResponse = {
     /**
      * Array of workspace users.
      */
-    workspaceUsers: import('./entities').WorkspaceUser[]
+    workspaceUsers: WorkspaceUser[]
 }
 
 /**
@@ -1035,7 +1039,7 @@ export type WorkspaceInvitationsResponse = string[]
 /**
  * Response type for all workspace invitations endpoint (detailed objects).
  */
-export type AllWorkspaceInvitationsResponse = import('./entities').WorkspaceInvitation[]
+export type AllWorkspaceInvitationsResponse = WorkspaceInvitation[]
 
 /**
  * Response type for workspace logo upload.
