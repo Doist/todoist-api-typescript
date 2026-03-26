@@ -224,6 +224,7 @@ import {
 } from './utils/validators'
 import { formatDateToYYYYMMDD } from './utils/url-helpers'
 import { uploadMultipartFile } from './utils/multipart-upload'
+import { camelCaseKeys } from './utils/case-conversion'
 import {
     normalizeObjectEventTypeForApi,
     denormalizeObjectTypeFromApi,
@@ -2493,13 +2494,10 @@ export class TodoistApi {
         args: CreateProjectFromTemplateArgs,
         requestId?: string,
     ): Promise<CreateProjectFromTemplateResponse> {
-        const { file, fileName, ...fields } = args
-        const additionalFields: Record<string, string> = {}
-        if (fields.name) {
-            additionalFields.name = fields.name
-        }
-        if (fields.workspaceId) {
-            additionalFields.workspace_id = fields.workspaceId
+        const { file, fileName, name, workspaceId } = args
+        const additionalFields: Record<string, string> = { name }
+        if (workspaceId !== undefined && workspaceId !== null) {
+            additionalFields.workspace_id = workspaceId
         }
 
         const data = await uploadMultipartFile<Record<string, unknown>>({
@@ -2512,7 +2510,9 @@ export class TodoistApi {
             customFetch: this.customFetch,
             requestId,
         })
-        return this.validateTemplateResponse(data) as CreateProjectFromTemplateResponse
+        return this.validateTemplateResponse(
+            camelCaseKeys(data),
+        ) as CreateProjectFromTemplateResponse
     }
 
     /**
@@ -2537,7 +2537,7 @@ export class TodoistApi {
             customFetch: this.customFetch,
             requestId,
         })
-        return this.validateTemplateResponse(data) as ImportTemplateResponse
+        return this.validateTemplateResponse(camelCaseKeys(data)) as ImportTemplateResponse
     }
 
     /**
