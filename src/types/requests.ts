@@ -763,6 +763,109 @@ export type GetFullProjectResponse = {
     notes: Comment[]
 }
 
+// Backup types
+
+/**
+ * Arguments for listing backups.
+ * @see https://todoist.com/api/v1/docs#tag/Backups/operation/get_backups_api_v1_backups_get
+ */
+export type GetBackupsArgs = {
+    /** MFA token if required. Not needed when using an OAuth token with the `backups:read` scope. */
+    mfaToken?: string | null
+}
+
+/**
+ * Arguments for downloading a backup.
+ * @see https://todoist.com/api/v1/docs#tag/Backups/operation/download_backup_api_v1_backups_download_get
+ */
+export type DownloadBackupArgs = {
+    /** The backup file URL. */
+    file: string
+}
+
+// Email forwarding types
+
+/** Object types that support email forwarding. */
+export const EMAIL_OBJECT_TYPES = ['project', 'project_comments', 'task'] as const
+/** Object type that supports email forwarding. */
+export type EmailObjectType = (typeof EMAIL_OBJECT_TYPES)[number]
+
+/**
+ * Arguments for getting or creating an email forwarding address.
+ * @see https://todoist.com/api/v1/docs#tag/Emails/operation/email_get_or_create_api_v1_emails_put
+ */
+export type GetOrCreateEmailArgs = {
+    /** The type of object to forward emails to. */
+    objType: EmailObjectType
+    /** The ID of the object. */
+    objId: string
+}
+
+/**
+ * Response from getting or creating an email forwarding address.
+ */
+export type GetOrCreateEmailResponse = {
+    email: string
+}
+
+/**
+ * Arguments for disabling email forwarding.
+ * @see https://todoist.com/api/v1/docs#tag/Emails/operation/email_disable_api_v1_emails_delete
+ */
+export type DisableEmailArgs = {
+    /** The type of object to disable forwarding for. */
+    objType: EmailObjectType
+    /** The ID of the object. */
+    objId: string
+}
+
+// ID mapping types
+
+/** Object types that support ID mappings. */
+export const ID_MAPPING_OBJECT_TYPES = [
+    'sections',
+    'tasks',
+    'comments',
+    'reminders',
+    'location_reminders',
+    'projects',
+] as const
+/** Object type that supports ID mappings. */
+export type IdMappingObjectType = (typeof ID_MAPPING_OBJECT_TYPES)[number]
+
+/** Object types that support moved ID lookups. */
+export const MOVED_ID_OBJECT_TYPES = [
+    'sections',
+    'tasks',
+    'comments',
+    'reminders',
+    'location_reminders',
+] as const
+/** Object type that supports moved ID lookups. */
+export type MovedIdObjectType = (typeof MOVED_ID_OBJECT_TYPES)[number]
+
+/**
+ * Arguments for getting ID mappings between old and new IDs.
+ * @see https://todoist.com/api/v1/docs#tag/Ids/operation/id_mappings_api_v1_id_mappings__obj_name___obj_ids__get
+ */
+export type GetIdMappingsArgs = {
+    /** The type of object to look up. */
+    objName: IdMappingObjectType
+    /** Array of IDs to look up. */
+    objIds: [string, ...string[]]
+}
+
+/**
+ * Arguments for getting moved IDs.
+ * @see https://todoist.com/api/v1/docs#tag/Ids/operation/moved_ids_api_v1_moved_ids__obj_name__get
+ */
+export type GetMovedIdsArgs = {
+    /** The type of object to look up. */
+    objName: MovedIdObjectType
+    /** Array of old IDs to look up. */
+    oldIds?: string[]
+}
+
 // Reminders list types
 
 /**

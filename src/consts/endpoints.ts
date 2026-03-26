@@ -65,6 +65,12 @@ export const ENDPOINT_REST_TEMPLATES_IMPORT_FROM_FILE = 'templates/import_into_p
 export const ENDPOINT_REST_TEMPLATES_IMPORT_FROM_ID =
     'templates/import_into_project_from_template_id'
 
+export const ENDPOINT_REST_BACKUPS = 'backups'
+export const ENDPOINT_REST_BACKUPS_DOWNLOAD = 'backups/download'
+export const ENDPOINT_REST_EMAILS = 'emails'
+export const ENDPOINT_REST_ID_MAPPINGS = 'id_mappings'
+export const ENDPOINT_REST_MOVED_IDS = 'moved_ids'
+
 export const ENDPOINT_SYNC_QUICK_ADD = ENDPOINT_REST_TASKS + '/quick'
 
 export const ENDPOINT_SYNC = 'sync'
