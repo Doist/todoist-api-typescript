@@ -72,8 +72,8 @@ export type MigratePersonalTokenArgs = {
     clientSecret: string
     /** The personal API token obtained from email/password authentication. */
     personalToken: string
-    /** Scopes for the new OAuth token (e.g. 'data:read_write,data:delete'). */
-    scope: string
+    /** Scopes for the new OAuth token. */
+    scope: readonly Permission[]
 }
 
 /**
@@ -297,22 +297,31 @@ export async function migratePersonalToken(
     const baseUrl = options?.baseUrl
     const customFetch = options?.customFetch
 
-    const response = await request<MigratePersonalTokenResponse>({
-        httpMethod: 'POST',
-        baseUri: getSyncBaseUri(baseUrl),
-        relativePath: ENDPOINT_REST_ACCESS_TOKENS_MIGRATE,
-        apiToken: undefined,
-        payload: args,
-        customFetch,
-    })
+    try {
+        const response = await request<MigratePersonalTokenResponse>({
+            httpMethod: 'POST',
+            baseUri: getSyncBaseUri(baseUrl),
+            relativePath: ENDPOINT_REST_ACCESS_TOKENS_MIGRATE,
+            apiToken: undefined,
+            payload: { ...args, scope: args.scope.join(',') },
+            customFetch,
+        })
 
-    if (response.status !== 200) {
+        if (response.status !== 200 || !response.data?.accessToken) {
+            throw new TodoistRequestError(
+                'Personal token migration failed.',
+                response.status,
+                response.data,
+            )
+        }
+
+        return response.data
+    } catch (error) {
+        const err = error as TodoistRequestError
         throw new TodoistRequestError(
             'Personal token migration failed.',
-            response.status,
-            response.data,
+            err.httpStatusCode,
+            err.responseData,
         )
     }
-
-    return response.data
 }

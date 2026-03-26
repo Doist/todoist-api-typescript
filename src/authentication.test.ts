@@ -197,7 +197,7 @@ describe('authentication', () => {
             clientId: 'test-client-id',
             clientSecret: 'test-client-secret',
             personalToken: 'personal-api-token',
-            scope: 'data:read_write,data:delete',
+            scope: ['data:read_write', 'data:delete'] as const,
         }
 
         test('returns new OAuth token on success', async () => {
@@ -221,14 +221,16 @@ describe('authentication', () => {
             })
         })
 
-        test('throws on failure', async () => {
+        test('throws TodoistRequestError on failure', async () => {
             server.use(
                 http.post(`${getSyncBaseUri()}access_tokens/migrate_personal_token`, () => {
                     return HttpResponse.json({ error: 'invalid_token' }, { status: 400 })
                 }),
             )
 
-            await expect(migratePersonalToken(migrateArgs)).rejects.toThrow()
+            await expect(migratePersonalToken(migrateArgs)).rejects.toThrow(
+                'Personal token migration failed.',
+            )
         })
     })
 })
