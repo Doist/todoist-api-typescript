@@ -1,4 +1,4 @@
-import type { WorkspaceRole } from '../../entities'
+import type { WorkspaceRole } from '../../workspaces/types'
 import type { DefaultAccessLevel, WorkspaceProjectSortOrder } from './shared'
 
 export type SyncWorkspaceProperties = {

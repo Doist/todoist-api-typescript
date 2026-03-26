@@ -4,7 +4,7 @@ import {
     WorkspacePlanSchema,
     WorkspaceLimitsSchema,
     WorkspacePropertiesSchema,
-} from '../../entities'
+} from '../../workspaces/types'
 
 /**
  * Sync API workspace resource.

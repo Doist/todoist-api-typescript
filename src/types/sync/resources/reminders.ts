@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { DueDateSchema } from '../../entities'
+import { DueDateSchema } from '../../tasks/types'
 
 export const ReminderBaseSchema = z.object({
     id: z.string(),

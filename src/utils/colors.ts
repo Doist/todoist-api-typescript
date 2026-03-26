@@ -1,4 +1,4 @@
-import type { Color } from '../types/entities'
+import type { Color } from '../types/productivity/types'
 
 export const berryRed = {
     key: 'berry_red',

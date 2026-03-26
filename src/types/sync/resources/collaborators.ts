@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { WorkspaceRoleSchema } from '../../entities'
+import { WorkspaceRoleSchema } from '../../workspaces/types'
 
 export const CollaboratorSchema = z
     .object({
