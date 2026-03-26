@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.5.0](https://github.com/Doist/todoist-api-typescript/compare/v7.4.0...v7.5.0) (2026-03-26)
+
+
+### Features
+
+* add REST reminder support to SDK ([#496](https://github.com/Doist/todoist-api-typescript/issues/496)) ([41f3954](https://github.com/Doist/todoist-api-typescript/commit/41f3954d6d34630461c0d1531b17a600ed34d4e4))
+* add section archive/unarchive and project extras endpoints ([#509](https://github.com/Doist/todoist-api-typescript/issues/509)) ([a08118f](https://github.com/Doist/todoist-api-typescript/commit/a08118fc4f9036b714dc5620610e2960f294e43c))
+* add workspace CRUD and migrate getWorkspaces to REST ([#510](https://github.com/Doist/todoist-api-typescript/issues/510)) ([e90c74b](https://github.com/Doist/todoist-api-typescript/commit/e90c74b783814f5c781a186bb2a45a438bd86d0c))
+
+
+### Bug Fixes
+
+* honor proxy env vars by default ([#487](https://github.com/Doist/todoist-api-typescript/issues/487)) ([bf4180b](https://github.com/Doist/todoist-api-typescript/commit/bf4180b7614ea5ac824f1d67fff7fc7fbb4d6936))
+
+
+### Miscellaneous
+
+* **deps:** bump picomatch ([#508](https://github.com/Doist/todoist-api-typescript/issues/508)) ([84940a9](https://github.com/Doist/todoist-api-typescript/commit/84940a9f760f201a49ad0852822be8c7c35ac98d))
+* **deps:** update dependency msw to v2.12.13 ([#503](https://github.com/Doist/todoist-api-typescript/issues/503)) ([aac5526](https://github.com/Doist/todoist-api-typescript/commit/aac5526a0fb2a5e61f4ff3f98d2349b0eaaee014))
+* **deps:** update dependency obsidian to v1.12.3 ([#505](https://github.com/Doist/todoist-api-typescript/issues/505)) ([9699cbf](https://github.com/Doist/todoist-api-typescript/commit/9699cbf985b0411262f7b5e8638dd50f89a1e9ca))
+* **deps:** update dependency rimraf to v6.1.3 ([#506](https://github.com/Doist/todoist-api-typescript/issues/506)) ([007e154](https://github.com/Doist/todoist-api-typescript/commit/007e154fe300728cb72481dbb0770754cffa8444))
+
 ## [7.4.0](https://github.com/Doist/todoist-api-typescript/compare/v7.3.0...v7.4.0) (2026-03-25)
 
 
