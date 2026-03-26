@@ -21,7 +21,7 @@ import type {
     WorkspaceUser,
     WorkspaceUserTask,
 } from './entities'
-import type { LocationTrigger } from './sync/resources/reminders'
+import type { LocationTrigger, Reminder, LocationReminder } from './sync/resources/reminders'
 
 /**
  * Arguments for creating a new task.
@@ -782,7 +782,7 @@ export type GetRemindersArgs = {
  * Paginated response for reminders.
  */
 export type GetRemindersResponse = {
-    results: import('./sync/resources/reminders').Reminder[]
+    results: Reminder[]
     nextCursor: string | null
 }
 
@@ -803,7 +803,7 @@ export type GetLocationRemindersArgs = {
  * Paginated response for location reminders.
  */
 export type GetLocationRemindersResponse = {
-    results: import('./sync/resources/reminders').LocationReminder[]
+    results: LocationReminder[]
     nextCursor: string | null
 }
 
@@ -822,10 +822,10 @@ export type GetAllCompletedTasksArgs = {
     limit?: number
     /** Number of results to skip (default 0). */
     offset?: number
-    /** Return items completed after this date (ISO 8601). */
-    since?: string | null
-    /** Return items completed before this date (ISO 8601). */
-    until?: string | null
+    /** Return items completed after this date. */
+    since?: Date | null
+    /** Return items completed before this date. */
+    until?: Date | null
     /** Include comment data in the response. */
     annotateNotes?: boolean
     /** Include task data in the response. */
@@ -838,7 +838,7 @@ export type GetAllCompletedTasksArgs = {
 export type GetAllCompletedTasksResponse = {
     projects: Record<string, Record<string, unknown>>
     sections: Record<string, Record<string, unknown>>
-    items: Record<string, unknown>[]
+    items: Task[]
 }
 
 // Template types
@@ -895,9 +895,10 @@ export type CreateProjectFromTemplateResponse = {
     status: string
     projectId: string
     templateType: string
-    projects: Record<string, unknown>[]
-    sections: Record<string, unknown>[]
-    items: Record<string, unknown>[]
+    projects: (PersonalProject | WorkspaceProject)[]
+    sections: Section[]
+    tasks: Task[]
+    comments: Comment[]
 }
 
 /**
@@ -932,9 +933,10 @@ export type ImportTemplateFromIdArgs = {
 export type ImportTemplateResponse = {
     status: string
     templateType: string
-    projects: Record<string, unknown>[]
-    sections: Record<string, unknown>[]
-    items: Record<string, unknown>[]
+    projects: (PersonalProject | WorkspaceProject)[]
+    sections: Section[]
+    tasks: Task[]
+    comments: Comment[]
 }
 
 // Insights types

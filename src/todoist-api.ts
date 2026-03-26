@@ -684,15 +684,24 @@ export class TodoistApi {
     async getAllCompletedTasks(
         args: GetAllCompletedTasksArgs = {},
     ): Promise<GetAllCompletedTasksResponse> {
-        const { data } = await request<GetAllCompletedTasksResponse>({
+        const { since, until, ...rest } = args
+        const { data } = await request<Record<string, unknown>>({
             httpMethod: 'GET',
             baseUri: this.syncApiBase,
             relativePath: ENDPOINT_REST_TASKS_COMPLETED,
             apiToken: this.authToken,
             customFetch: this.customFetch,
-            payload: args,
+            payload: {
+                ...rest,
+                ...(since ? { since: since.toISOString() } : {}),
+                ...(until ? { until: until.toISOString() } : {}),
+            },
         })
-        return data
+        return {
+            projects: data.projects as Record<string, Record<string, unknown>>,
+            sections: data.sections as Record<string, Record<string, unknown>>,
+            items: validateTaskArray(data.items as unknown[]),
+        }
     }
 
     /**
@@ -2493,7 +2502,7 @@ export class TodoistApi {
             additionalFields.workspace_id = fields.workspaceId
         }
 
-        const data = await uploadMultipartFile<CreateProjectFromTemplateResponse>({
+        const data = await uploadMultipartFile<Record<string, unknown>>({
             baseUrl: this.syncApiBase,
             authToken: this.authToken,
             endpoint: ENDPOINT_REST_TEMPLATES_CREATE_FROM_FILE,
@@ -2503,7 +2512,7 @@ export class TodoistApi {
             customFetch: this.customFetch,
             requestId,
         })
-        return data
+        return this.validateTemplateResponse(data) as CreateProjectFromTemplateResponse
     }
 
     /**
@@ -2518,7 +2527,7 @@ export class TodoistApi {
         requestId?: string,
     ): Promise<ImportTemplateResponse> {
         const { file, fileName, projectId } = args
-        const data = await uploadMultipartFile<ImportTemplateResponse>({
+        const data = await uploadMultipartFile<Record<string, unknown>>({
             baseUrl: this.syncApiBase,
             authToken: this.authToken,
             endpoint: ENDPOINT_REST_TEMPLATES_IMPORT_FROM_FILE,
@@ -2528,7 +2537,7 @@ export class TodoistApi {
             customFetch: this.customFetch,
             requestId,
         })
-        return data
+        return this.validateTemplateResponse(data) as ImportTemplateResponse
     }
 
     /**
@@ -2542,7 +2551,7 @@ export class TodoistApi {
         args: ImportTemplateFromIdArgs,
         requestId?: string,
     ): Promise<ImportTemplateResponse> {
-        const { data } = await request<ImportTemplateResponse>({
+        const { data } = await request<Record<string, unknown>>({
             httpMethod: 'POST',
             baseUri: this.syncApiBase,
             relativePath: ENDPOINT_REST_TEMPLATES_IMPORT_FROM_ID,
@@ -2551,7 +2560,17 @@ export class TodoistApi {
             payload: args,
             requestId: requestId,
         })
-        return data
+        return this.validateTemplateResponse(data) as ImportTemplateResponse
+    }
+
+    private validateTemplateResponse(data: Record<string, unknown>) {
+        return {
+            ...data,
+            projects: validateProjectArray((data.projects as unknown[]) ?? []),
+            sections: validateSectionArray((data.sections as unknown[]) ?? []),
+            tasks: validateTaskArray((data.tasks as unknown[]) ?? []),
+            comments: validateCommentArray((data.comments as unknown[]) ?? []),
+        }
     }
 
     /* Workspace methods */

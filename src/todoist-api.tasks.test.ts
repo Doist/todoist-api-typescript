@@ -635,7 +635,7 @@ describe('TodoistApi task endpoints', () => {
             const mockResponse = {
                 projects: { '123': { id: '123', name: 'Project' } },
                 sections: {},
-                items: [{ id: '1', content: 'Done task', project_id: '123' }],
+                items: [DEFAULT_TASK],
             }
             server.use(
                 http.get(`${getSyncBaseUri()}${ENDPOINT_REST_TASKS_COMPLETED}`, () => {

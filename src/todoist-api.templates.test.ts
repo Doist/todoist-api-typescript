@@ -34,10 +34,12 @@ describe('TodoistApi template endpoints', () => {
         test('returns import result from rest client', async () => {
             const mockResponse = {
                 status: 'ok',
-                template_type: 'csv',
+                template_type: 'project',
                 projects: [],
                 sections: [],
-                items: [],
+                tasks: [],
+                comments: [],
+                project_notes: [],
             }
             server.use(
                 http.post(
@@ -51,13 +53,13 @@ describe('TodoistApi template endpoints', () => {
 
             const result = await api.importTemplateFromId({
                 projectId: '123',
-                templateId: 'tmpl_456',
+                templateId: 'product-launch',
             })
 
-            expect(result).toMatchObject({
-                status: 'ok',
-                templateType: 'csv',
-            })
+            expect(result.status).toBe('ok')
+            expect(result.templateType).toBe('project')
+            expect(result.tasks).toEqual([])
+            expect(result.sections).toEqual([])
         })
     })
 })
