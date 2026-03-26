@@ -66,6 +66,7 @@ export const ENDPOINT_GET_TOKEN = 'access_token'
 export const ENDPOINT_REVOKE = 'revoke'
 
 // Workspace endpoints
+export const ENDPOINT_REST_WORKSPACES = 'workspaces'
 export const ENDPOINT_WORKSPACE_INVITATIONS = 'workspaces/invitations'
 export const ENDPOINT_WORKSPACE_INVITATIONS_ALL = 'workspaces/invitations/all'
 export const ENDPOINT_WORKSPACE_INVITATIONS_DELETE = 'workspaces/invitations/delete'

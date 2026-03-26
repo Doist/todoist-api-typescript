@@ -64,11 +64,6 @@ describe('TodoistApi workspaces', () => {
         properties: {},
     }
 
-    const mockWorkspaceData = {
-        [mockBusinessWorkspace.id]: mockBusinessWorkspace,
-        [mockStarterWorkspace.id]: mockStarterWorkspace,
-    }
-
     describe('getWorkspaceInvitations', () => {
         test('gets workspace invitations', async () => {
             const mockResponse = ['user1@example.com', 'user2@example.com']
@@ -532,24 +527,12 @@ describe('TodoistApi workspaces', () => {
     })
 
     describe('getWorkspaces', () => {
-        test('gets workspaces successfully', async () => {
-            const mockSyncResponse = {
-                sync_token: 'abc123',
-                full_sync: true,
-                workspaces: mockWorkspaceData,
-            }
+        test('gets workspaces successfully via REST', async () => {
+            const mockWorkspacesArray = [mockBusinessWorkspace, mockStarterWorkspace]
 
             server.use(
-                http.post(`${getSyncBaseUri()}sync`, async ({ request }) => {
-                    const body = (await request.json()) as {
-                        sync_token?: string
-                        resource_types?: string[]
-                    }
-                    expect(body).toMatchObject({
-                        sync_token: '*',
-                        resource_types: ['workspaces'],
-                    })
-                    return HttpResponse.json(mockSyncResponse, { status: 200 })
+                http.get(`${getSyncBaseUri()}workspaces`, () => {
+                    return HttpResponse.json(mockWorkspacesArray, { status: 200 })
                 }),
             )
 
@@ -569,25 +552,88 @@ describe('TodoistApi workspaces', () => {
 
         test('validates workspace schema', async () => {
             server.use(
-                http.post(`${getSyncBaseUri()}sync`, () => {
+                http.get(`${getSyncBaseUri()}workspaces`, () => {
                     return HttpResponse.json(
-                        {
-                            sync_token: 'token',
-                            full_sync: true,
-                            workspaces: {
-                                invalid: {
-                                    id: '123',
-                                    name: 'Invalid',
-                                    plan: 'INVALID_PLAN',
-                                },
+                        [
+                            {
+                                id: '123',
+                                name: 'Invalid',
+                                plan: 'INVALID_PLAN',
                             },
-                        },
+                        ],
                         { status: 200 },
                     )
                 }),
             )
 
             await expect(api.getWorkspaces()).rejects.toThrow()
+        })
+    })
+
+    describe('getWorkspace', () => {
+        test('gets a single workspace by ID', async () => {
+            server.use(
+                http.get(`${getSyncBaseUri()}workspaces/12345`, () => {
+                    return HttpResponse.json(mockBusinessWorkspace, { status: 200 })
+                }),
+            )
+
+            const result = await api.getWorkspace('12345')
+
+            expect(result).toMatchObject({
+                id: '12345',
+                name: 'My Workspace',
+                plan: 'BUSINESS',
+            })
+        })
+    })
+
+    describe('addWorkspace', () => {
+        test('creates a workspace', async () => {
+            server.use(
+                http.post(`${getSyncBaseUri()}workspaces`, () => {
+                    return HttpResponse.json(mockBusinessWorkspace, { status: 200 })
+                }),
+            )
+
+            const result = await api.addWorkspace({ name: 'My Workspace' })
+
+            expect(result).toMatchObject({
+                id: '12345',
+                name: 'My Workspace',
+            })
+        })
+    })
+
+    describe('updateWorkspace', () => {
+        test('updates a workspace', async () => {
+            const updatedWorkspace = { ...mockBusinessWorkspace, name: 'Updated Name' }
+            server.use(
+                http.post(`${getSyncBaseUri()}workspaces/12345`, () => {
+                    return HttpResponse.json(updatedWorkspace, { status: 200 })
+                }),
+            )
+
+            const result = await api.updateWorkspace('12345', { name: 'Updated Name' })
+
+            expect(result).toMatchObject({
+                id: '12345',
+                name: 'Updated Name',
+            })
+        })
+    })
+
+    describe('deleteWorkspace', () => {
+        test('deletes a workspace', async () => {
+            server.use(
+                http.delete(`${getSyncBaseUri()}workspaces/12345`, () => {
+                    return HttpResponse.json(undefined, { status: 204 })
+                }),
+            )
+
+            const result = await api.deleteWorkspace('12345')
+
+            expect(result).toEqual(true)
         })
     })
 })

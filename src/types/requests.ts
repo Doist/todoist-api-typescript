@@ -762,6 +762,56 @@ export type GetFullProjectResponse = {
 // Workspace-related types
 
 /**
+ * Arguments for creating a new workspace.
+ * @see https://todoist.com/api/v1/docs#tag/Workspace/operation/create_workspace_api_v1_workspaces_post
+ */
+export type CreateWorkspaceArgs = {
+    /** Name of the workspace. */
+    name?: string | null
+    /** Description of the workspace. */
+    description?: string | null
+    /** Whether link sharing is enabled for the workspace. */
+    isLinkSharingEnabled?: boolean
+    /** Whether guests are allowed in the workspace. */
+    isGuestAllowed?: boolean
+    /** Workspace email domain. */
+    domainName?: string | null
+    /** Whether users with matching email domains can discover this workspace. */
+    domainDiscovery?: boolean
+    /** Whether workspace invites are restricted to workspace domain. */
+    restrictEmailDomains?: boolean
+    /** Workspace properties. */
+    properties?: Record<string, unknown> | null
+}
+
+/**
+ * Arguments for updating an existing workspace.
+ * @see https://todoist.com/api/v1/docs#tag/Workspace/operation/update_workspace_api_v1_workspaces__workspace_id__post
+ */
+export type UpdateWorkspaceArgs = {
+    /** Updated workspace name. */
+    name?: string | null
+    /** Updated workspace description. */
+    description?: string | null
+    /** Updated link sharing status. */
+    isLinkSharingEnabled?: boolean | null
+    /** Updated guest access status. */
+    isGuestAllowed?: boolean | null
+    /** Updated workspace email domain. */
+    domainName?: string | null
+    /** Updated domain discovery setting. */
+    domainDiscovery?: boolean | null
+    /** Updated email domain restriction setting. */
+    restrictEmailDomains?: boolean | null
+    /** Updated workspace properties. */
+    properties?: Record<string, unknown> | null
+    /** Regenerate workspace invite code when set. */
+    inviteCode?: string | null
+    /** Updated collapse state for current user. */
+    isCollapsed?: boolean | null
+}
+
+/**
  * Arguments for getting workspace invitations.
  */
 export type GetWorkspaceInvitationsArgs = {

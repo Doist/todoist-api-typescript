@@ -84,6 +84,8 @@ import {
     GetProjectPermissionsResponse,
     GetFullProjectArgs,
     GetFullProjectResponse,
+    CreateWorkspaceArgs,
+    UpdateWorkspaceArgs,
 } from './types/requests'
 import { CustomFetch, CustomFetchResponse } from './types/http'
 import { request, isSuccess } from './transport/http-client'
@@ -128,6 +130,7 @@ import {
     ENDPOINT_REST_PRODUCTIVITY,
     ENDPOINT_REST_ACTIVITIES,
     ENDPOINT_REST_UPLOADS,
+    ENDPOINT_REST_WORKSPACES,
     ENDPOINT_WORKSPACE_INVITATIONS,
     ENDPOINT_WORKSPACE_INVITATIONS_ALL,
     ENDPOINT_WORKSPACE_INVITATIONS_DELETE,
@@ -162,6 +165,7 @@ import {
     validateWorkspaceInvitationArray,
     validateWorkspacePlanDetails,
     validateJoinWorkspaceResult,
+    validateWorkspace,
     validateWorkspaceArray,
 } from './utils/validators'
 import { formatDateToYYYYMMDD } from './utils/url-helpers'
@@ -2457,8 +2461,6 @@ export class TodoistApi {
     /**
      * Retrieves all workspaces for the authenticated user.
      *
-     * Uses the Sync API internally to fetch workspace data.
-     *
      * @param requestId - Optional custom identifier for the request.
      * @returns A promise that resolves to an array of workspaces.
      *
@@ -2471,20 +2473,101 @@ export class TodoistApi {
      * ```
      */
     async getWorkspaces(requestId?: string): Promise<Workspace[]> {
-        const syncRequest: SyncRequest = {
-            syncToken: '*',
-            resourceTypes: ['workspaces'],
-        }
+        const response = await request<unknown[]>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_REST_WORKSPACES,
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
+            requestId: requestId,
+        })
+        return validateWorkspaceArray(response.data)
+    }
 
-        const syncResponse = await this.requestSync(syncRequest, requestId, false)
+    /**
+     * Retrieves a workspace by its ID.
+     *
+     * @param id - The unique identifier of the workspace.
+     * @param requestId - Optional custom identifier for the request.
+     * @returns A promise that resolves to the requested workspace.
+     */
+    async getWorkspace(id: string, requestId?: string): Promise<Workspace> {
+        z.string().parse(id)
+        const response = await request<Workspace>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: generatePath(ENDPOINT_REST_WORKSPACES, id),
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
+            requestId: requestId,
+        })
+        return validateWorkspace(response.data)
+    }
 
-        const workspacesData = syncResponse.workspaces
-        if (!workspacesData || typeof workspacesData !== 'object') {
-            return []
-        }
+    /**
+     * Creates a new workspace.
+     *
+     * @param args - The arguments for creating the workspace.
+     * @param requestId - Optional custom identifier for the request.
+     * @returns A promise that resolves to the created workspace.
+     */
+    async addWorkspace(args: CreateWorkspaceArgs, requestId?: string): Promise<Workspace> {
+        const response = await request<Workspace>({
+            httpMethod: 'POST',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_REST_WORKSPACES,
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
+            payload: args,
+            requestId: requestId,
+        })
+        return validateWorkspace(response.data)
+    }
 
-        const workspacesArray = Object.values(workspacesData)
-        return validateWorkspaceArray(workspacesArray)
+    /**
+     * Updates an existing workspace.
+     *
+     * @param id - The unique identifier of the workspace to update.
+     * @param args - The arguments for updating the workspace.
+     * @param requestId - Optional custom identifier for the request.
+     * @returns A promise that resolves to the updated workspace.
+     */
+    async updateWorkspace(
+        id: string,
+        args: UpdateWorkspaceArgs,
+        requestId?: string,
+    ): Promise<Workspace> {
+        z.string().parse(id)
+        const response = await request<Workspace>({
+            httpMethod: 'POST',
+            baseUri: this.syncApiBase,
+            relativePath: generatePath(ENDPOINT_REST_WORKSPACES, id),
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
+            payload: args,
+            requestId: requestId,
+        })
+        return validateWorkspace(response.data)
+    }
+
+    /**
+     * Deletes a workspace by its ID.
+     *
+     * @param id - The unique identifier of the workspace to delete.
+     * @param requestId - Optional custom identifier for the request.
+     * @returns A promise that resolves to `true` if successful.
+     */
+    async deleteWorkspace(id: string, requestId?: string): Promise<boolean> {
+        z.string().parse(id)
+        const response = await request({
+            httpMethod: 'DELETE',
+            baseUri: this.syncApiBase,
+            relativePath: generatePath(ENDPOINT_REST_WORKSPACES, id),
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
+            requestId: requestId,
+        })
+        return isSuccess(response)
     }
 
     /**
