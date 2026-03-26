@@ -765,15 +765,31 @@ export type GetFullProjectResponse = {
 
 // Insights types
 
+/** Known activity object types. Accepts any string for forward compatibility. */
+export type InsightsObjectType = 'ITEM' | 'PROJECT' | 'NOTE' | (string & Record<string, never>)
+
+/** Known activity event types. Accepts any string for forward compatibility. */
+export type InsightsEventType =
+    | 'ADDED'
+    | 'DELETED'
+    | 'UPDATED'
+    | 'ARCHIVED'
+    | 'UNARCHIVED'
+    | 'COMPLETED'
+    | 'UNCOMPLETED'
+    | 'SHARED'
+    | 'LEFT'
+    | (string & Record<string, never>)
+
 /**
  * Arguments for getting project activity stats.
  * @see https://todoist.com/api/v1/docs#tag/Insights/operation/get_project_activity_stats_api_v1_projects__project_id__insights_activity_stats_get
  */
 export type GetProjectActivityStatsArgs = {
     /** The type of object to get activity counts for (default: 'ITEM'). */
-    objectType?: string
+    objectType?: InsightsObjectType
     /** The type of event to count (default: 'COMPLETED'). */
-    eventType?: string
+    eventType?: InsightsEventType
     /** Number of weeks of activity counts to retrieve (1-12, default 2). */
     weeks?: number
     /** Whether to include weekly rollup counts in the response. */
