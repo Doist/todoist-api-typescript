@@ -84,7 +84,7 @@ import {
     GetProjectPermissionsResponse,
     GetFullProjectArgs,
     GetFullProjectResponse,
-    CreateWorkspaceArgs,
+    AddWorkspaceArgs,
     UpdateWorkspaceArgs,
 } from './types/requests'
 import { CustomFetch, CustomFetchResponse } from './types/http'
@@ -2511,7 +2511,7 @@ export class TodoistApi {
      * @param requestId - Optional custom identifier for the request.
      * @returns A promise that resolves to the created workspace.
      */
-    async addWorkspace(args: CreateWorkspaceArgs, requestId?: string): Promise<Workspace> {
+    async addWorkspace(args: AddWorkspaceArgs, requestId?: string): Promise<Workspace> {
         const response = await request<Workspace>({
             httpMethod: 'POST',
             baseUri: this.syncApiBase,

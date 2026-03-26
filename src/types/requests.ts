@@ -765,9 +765,9 @@ export type GetFullProjectResponse = {
  * Arguments for creating a new workspace.
  * @see https://todoist.com/api/v1/docs#tag/Workspace/operation/create_workspace_api_v1_workspaces_post
  */
-export type CreateWorkspaceArgs = {
+export type AddWorkspaceArgs = {
     /** Name of the workspace. */
-    name?: string | null
+    name: string
     /** Description of the workspace. */
     description?: string | null
     /** Whether link sharing is enabled for the workspace. */
@@ -790,25 +790,23 @@ export type CreateWorkspaceArgs = {
  */
 export type UpdateWorkspaceArgs = {
     /** Updated workspace name. */
-    name?: string | null
+    name?: string
     /** Updated workspace description. */
     description?: string | null
     /** Updated link sharing status. */
-    isLinkSharingEnabled?: boolean | null
+    isLinkSharingEnabled?: boolean
     /** Updated guest access status. */
     isGuestAllowed?: boolean | null
     /** Updated workspace email domain. */
     domainName?: string | null
     /** Updated domain discovery setting. */
-    domainDiscovery?: boolean | null
+    domainDiscovery?: boolean
     /** Updated email domain restriction setting. */
-    restrictEmailDomains?: boolean | null
+    restrictEmailDomains?: boolean
     /** Updated workspace properties. */
     properties?: Record<string, unknown> | null
-    /** Regenerate workspace invite code when set. */
-    inviteCode?: string | null
     /** Updated collapse state for current user. */
-    isCollapsed?: boolean | null
+    isCollapsed?: boolean
 }
 
 /**
