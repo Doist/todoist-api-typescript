@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.6.0](https://github.com/Doist/todoist-api-typescript/compare/v7.5.0...v7.6.0) (2026-03-26)
+
+
+### Features
+
+* add backups, email forwarding, and ID mapping endpoints ([#515](https://github.com/Doist/todoist-api-typescript/issues/515)) ([a6d36f3](https://github.com/Doist/todoist-api-typescript/commit/a6d36f3e43fd946faf55174ad1ae7225428e91ce))
+* add migratePersonalToken authentication function ([#516](https://github.com/Doist/todoist-api-typescript/issues/516)) ([332fd49](https://github.com/Doist/todoist-api-typescript/commit/332fd49fae48ec560076ab2ff157ef88a6a0ad9b))
+* add project and workspace insights endpoints ([#513](https://github.com/Doist/todoist-api-typescript/issues/513)) ([95d28c9](https://github.com/Doist/todoist-api-typescript/commit/95d28c9b27146803cc2bc8357f9ac2ac16eb8cce))
+* add reminder list, completed tasks, and template endpoints ([#514](https://github.com/Doist/todoist-api-typescript/issues/514)) ([2885fd3](https://github.com/Doist/todoist-api-typescript/commit/2885fd3880c40029dfff83f8eb0dba0d7ac9b1ab))
+* add workspace user management endpoints ([#511](https://github.com/Doist/todoist-api-typescript/issues/511)) ([468aed4](https://github.com/Doist/todoist-api-typescript/commit/468aed44a8b38d4f661a252933aedcd3d8c122a7))
+
+
+### Bug Fixes
+
+* update [@see](https://github.com/see) doc links to correct developer.todoist.com URL ([#517](https://github.com/Doist/todoist-api-typescript/issues/517)) ([82f1793](https://github.com/Doist/todoist-api-typescript/commit/82f17930200c91a0745f75575bab2409593b6398))
+
 ## [7.5.0](https://github.com/Doist/todoist-api-typescript/compare/v7.4.0...v7.5.0) (2026-03-26)
 
 
