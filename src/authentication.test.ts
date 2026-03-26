@@ -1,4 +1,10 @@
-import { getAuthorizationUrl, getAuthToken, revokeToken, Permission } from './authentication'
+import {
+    getAuthorizationUrl,
+    getAuthToken,
+    revokeToken,
+    migratePersonalToken,
+    Permission,
+} from './authentication'
 import { server, http, HttpResponse } from './test-utils/msw-setup'
 import { assertInstance } from './test-utils/asserts'
 import { TodoistRequestError } from './types'
@@ -183,6 +189,48 @@ describe('authentication', () => {
             const result = await revokeToken(revokeTokenRequest)
 
             expect(result).toBe(true)
+        })
+    })
+
+    describe('migratePersonalToken', () => {
+        const migrateArgs = {
+            clientId: 'test-client-id',
+            clientSecret: 'test-client-secret',
+            personalToken: 'personal-api-token',
+            scope: ['data:read_write', 'data:delete'] as const,
+        }
+
+        test('returns new OAuth token on success', async () => {
+            const mockResponse = {
+                access_token: 'new-oauth-token',
+                token_type: 'Bearer',
+                expires_in: 3600,
+            }
+            server.use(
+                http.post(`${getSyncBaseUri()}access_tokens/migrate_personal_token`, () => {
+                    return HttpResponse.json(mockResponse, { status: 200 })
+                }),
+            )
+
+            const result = await migratePersonalToken(migrateArgs)
+
+            expect(result).toMatchObject({
+                accessToken: 'new-oauth-token',
+                tokenType: 'Bearer',
+                expiresIn: 3600,
+            })
+        })
+
+        test('throws TodoistRequestError on failure', async () => {
+            server.use(
+                http.post(`${getSyncBaseUri()}access_tokens/migrate_personal_token`, () => {
+                    return HttpResponse.json({ error: 'invalid_token' }, { status: 400 })
+                }),
+            )
+
+            await expect(migratePersonalToken(migrateArgs)).rejects.toThrow(
+                'Personal token migration failed.',
+            )
         })
     })
 })
