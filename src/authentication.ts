@@ -30,13 +30,13 @@ export const PERMISSIONS = [
 ] as const
 /**
  * Permission scope that can be requested during OAuth2 authorization.
- * @see {@link https://todoist.com/api/v1/docs#tag/Authorization}
+ * @see {@link https://developer.todoist.com/api/v1/#tag/Authorization}
  */
 export type Permission = (typeof PERMISSIONS)[number]
 
 /**
  * Parameters required to exchange an authorization code for an access token.
- * @see https://todoist.com/api/v1/docs#tag/Authorization/OAuth
+ * @see https://developer.todoist.com/api/v1/#tag/Authorization/OAuth
  */
 export type AuthTokenRequestArgs = {
     clientId: string
@@ -45,7 +45,7 @@ export type AuthTokenRequestArgs = {
 }
 /**
  * Response from a successful OAuth2 token exchange.
- * @see https://todoist.com/api/v1/docs#tag/Authorization/OAuth
+ * @see https://developer.todoist.com/api/v1/#tag/Authorization/OAuth
  */
 export type AuthTokenResponse = {
     accessToken: string
@@ -54,7 +54,7 @@ export type AuthTokenResponse = {
 
 /**
  * Parameters required to revoke a token using RFC 7009 compliant endpoint.
- * @see https://todoist.com/api/v1/docs#tag/Authorization
+ * @see https://developer.todoist.com/api/v1/#tag/Authorization
  */
 export type RevokeTokenRequestArgs = {
     clientId: string
@@ -130,7 +130,7 @@ export function getAuthStateParameter(): string {
  * ```
  *
  * @returns The full authorization URL to redirect users to
- * @see https://todoist.com/api/v1/docs#tag/Authorization/OAuth
+ * @see https://developer.todoist.com/api/v1/#tag/Authorization/OAuth
  */
 export function getAuthorizationUrl({
     clientId,
@@ -227,7 +227,7 @@ export async function getAuthToken(
  *
  * @returns True if revocation was successful
  * @see https://datatracker.ietf.org/doc/html/rfc7009
- * @see https://todoist.com/api/v1/docs#tag/Authorization
+ * @see https://developer.todoist.com/api/v1/#tag/Authorization
  */
 export async function revokeToken(
     args: RevokeTokenRequestArgs,

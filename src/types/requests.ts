@@ -25,7 +25,7 @@ import type { LocationTrigger, Reminder, LocationReminder } from './sync/resourc
 
 /**
  * Arguments for creating a new task.
- * @see https://todoist.com/api/v1/docs#tag/Tasks/operation/create_task_api_v1_tasks_post
+ * @see https://developer.todoist.com/api/v1/#tag/Tasks/operation/create_task_api_v1_tasks_post
  */
 export type AddTaskArgs = {
     content: string
@@ -53,7 +53,7 @@ export type AddTaskArgs = {
 
 /**
  * Arguments for retrieving tasks.
- * @see https://todoist.com/api/v1/docs#tag/Tasks/operation/get_tasks_api_v1_tasks_get
+ * @see https://developer.todoist.com/api/v1/#tag/Tasks/operation/get_tasks_api_v1_tasks_get
  */
 export type GetTasksArgs = {
     projectId?: string
@@ -67,7 +67,7 @@ export type GetTasksArgs = {
 
 /**
  * Arguments for retrieving tasks by filter.
- * @see https://todoist.com/api/v1/docs#tag/Tasks/operation/get_tasks_by_filter_api_v1_tasks_filter_get
+ * @see https://developer.todoist.com/api/v1/#tag/Tasks/operation/get_tasks_by_filter_api_v1_tasks_filter_get
  */
 export type GetTasksByFilterArgs = {
     query: string
@@ -78,7 +78,7 @@ export type GetTasksByFilterArgs = {
 
 /**
  * Arguments for retrieving completed tasks by completion date.
- * @see https://todoist.com/api/v1/docs#tag/Tasks/operation/tasks_completed_by_completion_date_api_v1_tasks_completed_by_completion_date_get
+ * @see https://developer.todoist.com/api/v1/#tag/Tasks/operation/tasks_completed_by_completion_date_api_v1_tasks_completed_by_completion_date_get
  */
 export type GetCompletedTasksByCompletionDateArgs = {
     since: string
@@ -96,7 +96,7 @@ export type GetCompletedTasksByCompletionDateArgs = {
 
 /**
  * Arguments for retrieving completed tasks by due date.
- * @see https://todoist.com/api/v1/docs#tag/Tasks/operation/tasks_completed_by_due_date_api_v1_tasks_completed_by_due_date_get
+ * @see https://developer.todoist.com/api/v1/#tag/Tasks/operation/tasks_completed_by_due_date_api_v1_tasks_completed_by_due_date_get
  */
 export type GetCompletedTasksByDueDateArgs = {
     since: string
@@ -121,7 +121,7 @@ export type SearchCompletedTasksArgs = {
 }
 
 /**
- * @see https://todoist.com/api/v1/docs#tag/Tasks/operation/get_tasks_api_v1_tasks_get
+ * @see https://developer.todoist.com/api/v1/#tag/Tasks/operation/get_tasks_api_v1_tasks_get
  */
 export type GetTasksResponse = {
     results: Task[]
@@ -129,8 +129,8 @@ export type GetTasksResponse = {
 }
 
 /**
- * @see https://todoist.com/api/v1/docs#tag/Tasks/operation/tasks_completed_by_due_date_api_v1_tasks_completed_by_due_date_get
- * @see https://todoist.com/api/v1/docs#tag/Tasks/operation/tasks_completed_by_completion_date_api_v1_tasks_completed_by_completion_date_get
+ * @see https://developer.todoist.com/api/v1/#tag/Tasks/operation/tasks_completed_by_due_date_api_v1_tasks_completed_by_due_date_get
+ * @see https://developer.todoist.com/api/v1/#tag/Tasks/operation/tasks_completed_by_completion_date_api_v1_tasks_completed_by_completion_date_get
  */
 export type GetCompletedTasksResponse = {
     items: Task[]
@@ -139,7 +139,7 @@ export type GetCompletedTasksResponse = {
 
 /**
  * Arguments for updating a task.
- * @see https://todoist.com/api/v1/docs#tag/Tasks/operation/update_task_api_v1_tasks__task_id__post
+ * @see https://developer.todoist.com/api/v1/#tag/Tasks/operation/update_task_api_v1_tasks__task_id__post
  */
 export type UpdateTaskArgs = {
     content?: string
@@ -176,7 +176,7 @@ export type UpdateTaskArgs = {
 
 /**
  * Arguments for quick adding a task.
- * @see https://todoist.com/api/v1/docs#tag/Tasks/operation/quick_add_api_v1_tasks_quick_post
+ * @see https://developer.todoist.com/api/v1/#tag/Tasks/operation/quick_add_api_v1_tasks_quick_post
  */
 export type QuickAddTaskArgs = {
     text: string
@@ -189,12 +189,12 @@ export type QuickAddTaskArgs = {
 
 /**
  * Response from quick adding a task.
- * @see https://todoist.com/api/v1/docs#tag/Tasks/operation/quick_add_api_v1_tasks_quick_post
+ * @see https://developer.todoist.com/api/v1/#tag/Tasks/operation/quick_add_api_v1_tasks_quick_post
  */
 
 /**
  * Arguments for moving a task.
- * @see https://todoist.com/api/v1/docs#tag/Tasks/operation/move_task_api_v1_tasks__task_id__move_post
+ * @see https://developer.todoist.com/api/v1/#tag/Tasks/operation/move_task_api_v1_tasks__task_id__move_post
  */
 export type MoveTaskArgs = RequireExactlyOne<{
     projectId?: string
@@ -204,7 +204,7 @@ export type MoveTaskArgs = RequireExactlyOne<{
 
 /**
  * Arguments for retrieving projects.
- * @see https://todoist.com/api/v1/docs#tag/Projects/operation/get_projects_api_v1_projects_get
+ * @see https://developer.todoist.com/api/v1/#tag/Projects/operation/get_projects_api_v1_projects_get
  */
 export type GetProjectsArgs = {
     cursor?: string | null
@@ -223,7 +223,7 @@ export type SearchProjectsArgs = SearchArgs
 
 /**
  * Response from retrieving projects.
- * @see https://todoist.com/api/v1/docs#tag/Projects/operation/get_projects_api_v1_projects_get
+ * @see https://developer.todoist.com/api/v1/#tag/Projects/operation/get_projects_api_v1_projects_get
  */
 export type GetProjectsResponse = {
     results: (PersonalProject | WorkspaceProject)[]
@@ -232,7 +232,7 @@ export type GetProjectsResponse = {
 
 /**
  * Arguments for retrieving archived projects.
- * @see https://todoist.com/api/v1/docs#tag/Projects/operation/get_archived_projects_api_v1_projects_archived_get
+ * @see https://developer.todoist.com/api/v1/#tag/Projects/operation/get_archived_projects_api_v1_projects_archived_get
  */
 export type GetArchivedProjectsArgs = {
     cursor?: string | null
@@ -241,7 +241,7 @@ export type GetArchivedProjectsArgs = {
 
 /**
  * Response from retrieving archived projects.
- * @see https://todoist.com/api/v1/docs#tag/Projects/operation/get_archived_projects_api_v1_projects_archived_get
+ * @see https://developer.todoist.com/api/v1/#tag/Projects/operation/get_archived_projects_api_v1_projects_archived_get
  */
 export type GetArchivedProjectsResponse = {
     results: (PersonalProject | WorkspaceProject)[]
@@ -250,7 +250,7 @@ export type GetArchivedProjectsResponse = {
 
 /**
  * Arguments for creating a new project.
- * @see https://todoist.com/api/v1/docs#tag/Projects/operation/create_project_api_v1_projects_post
+ * @see https://developer.todoist.com/api/v1/#tag/Projects/operation/create_project_api_v1_projects_post
  */
 export type AddProjectArgs = {
     name: string
@@ -263,7 +263,7 @@ export type AddProjectArgs = {
 
 /**
  * Arguments for updating a project.
- * @see https://todoist.com/api/v1/docs#tag/Projects/operation/update_project_api_v1_projects__project_id__post
+ * @see https://developer.todoist.com/api/v1/#tag/Projects/operation/update_project_api_v1_projects__project_id__post
  */
 export type UpdateProjectArgs = {
     name?: string
@@ -274,7 +274,7 @@ export type UpdateProjectArgs = {
 
 /**
  * Arguments for retrieving project collaborators.
- * @see https://todoist.com/api/v1/docs#tag/Projects/operation/get_project_collaborators_api_v1_projects__project_id__collaborators_get
+ * @see https://developer.todoist.com/api/v1/#tag/Projects/operation/get_project_collaborators_api_v1_projects__project_id__collaborators_get
  */
 export type GetProjectCollaboratorsArgs = {
     cursor?: string | null
@@ -283,7 +283,7 @@ export type GetProjectCollaboratorsArgs = {
 
 /**
  * Response from retrieving project collaborators.
- * @see https://todoist.com/api/v1/docs#tag/Projects/operation/get_project_collaborators_api_v1_projects__project_id__collaborators_get
+ * @see https://developer.todoist.com/api/v1/#tag/Projects/operation/get_project_collaborators_api_v1_projects__project_id__collaborators_get
  */
 export type GetProjectCollaboratorsResponse = {
     results: User[]
@@ -292,7 +292,7 @@ export type GetProjectCollaboratorsResponse = {
 
 /**
  * Arguments for retrieving sections.
- * @see https://todoist.com/api/v1/docs#tag/Sections/operation/get_sections_api_v1_sections_get
+ * @see https://developer.todoist.com/api/v1/#tag/Sections/operation/get_sections_api_v1_sections_get
  */
 export type GetSectionsArgs = {
     projectId?: string | null
@@ -307,7 +307,7 @@ export type SearchSectionsArgs = SearchArgs & { projectId?: string | null }
 
 /**
  * Response from retrieving sections.
- * @see https://todoist.com/api/v1/docs#tag/Sections/operation/get_sections_api_v1_sections_get
+ * @see https://developer.todoist.com/api/v1/#tag/Sections/operation/get_sections_api_v1_sections_get
  */
 export type GetSectionsResponse = {
     results: Section[]
@@ -316,7 +316,7 @@ export type GetSectionsResponse = {
 
 /**
  * Arguments for creating a new section.
- * @see https://todoist.com/api/v1/docs#tag/Sections/operation/create_section_api_v1_sections_post
+ * @see https://developer.todoist.com/api/v1/#tag/Sections/operation/create_section_api_v1_sections_post
  */
 export type AddSectionArgs = {
     name: string
@@ -326,7 +326,7 @@ export type AddSectionArgs = {
 
 /**
  * Arguments for updating a section.
- * @see https://todoist.com/api/v1/docs#tag/Sections/operation/update_section_api_v1_sections__section_id__post
+ * @see https://developer.todoist.com/api/v1/#tag/Sections/operation/update_section_api_v1_sections__section_id__post
  */
 export type UpdateSectionArgs = {
     name: string
@@ -334,7 +334,7 @@ export type UpdateSectionArgs = {
 
 /**
  * Arguments for retrieving labels.
- * @see https://todoist.com/api/v1/docs#tag/Labels/operation/get_labels_api_v1_labels_get
+ * @see https://developer.todoist.com/api/v1/#tag/Labels/operation/get_labels_api_v1_labels_get
  */
 export type GetLabelsArgs = {
     cursor?: string | null
@@ -348,7 +348,7 @@ export type SearchLabelsArgs = SearchArgs
 
 /**
  * Response from retrieving labels.
- * @see https://todoist.com/api/v1/docs#tag/Labels/operation/get_labels_api_v1_labels_get
+ * @see https://developer.todoist.com/api/v1/#tag/Labels/operation/get_labels_api_v1_labels_get
  */
 export type GetLabelsResponse = {
     results: Label[]
@@ -357,7 +357,7 @@ export type GetLabelsResponse = {
 
 /**
  * Arguments for creating a new label.
- * @see https://todoist.com/api/v1/docs#tag/Labels/operation/create_label_api_v1_labels_post
+ * @see https://developer.todoist.com/api/v1/#tag/Labels/operation/create_label_api_v1_labels_post
  */
 export type AddLabelArgs = {
     name: string
@@ -368,7 +368,7 @@ export type AddLabelArgs = {
 
 /**
  * Arguments for updating a label.
- * @see https://todoist.com/api/v1/docs#tag/Labels/operation/update_label_api_v1_labels__label_id__post
+ * @see https://developer.todoist.com/api/v1/#tag/Labels/operation/update_label_api_v1_labels__label_id__post
  */
 export type UpdateLabelArgs = {
     name?: string
@@ -379,7 +379,7 @@ export type UpdateLabelArgs = {
 
 /**
  * Arguments for retrieving shared labels.
- * @see https://todoist.com/api/v1/docs#tag/Labels/operation/shared_labels_api_v1_labels_shared_get
+ * @see https://developer.todoist.com/api/v1/#tag/Labels/operation/shared_labels_api_v1_labels_shared_get
  */
 export type GetSharedLabelsArgs = {
     omitPersonal?: boolean
@@ -389,7 +389,7 @@ export type GetSharedLabelsArgs = {
 
 /**
  * Response from retrieving shared labels.
- * @see https://todoist.com/api/v1/docs#tag/Labels/operation/shared_labels_api_v1_labels_shared_get
+ * @see https://developer.todoist.com/api/v1/#tag/Labels/operation/shared_labels_api_v1_labels_shared_get
  */
 export type GetSharedLabelsResponse = {
     results: string[]
@@ -398,7 +398,7 @@ export type GetSharedLabelsResponse = {
 
 /**
  * Arguments for renaming a shared label.
- * @see https://todoist.com/api/v1/docs#tag/Labels/operation/shared_labels_rename_api_v1_labels_shared_rename_post
+ * @see https://developer.todoist.com/api/v1/#tag/Labels/operation/shared_labels_rename_api_v1_labels_shared_rename_post
  */
 export type RenameSharedLabelArgs = {
     name: string
@@ -407,7 +407,7 @@ export type RenameSharedLabelArgs = {
 
 /**
  * Arguments for removing a shared label.
- * @see https://todoist.com/api/v1/docs#tag/Labels/operation/shared_labels_remove_api_v1_labels_shared_remove_post
+ * @see https://developer.todoist.com/api/v1/#tag/Labels/operation/shared_labels_remove_api_v1_labels_shared_remove_post
  */
 export type RemoveSharedLabelArgs = {
     name: string
@@ -415,7 +415,7 @@ export type RemoveSharedLabelArgs = {
 
 /**
  * Arguments for retrieving comments.
- * @see https://todoist.com/api/v1/docs#tag/Comments/operation/get_comments_api_v1_comments_get
+ * @see https://developer.todoist.com/api/v1/#tag/Comments/operation/get_comments_api_v1_comments_get
  */
 export type GetCommentsArgs = {
     taskId: string
@@ -426,7 +426,7 @@ export type GetCommentsArgs = {
 
 /**
  * Arguments for retrieving task comments.
- * @see https://todoist.com/api/v1/docs#tag/Comments/operation/get_comments_api_v1_comments_get
+ * @see https://developer.todoist.com/api/v1/#tag/Comments/operation/get_comments_api_v1_comments_get
  */
 export type GetTaskCommentsArgs = {
     taskId: string
@@ -437,7 +437,7 @@ export type GetTaskCommentsArgs = {
 
 /**
  * Arguments for retrieving project comments.
- * @see https://todoist.com/api/v1/docs#tag/Comments/operation/get_comments_api_v1_comments_get
+ * @see https://developer.todoist.com/api/v1/#tag/Comments/operation/get_comments_api_v1_comments_get
  */
 export type GetProjectCommentsArgs = {
     projectId: string
@@ -448,7 +448,7 @@ export type GetProjectCommentsArgs = {
 
 /**
  * Response from retrieving comments.
- * @see https://todoist.com/api/v1/docs#tag/Comments/operation/get_comments_api_v1_comments_get
+ * @see https://developer.todoist.com/api/v1/#tag/Comments/operation/get_comments_api_v1_comments_get
  */
 export type GetCommentsResponse = {
     results: Comment[]
@@ -457,7 +457,7 @@ export type GetCommentsResponse = {
 
 /**
  * Arguments for creating a new comment.
- * @see https://todoist.com/api/v1/docs#tag/Comments/operation/create_comment_api_v1_comments_post
+ * @see https://developer.todoist.com/api/v1/#tag/Comments/operation/create_comment_api_v1_comments_post
  */
 export type AddCommentArgs = {
     content: string
@@ -474,7 +474,7 @@ export type AddCommentArgs = {
 
 /**
  * Arguments for updating a comment.
- * @see https://todoist.com/api/v1/docs#tag/Comments/operation/update_comment_api_v1_comments__comment_id__post
+ * @see https://developer.todoist.com/api/v1/#tag/Comments/operation/update_comment_api_v1_comments__comment_id__post
  */
 export type UpdateCommentArgs = {
     content: string
@@ -632,7 +632,7 @@ export type GetActivityLogsResponse = {
 
 /**
  * Arguments for uploading a file.
- * @see https://todoist.com/api/v1/docs#tag/Uploads/operation/upload_file_api_v1_uploads_post
+ * @see https://developer.todoist.com/api/v1/#tag/Uploads/operation/upload_file_api_v1_uploads_post
  */
 export type UploadFileArgs = {
     /**
@@ -655,7 +655,7 @@ export type UploadFileArgs = {
 
 /**
  * Arguments for deleting an uploaded file.
- * @see https://todoist.com/api/v1/docs#tag/Uploads/operation/delete_upload_api_v1_uploads_delete
+ * @see https://developer.todoist.com/api/v1/#tag/Uploads/operation/delete_upload_api_v1_uploads_delete
  */
 export type DeleteUploadArgs = {
     /**
@@ -692,7 +692,7 @@ export type MoveProjectToPersonalArgs = {
 
 /**
  * Arguments for counting archived projects.
- * @see https://todoist.com/api/v1/docs#tag/Projects/operation/count_projects_archived_api_v1_projects_archived_count_get
+ * @see https://developer.todoist.com/api/v1/#tag/Projects/operation/count_projects_archived_api_v1_projects_archived_count_get
  */
 export type GetArchivedProjectsCountArgs = {
     workspaceId?: number | null
@@ -701,7 +701,7 @@ export type GetArchivedProjectsCountArgs = {
 
 /**
  * Response from counting archived projects.
- * @see https://todoist.com/api/v1/docs#tag/Projects/operation/count_projects_archived_api_v1_projects_archived_count_get
+ * @see https://developer.todoist.com/api/v1/#tag/Projects/operation/count_projects_archived_api_v1_projects_archived_count_get
  */
 export type GetArchivedProjectsCountResponse = {
     count: number
@@ -732,7 +732,7 @@ export type WorkspaceRoleView = {
 
 /**
  * Response from getting project permissions (role-to-action mappings).
- * @see https://todoist.com/api/v1/docs#tag/Projects/operation/permissions_api_v1_projects_permissions_get
+ * @see https://developer.todoist.com/api/v1/#tag/Projects/operation/permissions_api_v1_projects_permissions_get
  */
 export type GetProjectPermissionsResponse = {
     projectCollaboratorActions: ProjectRoleView[]
@@ -741,7 +741,7 @@ export type GetProjectPermissionsResponse = {
 
 /**
  * Arguments for getting full project data.
- * @see https://todoist.com/api/v1/docs#tag/Projects/operation/projects_full_data_api_v1_projects__project_id__full_get
+ * @see https://developer.todoist.com/api/v1/#tag/Projects/operation/projects_full_data_api_v1_projects__project_id__full_get
  */
 export type GetFullProjectArgs = {
     /**
@@ -752,7 +752,7 @@ export type GetFullProjectArgs = {
 
 /**
  * Response from getting full project data.
- * @see https://todoist.com/api/v1/docs#tag/Projects/operation/projects_full_data_api_v1_projects__project_id__full_get
+ * @see https://developer.todoist.com/api/v1/#tag/Projects/operation/projects_full_data_api_v1_projects__project_id__full_get
  */
 export type GetFullProjectResponse = {
     project: (PersonalProject | WorkspaceProject) | null
@@ -767,7 +767,7 @@ export type GetFullProjectResponse = {
 
 /**
  * Arguments for listing backups.
- * @see https://todoist.com/api/v1/docs#tag/Backups/operation/get_backups_api_v1_backups_get
+ * @see https://developer.todoist.com/api/v1/#tag/Backups/operation/get_backups_api_v1_backups_get
  */
 export type GetBackupsArgs = {
     /** MFA token if required. Not needed when using an OAuth token with the `backups:read` scope. */
@@ -776,7 +776,7 @@ export type GetBackupsArgs = {
 
 /**
  * Arguments for downloading a backup.
- * @see https://todoist.com/api/v1/docs#tag/Backups/operation/download_backup_api_v1_backups_download_get
+ * @see https://developer.todoist.com/api/v1/#tag/Backups/operation/download_backup_api_v1_backups_download_get
  */
 export type DownloadBackupArgs = {
     /** The backup file URL. */
@@ -792,7 +792,7 @@ export type EmailObjectType = (typeof EMAIL_OBJECT_TYPES)[number]
 
 /**
  * Arguments for getting or creating an email forwarding address.
- * @see https://todoist.com/api/v1/docs#tag/Emails/operation/email_get_or_create_api_v1_emails_put
+ * @see https://developer.todoist.com/api/v1/#tag/Emails/operation/email_get_or_create_api_v1_emails_put
  */
 export type GetOrCreateEmailArgs = {
     /** The type of object to forward emails to. */
@@ -810,7 +810,7 @@ export type GetOrCreateEmailResponse = {
 
 /**
  * Arguments for disabling email forwarding.
- * @see https://todoist.com/api/v1/docs#tag/Emails/operation/email_disable_api_v1_emails_delete
+ * @see https://developer.todoist.com/api/v1/#tag/Emails/operation/email_disable_api_v1_emails_delete
  */
 export type DisableEmailArgs = {
     /** The type of object to disable forwarding for. */
@@ -846,7 +846,7 @@ export type MovedIdObjectType = (typeof MOVED_ID_OBJECT_TYPES)[number]
 
 /**
  * Arguments for getting ID mappings between old and new IDs.
- * @see https://todoist.com/api/v1/docs#tag/Ids/operation/id_mappings_api_v1_id_mappings__obj_name___obj_ids__get
+ * @see https://developer.todoist.com/api/v1/#tag/Ids/operation/id_mappings_api_v1_id_mappings__obj_name___obj_ids__get
  */
 export type GetIdMappingsArgs = {
     /** The type of object to look up. */
@@ -857,7 +857,7 @@ export type GetIdMappingsArgs = {
 
 /**
  * Arguments for getting moved IDs.
- * @see https://todoist.com/api/v1/docs#tag/Ids/operation/moved_ids_api_v1_moved_ids__obj_name__get
+ * @see https://developer.todoist.com/api/v1/#tag/Ids/operation/moved_ids_api_v1_moved_ids__obj_name__get
  */
 export type GetMovedIdsArgs = {
     /** The type of object to look up. */
@@ -870,7 +870,7 @@ export type GetMovedIdsArgs = {
 
 /**
  * Arguments for listing reminders.
- * @see https://todoist.com/api/v1/docs#tag/Reminders/operation/get_reminders_api_v1_reminders_get
+ * @see https://developer.todoist.com/api/v1/#tag/Reminders/operation/get_reminders_api_v1_reminders_get
  */
 export type GetRemindersArgs = {
     /** Filter by task ID. */
@@ -891,7 +891,7 @@ export type GetRemindersResponse = {
 
 /**
  * Arguments for listing location reminders.
- * @see https://todoist.com/api/v1/docs#tag/Location-reminders/operation/get_location_reminders_api_v1_location_reminders_get
+ * @see https://developer.todoist.com/api/v1/#tag/Location-reminders/operation/get_location_reminders_api_v1_location_reminders_get
  */
 export type GetLocationRemindersArgs = {
     /** Filter by task ID. */
@@ -914,7 +914,7 @@ export type GetLocationRemindersResponse = {
 
 /**
  * Arguments for getting all completed tasks.
- * @see https://todoist.com/api/v1/docs#tag/Tasks/operation/get_all_completed_items_api_v1_tasks_completed_get
+ * @see https://developer.todoist.com/api/v1/#tag/Tasks/operation/get_all_completed_items_api_v1_tasks_completed_get
  */
 export type GetAllCompletedTasksArgs = {
     /** Filter by project ID. */
@@ -948,7 +948,7 @@ export type GetAllCompletedTasksResponse = {
 
 /**
  * Arguments for exporting a project as a template file.
- * @see https://todoist.com/api/v1/docs#tag/Templates/operation/export_as_file_api_v1_templates_file_get
+ * @see https://developer.todoist.com/api/v1/#tag/Templates/operation/export_as_file_api_v1_templates_file_get
  */
 export type ExportTemplateFileArgs = {
     /** The project ID to export. */
@@ -959,7 +959,7 @@ export type ExportTemplateFileArgs = {
 
 /**
  * Arguments for exporting a project as a template URL.
- * @see https://todoist.com/api/v1/docs#tag/Templates/operation/export_as_url_api_v1_templates_url_get
+ * @see https://developer.todoist.com/api/v1/#tag/Templates/operation/export_as_url_api_v1_templates_url_get
  */
 export type ExportTemplateUrlArgs = {
     /** The project ID to export. */
@@ -978,7 +978,7 @@ export type ExportTemplateUrlResponse = {
 
 /**
  * Arguments for creating a project from a template file.
- * @see https://todoist.com/api/v1/docs#tag/Templates/operation/create_project_from_file_api_v1_templates_create_project_from_file_post
+ * @see https://developer.todoist.com/api/v1/#tag/Templates/operation/create_project_from_file_api_v1_templates_create_project_from_file_post
  */
 export type CreateProjectFromTemplateArgs = {
     /** Name for the new project. */
@@ -1006,7 +1006,7 @@ export type CreateProjectFromTemplateResponse = {
 
 /**
  * Arguments for importing a template file into an existing project.
- * @see https://todoist.com/api/v1/docs#tag/Templates/operation/import_into_project_from_file_api_v1_templates_import_into_project_from_file_post
+ * @see https://developer.todoist.com/api/v1/#tag/Templates/operation/import_into_project_from_file_api_v1_templates_import_into_project_from_file_post
  */
 export type ImportTemplateIntoProjectArgs = {
     /** The project ID to import into. */
@@ -1019,7 +1019,7 @@ export type ImportTemplateIntoProjectArgs = {
 
 /**
  * Arguments for importing a template by ID into an existing project.
- * @see https://todoist.com/api/v1/docs#tag/Templates/operation/import_into_project_from_template_id_api_v1_templates_import_into_project_from_template_id_post
+ * @see https://developer.todoist.com/api/v1/#tag/Templates/operation/import_into_project_from_template_id_api_v1_templates_import_into_project_from_template_id_post
  */
 export type ImportTemplateFromIdArgs = {
     /** The project ID to import into. */
@@ -1062,7 +1062,7 @@ export type InsightsEventType =
 
 /**
  * Arguments for getting project activity stats.
- * @see https://todoist.com/api/v1/docs#tag/Insights/operation/get_project_activity_stats_api_v1_projects__project_id__insights_activity_stats_get
+ * @see https://developer.todoist.com/api/v1/#tag/Insights/operation/get_project_activity_stats_api_v1_projects__project_id__insights_activity_stats_get
  */
 export type GetProjectActivityStatsArgs = {
     /** The type of object to get activity counts for (default: 'ITEM'). */
@@ -1077,7 +1077,7 @@ export type GetProjectActivityStatsArgs = {
 
 /**
  * Arguments for getting workspace insights.
- * @see https://todoist.com/api/v1/docs#tag/Insights/operation/get_workspace_insights_api_v1_workspaces__workspace_id__insights_get
+ * @see https://developer.todoist.com/api/v1/#tag/Insights/operation/get_workspace_insights_api_v1_workspaces__workspace_id__insights_get
  */
 export type GetWorkspaceInsightsArgs = {
     /** Project IDs to get insights for. */
@@ -1088,7 +1088,7 @@ export type GetWorkspaceInsightsArgs = {
 
 /**
  * Arguments for creating a new workspace.
- * @see https://todoist.com/api/v1/docs#tag/Workspace/operation/create_workspace_api_v1_workspaces_post
+ * @see https://developer.todoist.com/api/v1/#tag/Workspace/operation/create_workspace_api_v1_workspaces_post
  */
 export type AddWorkspaceArgs = {
     /** Name of the workspace. */
@@ -1111,7 +1111,7 @@ export type AddWorkspaceArgs = {
 
 /**
  * Arguments for updating an existing workspace.
- * @see https://todoist.com/api/v1/docs#tag/Workspace/operation/update_workspace_api_v1_workspaces__workspace_id__post
+ * @see https://developer.todoist.com/api/v1/#tag/Workspace/operation/update_workspace_api_v1_workspaces__workspace_id__post
  */
 export type UpdateWorkspaceArgs = {
     /** Updated workspace name. */
@@ -1136,7 +1136,7 @@ export type UpdateWorkspaceArgs = {
 
 /**
  * Arguments for getting workspace members activity.
- * @see https://todoist.com/api/v1/docs#tag/Workspace/operation/get_workspace_members_activity_api_v1_workspaces_members_get
+ * @see https://developer.todoist.com/api/v1/#tag/Workspace/operation/get_workspace_members_activity_api_v1_workspaces_members_get
  */
 export type GetWorkspaceMembersActivityArgs = {
     /** The workspace ID. */
@@ -1156,7 +1156,7 @@ export type GetWorkspaceMembersActivityResponse = {
 
 /**
  * Arguments for getting tasks assigned to a workspace user.
- * @see https://todoist.com/api/v1/docs#tag/Workspace/operation/get_workspace_user_tasks_api_v1_workspaces__workspace_id__users__user_id__tasks_get
+ * @see https://developer.todoist.com/api/v1/#tag/Workspace/operation/get_workspace_user_tasks_api_v1_workspaces__workspace_id__users__user_id__tasks_get
  */
 export type GetWorkspaceUserTasksArgs = {
     /** The workspace ID. */
@@ -1176,7 +1176,7 @@ export type GetWorkspaceUserTasksResponse = {
 
 /**
  * Arguments for inviting users to a workspace.
- * @see https://todoist.com/api/v1/docs#tag/Workspace/operation/invite_workspace_users_api_v1_workspaces__workspace_id__users_invite_post
+ * @see https://developer.todoist.com/api/v1/#tag/Workspace/operation/invite_workspace_users_api_v1_workspaces__workspace_id__users_invite_post
  */
 export type InviteWorkspaceUsersArgs = {
     /** The workspace ID. */
@@ -1196,7 +1196,7 @@ export type InviteWorkspaceUsersResponse = {
 
 /**
  * Arguments for updating a workspace user's role.
- * @see https://todoist.com/api/v1/docs#tag/Workspace/operation/update_workspace_user_api_v1_workspaces__workspace_id__users__user_id__post
+ * @see https://developer.todoist.com/api/v1/#tag/Workspace/operation/update_workspace_user_api_v1_workspaces__workspace_id__users__user_id__post
  */
 export type UpdateWorkspaceUserArgs = {
     /** The workspace ID. */
@@ -1209,7 +1209,7 @@ export type UpdateWorkspaceUserArgs = {
 
 /**
  * Arguments for removing a user from a workspace.
- * @see https://todoist.com/api/v1/docs#tag/Workspace/operation/remove_workspace_user_api_v1_workspaces__workspace_id__users__user_id__delete
+ * @see https://developer.todoist.com/api/v1/#tag/Workspace/operation/remove_workspace_user_api_v1_workspaces__workspace_id__users__user_id__delete
  */
 export type RemoveWorkspaceUserArgs = {
     /** The workspace ID. */
