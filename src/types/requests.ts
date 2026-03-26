@@ -770,7 +770,7 @@ export type GetFullProjectResponse = {
  * @see https://todoist.com/api/v1/docs#tag/Backups/operation/get_backups_api_v1_backups_get
  */
 export type GetBackupsArgs = {
-    /** MFA token if required. */
+    /** MFA token if required. Not needed when using an OAuth token with the `backups:read` scope. */
     mfaToken?: string | null
 }
 
