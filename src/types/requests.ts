@@ -763,6 +763,180 @@ export type GetFullProjectResponse = {
     notes: Comment[]
 }
 
+// Reminders list types
+
+/**
+ * Arguments for listing reminders.
+ * @see https://todoist.com/api/v1/docs#tag/Reminders/operation/get_reminders_api_v1_reminders_get
+ */
+export type GetRemindersArgs = {
+    /** Filter by task ID. */
+    taskId?: string | null
+    /** Cursor for pagination. */
+    cursor?: string | null
+    /** Number of results per page (max 200, default 50). */
+    limit?: number
+}
+
+/**
+ * Paginated response for reminders.
+ */
+export type GetRemindersResponse = {
+    results: import('./sync/resources/reminders').Reminder[]
+    nextCursor: string | null
+}
+
+/**
+ * Arguments for listing location reminders.
+ * @see https://todoist.com/api/v1/docs#tag/Location-reminders/operation/get_location_reminders_api_v1_location_reminders_get
+ */
+export type GetLocationRemindersArgs = {
+    /** Filter by task ID. */
+    taskId?: string | null
+    /** Cursor for pagination. */
+    cursor?: string | null
+    /** Number of results per page (max 200, default 50). */
+    limit?: number
+}
+
+/**
+ * Paginated response for location reminders.
+ */
+export type GetLocationRemindersResponse = {
+    results: import('./sync/resources/reminders').LocationReminder[]
+    nextCursor: string | null
+}
+
+// Completed tasks (legacy) types
+
+/**
+ * Arguments for getting all completed tasks.
+ * @see https://todoist.com/api/v1/docs#tag/Tasks/operation/get_all_completed_items_api_v1_tasks_completed_get
+ */
+export type GetAllCompletedTasksArgs = {
+    /** Filter by project ID. */
+    projectId?: string | null
+    /** Filter by label name. */
+    label?: string | null
+    /** Number of results to return (max 200, default 30). */
+    limit?: number
+    /** Number of results to skip (default 0). */
+    offset?: number
+    /** Return items completed after this date (ISO 8601). */
+    since?: string | null
+    /** Return items completed before this date (ISO 8601). */
+    until?: string | null
+    /** Include comment data in the response. */
+    annotateNotes?: boolean
+    /** Include task data in the response. */
+    annotateItems?: boolean
+}
+
+/**
+ * Response from getting all completed tasks.
+ */
+export type GetAllCompletedTasksResponse = {
+    projects: Record<string, Record<string, unknown>>
+    sections: Record<string, Record<string, unknown>>
+    items: Record<string, unknown>[]
+}
+
+// Template types
+
+/**
+ * Arguments for exporting a project as a template file.
+ * @see https://todoist.com/api/v1/docs#tag/Templates/operation/export_as_file_api_v1_templates_file_get
+ */
+export type ExportTemplateFileArgs = {
+    /** The project ID to export. */
+    projectId: string
+    /** Whether to use relative dates in the export. */
+    useRelativeDates?: boolean
+}
+
+/**
+ * Arguments for exporting a project as a template URL.
+ * @see https://todoist.com/api/v1/docs#tag/Templates/operation/export_as_url_api_v1_templates_url_get
+ */
+export type ExportTemplateUrlArgs = {
+    /** The project ID to export. */
+    projectId: string
+    /** Whether to use relative dates in the export. */
+    useRelativeDates?: boolean
+}
+
+/**
+ * Response from exporting a project as a template URL.
+ */
+export type ExportTemplateUrlResponse = {
+    fileName: string
+    fileUrl: string
+}
+
+/**
+ * Arguments for creating a project from a template file.
+ * @see https://todoist.com/api/v1/docs#tag/Templates/operation/create_project_from_file_api_v1_templates_create_project_from_file_post
+ */
+export type CreateProjectFromTemplateArgs = {
+    /** Name for the new project. */
+    name: string
+    /** The template file content. */
+    file: Buffer | NodeJS.ReadableStream | string | Blob
+    /** Optional file name (required for Buffer/Stream). */
+    fileName?: string
+    /** Optional workspace ID. */
+    workspaceId?: string | null
+}
+
+/**
+ * Response from creating a project from a template.
+ */
+export type CreateProjectFromTemplateResponse = {
+    status: string
+    projectId: string
+    templateType: string
+    projects: Record<string, unknown>[]
+    sections: Record<string, unknown>[]
+    items: Record<string, unknown>[]
+}
+
+/**
+ * Arguments for importing a template file into an existing project.
+ * @see https://todoist.com/api/v1/docs#tag/Templates/operation/import_into_project_from_file_api_v1_templates_import_into_project_from_file_post
+ */
+export type ImportTemplateIntoProjectArgs = {
+    /** The project ID to import into. */
+    projectId: string
+    /** The template file content. */
+    file: Buffer | NodeJS.ReadableStream | string | Blob
+    /** Optional file name (required for Buffer/Stream). */
+    fileName?: string
+}
+
+/**
+ * Arguments for importing a template by ID into an existing project.
+ * @see https://todoist.com/api/v1/docs#tag/Templates/operation/import_into_project_from_template_id_api_v1_templates_import_into_project_from_template_id_post
+ */
+export type ImportTemplateFromIdArgs = {
+    /** The project ID to import into. */
+    projectId: string
+    /** The template ID to import. */
+    templateId: string
+    /** Locale for the import (default: 'en'). */
+    locale?: string
+}
+
+/**
+ * Response from importing a template into a project.
+ */
+export type ImportTemplateResponse = {
+    status: string
+    templateType: string
+    projects: Record<string, unknown>[]
+    sections: Record<string, unknown>[]
+    items: Record<string, unknown>[]
+}
+
 // Insights types
 
 /** Known activity object types. Accepts any string for forward compatibility. */

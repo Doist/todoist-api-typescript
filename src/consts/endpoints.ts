@@ -57,6 +57,14 @@ export const ENDPOINT_REST_PROJECTS_MOVE_TO_WORKSPACE =
     ENDPOINT_REST_PROJECTS + '/move_to_workspace'
 export const ENDPOINT_REST_PROJECTS_MOVE_TO_PERSONAL = ENDPOINT_REST_PROJECTS + '/move_to_personal'
 
+export const ENDPOINT_REST_TASKS_COMPLETED = ENDPOINT_REST_TASKS + '/completed'
+export const ENDPOINT_REST_TEMPLATES_FILE = 'templates/file'
+export const ENDPOINT_REST_TEMPLATES_URL = 'templates/url'
+export const ENDPOINT_REST_TEMPLATES_CREATE_FROM_FILE = 'templates/create_project_from_file'
+export const ENDPOINT_REST_TEMPLATES_IMPORT_FROM_FILE = 'templates/import_into_project_from_file'
+export const ENDPOINT_REST_TEMPLATES_IMPORT_FROM_ID =
+    'templates/import_into_project_from_template_id'
+
 export const ENDPOINT_SYNC_QUICK_ADD = ENDPOINT_REST_TASKS + '/quick'
 
 export const ENDPOINT_SYNC = 'sync'

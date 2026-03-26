@@ -434,4 +434,44 @@ describe('TodoistApi reminder endpoints', () => {
             )
         })
     })
+
+    describe('getReminders', () => {
+        test('returns paginated reminders', async () => {
+            const reminders = [DEFAULT_RELATIVE_REMINDER]
+            server.use(
+                http.get(`${getSyncBaseUri()}${ENDPOINT_REST_REMINDERS}`, () => {
+                    return HttpResponse.json(
+                        { results: reminders, next_cursor: 'abc' },
+                        { status: 200 },
+                    )
+                }),
+            )
+            const api = getTarget()
+
+            const { results, nextCursor } = await api.getReminders()
+
+            expect(results).toHaveLength(1)
+            expect(nextCursor).toBe('abc')
+        })
+    })
+
+    describe('getLocationReminders', () => {
+        test('returns paginated location reminders', async () => {
+            const reminders = [DEFAULT_LOCATION_REMINDER]
+            server.use(
+                http.get(`${getSyncBaseUri()}${ENDPOINT_REST_LOCATION_REMINDERS}`, () => {
+                    return HttpResponse.json(
+                        { results: reminders, next_cursor: null },
+                        { status: 200 },
+                    )
+                }),
+            )
+            const api = getTarget()
+
+            const { results, nextCursor } = await api.getLocationReminders()
+
+            expect(results).toHaveLength(1)
+            expect(nextCursor).toBeNull()
+        })
+    })
 })

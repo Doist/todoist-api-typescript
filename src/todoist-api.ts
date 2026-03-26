@@ -101,6 +101,20 @@ import {
     RemoveWorkspaceUserArgs,
     GetProjectActivityStatsArgs,
     GetWorkspaceInsightsArgs,
+    GetRemindersArgs,
+    GetRemindersResponse,
+    GetLocationRemindersArgs,
+    GetLocationRemindersResponse,
+    GetAllCompletedTasksArgs,
+    GetAllCompletedTasksResponse,
+    ExportTemplateFileArgs,
+    ExportTemplateUrlArgs,
+    ExportTemplateUrlResponse,
+    CreateProjectFromTemplateArgs,
+    CreateProjectFromTemplateResponse,
+    ImportTemplateIntoProjectArgs,
+    ImportTemplateFromIdArgs,
+    ImportTemplateResponse,
 } from './types/requests'
 import { CustomFetch, CustomFetchResponse } from './types/http'
 import { request, isSuccess } from './transport/http-client'
@@ -112,6 +126,12 @@ import {
     ENDPOINT_REST_TASKS_COMPLETED_BY_COMPLETION_DATE,
     ENDPOINT_REST_TASKS_COMPLETED_BY_DUE_DATE,
     ENDPOINT_REST_TASKS_COMPLETED_SEARCH,
+    ENDPOINT_REST_TASKS_COMPLETED,
+    ENDPOINT_REST_TEMPLATES_FILE,
+    ENDPOINT_REST_TEMPLATES_URL,
+    ENDPOINT_REST_TEMPLATES_CREATE_FROM_FILE,
+    ENDPOINT_REST_TEMPLATES_IMPORT_FROM_FILE,
+    ENDPOINT_REST_TEMPLATES_IMPORT_FROM_ID,
     ENDPOINT_REST_PROJECTS,
     ENDPOINT_REST_PROJECTS_SEARCH,
     ENDPOINT_SYNC_QUICK_ADD,
@@ -184,6 +204,8 @@ import {
     validateUserArray,
     validateProductivityStats,
     validateReminder,
+    validateReminderArray,
+    validateLocationReminderArray,
     validateActivityEventArray,
     validateWorkspaceUserArray,
     validateWorkspaceInvitation,
@@ -649,6 +671,28 @@ export class TodoistApi {
             items: validateTaskArray(items),
             nextCursor,
         }
+    }
+
+    /**
+     * Retrieves all completed tasks with optional filters.
+     *
+     * Uses offset-based pagination rather than cursor-based.
+     *
+     * @param args - Optional parameters including project ID, label, date range, and pagination.
+     * @returns A promise that resolves to completed tasks with associated project and section data.
+     */
+    async getAllCompletedTasks(
+        args: GetAllCompletedTasksArgs = {},
+    ): Promise<GetAllCompletedTasksResponse> {
+        const { data } = await request<GetAllCompletedTasksResponse>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_REST_TASKS_COMPLETED,
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
+            payload: args,
+        })
+        return data
     }
 
     /**
@@ -1848,6 +1892,54 @@ export class TodoistApi {
     }
 
     /**
+     * Retrieves a paginated list of time-based reminders.
+     *
+     * @param args - Optional parameters including task ID filter and pagination.
+     * @returns A promise that resolves to a paginated list of reminders.
+     */
+    async getReminders(args: GetRemindersArgs = {}): Promise<GetRemindersResponse> {
+        const {
+            data: { results, nextCursor },
+        } = await request<GetRemindersResponse>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_REST_REMINDERS,
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
+            payload: args,
+        })
+        return {
+            results: validateReminderArray(results),
+            nextCursor,
+        }
+    }
+
+    /**
+     * Retrieves a paginated list of location-based reminders.
+     *
+     * @param args - Optional parameters including task ID filter and pagination.
+     * @returns A promise that resolves to a paginated list of location reminders.
+     */
+    async getLocationReminders(
+        args: GetLocationRemindersArgs = {},
+    ): Promise<GetLocationRemindersResponse> {
+        const {
+            data: { results, nextCursor },
+        } = await request<GetLocationRemindersResponse>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_REST_LOCATION_REMINDERS,
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
+            payload: args,
+        })
+        return {
+            results: validateLocationReminderArray(results),
+            nextCursor,
+        }
+    }
+
+    /**
      * Retrieves a time-based reminder by its ID.
      *
      * @param id - The unique identifier of the reminder to retrieve.
@@ -2341,6 +2433,125 @@ export class TodoistApi {
             json: () => response.json(),
             arrayBuffer: () => response.arrayBuffer(),
         }
+    }
+
+    // ── Templates ──
+
+    /**
+     * Exports a project as a template file (CSV format).
+     *
+     * @param args - Arguments including project ID and optional date format preference.
+     * @returns A promise that resolves to the template file content as a string.
+     */
+    async exportTemplateAsFile(args: ExportTemplateFileArgs): Promise<string> {
+        const response = await request<string>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_REST_TEMPLATES_FILE,
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
+            payload: args,
+        })
+        return response.data
+    }
+
+    /**
+     * Exports a project as a template URL.
+     *
+     * @param args - Arguments including project ID and optional date format preference.
+     * @returns A promise that resolves to the file name and URL.
+     */
+    async exportTemplateAsUrl(args: ExportTemplateUrlArgs): Promise<ExportTemplateUrlResponse> {
+        const { data } = await request<ExportTemplateUrlResponse>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_REST_TEMPLATES_URL,
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
+            payload: args,
+        })
+        return data
+    }
+
+    /**
+     * Creates a new project from a template file.
+     *
+     * @param args - Arguments including project name, template file, and optional workspace ID.
+     * @param requestId - Optional custom identifier for the request.
+     * @returns A promise that resolves to the created project data.
+     */
+    async createProjectFromTemplate(
+        args: CreateProjectFromTemplateArgs,
+        requestId?: string,
+    ): Promise<CreateProjectFromTemplateResponse> {
+        const { file, fileName, ...fields } = args
+        const additionalFields: Record<string, string> = {}
+        if (fields.name) {
+            additionalFields.name = fields.name
+        }
+        if (fields.workspaceId) {
+            additionalFields.workspace_id = fields.workspaceId
+        }
+
+        const data = await uploadMultipartFile<CreateProjectFromTemplateResponse>({
+            baseUrl: this.syncApiBase,
+            authToken: this.authToken,
+            endpoint: ENDPOINT_REST_TEMPLATES_CREATE_FROM_FILE,
+            file,
+            fileName,
+            additionalFields,
+            customFetch: this.customFetch,
+            requestId,
+        })
+        return data
+    }
+
+    /**
+     * Imports a template file into an existing project.
+     *
+     * @param args - Arguments including project ID and template file.
+     * @param requestId - Optional custom identifier for the request.
+     * @returns A promise that resolves to the import result.
+     */
+    async importTemplateIntoProject(
+        args: ImportTemplateIntoProjectArgs,
+        requestId?: string,
+    ): Promise<ImportTemplateResponse> {
+        const { file, fileName, projectId } = args
+        const data = await uploadMultipartFile<ImportTemplateResponse>({
+            baseUrl: this.syncApiBase,
+            authToken: this.authToken,
+            endpoint: ENDPOINT_REST_TEMPLATES_IMPORT_FROM_FILE,
+            file,
+            fileName,
+            additionalFields: { project_id: projectId },
+            customFetch: this.customFetch,
+            requestId,
+        })
+        return data
+    }
+
+    /**
+     * Imports a template by ID into an existing project.
+     *
+     * @param args - Arguments including project ID, template ID, and optional locale.
+     * @param requestId - Optional custom identifier for the request.
+     * @returns A promise that resolves to the import result.
+     */
+    async importTemplateFromId(
+        args: ImportTemplateFromIdArgs,
+        requestId?: string,
+    ): Promise<ImportTemplateResponse> {
+        const { data } = await request<ImportTemplateResponse>({
+            httpMethod: 'POST',
+            baseUri: this.syncApiBase,
+            relativePath: ENDPOINT_REST_TEMPLATES_IMPORT_FROM_ID,
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
+            payload: args,
+            requestId: requestId,
+        })
+        return data
     }
 
     /* Workspace methods */

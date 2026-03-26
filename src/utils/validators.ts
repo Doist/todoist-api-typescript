@@ -41,6 +41,7 @@ import {
     CalendarSchema,
     CalendarAccountSchema,
     ReminderSchema,
+    LocationReminderSchema,
     CompletedInfoSchema,
     ViewOptionsSchema,
     ProjectViewOptionsDefaultsSchema,
@@ -188,6 +189,9 @@ export const validateCalendarAccountArray = createArrayValidator(validateCalenda
 
 export const validateReminder = createValidator(ReminderSchema)
 export const validateReminderArray = createArrayValidator(validateReminder)
+
+export const validateLocationReminder = createValidator(LocationReminderSchema)
+export const validateLocationReminderArray = createArrayValidator(validateLocationReminder)
 
 export const validateCompletedInfo = createValidator(CompletedInfoSchema)
 export const validateCompletedInfoArray = createArrayValidator(validateCompletedInfo)
