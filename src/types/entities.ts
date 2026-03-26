@@ -15,7 +15,7 @@ export const DueDateSchema = z
     })
 /**
  * Represents a due date for a task.
- * @see https://todoist.com/api/v1/docs#tag/Tasks/operation/get_tasks_api_v1_tasks_get
+ * @see https://developer.todoist.com/api/v1/#tag/Tasks/operation/get_tasks_api_v1_tasks_get
  */
 export type DueDate = z.infer<typeof DueDateSchema>
 
@@ -30,7 +30,7 @@ export const DurationSchema = z.object({
 })
 /**
  * Represents a duration for a task deadline.
- * @see https://todoist.com/api/v1/docs#tag/Tasks
+ * @see https://developer.todoist.com/api/v1/#tag/Tasks
  */
 export type Duration = z.infer<typeof DurationSchema>
 
@@ -81,7 +81,7 @@ export const TaskSchema = z
     })
 /**
  * Represents a task in Todoist.
- * @see https://todoist.com/api/v1/docs#tag/Tasks
+ * @see https://developer.todoist.com/api/v1/#tag/Tasks
  */
 export type Task = z.infer<typeof TaskSchema>
 
@@ -149,13 +149,13 @@ export const WorkspaceProjectSchema = BaseProjectSchema.extend({
 
 /**
  * Represents a personal project in Todoist.
- * @see https://todoist.com/api/v1/docs#tag/Projects
+ * @see https://developer.todoist.com/api/v1/#tag/Projects
  */
 export type PersonalProject = z.infer<typeof PersonalProjectSchema>
 
 /**
  * Represents a workspace project in Todoist.
- * @see https://todoist.com/api/v1/docs#tag/Projects
+ * @see https://developer.todoist.com/api/v1/#tag/Projects
  */
 export type WorkspaceProject = z.infer<typeof WorkspaceProjectSchema>
 
@@ -163,7 +163,7 @@ export type WorkspaceProject = z.infer<typeof WorkspaceProjectSchema>
 export const PROJECT_VIEW_STYLES = ['list', 'board', 'calendar'] as const
 /**
  * View style for a project.
- * @see https://todoist.com/api/v1/docs#tag/Projects
+ * @see https://developer.todoist.com/api/v1/#tag/Projects
  */
 export type ProjectViewStyle = (typeof PROJECT_VIEW_STYLES)[number]
 
@@ -189,7 +189,7 @@ export const SectionSchema = z
     })
 /**
  * Represents a section in a Todoist project.
- * @see https://todoist.com/api/v1/docs#tag/Sections
+ * @see https://developer.todoist.com/api/v1/#tag/Sections
  */
 export type Section = z.infer<typeof SectionSchema>
 
@@ -202,7 +202,7 @@ export const LabelSchema = z.object({
 })
 /**
  * Represents a label in Todoist.
- * @see https://todoist.com/api/v1/docs#tag/Labels
+ * @see https://developer.todoist.com/api/v1/#tag/Labels
  */
 export type Label = z.infer<typeof LabelSchema>
 
@@ -230,7 +230,7 @@ export const AttachmentSchema = z
     })
 /**
  * Represents a file attachment in a comment.
- * @see https://todoist.com/api/v1/docs#tag/Sync/Comments/File-Attachments
+ * @see https://developer.todoist.com/api/v1/#tag/Sync/Comments/File-Attachments
  */
 export type Attachment = z.infer<typeof AttachmentSchema>
 
@@ -262,7 +262,7 @@ export const RawCommentSchema = z
 
 /**
  * Represents a raw comment response from the API.
- * @see https://todoist.com/api/v1/docs#tag/Comments
+ * @see https://developer.todoist.com/api/v1/#tag/Comments
  */
 export type RawComment = z.infer<typeof RawCommentSchema>
 
@@ -276,7 +276,7 @@ export const CommentSchema = RawCommentSchema.transform((data) => {
 })
 /**
  * Represents a comment in Todoist.
- * @see https://todoist.com/api/v1/docs#tag/Comments
+ * @see https://developer.todoist.com/api/v1/#tag/Comments
  */
 export type Comment = z.infer<typeof CommentSchema>
 
@@ -287,7 +287,7 @@ export const UserSchema = z.object({
 })
 /**
  * Represents a user in Todoist (simplified for collaborators).
- * @see https://todoist.com/api/v1/docs#tag/User
+ * @see https://developer.todoist.com/api/v1/#tag/User
  */
 export type User = z.infer<typeof UserSchema>
 
@@ -339,7 +339,7 @@ export const CurrentUserSchema = z.object({
 })
 /**
  * Represents the current authenticated user with detailed information.
- * @see https://todoist.com/api/v1/docs#tag/User
+ * @see https://developer.todoist.com/api/v1/#tag/User
  */
 export type CurrentUser = z.infer<typeof CurrentUserSchema>
 
@@ -425,7 +425,7 @@ export const ColorSchema = z.object({
 })
 /**
  * Represents a color in Todoist.
- * @see https://todoist.com/api/v1/docs#tag/Colors
+ * @see https://developer.todoist.com/api/v1/#tag/Colors
  */
 export type Color = z.infer<typeof ColorSchema>
 
