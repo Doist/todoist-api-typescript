@@ -14,6 +14,7 @@ import {
     ENDPOINT_REST_TASKS_COMPLETED_BY_COMPLETION_DATE,
     ENDPOINT_REST_TASKS_COMPLETED_BY_DUE_DATE,
     ENDPOINT_REST_TASKS_COMPLETED_SEARCH,
+    ENDPOINT_REST_TASKS_COMPLETED,
     ENDPOINT_SYNC_QUICK_ADD,
 } from './consts/endpoints'
 import { server, http, HttpResponse } from './test-utils/msw-setup'
@@ -626,6 +627,27 @@ describe('TodoistApi task endpoints', () => {
             await expect(
                 api.searchCompletedTasks(DEFAULT_SEARCH_COMPLETED_TASKS_ARGS),
             ).rejects.toThrow()
+        })
+    })
+
+    describe('getAllCompletedTasks', () => {
+        test('returns completed tasks from rest client', async () => {
+            const mockResponse = {
+                projects: { '123': { id: '123', name: 'Project' } },
+                sections: {},
+                items: [DEFAULT_TASK],
+            }
+            server.use(
+                http.get(`${getSyncBaseUri()}${ENDPOINT_REST_TASKS_COMPLETED}`, () => {
+                    return HttpResponse.json(mockResponse, { status: 200 })
+                }),
+            )
+            const api = getTarget()
+
+            const result = await api.getAllCompletedTasks({ projectId: '123' })
+
+            expect(result.items).toHaveLength(1)
+            expect(result.projects).toHaveProperty('123')
         })
     })
 })
