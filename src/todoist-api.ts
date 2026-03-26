@@ -2059,7 +2059,7 @@ export class TodoistApi {
      * @param args - Optional filter parameters such as workspace ID.
      * @returns A promise that resolves to a paginated response of folders.
      */
-    async getFolders(args?: GetFoldersArgs): Promise<GetFoldersResponse> {
+    async getFolders(args: GetFoldersArgs): Promise<GetFoldersResponse> {
         const {
             data: { results, nextCursor },
         } = await request<GetFoldersResponse>({

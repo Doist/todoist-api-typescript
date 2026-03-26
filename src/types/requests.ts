@@ -837,7 +837,7 @@ export type WorkspaceLogoResponse = Record<string, unknown> | null
 // Folder-related types
 
 export type GetFoldersArgs = {
-    workspaceId?: number | null
+    workspaceId: number
     cursor?: string | null
     limit?: number
 }
