@@ -22,6 +22,11 @@ import {
     WorkspaceSchema,
     MemberActivityInfoSchema,
     WorkspaceUserTaskSchema,
+    ProjectActivityStatsSchema,
+    ProjectHealthSchema,
+    ProjectHealthContextSchema,
+    ProjectProgressSchema,
+    WorkspaceInsightsSchema,
 } from '../types/entities'
 
 import {
@@ -143,6 +148,12 @@ export const validateMemberActivityInfoArray = createArrayValidator(validateMemb
 
 export const validateWorkspaceUserTask = createValidator(WorkspaceUserTaskSchema)
 export const validateWorkspaceUserTaskArray = createArrayValidator(validateWorkspaceUserTask)
+
+export const validateProjectActivityStats = createValidator(ProjectActivityStatsSchema)
+export const validateProjectHealth = createValidator(ProjectHealthSchema)
+export const validateProjectHealthContext = createValidator(ProjectHealthContextSchema)
+export const validateProjectProgress = createValidator(ProjectProgressSchema)
+export const validateWorkspaceInsights = createValidator(WorkspaceInsightsSchema)
 
 // Sync resource validators
 

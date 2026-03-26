@@ -763,6 +763,28 @@ export type GetFullProjectResponse = {
     notes: Comment[]
 }
 
+// Insights types
+
+/**
+ * Arguments for getting project activity stats.
+ * @see https://todoist.com/api/v1/docs#tag/Insights/operation/get_project_activity_stats_api_v1_projects__project_id__insights_activity_stats_get
+ */
+export type GetProjectActivityStatsArgs = {
+    /** Number of weeks of activity counts to retrieve (1-12, default 2). */
+    weeks?: number
+    /** Whether to include weekly rollup counts in the response. */
+    includeWeeklyCounts?: boolean
+}
+
+/**
+ * Arguments for getting workspace insights.
+ * @see https://todoist.com/api/v1/docs#tag/Insights/operation/get_workspace_insights_api_v1_workspaces__workspace_id__insights_get
+ */
+export type GetWorkspaceInsightsArgs = {
+    /** Comma-separated list of project IDs to get insights for. */
+    projectIds?: string | null
+}
+
 // Workspace-related types
 
 /**
