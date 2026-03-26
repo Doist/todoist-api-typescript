@@ -84,6 +84,22 @@ export function getWorkspaceInvitationRejectEndpoint(inviteCode: string): string
     return `workspaces/invitations/${inviteCode}/reject`
 }
 
+// Workspace members
+export const ENDPOINT_WORKSPACE_MEMBERS = 'workspaces/members'
+
+// Workspace user management (require workspace_id and/or user_id parameters)
+export function getWorkspaceUserTasksEndpoint(workspaceId: number, userId: number): string {
+    return `workspaces/${workspaceId}/users/${userId}/tasks`
+}
+
+export function getWorkspaceInviteUsersEndpoint(workspaceId: number): string {
+    return `workspaces/${workspaceId}/users/invite`
+}
+
+export function getWorkspaceUserEndpoint(workspaceId: number, userId: number): string {
+    return `workspaces/${workspaceId}/users/${userId}`
+}
+
 // Workspace projects (require workspace_id parameter)
 export function getWorkspaceActiveProjectsEndpoint(workspaceId: number): string {
     return `workspaces/${workspaceId}/projects/active`

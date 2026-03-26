@@ -810,6 +810,90 @@ export type UpdateWorkspaceArgs = {
 }
 
 /**
+ * Arguments for getting workspace members activity.
+ * @see https://todoist.com/api/v1/docs#tag/Workspace/operation/get_workspace_members_activity_api_v1_workspaces_members_get
+ */
+export type GetWorkspaceMembersActivityArgs = {
+    /** The workspace ID. */
+    workspaceId: number
+    /** Comma-separated list of user IDs to filter by. */
+    userIds?: string | null
+    /** Comma-separated list of project IDs to filter by. */
+    projectIds?: string | null
+}
+
+/**
+ * Response from getting workspace members activity.
+ */
+export type GetWorkspaceMembersActivityResponse = {
+    members: import('./entities').MemberActivityInfo[]
+}
+
+/**
+ * Arguments for getting tasks assigned to a workspace user.
+ * @see https://todoist.com/api/v1/docs#tag/Workspace/operation/get_workspace_user_tasks_api_v1_workspaces__workspace_id__users__user_id__tasks_get
+ */
+export type GetWorkspaceUserTasksArgs = {
+    /** The workspace ID. */
+    workspaceId: number
+    /** The user ID. */
+    userId: number
+    /** Comma-separated list of project IDs to filter by. */
+    projectIds?: string | null
+}
+
+/**
+ * Response from getting workspace user tasks.
+ */
+export type GetWorkspaceUserTasksResponse = {
+    tasks: import('./entities').WorkspaceUserTask[]
+}
+
+/**
+ * Arguments for inviting users to a workspace.
+ * @see https://todoist.com/api/v1/docs#tag/Workspace/operation/invite_workspace_users_api_v1_workspaces__workspace_id__users_invite_post
+ */
+export type InviteWorkspaceUsersArgs = {
+    /** The workspace ID. */
+    workspaceId: number
+    /** List of user emails to invite. */
+    emailList: string[]
+    /** Role assigned to invited users. */
+    role?: import('./entities').WorkspaceRole
+}
+
+/**
+ * Response from inviting workspace users.
+ */
+export type InviteWorkspaceUsersResponse = {
+    invitedEmails: string[]
+}
+
+/**
+ * Arguments for updating a workspace user's role.
+ * @see https://todoist.com/api/v1/docs#tag/Workspace/operation/update_workspace_user_api_v1_workspaces__workspace_id__users__user_id__post
+ */
+export type UpdateWorkspaceUserArgs = {
+    /** The workspace ID. */
+    workspaceId: number
+    /** The user ID. */
+    userId: number
+    /** Updated role for the user. */
+    role: import('./entities').WorkspaceRole
+}
+
+/**
+ * Arguments for removing a user from a workspace.
+ * @see https://todoist.com/api/v1/docs#tag/Workspace/operation/remove_workspace_user_api_v1_workspaces__workspace_id__users__user_id__delete
+ */
+export type RemoveWorkspaceUserArgs = {
+    /** The workspace ID. */
+    workspaceId: number
+    /** The user ID. */
+    userId: number
+}
+
+/**
  * Arguments for getting workspace invitations.
  */
 export type GetWorkspaceInvitationsArgs = {

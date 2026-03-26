@@ -20,6 +20,9 @@ import {
     WorkspacePlanDetailsSchema,
     JoinWorkspaceResultSchema,
     WorkspaceSchema,
+    MemberActivityInfoSchema,
+    WorkspaceUserTaskSchema,
+    WorkspaceUserViewSchema,
 } from '../types/entities'
 
 import {
@@ -135,6 +138,14 @@ export const validateJoinWorkspaceResult = createValidator(JoinWorkspaceResultSc
 
 export const validateWorkspace = createValidator(WorkspaceSchema)
 export const validateWorkspaceArray = createArrayValidator(validateWorkspace)
+
+export const validateMemberActivityInfo = createValidator(MemberActivityInfoSchema)
+export const validateMemberActivityInfoArray = createArrayValidator(validateMemberActivityInfo)
+
+export const validateWorkspaceUserTask = createValidator(WorkspaceUserTaskSchema)
+export const validateWorkspaceUserTaskArray = createArrayValidator(validateWorkspaceUserTask)
+
+export const validateWorkspaceUserView = createValidator(WorkspaceUserViewSchema)
 
 // Sync resource validators
 

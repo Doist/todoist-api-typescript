@@ -636,4 +636,134 @@ describe('TodoistApi workspaces', () => {
             expect(result).toEqual(true)
         })
     })
+
+    describe('getWorkspaceMembersActivity', () => {
+        test('gets workspace members activity', async () => {
+            const mockResponse = {
+                members: [
+                    { userId: '123', tasksAssigned: 5, tasksOverdue: 2 },
+                    { userId: '456', tasksAssigned: 3, tasksOverdue: 0 },
+                ],
+            }
+            server.use(
+                http.get(`${getSyncBaseUri()}workspaces/members`, () => {
+                    return HttpResponse.json(mockResponse, { status: 200 })
+                }),
+            )
+
+            const result = await api.getWorkspaceMembersActivity({ workspaceId: 123 })
+
+            expect(result.members).toHaveLength(2)
+            expect(result.members[0]).toMatchObject({
+                userId: '123',
+                tasksAssigned: 5,
+                tasksOverdue: 2,
+            })
+        })
+    })
+
+    describe('getWorkspaceUserTasks', () => {
+        test('gets workspace user tasks', async () => {
+            const mockResponse = {
+                tasks: [
+                    {
+                        id: '1',
+                        content: 'Test task',
+                        responsibleUid: '123',
+                        due: null,
+                        deadline: null,
+                        labels: ['work'],
+                        notesCount: 0,
+                        projectId: 'proj1',
+                        projectName: 'Project 1',
+                        priority: 1,
+                        description: '',
+                        isOverdue: false,
+                    },
+                ],
+            }
+            server.use(
+                http.get(`${getSyncBaseUri()}workspaces/123/users/456/tasks`, () => {
+                    return HttpResponse.json(mockResponse, { status: 200 })
+                }),
+            )
+
+            const result = await api.getWorkspaceUserTasks({
+                workspaceId: 123,
+                userId: 456,
+            })
+
+            expect(result.tasks).toHaveLength(1)
+            expect(result.tasks[0]).toMatchObject({
+                id: '1',
+                content: 'Test task',
+            })
+        })
+    })
+
+    describe('inviteWorkspaceUsers', () => {
+        test('invites users to a workspace', async () => {
+            const mockResponse = {
+                invitedEmails: ['user1@example.com', 'user2@example.com'],
+            }
+            server.use(
+                http.post(`${getSyncBaseUri()}workspaces/123/users/invite`, () => {
+                    return HttpResponse.json(mockResponse, { status: 200 })
+                }),
+            )
+
+            const result = await api.inviteWorkspaceUsers({
+                workspaceId: 123,
+                emailList: ['user1@example.com', 'user2@example.com'],
+            })
+
+            expect(result.invitedEmails).toEqual(['user1@example.com', 'user2@example.com'])
+        })
+    })
+
+    describe('updateWorkspaceUser', () => {
+        test('updates a workspace user role', async () => {
+            const mockResponse = {
+                userId: '456',
+                workspaceId: '123',
+                role: 'ADMIN',
+                customSortingApplied: false,
+                projectSortPreference: 'MANUAL',
+            }
+            server.use(
+                http.post(`${getSyncBaseUri()}workspaces/123/users/456`, () => {
+                    return HttpResponse.json(mockResponse, { status: 200 })
+                }),
+            )
+
+            const result = await api.updateWorkspaceUser({
+                workspaceId: 123,
+                userId: 456,
+                role: 'ADMIN',
+            })
+
+            expect(result).toMatchObject({
+                userId: '456',
+                workspaceId: '123',
+                role: 'ADMIN',
+            })
+        })
+    })
+
+    describe('removeWorkspaceUser', () => {
+        test('removes a user from a workspace', async () => {
+            server.use(
+                http.delete(`${getSyncBaseUri()}workspaces/123/users/456`, () => {
+                    return HttpResponse.json({ status: 'ok' }, { status: 200 })
+                }),
+            )
+
+            const result = await api.removeWorkspaceUser({
+                workspaceId: 123,
+                userId: 456,
+            })
+
+            expect(result).toEqual(true)
+        })
+    })
 })
