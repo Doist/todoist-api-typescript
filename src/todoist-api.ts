@@ -14,6 +14,11 @@ import {
     WorkspacePlanDetails,
     JoinWorkspaceResult,
     Workspace,
+    ProjectActivityStats,
+    ProjectHealth,
+    ProjectHealthContext,
+    ProjectProgress,
+    WorkspaceInsights,
 } from './types/entities'
 import { LOCATION_TRIGGERS } from './types/sync/resources/reminders'
 import {
@@ -94,6 +99,8 @@ import {
     InviteWorkspaceUsersResponse,
     UpdateWorkspaceUserArgs,
     RemoveWorkspaceUserArgs,
+    GetProjectActivityStatsArgs,
+    GetWorkspaceInsightsArgs,
 } from './types/requests'
 import { CustomFetch, CustomFetchResponse } from './types/http'
 import { request, isSuccess } from './transport/http-client'
@@ -138,6 +145,12 @@ import {
     ENDPOINT_REST_PRODUCTIVITY,
     ENDPOINT_REST_ACTIVITIES,
     ENDPOINT_REST_UPLOADS,
+    getProjectInsightsActivityStatsEndpoint,
+    getProjectInsightsHealthEndpoint,
+    getProjectInsightsHealthContextEndpoint,
+    getProjectInsightsProgressEndpoint,
+    getProjectInsightsHealthAnalyzeEndpoint,
+    getWorkspaceInsightsEndpoint,
     ENDPOINT_REST_WORKSPACES,
     ENDPOINT_WORKSPACE_MEMBERS,
     getWorkspaceUserTasksEndpoint,
@@ -181,6 +194,11 @@ import {
     validateWorkspaceArray,
     validateMemberActivityInfoArray,
     validateWorkspaceUserTaskArray,
+    validateProjectActivityStats,
+    validateProjectHealth,
+    validateProjectHealthContext,
+    validateProjectProgress,
+    validateWorkspaceInsights,
 } from './utils/validators'
 import { formatDateToYYYYMMDD } from './utils/url-helpers'
 import { uploadMultipartFile } from './utils/multipart-upload'
@@ -1233,6 +1251,133 @@ export class TodoistApi {
             nextCursor,
         }
     }
+
+    // ── Insights ──
+
+    /**
+     * Retrieves activity statistics for a project.
+     *
+     * @param projectId - The unique identifier of the project.
+     * @param args - Optional parameters including weeks and weekly counts flag.
+     * @returns A promise that resolves to the project activity stats.
+     */
+    async getProjectActivityStats(
+        projectId: string,
+        args: GetProjectActivityStatsArgs = {},
+    ): Promise<ProjectActivityStats> {
+        z.string().parse(projectId)
+        const response = await request<ProjectActivityStats>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: getProjectInsightsActivityStatsEndpoint(projectId),
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
+            payload: { objectType: 'ITEM', eventType: 'COMPLETED', ...args },
+        })
+        return validateProjectActivityStats(response.data)
+    }
+
+    /**
+     * Retrieves the health status of a project.
+     *
+     * @param projectId - The unique identifier of the project.
+     * @returns A promise that resolves to the project health data.
+     */
+    async getProjectHealth(projectId: string): Promise<ProjectHealth> {
+        z.string().parse(projectId)
+        const response = await request<ProjectHealth>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: getProjectInsightsHealthEndpoint(projectId),
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
+        })
+        return validateProjectHealth(response.data)
+    }
+
+    /**
+     * Retrieves the health context for a project, including metrics and task details.
+     *
+     * @param projectId - The unique identifier of the project.
+     * @returns A promise that resolves to the project health context.
+     */
+    async getProjectHealthContext(projectId: string): Promise<ProjectHealthContext> {
+        z.string().parse(projectId)
+        const response = await request<ProjectHealthContext>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: getProjectInsightsHealthContextEndpoint(projectId),
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
+        })
+        return validateProjectHealthContext(response.data)
+    }
+
+    /**
+     * Retrieves progress information for a project.
+     *
+     * @param projectId - The unique identifier of the project.
+     * @returns A promise that resolves to the project progress data.
+     */
+    async getProjectProgress(projectId: string): Promise<ProjectProgress> {
+        z.string().parse(projectId)
+        const response = await request<ProjectProgress>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: getProjectInsightsProgressEndpoint(projectId),
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
+        })
+        return validateProjectProgress(response.data)
+    }
+
+    /**
+     * Retrieves insights for all projects in a workspace.
+     *
+     * @param workspaceId - The unique identifier of the workspace.
+     * @param args - Optional parameters including project IDs filter.
+     * @returns A promise that resolves to workspace insights data.
+     */
+    async getWorkspaceInsights(
+        workspaceId: string,
+        args: GetWorkspaceInsightsArgs = {},
+    ): Promise<WorkspaceInsights> {
+        z.string().parse(workspaceId)
+        const response = await request<WorkspaceInsights>({
+            httpMethod: 'GET',
+            baseUri: this.syncApiBase,
+            relativePath: getWorkspaceInsightsEndpoint(workspaceId),
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
+            payload: {
+                ...args,
+                ...(args.projectIds ? { projectIds: args.projectIds.join(',') } : {}),
+            },
+        })
+        return validateWorkspaceInsights(response.data)
+    }
+
+    /**
+     * Triggers a health analysis for a project.
+     *
+     * @param projectId - The unique identifier of the project.
+     * @param requestId - Optional custom identifier for the request.
+     * @returns A promise that resolves to the updated project health data.
+     */
+    async analyzeProjectHealth(projectId: string, requestId?: string): Promise<ProjectHealth> {
+        z.string().parse(projectId)
+        const response = await request<ProjectHealth>({
+            httpMethod: 'POST',
+            baseUri: this.syncApiBase,
+            relativePath: getProjectInsightsHealthAnalyzeEndpoint(projectId),
+            apiToken: this.authToken,
+            customFetch: this.customFetch,
+            requestId: requestId,
+        })
+        return validateProjectHealth(response.data)
+    }
+
+    // ── Sections ──
 
     /**
      * Retrieves all sections within a specific project or matching criteria.

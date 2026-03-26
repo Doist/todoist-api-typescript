@@ -84,6 +84,31 @@ export function getWorkspaceInvitationRejectEndpoint(inviteCode: string): string
     return `workspaces/invitations/${inviteCode}/reject`
 }
 
+// Insights endpoints
+export function getProjectInsightsActivityStatsEndpoint(projectId: string): string {
+    return `projects/${projectId}/insights/activity_stats`
+}
+
+export function getProjectInsightsHealthEndpoint(projectId: string): string {
+    return `projects/${projectId}/insights/health`
+}
+
+export function getProjectInsightsHealthContextEndpoint(projectId: string): string {
+    return `projects/${projectId}/insights/health/context`
+}
+
+export function getProjectInsightsProgressEndpoint(projectId: string): string {
+    return `projects/${projectId}/insights/progress`
+}
+
+export function getProjectInsightsHealthAnalyzeEndpoint(projectId: string): string {
+    return `projects/${projectId}/insights/health/analyze`
+}
+
+export function getWorkspaceInsightsEndpoint(workspaceId: string): string {
+    return `workspaces/${workspaceId}/insights`
+}
+
 // Workspace members
 export const ENDPOINT_WORKSPACE_MEMBERS = 'workspaces/members'
 
