@@ -1349,7 +1349,10 @@ export class TodoistApi {
             relativePath: getWorkspaceInsightsEndpoint(workspaceId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
-            payload: args,
+            payload: {
+                ...args,
+                ...(args.projectIds ? { projectIds: args.projectIds.join(',') } : {}),
+            },
         })
         return validateWorkspaceInsights(response.data)
     }

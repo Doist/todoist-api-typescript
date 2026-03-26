@@ -801,8 +801,8 @@ export type GetProjectActivityStatsArgs = {
  * @see https://todoist.com/api/v1/docs#tag/Insights/operation/get_workspace_insights_api_v1_workspaces__workspace_id__insights_get
  */
 export type GetWorkspaceInsightsArgs = {
-    /** Comma-separated list of project IDs to get insights for. */
-    projectIds?: string | null
+    /** Project IDs to get insights for. */
+    projectIds?: string[]
 }
 
 // Workspace-related types
