@@ -47,16 +47,7 @@ export const PROJECT_STATUSES = [
 /** Project workflow status. */
 export type ProjectStatus = (typeof PROJECT_STATUSES)[number]
 
-/** Available default collaborator roles. */
-export const COLLABORATOR_ROLES = [
-    'CREATOR',
-    'ADMIN',
-    'READ_WRITE',
-    'EDIT_ONLY',
-    'COMPLETE_ONLY',
-] as const
-/** Default collaborator role for a project. */
-export type CollaboratorRole = (typeof COLLABORATOR_ROLES)[number]
+export { COLLABORATOR_ROLES, type CollaboratorRole } from '../../entities'
 
 /** Available reminder notification services. */
 export const REMINDER_SERVICES = ['default', 'email', 'mobile', 'push', 'no_default'] as const

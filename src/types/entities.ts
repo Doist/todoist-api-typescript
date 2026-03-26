@@ -505,6 +505,17 @@ export const ActivityEventSchema = z
  */
 export type ActivityEvent = z.infer<typeof ActivityEventSchema>
 
+/** Available project collaborator roles. */
+export const COLLABORATOR_ROLES = [
+    'CREATOR',
+    'ADMIN',
+    'READ_WRITE',
+    'EDIT_ONLY',
+    'COMPLETE_ONLY',
+] as const
+/** Role of a collaborator in a project. */
+export type CollaboratorRole = (typeof COLLABORATOR_ROLES)[number]
+
 /**
  * Available workspace roles.
  */

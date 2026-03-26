@@ -3,6 +3,7 @@ import type { ColorKey } from '../utils/colors'
 import type {
     ActivityEvent,
     ActivityObjectEventType,
+    CollaboratorRole,
     Comment,
     DueDate,
     Duration,
@@ -14,6 +15,7 @@ import type {
     Task,
     User,
     WorkspaceProject,
+    WorkspaceRole,
 } from './entities'
 import type { LocationTrigger } from './sync/resources/reminders'
 
@@ -714,7 +716,7 @@ export type ActionView = {
  * A project collaborator role with its permitted actions.
  */
 export type ProjectRoleView = {
-    name: import('./sync/commands/shared').CollaboratorRole
+    name: CollaboratorRole
     actions: ActionView[]
 }
 
@@ -722,7 +724,7 @@ export type ProjectRoleView = {
  * A workspace role with its permitted actions.
  */
 export type WorkspaceRoleView = {
-    name: import('./entities').WorkspaceRole
+    name: WorkspaceRole
     actions: ActionView[]
 }
 
