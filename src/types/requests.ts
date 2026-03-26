@@ -16,6 +16,7 @@ import type {
     WorkspaceProject,
 } from './entities'
 import type { LocationTrigger } from './sync/resources/reminders'
+import type { Folder } from './sync/resources/folders'
 
 /**
  * Arguments for creating a new task.
@@ -832,3 +833,28 @@ export type AllWorkspaceInvitationsResponse = import('./entities').WorkspaceInvi
  * Response type for workspace logo upload.
  */
 export type WorkspaceLogoResponse = Record<string, unknown> | null
+
+// Folder-related types
+
+export type GetFoldersArgs = {
+    workspaceId?: number | null
+    cursor?: string | null
+    limit?: number
+}
+
+export type GetFoldersResponse = {
+    results: Folder[]
+    nextCursor: string | null
+}
+
+export type AddFolderArgs = {
+    name: string
+    workspaceId: number
+    defaultOrder?: number | null
+    childOrder?: number | null
+}
+
+export type UpdateFolderArgs = {
+    name?: string | null
+    defaultOrder?: number | null
+}

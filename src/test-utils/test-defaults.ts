@@ -9,6 +9,7 @@ import {
     RawComment,
     PersonalProject,
     Reminder,
+    Folder,
 } from '../types'
 import { getProjectUrl, getTaskUrl, getSectionUrl } from '../utils/url-helpers'
 
@@ -323,4 +324,13 @@ export const RAW_COMMENT_WITH_OPTIONALS_AS_NULL_PROJECT: RawComment = {
 export const COMMENT_WITH_OPTIONALS_AS_NULL_PROJECT = {
     ...RAW_COMMENT_WITH_OPTIONALS_AS_NULL_PROJECT,
     taskId: undefined,
+}
+
+export const DEFAULT_FOLDER: Folder = {
+    id: '789',
+    name: 'This is a folder',
+    workspaceId: '100',
+    defaultOrder: 3,
+    childOrder: 3,
+    isDeleted: false,
 }
