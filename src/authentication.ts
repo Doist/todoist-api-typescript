@@ -8,6 +8,7 @@ import {
     ENDPOINT_AUTHORIZATION,
     ENDPOINT_GET_TOKEN,
     ENDPOINT_REVOKE,
+    ENDPOINT_REST_ACCESS_TOKENS_MIGRATE,
 } from './consts/endpoints'
 
 /**
@@ -59,6 +60,32 @@ export type RevokeTokenRequestArgs = {
     clientId: string
     clientSecret: string
     token: string
+}
+
+/**
+ * Parameters required to migrate a personal API token to an OAuth token.
+ */
+export type MigratePersonalTokenArgs = {
+    /** The unique Client ID of the registered Todoist application. */
+    clientId: string
+    /** The unique Client Secret of the registered Todoist application. */
+    clientSecret: string
+    /** The personal API token obtained from email/password authentication. */
+    personalToken: string
+    /** Scopes for the new OAuth token (e.g. 'data:read_write,data:delete'). */
+    scope: string
+}
+
+/**
+ * Response from a successful personal token migration.
+ */
+export type MigratePersonalTokenResponse = {
+    /** The new OAuth access token, or null if migration failed. */
+    accessToken: string | null
+    /** The token type (always 'Bearer'). */
+    tokenType: string
+    /** Token expiration time in seconds. */
+    expiresIn: number
 }
 
 /**
@@ -241,4 +268,51 @@ export async function revokeToken(
     })
 
     return isSuccess(response)
+}
+
+/**
+ * Migrates a personal API token to an OAuth access token.
+ *
+ * This allows applications to transition users from personal API tokens
+ * to proper OAuth tokens without requiring the user to go through the
+ * full OAuth authorization flow.
+ *
+ * @example
+ * ```typescript
+ * const { accessToken } = await migratePersonalToken({
+ *   clientId: 'your-client-id',
+ *   clientSecret: 'your-client-secret',
+ *   personalToken: 'user-personal-token',
+ *   scope: 'data:read_write,data:delete'
+ * })
+ * ```
+ *
+ * @returns The new OAuth token response
+ * @throws {@link TodoistRequestError} If the migration fails
+ */
+export async function migratePersonalToken(
+    args: MigratePersonalTokenArgs,
+    options?: AuthOptions,
+): Promise<MigratePersonalTokenResponse> {
+    const baseUrl = options?.baseUrl
+    const customFetch = options?.customFetch
+
+    const response = await request<MigratePersonalTokenResponse>({
+        httpMethod: 'POST',
+        baseUri: getSyncBaseUri(baseUrl),
+        relativePath: ENDPOINT_REST_ACCESS_TOKENS_MIGRATE,
+        apiToken: undefined,
+        payload: args,
+        customFetch,
+    })
+
+    if (response.status !== 200) {
+        throw new TodoistRequestError(
+            'Personal token migration failed.',
+            response.status,
+            response.data,
+        )
+    }
+
+    return response.data
 }

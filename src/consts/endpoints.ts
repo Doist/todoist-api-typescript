@@ -65,6 +65,7 @@ export const ENDPOINT_REST_TEMPLATES_IMPORT_FROM_FILE = 'templates/import_into_p
 export const ENDPOINT_REST_TEMPLATES_IMPORT_FROM_ID =
     'templates/import_into_project_from_template_id'
 
+export const ENDPOINT_REST_ACCESS_TOKENS_MIGRATE = 'access_tokens/migrate_personal_token'
 export const ENDPOINT_REST_BACKUPS = 'backups'
 export const ENDPOINT_REST_BACKUPS_DOWNLOAD = 'backups/download'
 export const ENDPOINT_REST_EMAILS = 'emails'
