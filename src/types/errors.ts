@@ -20,3 +20,10 @@ export class TodoistRequestError extends CustomError {
         return authenticationErrorCodes.includes(this.httpStatusCode)
     }
 }
+
+export class TodoistArgumentError extends CustomError {
+    public constructor(public message: string) {
+        super(message)
+        Object.defineProperty(this, 'name', { value: 'TodoistArgumentError' })
+    }
+}

@@ -28,6 +28,7 @@ export type LocationReminder = z.infer<typeof LocationReminderSchema>
 export const AbsoluteReminderSchema = ReminderBaseSchema.extend({
     type: z.literal('absolute'),
     due: DueDateSchema,
+    isUrgent: z.boolean().optional(),
 }).passthrough()
 
 export type AbsoluteReminder = z.infer<typeof AbsoluteReminderSchema>
@@ -36,6 +37,7 @@ export const RelativeReminderSchema = ReminderBaseSchema.extend({
     type: z.literal('relative'),
     minuteOffset: z.number().int(),
     due: DueDateSchema.optional(),
+    isUrgent: z.boolean().optional(),
 }).passthrough()
 
 export type RelativeReminder = z.infer<typeof RelativeReminderSchema>

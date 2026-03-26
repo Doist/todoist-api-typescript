@@ -1,4 +1,4 @@
-import { TodoistRequestError } from './errors'
+import { TodoistArgumentError, TodoistRequestError } from './errors'
 
 describe('errors', () => {
     const isAuthenticationErrorTheories = [
@@ -16,4 +16,8 @@ describe('errors', () => {
             expect(requestError.isAuthenticationError()).toEqual(isAuthenticationError)
         },
     )
+
+    test('TodoistArgumentError preserves its class name', () => {
+        expect(new TodoistArgumentError('An Error')).toHaveProperty('name', 'TodoistArgumentError')
+    })
 })

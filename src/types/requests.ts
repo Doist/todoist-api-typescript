@@ -4,6 +4,7 @@ import type {
     ActivityEvent,
     ActivityObjectEventType,
     Comment,
+    DueDate,
     Duration,
     Label,
     PersonalProject,
@@ -14,6 +15,7 @@ import type {
     User,
     WorkspaceProject,
 } from './entities'
+import type { LocationTrigger } from './sync/resources/reminders'
 
 /**
  * Arguments for creating a new task.
@@ -471,6 +473,70 @@ export type AddCommentArgs = {
 export type UpdateCommentArgs = {
     content: string
 }
+
+/** Available reminder delivery services. */
+export const REMINDER_DELIVERY_SERVICES = ['email', 'push'] as const
+/** Delivery service for a reminder notification. */
+export type ReminderDeliveryService = (typeof REMINDER_DELIVERY_SERVICES)[number]
+export type ReminderDueDate = Partial<
+    Pick<DueDate, 'date' | 'string' | 'timezone' | 'lang' | 'isRecurring'>
+>
+
+type ReminderTaskArgs = {
+    taskId: string
+}
+
+type TimeBasedReminderArgs = {
+    service?: ReminderDeliveryService
+    notifyUid?: string
+    isUrgent?: boolean
+}
+
+type AddLocationReminderFields = {
+    notifyUid?: string
+    name: string
+    locLat: string
+    locLong: string
+    locTrigger: LocationTrigger
+    radius?: number
+}
+
+export type AddRelativeReminderArgs = ReminderTaskArgs & {
+    reminderType?: 'relative'
+    minuteOffset: number
+} & TimeBasedReminderArgs
+
+export type AddAbsoluteReminderArgs = ReminderTaskArgs & {
+    reminderType: 'absolute'
+    due: ReminderDueDate
+} & TimeBasedReminderArgs
+
+export type AddLocationReminderArgs = ReminderTaskArgs & AddLocationReminderFields
+
+/**
+ * Arguments for creating a new reminder.
+ * @see https://developer.todoist.com/api/v1/#tag/Reminders/operation/create_reminder_api_v1_reminders_post
+ */
+export type AddReminderArgs = AddRelativeReminderArgs | AddAbsoluteReminderArgs
+
+export type UpdateRelativeReminderArgs = {
+    reminderType: 'relative'
+} & Partial<Omit<AddRelativeReminderArgs, 'taskId' | 'reminderType'>>
+
+export type UpdateAbsoluteReminderArgs = {
+    reminderType: 'absolute'
+} & Partial<Omit<AddAbsoluteReminderArgs, 'taskId' | 'reminderType'>>
+
+/**
+ * Arguments for updating an existing reminder.
+ * @see https://developer.todoist.com/api/v1/#tag/Reminders/operation/update_reminder_api_v1_reminders__reminder_id__post
+ */
+export type UpdateReminderArgs = UpdateRelativeReminderArgs | UpdateAbsoluteReminderArgs
+
+/**
+ * Arguments for updating an existing location reminder.
+ */
+export type UpdateLocationReminderArgs = Partial<Omit<AddLocationReminderArgs, 'taskId'>>
 
 /**
  * Common arguments for retrieving activity logs (excluding filter-type params).

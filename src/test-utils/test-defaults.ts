@@ -8,6 +8,7 @@ import {
     Deadline,
     RawComment,
     PersonalProject,
+    Reminder,
 } from '../types'
 import { getProjectUrl, getTaskUrl, getSectionUrl } from '../utils/url-helpers'
 
@@ -234,6 +235,42 @@ export const DEFAULT_COMMENT = {
     ...DEFAULT_RAW_COMMENT,
     taskId: DEFAULT_RAW_COMMENT.itemId,
     itemId: undefined,
+}
+
+export const DEFAULT_REMINDER_ID = '6XGgmFQrx44wfGHr'
+
+export const DEFAULT_RELATIVE_REMINDER: Reminder = {
+    id: DEFAULT_REMINDER_ID,
+    itemId: DEFAULT_TASK_ID,
+    notifyUid: DEFAULT_USER_ID,
+    isDeleted: false,
+    type: 'relative',
+    minuteOffset: 30,
+    due: DEFAULT_DUE_DATE,
+    isUrgent: false,
+}
+
+export const DEFAULT_ABSOLUTE_REMINDER: Reminder = {
+    id: DEFAULT_REMINDER_ID,
+    itemId: DEFAULT_TASK_ID,
+    notifyUid: DEFAULT_USER_ID,
+    isDeleted: false,
+    type: 'absolute',
+    due: DEFAULT_DUE_DATE,
+    isUrgent: true,
+}
+
+export const DEFAULT_LOCATION_REMINDER: Reminder = {
+    id: DEFAULT_REMINDER_ID,
+    itemId: DEFAULT_TASK_ID,
+    notifyUid: DEFAULT_USER_ID,
+    isDeleted: false,
+    type: 'location',
+    name: 'Aliados',
+    locLat: '41.148581',
+    locLong: '-8.610945000000015',
+    locTrigger: 'on_enter',
+    radius: 100,
 }
 
 export const INVALID_COMMENT = {
