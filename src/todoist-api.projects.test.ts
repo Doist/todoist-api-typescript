@@ -5,6 +5,9 @@ import {
     DEFAULT_USER,
     PROJECT_WITH_OPTIONALS_AS_NULL,
     DEFAULT_PROJECT_ID,
+    DEFAULT_TASK,
+    DEFAULT_SECTION,
+    DEFAULT_RAW_COMMENT,
 } from './test-utils/test-defaults'
 import {
     getSyncBaseUri,
@@ -299,10 +302,10 @@ describe('TodoistApi project endpoints', () => {
             const fullData = {
                 project: DEFAULT_PROJECT,
                 commentsCount: 5,
-                tasks: [{ id: '1', content: 'Test' }],
-                sections: [],
-                collaborators: [],
-                notes: [],
+                tasks: [DEFAULT_TASK],
+                sections: [DEFAULT_SECTION],
+                collaborators: [DEFAULT_USER],
+                notes: [DEFAULT_RAW_COMMENT],
             }
             server.use(
                 http.get(
@@ -316,7 +319,12 @@ describe('TodoistApi project endpoints', () => {
 
             const result = await api.getFullProject('123')
 
-            expect(result).toEqual(fullData)
+            expect(result.project).toEqual(DEFAULT_PROJECT)
+            expect(result.commentsCount).toBe(5)
+            expect(result.tasks).toHaveLength(1)
+            expect(result.sections).toHaveLength(1)
+            expect(result.collaborators).toHaveLength(1)
+            expect(result.notes).toHaveLength(1)
         })
     })
 

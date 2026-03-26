@@ -711,10 +711,18 @@ export type ActionView = {
 }
 
 /**
- * A role with its permitted actions.
+ * A project collaborator role with its permitted actions.
  */
-export type RoleView = {
-    name: string
+export type ProjectRoleView = {
+    name: import('./sync/commands/shared').CollaboratorRole
+    actions: ActionView[]
+}
+
+/**
+ * A workspace role with its permitted actions.
+ */
+export type WorkspaceRoleView = {
+    name: import('./entities').WorkspaceRole
     actions: ActionView[]
 }
 
@@ -723,8 +731,8 @@ export type RoleView = {
  * @see https://todoist.com/api/v1/docs#tag/Projects/operation/permissions_api_v1_projects_permissions_get
  */
 export type GetProjectPermissionsResponse = {
-    projectCollaboratorActions: RoleView[]
-    workspaceCollaboratorActions: RoleView[]
+    projectCollaboratorActions: ProjectRoleView[]
+    workspaceCollaboratorActions: WorkspaceRoleView[]
 }
 
 /**
@@ -742,10 +750,10 @@ export type GetFullProjectArgs = {
 export type GetFullProjectResponse = {
     project: (PersonalProject | WorkspaceProject) | null
     commentsCount: number
-    tasks: Record<string, unknown>[]
-    sections: Record<string, unknown>[]
-    collaborators: Record<string, unknown>[]
-    notes: Record<string, unknown>[]
+    tasks: Task[]
+    sections: Section[]
+    collaborators: User[]
+    notes: Comment[]
 }
 
 // Workspace-related types

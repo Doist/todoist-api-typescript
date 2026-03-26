@@ -1145,7 +1145,7 @@ export class TodoistApi {
         args: GetFullProjectArgs = {},
     ): Promise<GetFullProjectResponse> {
         z.string().parse(id)
-        const { data } = await request<GetFullProjectResponse>({
+        const { data } = await request<Record<string, unknown>>({
             httpMethod: 'GET',
             baseUri: this.syncApiBase,
             relativePath: generatePath(ENDPOINT_REST_PROJECTS, id, ENDPOINT_REST_PROJECT_FULL),
@@ -1153,7 +1153,14 @@ export class TodoistApi {
             customFetch: this.customFetch,
             payload: args,
         })
-        return data
+        return {
+            project: data.project ? validateProject(data.project) : null,
+            commentsCount: data.commentsCount as number,
+            tasks: validateTaskArray(data.tasks as unknown[]),
+            sections: validateSectionArray(data.sections as unknown[]),
+            collaborators: validateUserArray(data.collaborators as unknown[]),
+            notes: validateCommentArray(data.notes as unknown[]),
+        }
     }
 
     /**
