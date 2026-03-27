@@ -1,7 +1,7 @@
 import { vi } from 'vitest'
 import { TodoistApi } from './todoist-api'
 import { server, http, HttpResponse, getLastRequest, captureRequest } from './test-utils/msw-setup'
-import type { Comment } from './types/entities'
+import type { Comment } from './types/comments'
 import type { CustomFetchResponse } from './types/http'
 
 const FILE_URL = 'https://files.todoist.com/user_upload/v2/123/file.png'

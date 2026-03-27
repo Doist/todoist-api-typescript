@@ -1,9 +1,5 @@
-import type {
-    ProjectViewStyle,
-    ProjectVisibility,
-    WorkspaceRole,
-    CollaboratorRole,
-} from '../../entities'
+import type { ProjectViewStyle, ProjectVisibility } from '../../projects/types'
+import type { WorkspaceRole, CollaboratorRole } from '../../workspaces/types'
 import type { ProjectStatus } from './shared'
 import type { ColorKey } from '../../../utils/colors'
 

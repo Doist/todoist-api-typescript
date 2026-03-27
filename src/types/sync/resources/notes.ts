@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { AttachmentSchema } from '../../entities'
+import { AttachmentSchema } from '../../comments/types'
 
 /**
  * Sync API note (comment) resource.

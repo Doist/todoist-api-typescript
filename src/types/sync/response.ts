@@ -1,11 +1,8 @@
-import type {
-    Task,
-    Label,
-    Section,
-    PersonalProject,
-    WorkspaceProject,
-    WorkspaceUser,
-} from '../entities'
+import type { Task } from '../tasks/types'
+import type { PersonalProject, WorkspaceProject } from '../projects/types'
+import type { Section } from '../sections/types'
+import type { Label } from '../labels/types'
+import type { WorkspaceUser } from '../workspaces/types'
 import type {
     Filter,
     Collaborator,

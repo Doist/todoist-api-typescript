@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { PREMIUM_STATUSES } from '../../entities'
+import { PREMIUM_STATUSES } from '../../users/types'
 import {
     BooleanFromZeroOneSchema,
     DateFormatSchema,

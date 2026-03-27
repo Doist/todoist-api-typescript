@@ -47,7 +47,7 @@ export const PROJECT_STATUSES = [
 /** Project workflow status. */
 export type ProjectStatus = (typeof PROJECT_STATUSES)[number]
 
-export { COLLABORATOR_ROLES, type CollaboratorRole } from '../../entities'
+export { COLLABORATOR_ROLES, type CollaboratorRole } from '../../workspaces/types'
 
 /** Available reminder notification services. */
 export const REMINDER_SERVICES = ['default', 'email', 'mobile', 'push', 'no_default'] as const
@@ -58,7 +58,7 @@ export type ReminderService = (typeof REMINDER_SERVICES)[number]
  * Default access level for workspaces.
  * Same values as {@link ProjectVisibility} from entities.
  */
-export { type ProjectVisibility as DefaultAccessLevel } from '../../entities'
+export { type ProjectVisibility as DefaultAccessLevel } from '../../projects/types'
 
 /** Available workspace project sort orders. */
 export const WORKSPACE_PROJECT_SORT_ORDERS = ['MANUAL', 'A_TO_Z', 'Z_TO_A'] as const
