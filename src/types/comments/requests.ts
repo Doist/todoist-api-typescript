@@ -55,6 +55,7 @@ export type AddCommentArgs = {
         fileType?: string
         resourceType?: string
     } | null
+    uidsToNotify?: string[]
 } & RequireExactlyOne<{
     taskId?: string
     projectId?: string
