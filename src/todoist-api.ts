@@ -1869,7 +1869,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the created comment.
      */
     async addComment(args: AddCommentArgs, requestId?: string): Promise<Comment> {
-        const { uidsToNotify, ...rest} = args
+        const { uidsToNotify, ...rest } = args
         const response = await request<Comment>({
             httpMethod: 'POST',
             baseUri: this.syncApiBase,
@@ -1878,8 +1878,8 @@ export class TodoistApi {
             customFetch: this.customFetch,
             payload: {
                 ...rest,
-                ...(uidsToNotify ? { uidsToNotify: uidsToNotify.join(',') }: {}),
-                },
+                ...(uidsToNotify ? { uidsToNotify: uidsToNotify.join(',') } : {}),
+            },
             requestId: requestId,
         })
 
