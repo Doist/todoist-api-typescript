@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.7.0](https://github.com/Doist/todoist-api-typescript/compare/v7.6.1...v7.7.0) (2026-03-27)
+
+
+### Features
+
+* add uidsToNotify support to addComment ([#521](https://github.com/Doist/todoist-api-typescript/issues/521)) ([3643b7c](https://github.com/Doist/todoist-api-typescript/commit/3643b7c4a3abc1b9de68827069bce122f241bcf9))
+
+
+### Bug Fixes
+
+* move types condition before import/require in package.json exports ([#522](https://github.com/Doist/todoist-api-typescript/issues/522)) ([b893471](https://github.com/Doist/todoist-api-typescript/commit/b8934719418541f3b8c6f8f1bb4d841da33b60d0))
+
 ## [7.6.1](https://github.com/Doist/todoist-api-typescript/compare/v7.6.0...v7.6.1) (2026-03-27)
 
 
