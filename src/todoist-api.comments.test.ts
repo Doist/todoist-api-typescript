@@ -82,6 +82,39 @@ describe('TodoistApi comment endpoints', () => {
 
             expect(comment).toEqual(DEFAULT_COMMENT)
         })
+
+        test('does not send uidsToNotify when undefined', async () => {
+            let capturedBody: Record<string, unknown> = {}
+            server.use(
+                http.post(`${getSyncBaseUri()}${ENDPOINT_REST_COMMENTS}`, async ({ request }) => {
+                    capturedBody = (await request.json()) as Record<string, unknown>
+                    return HttpResponse.json(DEFAULT_RAW_COMMENT, { status: 200 })
+                }),
+            )
+            const api = getTarget()
+
+            await api.addComment(addCommentArgs)
+
+            expect(capturedBody).not.toHaveProperty('uids_to_notify')
+        })
+
+        test('sends uidsToNotify as a comma-separated string when defined', async () => {
+            let capturedBody: Record<string, unknown> = {}
+            server.use(
+                http.post(`${getSyncBaseUri()}${ENDPOINT_REST_COMMENTS}`, async ({ request }) => {
+                    capturedBody = (await request.json()) as Record<string, unknown>
+                    return HttpResponse.json(DEFAULT_RAW_COMMENT, { status: 200 })
+                }),
+            )
+            const api = getTarget()
+
+            await api.addComment({
+                ...addCommentArgs,
+                uidsToNotify: ['user1', 'user2', 'user3'],
+            })
+
+            expect(capturedBody.uids_to_notify).toBe('user1,user2,user3')
+        })
     })
 
     describe('updateComment', () => {
