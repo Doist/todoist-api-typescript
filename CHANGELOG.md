@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.6.1](https://github.com/Doist/todoist-api-typescript/compare/v7.6.0...v7.6.1) (2026-03-27)
+
+
+### Code Refactoring
+
+* split entities.ts and requests.ts into domain-specific folders ([#518](https://github.com/Doist/todoist-api-typescript/issues/518)) ([8bce74f](https://github.com/Doist/todoist-api-typescript/commit/8bce74f01d5b09cd2c039304c21fb88c9bc89f3f))
+
 ## [7.6.0](https://github.com/Doist/todoist-api-typescript/compare/v7.5.0...v7.6.0) (2026-03-26)
 
 
