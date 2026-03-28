@@ -1,7 +1,7 @@
 # ignore auto-generated documentation website
 website
 
-# Exclude CHANGELOG.md as it's managed by Release Please
+# Exclude CHANGELOG.md as it's managed by semantic-release
 CHANGELOG.md
 
 # Ignore build output directories
