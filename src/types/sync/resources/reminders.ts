@@ -9,13 +9,28 @@ export const ReminderBaseSchema = z.object({
     isDeleted: z.boolean(),
 })
 
+/** Enum-like object of reminder type values. */
+export const ReminderTypeEnum = {
+    Relative: 'relative',
+    Absolute: 'absolute',
+    Location: 'location',
+} as const
+/** Available reminder types. */
+export const REMINDER_TYPES = [
+    ReminderTypeEnum.Relative,
+    ReminderTypeEnum.Absolute,
+    ReminderTypeEnum.Location,
+] as const
+/** Discriminator for reminder type. */
+export type ReminderType = (typeof REMINDER_TYPES)[number]
+
 /** Available location reminder triggers. */
 export const LOCATION_TRIGGERS = ['on_enter', 'on_leave'] as const
 /** Trigger condition for a location-based reminder. */
 export type LocationTrigger = (typeof LOCATION_TRIGGERS)[number]
 
 export const LocationReminderSchema = ReminderBaseSchema.extend({
-    type: z.literal('location'),
+    type: z.literal(ReminderTypeEnum.Location),
     name: z.string(),
     locLat: z.string(),
     locLong: z.string(),
@@ -26,7 +41,7 @@ export const LocationReminderSchema = ReminderBaseSchema.extend({
 export type LocationReminder = z.infer<typeof LocationReminderSchema>
 
 export const AbsoluteReminderSchema = ReminderBaseSchema.extend({
-    type: z.literal('absolute'),
+    type: z.literal(ReminderTypeEnum.Absolute),
     due: DueDateSchema,
     isUrgent: z.boolean().optional(),
 }).passthrough()
@@ -34,7 +49,7 @@ export const AbsoluteReminderSchema = ReminderBaseSchema.extend({
 export type AbsoluteReminder = z.infer<typeof AbsoluteReminderSchema>
 
 export const RelativeReminderSchema = ReminderBaseSchema.extend({
-    type: z.literal('relative'),
+    type: z.literal(ReminderTypeEnum.Relative),
     minuteOffset: z.number().int(),
     due: DueDateSchema.optional(),
     isUrgent: z.boolean().optional(),

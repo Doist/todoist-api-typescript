@@ -130,7 +130,7 @@ import {
     ImportTemplateFromIdArgs,
     ImportTemplateResponse,
 } from './types/templates'
-import { LOCATION_TRIGGERS } from './types/sync/resources/reminders'
+import { LOCATION_TRIGGERS, ReminderTypeEnum } from './types/sync/resources/reminders'
 import { CustomFetch, CustomFetchResponse } from './types/http'
 import { request, isSuccess } from './transport/http-client'
 import type { Reminder } from './types'
@@ -374,7 +374,7 @@ const ReminderDueDateSchema = DueDateSchema.pick({
 
 const UpdateRelativeReminderArgsSchema = z
     .object({
-        reminderType: z.literal('relative'),
+        reminderType: z.literal(ReminderTypeEnum.Relative),
         minuteOffset: z.number().int().optional(),
         notifyUid: z.string().optional(),
         service: ReminderDeliveryServiceSchema.optional(),
@@ -384,7 +384,7 @@ const UpdateRelativeReminderArgsSchema = z
 
 const UpdateAbsoluteReminderArgsSchema = z
     .object({
-        reminderType: z.literal('absolute'),
+        reminderType: z.literal(ReminderTypeEnum.Absolute),
         due: ReminderDueDateSchema.optional(),
         notifyUid: z.string().optional(),
         service: ReminderDeliveryServiceSchema.optional(),
