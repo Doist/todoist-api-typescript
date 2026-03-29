@@ -1,44 +1,64 @@
-import type { DueDate } from '../tasks/types'
-import type { LocationTrigger, Reminder, LocationReminder } from '../sync/resources/reminders'
+import { z } from 'zod'
+import { DueDateSchema } from '../tasks/types'
+import type { Reminder, LocationReminder } from '../sync/resources/reminders'
+import {
+    LOCATION_TRIGGERS,
+    ReminderTypeEnum,
+} from '../sync/resources/reminders'
 
 /** Available reminder delivery services. */
 export const REMINDER_DELIVERY_SERVICES = ['email', 'push'] as const
 /** Delivery service for a reminder notification. */
 export type ReminderDeliveryService = (typeof REMINDER_DELIVERY_SERVICES)[number]
-export type ReminderDueDate = Partial<
-    Pick<DueDate, 'date' | 'string' | 'timezone' | 'lang' | 'isRecurring'>
->
 
-type ReminderTaskArgs = {
-    taskId: string
-}
+export const ReminderDeliveryServiceSchema = z.enum(REMINDER_DELIVERY_SERVICES)
 
-type TimeBasedReminderArgs = {
-    service?: ReminderDeliveryService
-    notifyUid?: string
-    isUrgent?: boolean
-}
+export const ReminderIdSchema = z.string()
 
-type AddLocationReminderFields = {
-    notifyUid?: string
-    name: string
-    locLat: string
-    locLong: string
-    locTrigger: LocationTrigger
-    radius?: number
-}
+export const ReminderDueDateSchema = DueDateSchema.pick({
+    date: true,
+    string: true,
+    timezone: true,
+    lang: true,
+    isRecurring: true,
+})
+    .partial()
+    .strict()
 
-export type AddRelativeReminderArgs = ReminderTaskArgs & {
-    reminderType?: 'relative'
-    minuteOffset: number
-} & TimeBasedReminderArgs
+export type ReminderDueDate = z.infer<typeof ReminderDueDateSchema>
 
-export type AddAbsoluteReminderArgs = ReminderTaskArgs & {
-    reminderType: 'absolute'
-    due: ReminderDueDate
-} & TimeBasedReminderArgs
+// ── Add schemas ──────────────────────────────────────────────────────
 
-export type AddLocationReminderArgs = ReminderTaskArgs & AddLocationReminderFields
+export const AddRelativeReminderArgsSchema = z
+    .object({
+        taskId: z.string(),
+        reminderType: z.literal(ReminderTypeEnum.Relative).optional(),
+        minuteOffset: z.number().int(),
+        service: ReminderDeliveryServiceSchema.optional(),
+        notifyUid: z.string().optional(),
+        isUrgent: z.boolean().optional(),
+    })
+    .strict()
+
+export type AddRelativeReminderArgs = z.infer<typeof AddRelativeReminderArgsSchema>
+
+export const AddAbsoluteReminderArgsSchema = z
+    .object({
+        taskId: z.string(),
+        reminderType: z.literal(ReminderTypeEnum.Absolute),
+        due: ReminderDueDateSchema,
+        service: ReminderDeliveryServiceSchema.optional(),
+        notifyUid: z.string().optional(),
+        isUrgent: z.boolean().optional(),
+    })
+    .strict()
+
+export type AddAbsoluteReminderArgs = z.infer<typeof AddAbsoluteReminderArgsSchema>
+
+export const AddReminderArgsSchema = z.discriminatedUnion('reminderType', [
+    AddRelativeReminderArgsSchema.required({ reminderType: true }),
+    AddAbsoluteReminderArgsSchema,
+])
 
 /**
  * Arguments for creating a new reminder.
@@ -46,13 +66,60 @@ export type AddLocationReminderArgs = ReminderTaskArgs & AddLocationReminderFiel
  */
 export type AddReminderArgs = AddRelativeReminderArgs | AddAbsoluteReminderArgs
 
-export type UpdateRelativeReminderArgs = {
-    reminderType: 'relative'
-} & Partial<Omit<AddRelativeReminderArgs, 'taskId' | 'reminderType'>>
+export const AddLocationReminderArgsSchema = z
+    .object({
+        taskId: z.string(),
+        notifyUid: z.string().optional(),
+        name: z.string(),
+        locLat: z.string(),
+        locLong: z.string(),
+        locTrigger: z.enum(LOCATION_TRIGGERS),
+        radius: z.number().int().optional(),
+    })
+    .strict()
 
-export type UpdateAbsoluteReminderArgs = {
-    reminderType: 'absolute'
-} & Partial<Omit<AddAbsoluteReminderArgs, 'taskId' | 'reminderType'>>
+export type AddLocationReminderArgs = z.infer<typeof AddLocationReminderArgsSchema>
+
+// ── Update schemas ───────────────────────────────────────────────────
+
+export const UpdateRelativeReminderArgsSchema = z
+    .object({
+        reminderType: z.literal(ReminderTypeEnum.Relative),
+        minuteOffset: z.number().int().optional(),
+        notifyUid: z.string().optional(),
+        service: ReminderDeliveryServiceSchema.optional(),
+        isUrgent: z.boolean().optional(),
+    })
+    .strict()
+
+export type UpdateRelativeReminderArgs = z.infer<typeof UpdateRelativeReminderArgsSchema>
+
+export const UpdateAbsoluteReminderArgsSchema = z
+    .object({
+        reminderType: z.literal(ReminderTypeEnum.Absolute),
+        due: ReminderDueDateSchema.optional(),
+        notifyUid: z.string().optional(),
+        service: ReminderDeliveryServiceSchema.optional(),
+        isUrgent: z.boolean().optional(),
+    })
+    .strict()
+
+export type UpdateAbsoluteReminderArgs = z.infer<typeof UpdateAbsoluteReminderArgsSchema>
+
+export const UpdateReminderArgsSchema = z
+    .discriminatedUnion('reminderType', [
+        UpdateRelativeReminderArgsSchema,
+        UpdateAbsoluteReminderArgsSchema,
+    ])
+    .refine(
+        (args) =>
+            Object.entries(args).some(
+                ([key, value]) => key !== 'reminderType' && value !== undefined,
+            ),
+        {
+            message: 'At least one reminder field must be provided to updateReminder',
+        },
+    )
 
 /**
  * Arguments for updating an existing reminder.
@@ -60,10 +127,26 @@ export type UpdateAbsoluteReminderArgs = {
  */
 export type UpdateReminderArgs = UpdateRelativeReminderArgs | UpdateAbsoluteReminderArgs
 
+export const UpdateLocationReminderArgsSchema = z
+    .object({
+        notifyUid: z.string().optional(),
+        name: z.string().optional(),
+        locLat: z.string().optional(),
+        locLong: z.string().optional(),
+        locTrigger: z.enum(LOCATION_TRIGGERS).optional(),
+        radius: z.number().int().optional(),
+    })
+    .strict()
+    .refine((args) => Object.values(args).some((value) => value !== undefined), {
+        message: 'At least one reminder field must be provided to updateLocationReminder',
+    })
+
 /**
  * Arguments for updating an existing location reminder.
  */
-export type UpdateLocationReminderArgs = Partial<Omit<AddLocationReminderArgs, 'taskId'>>
+export type UpdateLocationReminderArgs = z.infer<typeof UpdateLocationReminderArgsSchema>
+
+// ── Get/Response types ───────────────────────────────────────────────
 
 /**
  * Arguments for listing reminders.
