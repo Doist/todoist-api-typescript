@@ -1,3 +1,9 @@
+## [7.8.0](https://github.com/Doist/todoist-api-typescript/compare/v7.7.0...v7.8.0) (2026-03-29)
+
+### Features
+
+* export REMINDER_TYPES and refactor reminder schemas ([#528](https://github.com/Doist/todoist-api-typescript/issues/528)) ([105209a](https://github.com/Doist/todoist-api-typescript/commit/105209a6e53c9f488216edcbe1d33596e70ad5dc))
+
 # Changelog
 
 All notable changes to this project will be documented in this file.
