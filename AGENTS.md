@@ -23,6 +23,24 @@ z.enum(EXAMPLE_VALUES)
 -   **Reuse**: If the same values appear in multiple files, define the const array once and import it elsewhere
 -   **JSDoc**: Add a brief JSDoc comment to both the const array and the derived type so IDE hover shows documentation on each
 
+### Exception: Discriminated unions with `z.literal()`
+
+When the same string values are used as `z.literal()` discriminators across multiple schemas (e.g. in a discriminated union where each variant has its own schema), use an `as const` enum-like object as the single source of truth, then derive the array from it:
+
+```ts
+export const ExampleTypeEnum = {
+    Foo: 'foo',
+    Bar: 'bar',
+} as const
+export const EXAMPLE_TYPES = [ExampleTypeEnum.Foo, ExampleTypeEnum.Bar] as const
+export type ExampleType = (typeof EXAMPLE_TYPES)[number]
+
+// In schemas:
+z.literal(ExampleTypeEnum.Foo)
+```
+
+This avoids duplicating string literals across multiple `z.literal()` calls and type definitions. See `ReminderTypeEnum` for a real example.
+
 ## Zod Schemas
 
 -   **Export**: All Zod schemas should be exported

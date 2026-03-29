@@ -1,5 +1,4 @@
 import {
-    DueDateSchema,
     Task,
     AddTaskArgs,
     GetTasksArgs,
@@ -65,7 +64,6 @@ import {
     GetCommentsResponse,
 } from './types/comments'
 import {
-    REMINDER_DELIVERY_SERVICES,
     AddReminderArgs,
     UpdateReminderArgs,
     AddLocationReminderArgs,
@@ -74,6 +72,9 @@ import {
     GetRemindersResponse,
     GetLocationRemindersArgs,
     GetLocationRemindersResponse,
+    UpdateReminderArgsSchema,
+    UpdateLocationReminderArgsSchema,
+    ReminderIdSchema,
 } from './types/reminders'
 import { CurrentUser } from './types/users'
 import { ProductivityStats } from './types/productivity'
@@ -130,7 +131,6 @@ import {
     ImportTemplateFromIdArgs,
     ImportTemplateResponse,
 } from './types/templates'
-import { LOCATION_TRIGGERS } from './types/sync/resources/reminders'
 import { CustomFetch, CustomFetchResponse } from './types/http'
 import { request, isSuccess } from './transport/http-client'
 import type { Reminder } from './types'
@@ -359,67 +359,6 @@ function headersToRecord(headers: Headers): Record<string, string> {
     })
     return result
 }
-
-const ReminderDeliveryServiceSchema = z.enum(REMINDER_DELIVERY_SERVICES)
-const ReminderIdSchema = z.string()
-const ReminderDueDateSchema = DueDateSchema.pick({
-    date: true,
-    string: true,
-    timezone: true,
-    lang: true,
-    isRecurring: true,
-})
-    .partial()
-    .strict()
-
-const UpdateRelativeReminderArgsSchema = z
-    .object({
-        reminderType: z.literal('relative'),
-        minuteOffset: z.number().int().optional(),
-        notifyUid: z.string().optional(),
-        service: ReminderDeliveryServiceSchema.optional(),
-        isUrgent: z.boolean().optional(),
-    })
-    .strict()
-
-const UpdateAbsoluteReminderArgsSchema = z
-    .object({
-        reminderType: z.literal('absolute'),
-        due: ReminderDueDateSchema.optional(),
-        notifyUid: z.string().optional(),
-        service: ReminderDeliveryServiceSchema.optional(),
-        isUrgent: z.boolean().optional(),
-    })
-    .strict()
-
-const UpdateLocationReminderArgsSchema = z
-    .object({
-        notifyUid: z.string().optional(),
-        name: z.string().optional(),
-        locLat: z.string().optional(),
-        locLong: z.string().optional(),
-        locTrigger: z.enum(LOCATION_TRIGGERS).optional(),
-        radius: z.number().int().optional(),
-    })
-    .strict()
-    .refine((args) => Object.values(args).some((value) => value !== undefined), {
-        message: 'At least one reminder field must be provided to updateLocationReminder',
-    })
-
-const UpdateReminderArgsSchema = z
-    .discriminatedUnion('reminderType', [
-        UpdateRelativeReminderArgsSchema,
-        UpdateAbsoluteReminderArgsSchema,
-    ])
-    .refine(
-        (args) =>
-            Object.entries(args).some(
-                ([key, value]) => key !== 'reminderType' && value !== undefined,
-            ),
-        {
-            message: 'At least one reminder field must be provided to updateReminder',
-        },
-    )
 
 /**
  * Response from viewAttachment, extending CustomFetchResponse with
