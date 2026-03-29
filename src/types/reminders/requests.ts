@@ -52,8 +52,8 @@ export const AddAbsoluteReminderArgsSchema = z
 
 export type AddAbsoluteReminderArgs = z.infer<typeof AddAbsoluteReminderArgsSchema>
 
-export const AddReminderArgsSchema = z.discriminatedUnion('reminderType', [
-    AddRelativeReminderArgsSchema.required({ reminderType: true }),
+export const AddReminderArgsSchema = z.union([
+    AddRelativeReminderArgsSchema,
     AddAbsoluteReminderArgsSchema,
 ])
 

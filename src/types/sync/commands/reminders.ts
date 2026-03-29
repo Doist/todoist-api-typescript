@@ -1,16 +1,16 @@
 import type { SyncDueDate, ReminderService } from './shared'
-import type { LocationTrigger } from '../resources/reminders'
+import type { LocationTrigger, ReminderType } from '../resources/reminders'
 
 export type ReminderAddArgs =
     | {
-          type: 'absolute'
+          type: Extract<ReminderType, 'absolute'>
           itemId: string
           service?: ReminderService
           notifyUid?: string
           due?: SyncDueDate
       }
     | {
-          type: 'relative'
+          type: Extract<ReminderType, 'relative'>
           itemId: string
           service?: ReminderService
           notifyUid?: string
@@ -18,7 +18,7 @@ export type ReminderAddArgs =
           due?: SyncDueDate
       }
     | {
-          type: 'location'
+          type: Extract<ReminderType, 'location'>
           itemId: string
           name: string
           locLat: string
@@ -31,14 +31,14 @@ export type ReminderAddArgs =
 export type ReminderUpdateArgs =
     | {
           id: string
-          type: 'absolute'
+          type: Extract<ReminderType, 'absolute'>
           service?: ReminderService
           notifyUid?: string
           due?: SyncDueDate
       }
     | {
           id: string
-          type: 'relative'
+          type: Extract<ReminderType, 'relative'>
           service?: ReminderService
           notifyUid?: string
           minuteOffset?: number
@@ -46,7 +46,7 @@ export type ReminderUpdateArgs =
       }
     | {
           id: string
-          type: 'location'
+          type: Extract<ReminderType, 'location'>
           name?: string
           locLat?: string
           locLong?: string
