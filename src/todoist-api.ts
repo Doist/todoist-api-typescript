@@ -360,7 +360,6 @@ function headersToRecord(headers: Headers): Record<string, string> {
     return result
 }
 
-
 /**
  * Response from viewAttachment, extending CustomFetchResponse with
  * arrayBuffer() support for binary file content.
