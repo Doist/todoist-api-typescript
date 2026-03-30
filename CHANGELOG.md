@@ -1,3 +1,9 @@
+## [7.9.0](https://github.com/Doist/todoist-api-typescript/compare/v7.8.0...v7.9.0) (2026-03-30)
+
+### Features
+
+* Add workspace folders CRUD endpoints ([#442](https://github.com/Doist/todoist-api-typescript/issues/442)) ([5eb553a](https://github.com/Doist/todoist-api-typescript/commit/5eb553ada0110b40118510803efc73ca50543cc6))
+
 ## [7.8.0](https://github.com/Doist/todoist-api-typescript/compare/v7.7.0...v7.8.0) (2026-03-29)
 
 ### Features
