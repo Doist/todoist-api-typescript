@@ -1,16 +1,11 @@
 import { z } from 'zod'
+import { StringOrNumberSchema } from '../../common'
 import {
     WorkspaceRoleSchema,
     WorkspacePlanSchema,
     WorkspaceLimitsSchema,
     WorkspacePropertiesSchema,
 } from '../../workspaces/types'
-
-/**
- * Coerces a string or number value to a string.
- * The REST API returns numeric IDs while the Sync API returns string IDs.
- */
-const stringOrNumber = z.union([z.string(), z.number()]).transform((val) => String(val))
 
 /**
  * Sync API workspace resource.
@@ -21,21 +16,21 @@ const stringOrNumber = z.union([z.string(), z.number()]).transform((val) => Stri
  */
 export const SyncWorkspaceSchema = z
     .object({
-        id: stringOrNumber,
+        id: StringOrNumberSchema,
         name: z.string(),
         description: z.string(),
         logoBig: z.string().optional(),
         logoMedium: z.string().optional(),
         logoSmall: z.string().optional(),
         logoS640: z.string().optional(),
-        creatorId: stringOrNumber,
+        creatorId: StringOrNumberSchema,
         createdAt: z.string().optional(),
         dateCreated: z.string().optional(),
         isDeleted: z.boolean(),
         isCollapsed: z.boolean(),
-        role: WorkspaceRoleSchema,
+        role: WorkspaceRoleSchema.optional(),
         plan: WorkspacePlanSchema,
-        limits: WorkspaceLimitsSchema,
+        limits: WorkspaceLimitsSchema.optional(),
         inviteCode: z.string().nullable().optional(),
         isLinkSharingEnabled: z.boolean().nullable().optional(),
         isGuestAllowed: z.boolean().nullable().optional(),
@@ -64,5 +59,9 @@ export const SyncWorkspaceSchema = z
         properties: WorkspacePropertiesSchema.optional(),
     })
     .passthrough()
+    .transform(({ dateCreated, createdAt, ...rest }) => ({
+        ...rest,
+        createdAt: createdAt ?? dateCreated,
+    }))
 
 export type SyncWorkspace = z.infer<typeof SyncWorkspaceSchema>

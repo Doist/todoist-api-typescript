@@ -579,7 +579,7 @@ describe('TodoistApi workspaces', () => {
                 name: 'Numeric ID Workspace',
                 plan: 'BUSINESS',
                 creatorId: '499807',
-                dateCreated: '2022-08-16T11:16:22.433711Z',
+                createdAt: '2022-08-16T11:16:22.433711Z',
             })
             // id and creatorId should be strings after coercion
             expect(typeof result[0].id).toBe('string')
@@ -612,8 +612,8 @@ describe('TodoistApi workspaces', () => {
             expect(result).toHaveLength(1)
             expect(result[0].role).toBeUndefined()
             expect(result[0].limits).toBeUndefined()
-            expect(result[0].createdAt).toBeUndefined()
-            expect(result[0].dateCreated).toBe('2023-06-01T00:00:00Z')
+            // dateCreated from the API is normalized to createdAt
+            expect(result[0].createdAt).toBe('2023-06-01T00:00:00Z')
         })
 
         test('validates workspace schema', async () => {
