@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { StringOrNumberSchema } from '../../common'
 import {
     WorkspaceRoleSchema,
     WorkspacePlanSchema,
@@ -15,20 +16,21 @@ import {
  */
 export const SyncWorkspaceSchema = z
     .object({
-        id: z.string(),
+        id: StringOrNumberSchema,
         name: z.string(),
         description: z.string(),
         logoBig: z.string().optional(),
         logoMedium: z.string().optional(),
         logoSmall: z.string().optional(),
         logoS640: z.string().optional(),
-        creatorId: z.string(),
-        createdAt: z.string(),
+        creatorId: StringOrNumberSchema,
+        createdAt: z.string().optional(),
+        dateCreated: z.string().optional(),
         isDeleted: z.boolean(),
         isCollapsed: z.boolean(),
-        role: WorkspaceRoleSchema,
+        role: WorkspaceRoleSchema.optional(),
         plan: WorkspacePlanSchema,
-        limits: WorkspaceLimitsSchema,
+        limits: WorkspaceLimitsSchema.optional(),
         inviteCode: z.string().nullable().optional(),
         isLinkSharingEnabled: z.boolean().nullable().optional(),
         isGuestAllowed: z.boolean().nullable().optional(),
@@ -57,5 +59,9 @@ export const SyncWorkspaceSchema = z
         properties: WorkspacePropertiesSchema.optional(),
     })
     .passthrough()
+    .transform(({ dateCreated, createdAt, ...rest }) => ({
+        ...rest,
+        createdAt: createdAt ?? dateCreated,
+    }))
 
 export type SyncWorkspace = z.infer<typeof SyncWorkspaceSchema>

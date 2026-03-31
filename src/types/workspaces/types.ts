@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { StringOrNumberSchema } from '../common'
 import { DueDateSchema, DeadlineSchema } from '../tasks/types'
 
 /** Available project collaborator roles. */
@@ -161,23 +162,29 @@ export type WorkspaceProperties = z.infer<typeof WorkspacePropertiesSchema>
 /**
  * Represents a workspace in Todoist.
  */
-export const WorkspaceSchema = z.object({
-    id: z.string(),
-    name: z.string(),
-    plan: WorkspacePlanSchema,
-    role: WorkspaceRoleSchema,
-    inviteCode: z.string(),
-    isLinkSharingEnabled: z.boolean(),
-    isGuestAllowed: z.boolean(),
-    limits: WorkspaceLimitsSchema,
-    logoBig: z.string().nullish(),
-    logoMedium: z.string().nullish(),
-    logoSmall: z.string().nullish(),
-    logoS640: z.string().nullish(),
-    createdAt: z.string(),
-    creatorId: z.string(),
-    properties: WorkspacePropertiesSchema,
-})
+export const WorkspaceSchema = z
+    .object({
+        id: StringOrNumberSchema,
+        name: z.string(),
+        plan: WorkspacePlanSchema,
+        role: WorkspaceRoleSchema.optional(),
+        inviteCode: z.string(),
+        isLinkSharingEnabled: z.boolean(),
+        isGuestAllowed: z.boolean(),
+        limits: WorkspaceLimitsSchema.optional(),
+        logoBig: z.string().nullish(),
+        logoMedium: z.string().nullish(),
+        logoSmall: z.string().nullish(),
+        logoS640: z.string().nullish(),
+        createdAt: z.string().optional(),
+        dateCreated: z.string().optional(),
+        creatorId: StringOrNumberSchema,
+        properties: WorkspacePropertiesSchema,
+    })
+    .transform(({ dateCreated, createdAt, ...rest }) => ({
+        ...rest,
+        createdAt: createdAt ?? dateCreated,
+    }))
 
 export type Workspace = z.infer<typeof WorkspaceSchema>
 
