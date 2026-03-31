@@ -14,7 +14,7 @@ import {
     getAuthStateParameter,
     getAuthorizationUrl,
     getAuthToken,
-} from '@doist/todoist-api-typescript'
+} from '@doist/todoist-sdk'
 
 // 1. Generate state parameter and store it
 const state = getAuthStateParameter()
@@ -36,7 +36,7 @@ const { accessToken } = await getAuthToken({
 ## Using the Access Token
 
 ```typescript
-import { TodoistApi } from '@doist/todoist-api-typescript'
+import { TodoistApi } from '@doist/todoist-sdk'
 
 // Initialize API with access token
 const api = new TodoistApi(accessToken)

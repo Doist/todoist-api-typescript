@@ -5,17 +5,17 @@ import type * as Preset from '@docusaurus/preset-classic'
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 const config: Config = {
-    title: 'Todoist API TypeScript Client',
+    title: 'Todoist SDK',
     tagline: 'The official TypeScript API client for the Todoist Sync API.',
     favicon: 'img/favicon.ico',
 
     url: 'https://doist.github.io/',
     // Set the /<baseUrl>/ pathname under which your site is served
     // For GitHub pages deployment, it is often '/<projectName>/'
-    baseUrl: '/todoist-api-typescript/',
+    baseUrl: '/todoist-sdk-typescript/',
 
     organizationName: 'Doist',
-    projectName: 'todoist-api-typescript',
+    projectName: 'todoist-sdk-typescript',
 
     onBrokenLinks: 'throw',
     onBrokenMarkdownLinks: 'warn',
@@ -44,7 +44,7 @@ const config: Config = {
     themeConfig: {
         image: 'img/todoist-social-card.png',
         navbar: {
-            title: 'Todoist API TypeScript Client',
+            title: 'Todoist SDK',
             logo: {
                 alt: 'Todoist Logo',
                 src: 'img/todoist-logo.svg',
@@ -56,7 +56,7 @@ const config: Config = {
                     to: '/',
                 },
                 {
-                    href: 'https://github.com/Doist/todoist-api-typescript',
+                    href: 'https://github.com/Doist/todoist-sdk-typescript',
                     label: 'GitHub',
                     position: 'right',
                 },
@@ -87,7 +87,7 @@ const config: Config = {
                         },
                         {
                             label: 'GitHub',
-                            href: 'https://github.com/Doist/todoist-api-typescript',
+                            href: 'https://github.com/Doist/todoist-sdk-typescript',
                         },
                     ],
                 },

@@ -1,13 +1,13 @@
-# Todoist API TypeScript Client
+# Todoist SDK
 
-This is the official TypeScript API client for the Todoist REST API.
+The official TypeScript SDK for the Todoist REST API.
 
 ## Installation
 
 Requires Node 20.18.1+.
 
 ```
-npm install @doist/todoist-api-typescript
+npm install @doist/todoist-sdk
 ```
 
 ### Usage
@@ -15,7 +15,7 @@ npm install @doist/todoist-api-typescript
 An example of initializing the API client and fetching a user's tasks:
 
 ```typescript
-import { TodoistApi } from '@doist/todoist-api-typescript'
+import { TodoistApi } from '@doist/todoist-sdk'
 
 const api = new TodoistApi('YOURTOKEN')
 
@@ -53,7 +53,7 @@ The Todoist API client supports custom HTTP implementations to enable usage in e
 ### Basic Usage
 
 ```typescript
-import { TodoistApi } from '@doist/todoist-api-typescript'
+import { TodoistApi } from '@doist/todoist-sdk'
 
 // Using the new options-based constructor
 const api = new TodoistApi('YOURTOKEN', {
