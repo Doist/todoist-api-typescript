@@ -1,3 +1,13 @@
+## [8.0.0](https://github.com/Doist/todoist-sdk-typescript/compare/v7.9.1...v8.0.0) (2026-03-31)
+
+### ⚠ BREAKING CHANGES
+
+* rename package to @doist/todoist-sdk (#532)
+
+### Features
+
+* rename package to @doist/todoist-sdk ([#532](https://github.com/Doist/todoist-sdk-typescript/issues/532)) ([675707d](https://github.com/Doist/todoist-sdk-typescript/commit/675707db1b7fd5504d413cced2c5e93ea181363e))
+
 ## [7.9.1](https://github.com/Doist/todoist-api-typescript/compare/v7.9.0...v7.9.1) (2026-03-31)
 
 ### Bug Fixes
