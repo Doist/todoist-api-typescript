@@ -7,6 +7,14 @@ import {
 } from '../../workspaces/types'
 
 /**
+ * Coerces a string or number value to a string.
+ * The REST API returns numeric IDs while the Sync API returns string IDs.
+ */
+const stringOrNumber = z
+    .union([z.string(), z.number()])
+    .transform((val) => String(val))
+
+/**
  * Sync API workspace resource.
  *
  * This is a superset of the REST `WorkspaceSchema` — the Sync API returns
@@ -15,15 +23,16 @@ import {
  */
 export const SyncWorkspaceSchema = z
     .object({
-        id: z.string(),
+        id: stringOrNumber,
         name: z.string(),
         description: z.string(),
         logoBig: z.string().optional(),
         logoMedium: z.string().optional(),
         logoSmall: z.string().optional(),
         logoS640: z.string().optional(),
-        creatorId: z.string(),
-        createdAt: z.string(),
+        creatorId: stringOrNumber,
+        createdAt: z.string().optional(),
+        dateCreated: z.string().optional(),
         isDeleted: z.boolean(),
         isCollapsed: z.boolean(),
         role: WorkspaceRoleSchema,

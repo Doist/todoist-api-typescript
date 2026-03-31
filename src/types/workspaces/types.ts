@@ -159,23 +159,32 @@ export const WorkspacePropertiesSchema = z.record(z.string(), z.unknown())
 export type WorkspaceProperties = z.infer<typeof WorkspacePropertiesSchema>
 
 /**
+ * Coerces a string or number value to a string.
+ * The REST API returns numeric IDs while the Sync API returns string IDs.
+ */
+const stringOrNumber = z
+    .union([z.string(), z.number()])
+    .transform((val) => String(val))
+
+/**
  * Represents a workspace in Todoist.
  */
 export const WorkspaceSchema = z.object({
-    id: z.string(),
+    id: stringOrNumber,
     name: z.string(),
     plan: WorkspacePlanSchema,
-    role: WorkspaceRoleSchema,
+    role: WorkspaceRoleSchema.optional(),
     inviteCode: z.string(),
     isLinkSharingEnabled: z.boolean(),
     isGuestAllowed: z.boolean(),
-    limits: WorkspaceLimitsSchema,
+    limits: WorkspaceLimitsSchema.optional(),
     logoBig: z.string().nullish(),
     logoMedium: z.string().nullish(),
     logoSmall: z.string().nullish(),
     logoS640: z.string().nullish(),
-    createdAt: z.string(),
-    creatorId: z.string(),
+    createdAt: z.string().optional(),
+    dateCreated: z.string().optional(),
+    creatorId: stringOrNumber,
     properties: WorkspacePropertiesSchema,
 })
 

@@ -550,6 +550,72 @@ describe('TodoistApi workspaces', () => {
             })
         })
 
+        test('coerces numeric id and creator_id to strings', async () => {
+            const mockWithNumericIds = [
+                {
+                    id: 69,
+                    name: 'Numeric ID Workspace',
+                    plan: 'BUSINESS',
+                    invite_code: 'invite789',
+                    is_link_sharing_enabled: true,
+                    is_guest_allowed: true,
+                    creator_id: 499807,
+                    date_created: '2022-08-16T11:16:22.433711Z',
+                    properties: {},
+                },
+            ]
+
+            server.use(
+                http.get(`${getSyncBaseUri()}workspaces`, () => {
+                    return HttpResponse.json(mockWithNumericIds, { status: 200 })
+                }),
+            )
+
+            const result = await api.getWorkspaces()
+
+            expect(result).toHaveLength(1)
+            expect(result[0]).toMatchObject({
+                id: '69',
+                name: 'Numeric ID Workspace',
+                plan: 'BUSINESS',
+                creatorId: '499807',
+                dateCreated: '2022-08-16T11:16:22.433711Z',
+            })
+            // id and creatorId should be strings after coercion
+            expect(typeof result[0].id).toBe('string')
+            expect(typeof result[0].creatorId).toBe('string')
+        })
+
+        test('handles missing role, limits, and createdAt fields', async () => {
+            const mockMinimalWorkspace = [
+                {
+                    id: '12345',
+                    name: 'Minimal Workspace',
+                    plan: 'STARTER',
+                    invite_code: 'invite999',
+                    is_link_sharing_enabled: false,
+                    is_guest_allowed: false,
+                    creator_id: '11111',
+                    date_created: '2023-06-01T00:00:00Z',
+                    properties: {},
+                },
+            ]
+
+            server.use(
+                http.get(`${getSyncBaseUri()}workspaces`, () => {
+                    return HttpResponse.json(mockMinimalWorkspace, { status: 200 })
+                }),
+            )
+
+            const result = await api.getWorkspaces()
+
+            expect(result).toHaveLength(1)
+            expect(result[0].role).toBeUndefined()
+            expect(result[0].limits).toBeUndefined()
+            expect(result[0].createdAt).toBeUndefined()
+            expect(result[0].dateCreated).toBe('2023-06-01T00:00:00Z')
+        })
+
         test('validates workspace schema', async () => {
             server.use(
                 http.get(`${getSyncBaseUri()}workspaces`, () => {
