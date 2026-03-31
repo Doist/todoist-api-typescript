@@ -1,3 +1,9 @@
+## [7.9.1](https://github.com/Doist/todoist-api-typescript/compare/v7.9.0...v7.9.1) (2026-03-31)
+
+### Bug Fixes
+
+* align WorkspaceSchema with actual REST API response ([#531](https://github.com/Doist/todoist-api-typescript/issues/531)) ([8750e3f](https://github.com/Doist/todoist-api-typescript/commit/8750e3f888c8d43f1a709f759d0369251f28d109))
+
 ## [7.9.0](https://github.com/Doist/todoist-api-typescript/compare/v7.8.0...v7.9.0) (2026-03-30)
 
 ### Features
