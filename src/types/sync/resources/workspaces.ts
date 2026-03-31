@@ -10,9 +10,7 @@ import {
  * Coerces a string or number value to a string.
  * The REST API returns numeric IDs while the Sync API returns string IDs.
  */
-const stringOrNumber = z
-    .union([z.string(), z.number()])
-    .transform((val) => String(val))
+const stringOrNumber = z.union([z.string(), z.number()]).transform((val) => String(val))
 
 /**
  * Sync API workspace resource.
