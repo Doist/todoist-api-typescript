@@ -62,11 +62,7 @@ export type ClientRegistrationRequest = {
     tokenEndpointAuthMethod?: TokenEndpointAuthMethod
 }
 
-/**
- * Response from a successful dynamic client registration.
- * @see {@link https://datatracker.ietf.org/doc/html/rfc7591#section-3.2.1 RFC 7591 Section 3.2.1}
- */
-export type ClientRegistrationResponse = {
+type RawClientRegistrationResponse = {
     clientId: string
     clientSecret: string
     clientName: string
@@ -75,10 +71,24 @@ export type ClientRegistrationResponse = {
     grantTypes: string[]
     responseTypes: string[]
     tokenEndpointAuthMethod: string
-    clientIdIssuedAt: Date
-    clientSecretExpiresAt: Date
+    clientIdIssuedAt: number
+    clientSecretExpiresAt: number
     clientUri?: string
     logoUri?: string
+}
+
+/**
+ * Response from a successful dynamic client registration.
+ * @see {@link https://datatracker.ietf.org/doc/html/rfc7591#section-3.2.1 RFC 7591 Section 3.2.1}
+ */
+export type ClientRegistrationResponse = Omit<
+    RawClientRegistrationResponse,
+    'clientIdIssuedAt' | 'clientSecretExpiresAt' | 'scope'
+> & {
+    scope: Permission[]
+    clientIdIssuedAt: Date
+    /** `null` indicates the client secret never expires. */
+    clientSecretExpiresAt: Date | null
 }
 
 /**
@@ -402,7 +412,7 @@ export async function registerClient(
     const customFetch = options?.customFetch
 
     try {
-        const response = await request<ClientRegistrationResponse>({
+        const response = await request<RawClientRegistrationResponse>({
             httpMethod: 'POST',
             baseUri: getAuthBaseUri(baseUrl),
             relativePath: ENDPOINT_REGISTER,
@@ -419,11 +429,13 @@ export async function registerClient(
             )
         }
 
-        const { clientIdIssuedAt, clientSecretExpiresAt, ...rest } = response.data
+        const { clientIdIssuedAt, clientSecretExpiresAt, scope, ...rest } = response.data
         return {
             ...rest,
-            clientIdIssuedAt: new Date((clientIdIssuedAt as unknown as number) * 1000),
-            clientSecretExpiresAt: new Date((clientSecretExpiresAt as unknown as number) * 1000),
+            scope: scope.split(' ') as Permission[],
+            clientIdIssuedAt: new Date(clientIdIssuedAt * 1000),
+            clientSecretExpiresAt:
+                clientSecretExpiresAt === 0 ? null : new Date(clientSecretExpiresAt * 1000),
         }
     } catch (error) {
         const err = error as TodoistRequestError

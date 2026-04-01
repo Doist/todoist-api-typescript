@@ -227,12 +227,12 @@ describe('authentication', () => {
                 clientSecret: 'secret123',
                 clientName: 'Test App',
                 redirectUris: ['https://example.com/callback'],
-                scope: 'data:read_write task:add',
+                scope: ['data:read_write', 'task:add'],
                 grantTypes: ['authorization_code'],
                 responseTypes: ['code'],
                 tokenEndpointAuthMethod: 'client_secret_post',
                 clientIdIssuedAt: new Date(1704067200 * 1000),
-                clientSecretExpiresAt: new Date(0),
+                clientSecretExpiresAt: null,
             })
         })
 
