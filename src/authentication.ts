@@ -71,7 +71,7 @@ type RawClientRegistrationResponse = {
     grantTypes: string[]
     responseTypes: string[]
     tokenEndpointAuthMethod: string
-    clientIdIssuedAt: number
+    clientIdIssuedAt?: number
     clientSecretExpiresAt?: number
     clientUri?: string
     logoUri?: string
@@ -86,9 +86,9 @@ export type ClientRegistrationResponse = Omit<
     'clientIdIssuedAt' | 'clientSecretExpiresAt' | 'scope'
 > & {
     scope?: Permission[]
-    clientIdIssuedAt: Date
-    /** `null` indicates the client secret never expires. */
-    clientSecretExpiresAt: Date | null
+    clientIdIssuedAt?: Date
+    /** `null` indicates the client secret never expires. Absent when no secret is issued. */
+    clientSecretExpiresAt?: Date | null
 }
 
 /**
@@ -433,10 +433,14 @@ export async function registerClient(
         return {
             ...rest,
             scope: scope ? (scope.split(' ') as Permission[]) : undefined,
-            clientIdIssuedAt: new Date(clientIdIssuedAt * 1000),
-            clientSecretExpiresAt: !clientSecretExpiresAt
-                ? null
-                : new Date(clientSecretExpiresAt * 1000),
+            clientIdIssuedAt:
+                clientIdIssuedAt !== undefined ? new Date(clientIdIssuedAt * 1000) : undefined,
+            clientSecretExpiresAt:
+                clientSecretExpiresAt === undefined
+                    ? undefined
+                    : clientSecretExpiresAt === 0
+                      ? null
+                      : new Date(clientSecretExpiresAt * 1000),
         }
     } catch (error) {
         const err = error as TodoistRequestError
