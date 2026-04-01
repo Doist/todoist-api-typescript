@@ -2,6 +2,9 @@ import type { ColorKey } from '../../utils/colors'
 import type { SearchArgs } from '../common'
 import type { Comment } from '../comments/types'
 import type { Section } from '../sections/types'
+import type { Collaborator, CollaboratorState } from '../sync/resources/collaborators'
+import type { Folder } from '../sync/resources/folders'
+import type { Note } from '../sync/resources/notes'
 import type { Task } from '../tasks/types'
 import type { User } from '../users/types'
 import type { CollaboratorRole, WorkspaceRole } from '../workspaces/types'
@@ -190,4 +193,23 @@ export type GetFullProjectResponse = {
     sections: Section[]
     collaborators: User[]
     notes: Comment[]
+}
+
+/**
+ * Response from joining a workspace project.
+ *
+ * Only used for workspaces — this endpoint is used to join a workspace project
+ * by a workspace user.
+ *
+ * @see https://developer.todoist.com/api/v1/#tag/Projects/operation/join_project_api_v1_projects__project_id__join_post
+ */
+export type JoinProjectResponse = {
+    project: WorkspaceProject
+    tasks: Task[]
+    sections: Section[]
+    comments: Note[]
+    collaborators: Collaborator[]
+    collaboratorStates: CollaboratorState[]
+    folder: Folder | null
+    subprojects: WorkspaceProject[]
 }

@@ -17,6 +17,7 @@ import {
 import {
     PersonalProject,
     WorkspaceProject,
+    WorkspaceProjectSchema,
     AddProjectArgs,
     UpdateProjectArgs,
     GetProjectsArgs,
@@ -33,6 +34,7 @@ import {
     GetProjectPermissionsResponse,
     GetFullProjectArgs,
     GetFullProjectResponse,
+    JoinProjectResponse,
 } from './types/projects'
 import {
     Section,
@@ -254,6 +256,9 @@ import {
     validateMovedIdArray,
     validateFolder,
     validateFolderArray,
+    validateCollaboratorArray,
+    validateCollaboratorStateArray,
+    validateNoteArray,
 } from './utils/validators'
 import { formatDateToYYYYMMDD } from './utils/url-helpers'
 import { uploadMultipartFile } from './utils/multipart-upload'
@@ -1226,15 +1231,18 @@ export class TodoistApi {
     }
 
     /**
-     * Joins a shared project by its ID.
+     * Joins a workspace project.
      *
-     * @param id - The unique identifier of the project to join.
+     * Only used for workspaces — this endpoint is used to join a workspace project
+     * by a workspace user.
+     *
+     * @param id - The unique identifier of the workspace project to join.
      * @param requestId - Optional custom identifier for the request.
-     * @returns A promise that resolves to the joined project.
+     * @returns A promise that resolves to the full project data after joining.
      */
-    async joinProject(id: string, requestId?: string): Promise<PersonalProject | WorkspaceProject> {
+    async joinProject(id: string, requestId?: string): Promise<JoinProjectResponse> {
         z.string().parse(id)
-        const response = await request<Record<string, unknown>>({
+        const { data } = await request<JoinProjectResponse>({
             httpMethod: 'POST',
             baseUri: this.syncApiBase,
             relativePath: generatePath(ENDPOINT_REST_PROJECTS, id, ENDPOINT_REST_PROJECT_JOIN),
@@ -1242,7 +1250,16 @@ export class TodoistApi {
             customFetch: this.customFetch,
             requestId: requestId,
         })
-        return validateProject(response.data)
+        return {
+            project: WorkspaceProjectSchema.parse(data.project),
+            tasks: validateTaskArray(data.tasks),
+            sections: validateSectionArray(data.sections),
+            comments: validateNoteArray(data.comments),
+            collaborators: validateCollaboratorArray(data.collaborators),
+            collaboratorStates: validateCollaboratorStateArray(data.collaboratorStates),
+            folder: data.folder ? validateFolder(data.folder) : null,
+            subprojects: data.subprojects.map((p) => WorkspaceProjectSchema.parse(p)),
+        }
     }
 
     /**

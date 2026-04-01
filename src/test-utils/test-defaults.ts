@@ -8,9 +8,12 @@ import {
     Deadline,
     RawComment,
     PersonalProject,
+    WorkspaceProject,
     Reminder,
     Folder,
 } from '../types'
+import type { Collaborator, CollaboratorState } from '../types/sync/resources/collaborators'
+import type { Note } from '../types/sync/resources/notes'
 import { getProjectUrl, getTaskUrl, getSectionUrl } from '../utils/url-helpers'
 
 export const DEFAULT_TASK_ID = '1234'
@@ -162,6 +165,33 @@ export const INVALID_PROJECT = {
 export const PROJECT_WITH_OPTIONALS_AS_NULL: PersonalProject = {
     ...DEFAULT_PROJECT,
     parentId: null,
+}
+
+export const DEFAULT_WORKSPACE_PROJECT: WorkspaceProject = {
+    id: DEFAULT_PROJECT_ID,
+    name: DEFAULT_PROJECT_NAME,
+    color: DEFAULT_ENTITY_COLOR,
+    childOrder: DEFAULT_ORDER,
+    isFavorite: false,
+    isShared: true,
+    viewStyle: DEFAULT_PROJECT_VIEW_STYLE,
+    canAssignTasks: DEFAULT_CAN_ASSIGN_TASKS,
+    isArchived: DEFAULT_IS_ARCHIVED,
+    isDeleted: DEFAULT_IS_DELETED,
+    isFrozen: DEFAULT_IS_FROZEN,
+    createdAt: DEFAULT_DATE,
+    updatedAt: DEFAULT_DATE,
+    defaultOrder: DEFAULT_ORDER,
+    description: '',
+    isCollapsed: DEFAULT_IS_COLLAPSED,
+    url: DEFAULT_PROJECT_URL,
+    workspaceId: '100',
+    folderId: null,
+    collaboratorRoleDefault: 'READ_WRITE',
+    isInviteOnly: false,
+    isLinkSharingEnabled: true,
+    role: 'ADMIN',
+    status: 'ACTIVE',
 }
 
 export const DEFAULT_SECTION: Section = {
@@ -332,5 +362,32 @@ export const DEFAULT_FOLDER: Folder = {
     workspaceId: '100',
     defaultOrder: 3,
     childOrder: 3,
+    isDeleted: false,
+}
+
+export const DEFAULT_COLLABORATOR: Collaborator = {
+    id: DEFAULT_USER_ID,
+    email: DEFAULT_USER_EMAIL,
+    fullName: DEFAULT_USER_NAME,
+    timezone: 'UTC',
+    imageId: null,
+}
+
+export const DEFAULT_COLLABORATOR_STATE: CollaboratorState = {
+    userId: DEFAULT_USER_ID,
+    projectId: DEFAULT_PROJECT_ID,
+    state: 'active',
+    isDeleted: false,
+}
+
+export const DEFAULT_NOTE: Note = {
+    id: DEFAULT_COMMENT_ID,
+    projectId: DEFAULT_PROJECT_ID,
+    content: DEFAULT_COMMENT_CONTENT,
+    postedAt: DEFAULT_DATE,
+    fileAttachment: DEFAULT_ATTACHMENT,
+    postedUid: DEFAULT_USER_ID,
+    uidsToNotify: null,
+    reactions: DEFAULT_COMMENT_REACTIONS,
     isDeleted: false,
 }

@@ -8,6 +8,11 @@ import {
     DEFAULT_TASK,
     DEFAULT_SECTION,
     DEFAULT_RAW_COMMENT,
+    DEFAULT_FOLDER,
+    DEFAULT_COLLABORATOR,
+    DEFAULT_COLLABORATOR_STATE,
+    DEFAULT_NOTE,
+    DEFAULT_WORKSPACE_PROJECT,
 } from './test-utils/test-defaults'
 import {
     getSyncBaseUri,
@@ -329,20 +334,63 @@ describe('TodoistApi project endpoints', () => {
     })
 
     describe('joinProject', () => {
-        test('returns project from rest client', async () => {
+        test('returns full join data from rest client', async () => {
+            const joinData = {
+                project: DEFAULT_WORKSPACE_PROJECT,
+                tasks: [DEFAULT_TASK],
+                sections: [DEFAULT_SECTION],
+                comments: [DEFAULT_NOTE],
+                collaborators: [DEFAULT_COLLABORATOR],
+                collaboratorStates: [DEFAULT_COLLABORATOR_STATE],
+                folder: DEFAULT_FOLDER,
+                subprojects: [],
+            }
             server.use(
                 http.post(
                     `${getSyncBaseUri()}${ENDPOINT_REST_PROJECTS}/123/${ENDPOINT_REST_PROJECT_JOIN}`,
                     () => {
-                        return HttpResponse.json(DEFAULT_PROJECT, { status: 200 })
+                        return HttpResponse.json(joinData, { status: 200 })
                     },
                 ),
             )
             const api = getTarget()
 
-            const project = await api.joinProject('123')
+            const result = await api.joinProject('123')
 
-            expect(project).toEqual(DEFAULT_PROJECT)
+            expect(result.project).toEqual(DEFAULT_WORKSPACE_PROJECT)
+            expect(result.tasks).toHaveLength(1)
+            expect(result.sections).toHaveLength(1)
+            expect(result.comments).toHaveLength(1)
+            expect(result.collaborators).toHaveLength(1)
+            expect(result.collaboratorStates).toHaveLength(1)
+            expect(result.folder).toEqual(DEFAULT_FOLDER)
+            expect(result.subprojects).toHaveLength(0)
+        })
+
+        test('returns null folder when project has no folder', async () => {
+            const joinData = {
+                project: DEFAULT_WORKSPACE_PROJECT,
+                tasks: [],
+                sections: [],
+                comments: [],
+                collaborators: [],
+                collaboratorStates: [],
+                folder: null,
+                subprojects: [],
+            }
+            server.use(
+                http.post(
+                    `${getSyncBaseUri()}${ENDPOINT_REST_PROJECTS}/123/${ENDPOINT_REST_PROJECT_JOIN}`,
+                    () => {
+                        return HttpResponse.json(joinData, { status: 200 })
+                    },
+                ),
+            )
+            const api = getTarget()
+
+            const result = await api.joinProject('123')
+
+            expect(result.folder).toBeNull()
         })
     })
 })
