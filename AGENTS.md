@@ -16,12 +16,12 @@ z.enum(EXAMPLE_VALUES)
 
 ### Rules
 
--   **Naming**: `SCREAMING_SNAKE_CASE` for const arrays, `PascalCase` for types
--   **Export**: Always export const arrays and types
--   **Chaining**: Never put `.nullable()` or `.optional()` on the const array — chain those on the schema after `z.enum()`
--   **Placement**: Place the const array and type immediately above the first usage
--   **Reuse**: If the same values appear in multiple files, define the const array once and import it elsewhere
--   **JSDoc**: Add a brief JSDoc comment to both the const array and the derived type so IDE hover shows documentation on each
+- **Naming**: `SCREAMING_SNAKE_CASE` for const arrays, `PascalCase` for types
+- **Export**: Always export const arrays and types
+- **Chaining**: Never put `.nullable()` or `.optional()` on the const array — chain those on the schema after `z.enum()`
+- **Placement**: Place the const array and type immediately above the first usage
+- **Reuse**: If the same values appear in multiple files, define the const array once and import it elsewhere
+- **JSDoc**: Add a brief JSDoc comment to both the const array and the derived type so IDE hover shows documentation on each
 
 ### Exception: Discriminated unions with `z.literal()`
 
@@ -43,4 +43,4 @@ This avoids duplicating string literals across multiple `z.literal()` calls and 
 
 ## Zod Schemas
 
--   **Export**: All Zod schemas should be exported
+- **Export**: All Zod schemas should be exported

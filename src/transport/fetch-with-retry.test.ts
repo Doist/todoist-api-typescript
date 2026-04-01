@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, test, vi } from 'vitest'
 import type { CustomFetch, CustomFetchResponse } from '../types/http'
-import * as httpDispatcher from './http-dispatcher'
 import { fetchWithRetry } from './fetch-with-retry'
+import * as httpDispatcher from './http-dispatcher'
 
 describe('fetchWithRetry', () => {
     const originalFetch = global.fetch

@@ -1,5 +1,4 @@
 import { TodoistApi } from '.'
-import { DEFAULT_AUTH_TOKEN, DEFAULT_SECTION } from './test-utils/test-defaults'
 import {
     getSyncBaseUri,
     ENDPOINT_REST_SECTIONS,
@@ -8,6 +7,7 @@ import {
     SECTION_UNARCHIVE,
 } from './consts/endpoints'
 import { server, http, HttpResponse } from './test-utils/msw-setup'
+import { DEFAULT_AUTH_TOKEN, DEFAULT_SECTION } from './test-utils/test-defaults'
 import { getSectionUrl } from './utils/url-helpers'
 
 function getTarget() {

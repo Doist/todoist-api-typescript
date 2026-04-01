@@ -1,7 +1,7 @@
 import { TodoistApi, type ActivityEvent, type ActivityObjectEventType } from '.'
-import { DEFAULT_AUTH_TOKEN } from './test-utils/test-defaults'
 import { getSyncBaseUri, ENDPOINT_REST_ACTIVITIES } from './consts/endpoints'
 import { server, http, HttpResponse } from './test-utils/msw-setup'
+import { DEFAULT_AUTH_TOKEN } from './test-utils/test-defaults'
 
 function getTarget(baseUrl = 'https://api.todoist.com') {
     return new TodoistApi(DEFAULT_AUTH_TOKEN, { baseUrl })

@@ -1,8 +1,8 @@
 import { vi } from 'vitest'
 import { TodoistApi } from '.'
-import { DEFAULT_AUTH_TOKEN, DEFAULT_SECTION, DEFAULT_TASK } from './test-utils/test-defaults'
 import { getSyncBaseUri } from './consts/endpoints'
 import { server, http, HttpResponse } from './test-utils/msw-setup'
+import { DEFAULT_AUTH_TOKEN, DEFAULT_SECTION, DEFAULT_TASK } from './test-utils/test-defaults'
 import { uploadMultipartFile } from './utils/multipart-upload'
 
 // Mock the multipart upload helper

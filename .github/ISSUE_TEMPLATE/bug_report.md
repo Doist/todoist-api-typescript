@@ -32,7 +32,7 @@ Yes/No
 
 ## Version information:
 
--   Package version:
+- Package version:
 
 ## Additional information
 

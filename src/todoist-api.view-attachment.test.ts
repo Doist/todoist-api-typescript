@@ -1,6 +1,6 @@
 import { vi } from 'vitest'
-import { TodoistApi } from './todoist-api'
 import { server, http, HttpResponse, getLastRequest, captureRequest } from './test-utils/msw-setup'
+import { TodoistApi } from './todoist-api'
 import type { Comment } from './types/comments'
 import type { CustomFetchResponse } from './types/http'
 

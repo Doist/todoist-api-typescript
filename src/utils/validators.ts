@@ -1,6 +1,18 @@
 import { type ZodType } from 'zod'
 
-import { TaskSchema } from '../types/tasks/types'
+import { ActivityEventSchema } from '../types/activity/types'
+import { BackupSchema } from '../types/backups/types'
+import { AttachmentSchema, CommentSchema } from '../types/comments/types'
+import { IdMappingSchema, MovedIdSchema } from '../types/id-mappings/types'
+import {
+    ProjectActivityStatsSchema,
+    ProjectHealthSchema,
+    ProjectHealthContextSchema,
+    ProjectProgressSchema,
+    WorkspaceInsightsSchema,
+} from '../types/insights/types'
+import { LabelSchema } from '../types/labels/types'
+import { ProductivityStatsSchema } from '../types/productivity/types'
 import {
     PersonalProjectSchema,
     WorkspaceProjectSchema,
@@ -8,11 +20,8 @@ import {
     type PersonalProject,
 } from '../types/projects/types'
 import { SectionSchema } from '../types/sections/types'
-import { LabelSchema } from '../types/labels/types'
-import { AttachmentSchema, CommentSchema } from '../types/comments/types'
+import { TaskSchema } from '../types/tasks/types'
 import { UserSchema, CurrentUserSchema } from '../types/users/types'
-import { ProductivityStatsSchema } from '../types/productivity/types'
-import { ActivityEventSchema } from '../types/activity/types'
 import {
     WorkspaceUserSchema,
     type WorkspaceUser,
@@ -23,15 +32,6 @@ import {
     MemberActivityInfoSchema,
     WorkspaceUserTaskSchema,
 } from '../types/workspaces/types'
-import {
-    ProjectActivityStatsSchema,
-    ProjectHealthSchema,
-    ProjectHealthContextSchema,
-    ProjectProgressSchema,
-    WorkspaceInsightsSchema,
-} from '../types/insights/types'
-import { BackupSchema } from '../types/backups/types'
-import { IdMappingSchema, MovedIdSchema } from '../types/id-mappings/types'
 
 import {
     FilterSchema,

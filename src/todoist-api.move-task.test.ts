@@ -1,7 +1,7 @@
 import { TodoistApi } from '.'
-import { DEFAULT_AUTH_TOKEN, DEFAULT_REQUEST_ID, DEFAULT_TASK } from './test-utils/test-defaults'
 import { getSyncBaseUri, ENDPOINT_REST_TASKS, ENDPOINT_REST_TASK_MOVE } from './consts/endpoints'
 import { server, http, HttpResponse } from './test-utils/msw-setup'
+import { DEFAULT_AUTH_TOKEN, DEFAULT_REQUEST_ID, DEFAULT_TASK } from './test-utils/test-defaults'
 import { getTaskUrl } from './utils/url-helpers'
 
 function getTarget(baseUrl = 'https://api.todoist.com') {

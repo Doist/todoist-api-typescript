@@ -8,11 +8,9 @@
  * This addresses issue #381: https://github.com/Doist/todoist-api-typescript/issues/381
  */
 
-import { vi } from 'vitest'
 import type { RequestUrlParam, RequestUrlResponse } from 'obsidian'
+import { vi } from 'vitest'
 import { TodoistApi, type CurrentUser } from '.'
-import { createObsidianFetchAdapter } from './test-utils/obsidian-fetch-adapter'
-import { server, http, HttpResponse } from './test-utils/msw-setup'
 import {
     getSyncBaseUri,
     ENDPOINT_REST_USER,
@@ -20,6 +18,8 @@ import {
     ENDPOINT_REST_PROJECTS,
     ENDPOINT_REST_LABELS,
 } from './consts/endpoints'
+import { server, http, HttpResponse } from './test-utils/msw-setup'
+import { createObsidianFetchAdapter } from './test-utils/obsidian-fetch-adapter'
 import { DEFAULT_AUTH_TOKEN, DEFAULT_TASK, DEFAULT_LABEL } from './test-utils/test-defaults'
 
 describe('Obsidian Custom Fetch Integration', () => {

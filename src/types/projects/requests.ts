@@ -1,6 +1,6 @@
 import type { ColorKey } from '../../utils/colors'
-import type { SearchArgs } from '../common'
 import type { Comment } from '../comments/types'
+import type { SearchArgs } from '../common'
 import type { Section } from '../sections/types'
 import type { Collaborator, CollaboratorState } from '../sync/resources/collaborators'
 import type { Folder } from '../sync/resources/folders'

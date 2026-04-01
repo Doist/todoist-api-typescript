@@ -1,8 +1,8 @@
 import { TodoistApi } from '.'
-import { createCommand } from './utils/sync-helpers'
-import { DEFAULT_AUTH_TOKEN } from './test-utils/test-defaults'
 import { getSyncBaseUri, ENDPOINT_SYNC } from './consts/endpoints'
 import { server, http, HttpResponse } from './test-utils/msw-setup'
+import { DEFAULT_AUTH_TOKEN } from './test-utils/test-defaults'
+import { createCommand } from './utils/sync-helpers'
 
 function getTarget() {
     return new TodoistApi(DEFAULT_AUTH_TOKEN)

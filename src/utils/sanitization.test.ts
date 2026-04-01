@@ -1,6 +1,6 @@
-import { getSanitizedContent, getSanitizedTasks } from './sanitization'
 import { DEFAULT_TASK } from '../test-utils/test-defaults'
 import { Task } from '../types'
+import { getSanitizedContent, getSanitizedTasks } from './sanitization'
 
 describe('getSanitizedContent', () => {
     const sanitizationTheories = [

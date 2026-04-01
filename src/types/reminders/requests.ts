@@ -1,7 +1,7 @@
 import { z } from 'zod'
-import { DueDateSchema } from '../tasks/types'
 import type { Reminder, LocationReminder } from '../sync/resources/reminders'
 import { LOCATION_TRIGGERS, ReminderTypeEnum } from '../sync/resources/reminders'
+import { DueDateSchema } from '../tasks/types'
 
 /** Available reminder delivery services. */
 export const REMINDER_DELIVERY_SERVICES = ['email', 'push'] as const

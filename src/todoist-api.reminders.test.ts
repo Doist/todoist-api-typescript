@@ -1,5 +1,11 @@
 import { TodoistApi } from '.'
 import {
+    ENDPOINT_REST_LOCATION_REMINDERS,
+    ENDPOINT_REST_REMINDERS,
+    getSyncBaseUri,
+} from './consts/endpoints'
+import { server, http, HttpResponse } from './test-utils/msw-setup'
+import {
     DEFAULT_ABSOLUTE_REMINDER,
     DEFAULT_AUTH_TOKEN,
     DEFAULT_LOCATION_REMINDER,
@@ -8,12 +14,6 @@ import {
     DEFAULT_REQUEST_ID,
     DEFAULT_TASK_ID,
 } from './test-utils/test-defaults'
-import {
-    ENDPOINT_REST_LOCATION_REMINDERS,
-    ENDPOINT_REST_REMINDERS,
-    getSyncBaseUri,
-} from './consts/endpoints'
-import { server, http, HttpResponse } from './test-utils/msw-setup'
 import { TodoistArgumentError } from './types'
 
 function getTarget() {

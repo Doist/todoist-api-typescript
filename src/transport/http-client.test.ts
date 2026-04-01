@@ -1,7 +1,7 @@
 import { vi } from 'vitest'
+import { captureRequest, getLastRequest, HttpResponse, http, server } from '../test-utils/msw-setup'
 import { TodoistRequestError } from '../types/errors'
 import type { HttpResponse as TodoistHttpResponse } from '../types/http'
-import { captureRequest, getLastRequest, HttpResponse, http, server } from '../test-utils/msw-setup'
 import { isSuccess, paramsSerializer, request } from './http-client'
 
 const RANDOM_ID = 'SomethingRandom'

@@ -1,20 +1,5 @@
 import { TodoistApi } from '.'
 import {
-    DEFAULT_AUTH_TOKEN,
-    DEFAULT_PROJECT,
-    DEFAULT_USER,
-    PROJECT_WITH_OPTIONALS_AS_NULL,
-    DEFAULT_PROJECT_ID,
-    DEFAULT_TASK,
-    DEFAULT_SECTION,
-    DEFAULT_RAW_COMMENT,
-    DEFAULT_FOLDER,
-    DEFAULT_COLLABORATOR,
-    DEFAULT_COLLABORATOR_STATE,
-    DEFAULT_NOTE,
-    DEFAULT_WORKSPACE_PROJECT,
-} from './test-utils/test-defaults'
-import {
     getSyncBaseUri,
     ENDPOINT_REST_PROJECTS,
     ENDPOINT_REST_PROJECTS_SEARCH,
@@ -29,6 +14,21 @@ import {
     ENDPOINT_REST_PROJECT_JOIN,
 } from './consts/endpoints'
 import { server, http, HttpResponse } from './test-utils/msw-setup'
+import {
+    DEFAULT_AUTH_TOKEN,
+    DEFAULT_PROJECT,
+    DEFAULT_USER,
+    PROJECT_WITH_OPTIONALS_AS_NULL,
+    DEFAULT_PROJECT_ID,
+    DEFAULT_TASK,
+    DEFAULT_SECTION,
+    DEFAULT_RAW_COMMENT,
+    DEFAULT_FOLDER,
+    DEFAULT_COLLABORATOR,
+    DEFAULT_COLLABORATOR_STATE,
+    DEFAULT_NOTE,
+    DEFAULT_WORKSPACE_PROJECT,
+} from './test-utils/test-defaults'
 import { getProjectUrl } from './utils/url-helpers'
 
 function getTarget() {

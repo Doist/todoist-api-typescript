@@ -1,4 +1,6 @@
 import { TodoistApi } from '.'
+import { getSyncBaseUri, ENDPOINT_REST_COMMENTS } from './consts/endpoints'
+import { server, http, HttpResponse } from './test-utils/msw-setup'
 import {
     COMMENT_WITH_ATTACHMENT_WITH_OPTIONALS_AS_NULL,
     COMMENT_WITH_OPTIONALS_AS_NULL_PROJECT,
@@ -10,8 +12,6 @@ import {
     RAW_COMMENT_WITH_OPTIONALS_AS_NULL_PROJECT,
     RAW_COMMENT_WITH_OPTIONALS_AS_NULL_TASK,
 } from './test-utils/test-defaults'
-import { getSyncBaseUri, ENDPOINT_REST_COMMENTS } from './consts/endpoints'
-import { server, http, HttpResponse } from './test-utils/msw-setup'
 
 function getTarget() {
     return new TodoistApi(DEFAULT_AUTH_TOKEN)

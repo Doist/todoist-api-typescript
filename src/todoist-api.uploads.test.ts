@@ -1,9 +1,9 @@
-import { vi } from 'vitest'
-import { TodoistApi } from './todoist-api'
-import { getSyncBaseUri } from './consts/endpoints'
 import * as fs from 'fs'
 import { Readable } from 'stream'
+import { vi } from 'vitest'
+import { getSyncBaseUri } from './consts/endpoints'
 import { server, http, HttpResponse, getLastRequest, captureRequest } from './test-utils/msw-setup'
+import { TodoistApi } from './todoist-api'
 
 // Mock fs
 vi.mock('fs')

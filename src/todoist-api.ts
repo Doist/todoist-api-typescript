@@ -1,148 +1,4 @@
-import {
-    Task,
-    AddTaskArgs,
-    GetTasksArgs,
-    GetTasksByFilterArgs,
-    UpdateTaskArgs,
-    QuickAddTaskArgs,
-    type MoveTaskArgs,
-    GetCompletedTasksByCompletionDateArgs,
-    GetCompletedTasksByDueDateArgs,
-    GetCompletedTasksResponse,
-    SearchCompletedTasksArgs,
-    GetTasksResponse,
-    GetAllCompletedTasksArgs,
-    GetAllCompletedTasksResponse,
-} from './types/tasks'
-import {
-    PersonalProject,
-    WorkspaceProject,
-    WorkspaceProjectSchema,
-    AddProjectArgs,
-    UpdateProjectArgs,
-    GetProjectsArgs,
-    SearchProjectsArgs,
-    GetProjectCollaboratorsArgs,
-    GetProjectsResponse,
-    GetProjectCollaboratorsResponse,
-    GetArchivedProjectsArgs,
-    GetArchivedProjectsResponse,
-    MoveProjectToWorkspaceArgs,
-    MoveProjectToPersonalArgs,
-    GetArchivedProjectsCountArgs,
-    GetArchivedProjectsCountResponse,
-    GetProjectPermissionsResponse,
-    GetFullProjectArgs,
-    GetFullProjectResponse,
-    JoinProjectResponse,
-} from './types/projects'
-import {
-    Section,
-    AddSectionArgs,
-    UpdateSectionArgs,
-    GetSectionsArgs,
-    SearchSectionsArgs,
-    GetSectionsResponse,
-} from './types/sections'
-import {
-    Label,
-    AddLabelArgs,
-    UpdateLabelArgs,
-    GetLabelsArgs,
-    SearchLabelsArgs,
-    GetLabelsResponse,
-    GetSharedLabelsArgs,
-    GetSharedLabelsResponse,
-    RenameSharedLabelArgs,
-    RemoveSharedLabelArgs,
-} from './types/labels'
-import {
-    Attachment,
-    Comment,
-    AddCommentArgs,
-    UpdateCommentArgs,
-    GetProjectCommentsArgs,
-    GetTaskCommentsArgs,
-    GetCommentsResponse,
-} from './types/comments'
-import {
-    AddReminderArgs,
-    UpdateReminderArgs,
-    AddLocationReminderArgs,
-    UpdateLocationReminderArgs,
-    GetRemindersArgs,
-    GetRemindersResponse,
-    GetLocationRemindersArgs,
-    GetLocationRemindersResponse,
-    UpdateReminderArgsSchema,
-    UpdateLocationReminderArgsSchema,
-    ReminderIdSchema,
-} from './types/reminders'
-import { CurrentUser } from './types/users'
-import { ProductivityStats } from './types/productivity'
-import { GetActivityLogsArgs, GetActivityLogsResponse } from './types/activity'
-import {
-    WorkspaceUser,
-    WorkspaceInvitation,
-    WorkspacePlanDetails,
-    JoinWorkspaceResult,
-    Workspace,
-    AddWorkspaceArgs,
-    UpdateWorkspaceArgs,
-    GetWorkspaceMembersActivityArgs,
-    GetWorkspaceMembersActivityResponse,
-    GetWorkspaceUserTasksArgs,
-    GetWorkspaceUserTasksResponse,
-    InviteWorkspaceUsersArgs,
-    InviteWorkspaceUsersResponse,
-    UpdateWorkspaceUserArgs,
-    RemoveWorkspaceUserArgs,
-    GetWorkspaceInvitationsArgs,
-    DeleteWorkspaceInvitationArgs,
-    WorkspaceInvitationActionArgs,
-    JoinWorkspaceArgs,
-    WorkspaceLogoArgs,
-    GetWorkspacePlanDetailsArgs,
-    GetWorkspaceUsersArgs,
-    GetWorkspaceUsersResponse,
-    GetWorkspaceProjectsArgs,
-    WorkspaceInvitationsResponse,
-    AllWorkspaceInvitationsResponse,
-    WorkspaceLogoResponse,
-} from './types/workspaces'
-import {
-    GetFoldersArgs,
-    GetFoldersResponse,
-    AddFolderArgs,
-    UpdateFolderArgs,
-} from './types/folders'
-import type { Folder } from './types/sync/resources/folders'
-import {
-    ProjectActivityStats,
-    ProjectHealth,
-    ProjectHealthContext,
-    ProjectProgress,
-    WorkspaceInsights,
-    GetProjectActivityStatsArgs,
-    GetWorkspaceInsightsArgs,
-} from './types/insights'
-import { Backup, GetBackupsArgs, DownloadBackupArgs } from './types/backups'
-import { IdMapping, MovedId, GetIdMappingsArgs, GetMovedIdsArgs } from './types/id-mappings'
-import { GetOrCreateEmailArgs, GetOrCreateEmailResponse, DisableEmailArgs } from './types/emails'
-import { UploadFileArgs, DeleteUploadArgs } from './types/uploads'
-import {
-    ExportTemplateFileArgs,
-    ExportTemplateUrlArgs,
-    ExportTemplateUrlResponse,
-    CreateProjectFromTemplateArgs,
-    CreateProjectFromTemplateResponse,
-    ImportTemplateIntoProjectArgs,
-    ImportTemplateFromIdArgs,
-    ImportTemplateResponse,
-} from './types/templates'
-import { CustomFetch, CustomFetchResponse } from './types/http'
-import { request, isSuccess } from './transport/http-client'
-import type { Reminder } from './types'
+import { z } from 'zod'
 import {
     getSyncBaseUri,
     ENDPOINT_REST_TASKS,
@@ -218,6 +74,159 @@ import {
     getWorkspaceArchivedProjectsEndpoint,
     ENDPOINT_REST_FOLDERS,
 } from './consts/endpoints'
+import { request, isSuccess } from './transport/http-client'
+import type { Reminder } from './types'
+import { GetActivityLogsArgs, GetActivityLogsResponse } from './types/activity'
+import { Backup, GetBackupsArgs, DownloadBackupArgs } from './types/backups'
+import {
+    Attachment,
+    Comment,
+    AddCommentArgs,
+    UpdateCommentArgs,
+    GetProjectCommentsArgs,
+    GetTaskCommentsArgs,
+    GetCommentsResponse,
+} from './types/comments'
+import { GetOrCreateEmailArgs, GetOrCreateEmailResponse, DisableEmailArgs } from './types/emails'
+import {
+    GetFoldersArgs,
+    GetFoldersResponse,
+    AddFolderArgs,
+    UpdateFolderArgs,
+} from './types/folders'
+import { CustomFetch, CustomFetchResponse } from './types/http'
+import { IdMapping, MovedId, GetIdMappingsArgs, GetMovedIdsArgs } from './types/id-mappings'
+import {
+    ProjectActivityStats,
+    ProjectHealth,
+    ProjectHealthContext,
+    ProjectProgress,
+    WorkspaceInsights,
+    GetProjectActivityStatsArgs,
+    GetWorkspaceInsightsArgs,
+} from './types/insights'
+import {
+    Label,
+    AddLabelArgs,
+    UpdateLabelArgs,
+    GetLabelsArgs,
+    SearchLabelsArgs,
+    GetLabelsResponse,
+    GetSharedLabelsArgs,
+    GetSharedLabelsResponse,
+    RenameSharedLabelArgs,
+    RemoveSharedLabelArgs,
+} from './types/labels'
+import { ProductivityStats } from './types/productivity'
+import {
+    PersonalProject,
+    WorkspaceProject,
+    WorkspaceProjectSchema,
+    AddProjectArgs,
+    UpdateProjectArgs,
+    GetProjectsArgs,
+    SearchProjectsArgs,
+    GetProjectCollaboratorsArgs,
+    GetProjectsResponse,
+    GetProjectCollaboratorsResponse,
+    GetArchivedProjectsArgs,
+    GetArchivedProjectsResponse,
+    MoveProjectToWorkspaceArgs,
+    MoveProjectToPersonalArgs,
+    GetArchivedProjectsCountArgs,
+    GetArchivedProjectsCountResponse,
+    GetProjectPermissionsResponse,
+    GetFullProjectArgs,
+    GetFullProjectResponse,
+    JoinProjectResponse,
+} from './types/projects'
+import {
+    AddReminderArgs,
+    UpdateReminderArgs,
+    AddLocationReminderArgs,
+    UpdateLocationReminderArgs,
+    GetRemindersArgs,
+    GetRemindersResponse,
+    GetLocationRemindersArgs,
+    GetLocationRemindersResponse,
+    UpdateReminderArgsSchema,
+    UpdateLocationReminderArgsSchema,
+    ReminderIdSchema,
+} from './types/reminders'
+import {
+    Section,
+    AddSectionArgs,
+    UpdateSectionArgs,
+    GetSectionsArgs,
+    SearchSectionsArgs,
+    GetSectionsResponse,
+} from './types/sections'
+import type { Folder } from './types/sync/resources/folders'
+import {
+    Task,
+    AddTaskArgs,
+    GetTasksArgs,
+    GetTasksByFilterArgs,
+    UpdateTaskArgs,
+    QuickAddTaskArgs,
+    type MoveTaskArgs,
+    GetCompletedTasksByCompletionDateArgs,
+    GetCompletedTasksByDueDateArgs,
+    GetCompletedTasksResponse,
+    SearchCompletedTasksArgs,
+    GetTasksResponse,
+    GetAllCompletedTasksArgs,
+    GetAllCompletedTasksResponse,
+} from './types/tasks'
+import {
+    ExportTemplateFileArgs,
+    ExportTemplateUrlArgs,
+    ExportTemplateUrlResponse,
+    CreateProjectFromTemplateArgs,
+    CreateProjectFromTemplateResponse,
+    ImportTemplateIntoProjectArgs,
+    ImportTemplateFromIdArgs,
+    ImportTemplateResponse,
+} from './types/templates'
+import { UploadFileArgs, DeleteUploadArgs } from './types/uploads'
+import { CurrentUser } from './types/users'
+import {
+    WorkspaceUser,
+    WorkspaceInvitation,
+    WorkspacePlanDetails,
+    JoinWorkspaceResult,
+    Workspace,
+    AddWorkspaceArgs,
+    UpdateWorkspaceArgs,
+    GetWorkspaceMembersActivityArgs,
+    GetWorkspaceMembersActivityResponse,
+    GetWorkspaceUserTasksArgs,
+    GetWorkspaceUserTasksResponse,
+    InviteWorkspaceUsersArgs,
+    InviteWorkspaceUsersResponse,
+    UpdateWorkspaceUserArgs,
+    RemoveWorkspaceUserArgs,
+    GetWorkspaceInvitationsArgs,
+    DeleteWorkspaceInvitationArgs,
+    WorkspaceInvitationActionArgs,
+    JoinWorkspaceArgs,
+    WorkspaceLogoArgs,
+    GetWorkspacePlanDetailsArgs,
+    GetWorkspaceUsersArgs,
+    GetWorkspaceUsersResponse,
+    GetWorkspaceProjectsArgs,
+    WorkspaceInvitationsResponse,
+    AllWorkspaceInvitationsResponse,
+    WorkspaceLogoResponse,
+} from './types/workspaces'
+import {
+    normalizeObjectEventTypeForApi,
+    denormalizeObjectTypeFromApi,
+} from './utils/activity-helpers'
+import { camelCaseKeys } from './utils/case-conversion'
+import { uploadMultipartFile } from './utils/multipart-upload'
+import { processTaskContent } from './utils/uncompletable-helpers'
+import { formatDateToYYYYMMDD } from './utils/url-helpers'
 import {
     validateAttachment,
     validateComment,
@@ -260,17 +269,9 @@ import {
     validateCollaboratorStateArray,
     validateNoteArray,
 } from './utils/validators'
-import { formatDateToYYYYMMDD } from './utils/url-helpers'
-import { uploadMultipartFile } from './utils/multipart-upload'
-import { camelCaseKeys } from './utils/case-conversion'
-import {
-    normalizeObjectEventTypeForApi,
-    denormalizeObjectTypeFromApi,
-} from './utils/activity-helpers'
-import { processTaskContent } from './utils/uncompletable-helpers'
-import { z } from 'zod'
 
 import { v4 as uuidv4 } from 'uuid'
+import { TodoistArgumentError, TodoistRequestError } from './types'
 import {
     type SyncResponse,
     type SyncCommand,
@@ -282,7 +283,6 @@ import {
     type TaskUpdateDateCompleteArgs,
     type UpdateGoalsArgs,
 } from './types/sync'
-import { TodoistArgumentError, TodoistRequestError } from './types'
 
 const MAX_COMMAND_COUNT = 100
 
