@@ -239,10 +239,7 @@ describe('authentication', () => {
         test('throws error if non 200 response', async () => {
             server.use(
                 http.post(`${getAuthBaseUri()}register`, () => {
-                    return HttpResponse.json(
-                        { error: 'invalid_client_metadata' },
-                        { status: 400 },
-                    )
+                    return HttpResponse.json({ error: 'invalid_client_metadata' }, { status: 400 })
                 }),
             )
 
