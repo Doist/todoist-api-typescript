@@ -1,7 +1,7 @@
 import { vi } from 'vitest'
-import { TodoistApi } from './todoist-api'
-import { server, http, HttpResponse } from './test-utils/msw-setup'
 import { getSyncBaseUri } from './consts/endpoints'
+import { server, http, HttpResponse } from './test-utils/msw-setup'
+import { TodoistApi } from './todoist-api'
 import { uploadMultipartFile } from './utils/multipart-upload'
 
 // Mock the multipart upload helper

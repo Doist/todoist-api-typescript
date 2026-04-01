@@ -1,7 +1,7 @@
+import type { ColorKey } from '../../../utils/colors'
 import type { ProjectViewStyle, ProjectVisibility } from '../../projects/types'
 import type { WorkspaceRole, CollaboratorRole } from '../../workspaces/types'
 import type { ProjectStatus } from './shared'
-import type { ColorKey } from '../../../utils/colors'
 
 export type ProjectAccessConfig = {
     visibility: ProjectVisibility

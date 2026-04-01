@@ -1,7 +1,7 @@
 import { TodoistApi } from '.'
-import { DEFAULT_AUTH_TOKEN } from './test-utils/test-defaults'
 import { getSyncBaseUri } from './consts/endpoints'
 import { server, http, HttpResponse } from './test-utils/msw-setup'
+import { DEFAULT_AUTH_TOKEN } from './test-utils/test-defaults'
 
 function getTarget() {
     return new TodoistApi(DEFAULT_AUTH_TOKEN)

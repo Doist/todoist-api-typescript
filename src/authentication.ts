@@ -1,7 +1,4 @@
-import { request, isSuccess } from './transport/http-client'
 import { v4 as uuid } from 'uuid'
-import { TodoistRequestError } from './types'
-import { CustomFetch } from './types/http'
 import {
     getAuthBaseUri,
     getSyncBaseUri,
@@ -11,6 +8,9 @@ import {
     ENDPOINT_REGISTER,
     ENDPOINT_REST_ACCESS_TOKENS_MIGRATE,
 } from './consts/endpoints'
+import { request, isSuccess } from './transport/http-client'
+import { TodoistRequestError } from './types'
+import { CustomFetch } from './types/http'
 
 /**
  * Options for authentication functions

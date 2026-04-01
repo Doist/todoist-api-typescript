@@ -1,15 +1,45 @@
 import type {
-    TaskAddArgs,
-    TaskUpdateArgs,
-    TaskCompleteArgs,
-    TaskCompleteUndoArgs,
-    TaskMoveArgs,
-    TaskReorderArgs,
-    TaskUncompleteArgs,
-    TaskUpdateDateCompleteArgs,
-    TaskDeleteArgs,
-    TaskUpdateDayOrderArgs,
-} from './tasks'
+    CalendarUpdateArgs,
+    CalendarAccountUpdateArgs,
+    CalendarAccountRestoreTaskCalendarArgs,
+} from './calendars'
+import type {
+    FilterAddArgs,
+    FilterUpdateArgs,
+    FilterUpdateOrdersArgs,
+    FilterDeleteArgs,
+} from './filters'
+import type { FolderAddArgs, FolderUpdateArgs, FolderDeleteArgs } from './folders'
+import type {
+    LabelAddArgs,
+    LabelRenameArgs,
+    LabelUpdateArgs,
+    LabelUpdateOrdersArgs,
+    LabelDeleteArgs,
+    LabelDeleteOccurrencesArgs,
+} from './labels'
+import type {
+    NoteAddArgs,
+    NoteUpdateArgs,
+    NoteDeleteArgs,
+    NoteReactionAddArgs,
+    NoteReactionRemoveArgs,
+} from './notes'
+import type {
+    LiveNotificationsMarkUnreadArgs,
+    LiveNotificationsMarkReadArgs,
+    LiveNotificationsMarkReadAllArgs,
+    LiveNotificationsSetLastReadArgs,
+} from './notifications'
+import type {
+    UserUpdateArgs,
+    DeleteCollaboratorArgs,
+    IdMappingArgs,
+    SuggestionDeleteArgs,
+    UserSettingsUpdateArgs,
+    UpdateGoalsArgs,
+} from './others'
+import type { ProjectViewOptionsDefaultsSetArgs } from './project-view-options'
 import type {
     ProjectAddArgs,
     ProjectUpdateArgs,
@@ -23,6 +53,7 @@ import type {
     ProjectMoveToWorkspaceArgs,
     ProjectMoveToPersonalArgs,
 } from './projects'
+import type { ReminderAddArgs, ReminderUpdateArgs, ReminderDeleteArgs } from './reminders'
 import type {
     SectionAddArgs,
     SectionUpdateArgs,
@@ -33,39 +64,24 @@ import type {
     SectionDeleteArgs,
 } from './sections'
 import type {
-    LabelAddArgs,
-    LabelRenameArgs,
-    LabelUpdateArgs,
-    LabelUpdateOrdersArgs,
-    LabelDeleteArgs,
-    LabelDeleteOccurrencesArgs,
-} from './labels'
+    AcceptInvitationArgs,
+    RejectInvitationArgs,
+    BizAcceptInvitationArgs,
+    BizRejectInvitationArgs,
+} from './sharing'
 import type {
-    FilterAddArgs,
-    FilterUpdateArgs,
-    FilterUpdateOrdersArgs,
-    FilterDeleteArgs,
-} from './filters'
-import type {
-    NoteAddArgs,
-    NoteUpdateArgs,
-    NoteDeleteArgs,
-    NoteReactionAddArgs,
-    NoteReactionRemoveArgs,
-} from './notes'
-import type { ReminderAddArgs, ReminderUpdateArgs, ReminderDeleteArgs } from './reminders'
-import type {
-    WorkspaceAddArgs,
-    WorkspaceUpdateArgs,
-    WorkspaceDeleteArgs,
-    WorkspaceUpdateUserArgs,
-    WorkspaceDeleteUserArgs,
-    WorkspaceLeaveArgs,
-    WorkspaceInviteArgs,
-    WorkspaceSetDefaultOrderArgs,
-    WorkspaceUpdateUserProjectSortPreferenceArgs,
-} from './workspaces'
-import type { FolderAddArgs, FolderUpdateArgs, FolderDeleteArgs } from './folders'
+    TaskAddArgs,
+    TaskUpdateArgs,
+    TaskCompleteArgs,
+    TaskCompleteUndoArgs,
+    TaskMoveArgs,
+    TaskReorderArgs,
+    TaskUncompleteArgs,
+    TaskUpdateDateCompleteArgs,
+    TaskDeleteArgs,
+    TaskUpdateDayOrderArgs,
+} from './tasks'
+import type { ViewOptionsSetArgs, ViewOptionsDeleteArgs } from './view-options'
 import type {
     WorkspaceFilterAddArgs,
     WorkspaceFilterUpdateArgs,
@@ -80,32 +96,16 @@ import type {
     WorkspaceGoalProjectRemoveArgs,
 } from './workspace-goals'
 import type {
-    LiveNotificationsMarkUnreadArgs,
-    LiveNotificationsMarkReadArgs,
-    LiveNotificationsMarkReadAllArgs,
-    LiveNotificationsSetLastReadArgs,
-} from './notifications'
-import type {
-    AcceptInvitationArgs,
-    RejectInvitationArgs,
-    BizAcceptInvitationArgs,
-    BizRejectInvitationArgs,
-} from './sharing'
-import type { ViewOptionsSetArgs, ViewOptionsDeleteArgs } from './view-options'
-import type { ProjectViewOptionsDefaultsSetArgs } from './project-view-options'
-import type {
-    CalendarUpdateArgs,
-    CalendarAccountUpdateArgs,
-    CalendarAccountRestoreTaskCalendarArgs,
-} from './calendars'
-import type {
-    UserUpdateArgs,
-    DeleteCollaboratorArgs,
-    IdMappingArgs,
-    SuggestionDeleteArgs,
-    UserSettingsUpdateArgs,
-    UpdateGoalsArgs,
-} from './others'
+    WorkspaceAddArgs,
+    WorkspaceUpdateArgs,
+    WorkspaceDeleteArgs,
+    WorkspaceUpdateUserArgs,
+    WorkspaceDeleteUserArgs,
+    WorkspaceLeaveArgs,
+    WorkspaceInviteArgs,
+    WorkspaceSetDefaultOrderArgs,
+    WorkspaceUpdateUserProjectSortPreferenceArgs,
+} from './workspaces'
 
 /**
  * Maps each Sync API command type string to its corresponding argument type.

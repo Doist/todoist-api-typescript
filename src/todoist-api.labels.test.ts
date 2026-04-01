@@ -1,5 +1,4 @@
 import { TodoistApi } from '.'
-import { DEFAULT_AUTH_TOKEN, DEFAULT_LABEL } from './test-utils/test-defaults'
 import {
     getSyncBaseUri,
     ENDPOINT_REST_LABELS,
@@ -9,6 +8,7 @@ import {
     ENDPOINT_REST_LABELS_SHARED_REMOVE,
 } from './consts/endpoints'
 import { server, http, HttpResponse } from './test-utils/msw-setup'
+import { DEFAULT_AUTH_TOKEN, DEFAULT_LABEL } from './test-utils/test-defaults'
 
 function getTarget() {
     return new TodoistApi(DEFAULT_AUTH_TOKEN)

@@ -1,5 +1,5 @@
-import type { SyncDueDate, ReminderService } from './shared'
 import type { LocationTrigger, ReminderType } from '../resources/reminders'
+import type { SyncDueDate, ReminderService } from './shared'
 
 export type ReminderAddArgs =
     | {

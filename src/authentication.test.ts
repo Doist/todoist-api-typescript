@@ -6,10 +6,10 @@ import {
     registerClient,
     Permission,
 } from './authentication'
-import { server, http, HttpResponse } from './test-utils/msw-setup'
-import { assertInstance } from './test-utils/asserts'
-import { TodoistRequestError } from './types'
 import { getAuthBaseUri, getSyncBaseUri } from './consts/endpoints'
+import { assertInstance } from './test-utils/asserts'
+import { server, http, HttpResponse } from './test-utils/msw-setup'
+import { TodoistRequestError } from './types'
 
 describe('authentication', () => {
     describe('getAuthorizationUrl', () => {

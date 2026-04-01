@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const { config: dotenvConfig } = require('dotenv');
+const { config: dotenvConfig } = require('dotenv')
 
 function printHelp() {
     console.log(`
@@ -30,14 +30,14 @@ Examples:
   npm run api:request -- --method POST --path /api/v1/tasks --body '{"content":"API smoke test"}'
   npm run api:request -- --method POST --path /api/v1/tasks/123 --body '{"due_string":"no date"}'
   npm run api:request -- --path /api/v1/tasks --query '{"project_id":"123","limit":10}'
-`);
+`)
 }
 
 function requireValue(flag, value) {
     if (value === undefined) {
-        throw new Error(`Missing value for ${flag}.`);
+        throw new Error(`Missing value for ${flag}.`)
     }
-    return value;
+    return value
 }
 
 function parseArgs(argv) {
@@ -49,180 +49,179 @@ function parseArgs(argv) {
         headers: {},
         raw: false,
         help: false,
-    };
+    }
 
     for (let index = 0; index < argv.length; index += 1) {
-        const token = argv[index];
+        const token = argv[index]
 
         if (token === '--help' || token === '-h') {
-            args.help = true;
-            continue;
+            args.help = true
+            continue
         }
 
         if (token === '--method' || token === '-X') {
-            args.method = requireValue(token, argv[index + 1]).toUpperCase();
-            index += 1;
-            continue;
+            args.method = requireValue(token, argv[index + 1]).toUpperCase()
+            index += 1
+            continue
         }
 
         if (token === '--path') {
-            args.path = requireValue(token, argv[index + 1]);
-            index += 1;
-            continue;
+            args.path = requireValue(token, argv[index + 1])
+            index += 1
+            continue
         }
 
         if (token === '--query') {
-            args.query = requireValue(token, argv[index + 1]);
-            index += 1;
-            continue;
+            args.query = requireValue(token, argv[index + 1])
+            index += 1
+            continue
         }
 
         if (token === '--body' || token === '--data' || token === '-d') {
-            args.body = requireValue(token, argv[index + 1]);
-            index += 1;
-            continue;
+            args.body = requireValue(token, argv[index + 1])
+            index += 1
+            continue
         }
 
         if (token === '--header' || token === '-H') {
-            const headerValue = argv[index + 1];
+            const headerValue = argv[index + 1]
             if (headerValue === undefined) {
-                throw new Error('Missing value for --header. Use "Key: Value".');
+                throw new Error('Missing value for --header. Use "Key: Value".')
             }
             if (!headerValue.includes(':')) {
-                throw new Error(`Invalid header format "${headerValue}". Use "Key: Value".`);
+                throw new Error(`Invalid header format "${headerValue}". Use "Key: Value".`)
             }
-            const separatorIndex = headerValue.indexOf(':');
-            const key = headerValue.slice(0, separatorIndex).trim();
-            const value = headerValue.slice(separatorIndex + 1).trim();
-            args.headers[key] = value;
-            index += 1;
-            continue;
+            const separatorIndex = headerValue.indexOf(':')
+            const key = headerValue.slice(0, separatorIndex).trim()
+            const value = headerValue.slice(separatorIndex + 1).trim()
+            args.headers[key] = value
+            index += 1
+            continue
         }
 
         if (token === '--raw') {
-            args.raw = true;
-            continue;
+            args.raw = true
+            continue
         }
 
         if (token.startsWith('--')) {
-            throw new Error(`Unknown option "${token}".`);
+            throw new Error(`Unknown option "${token}".`)
         }
 
         if (!args.path) {
-            args.path = token;
-            continue;
+            args.path = token
+            continue
         }
 
-        throw new Error(`Unexpected positional argument "${token}".`);
+        throw new Error(`Unexpected positional argument "${token}".`)
     }
 
-    return args;
+    return args
 }
-
 
 function parseJson(label, value) {
     try {
-        return JSON.parse(value);
+        return JSON.parse(value)
     } catch (error) {
-        throw new Error(`Invalid ${label} JSON: ${(error && error.message) || String(error)}`);
+        throw new Error(`Invalid ${label} JSON: ${(error && error.message) || String(error)}`)
     }
 }
 
 function appendQueryObject(url, queryObject) {
     if (Array.isArray(queryObject) || typeof queryObject !== 'object' || queryObject === null) {
-        throw new Error('--query JSON must be an object.');
+        throw new Error('--query JSON must be an object.')
     }
 
     for (const [key, value] of Object.entries(queryObject)) {
         if (value === undefined || value === null) {
-            continue;
+            continue
         }
         if (Array.isArray(value) || typeof value === 'object') {
-            url.searchParams.set(key, JSON.stringify(value));
-            continue;
+            url.searchParams.set(key, JSON.stringify(value))
+            continue
         }
-        url.searchParams.set(key, String(value));
+        url.searchParams.set(key, String(value))
     }
 }
 
 function buildUrl(args) {
-    const baseUrl = process.env.TODOIST_API_BASE_URL || 'https://api.todoist.com';
-    const isAbsolute = /^https?:\/\//u.test(args.path);
-    const url = new URL(args.path, isAbsolute ? undefined : baseUrl);
+    const baseUrl = process.env.TODOIST_API_BASE_URL || 'https://api.todoist.com'
+    const isAbsolute = /^https?:\/\//u.test(args.path)
+    const url = new URL(args.path, isAbsolute ? undefined : baseUrl)
 
     if (!args.query) {
-        return url;
+        return url
     }
 
-    const queryText = args.query.trim();
+    const queryText = args.query.trim()
     if (queryText.startsWith('{')) {
-        appendQueryObject(url, parseJson('query', queryText));
+        appendQueryObject(url, parseJson('query', queryText))
     } else {
-        const extraParams = new URLSearchParams(queryText);
+        const extraParams = new URLSearchParams(queryText)
         for (const [key, value] of extraParams.entries()) {
-            url.searchParams.append(key, value);
+            url.searchParams.append(key, value)
         }
     }
 
-    return url;
+    return url
 }
 
 function hasAuthorizationHeader(headers) {
-    return Object.keys(headers).some((key) => key.toLowerCase() === 'authorization');
+    return Object.keys(headers).some((key) => key.toLowerCase() === 'authorization')
 }
 
 async function main() {
-    const args = parseArgs(process.argv.slice(2));
+    const args = parseArgs(process.argv.slice(2))
     if (args.help) {
-        printHelp();
-        return;
+        printHelp()
+        return
     }
 
     if (!args.path) {
-        throw new Error('Missing required --path.');
+        throw new Error('Missing required --path.')
     }
 
-    dotenvConfig({ quiet: true });
+    dotenvConfig({ quiet: true })
 
-    const headers = { ...args.headers };
+    const headers = { ...args.headers }
     if (!hasAuthorizationHeader(headers)) {
-        const token = process.env.TODOIST_API_TOKEN;
+        const token = process.env.TODOIST_API_TOKEN
         if (!token) {
             throw new Error(
                 'Missing TODOIST_API_TOKEN. Add it to .env or pass Authorization header via --header.',
-            );
+            )
         }
-        headers.Authorization = `Bearer ${token}`;
+        headers.Authorization = `Bearer ${token}`
     }
 
-    let bodyText;
+    let bodyText
     if (args.body !== undefined) {
-        parseJson('body', args.body);
-        bodyText = args.body;
+        parseJson('body', args.body)
+        bodyText = args.body
         if (!Object.keys(headers).some((key) => key.toLowerCase() === 'content-type')) {
-            headers['Content-Type'] = 'application/json';
+            headers['Content-Type'] = 'application/json'
         }
     }
 
-    const url = buildUrl(args);
+    const url = buildUrl(args)
     const response = await fetch(url, {
         method: args.method,
         headers,
         body: bodyText,
-    });
+    })
 
-    const responseText = await response.text();
+    const responseText = await response.text()
 
-    console.error(`${response.status} ${response.statusText}`);
+    console.error(`${response.status} ${response.statusText}`)
 
     if (args.raw) {
-        process.stdout.write(responseText + '\n');
+        process.stdout.write(responseText + '\n')
     } else {
-        let parsed;
+        let parsed
         try {
-            parsed = responseText ? JSON.parse(responseText) : null;
+            parsed = responseText ? JSON.parse(responseText) : null
         } catch {
-            parsed = responseText;
+            parsed = responseText
         }
 
         const output = {
@@ -230,18 +229,18 @@ async function main() {
             statusText: response.statusText,
             url: response.url,
             data: parsed,
-        };
+        }
 
-        process.stdout.write(`${JSON.stringify(output, null, 2)}\n`);
+        process.stdout.write(`${JSON.stringify(output, null, 2)}\n`)
     }
 
     if (!response.ok) {
-        process.exitCode = 1;
+        process.exitCode = 1
     }
 }
 
 main().catch((error) => {
-    console.error(error.message || String(error));
-    printHelp();
-    process.exitCode = 1;
-});
+    console.error(error.message || String(error))
+    printHelp()
+    process.exitCode = 1
+})

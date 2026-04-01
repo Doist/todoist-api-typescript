@@ -1,8 +1,8 @@
 import { vi } from 'vitest'
 import { TodoistApi, type CurrentUser } from '.'
-import { CustomFetch, CustomFetchResponse } from './types/http'
-import { server, http, HttpResponse } from './test-utils/msw-setup'
 import { getSyncBaseUri, ENDPOINT_REST_USER } from './consts/endpoints'
+import { server, http, HttpResponse } from './test-utils/msw-setup'
+import { CustomFetch, CustomFetchResponse } from './types/http'
 
 const DEFAULT_AUTH_TOKEN = 'test-auth-token'
 

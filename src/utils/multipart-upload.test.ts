@@ -1,8 +1,8 @@
-import { vi } from 'vitest'
-import { uploadMultipartFile } from './multipart-upload'
 import * as fs from 'fs'
 import { Readable } from 'stream'
+import { vi } from 'vitest'
 import { server, http, HttpResponse, getLastRequest, captureRequest } from '../test-utils/msw-setup'
+import { uploadMultipartFile } from './multipart-upload'
 
 // Mock fs
 vi.mock('fs')
