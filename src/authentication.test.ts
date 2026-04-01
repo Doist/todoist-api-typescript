@@ -3,12 +3,13 @@ import {
     getAuthToken,
     revokeToken,
     migratePersonalToken,
+    registerClient,
     Permission,
 } from './authentication'
 import { server, http, HttpResponse } from './test-utils/msw-setup'
 import { assertInstance } from './test-utils/asserts'
 import { TodoistRequestError } from './types'
-import { getSyncBaseUri } from './consts/endpoints'
+import { getAuthBaseUri, getSyncBaseUri } from './consts/endpoints'
 
 describe('authentication', () => {
     describe('getAuthorizationUrl', () => {
@@ -189,6 +190,116 @@ describe('authentication', () => {
             const result = await revokeToken(revokeTokenRequest)
 
             expect(result).toBe(true)
+        })
+    })
+
+    describe('registerClient', () => {
+        const defaultRegistrationRequest = {
+            redirectUris: ['https://example.com/callback'],
+            clientName: 'Test App',
+            scope: ['data:read_write', 'task:add'] as const,
+        }
+
+        const successfulRegistrationResponse = {
+            client_id: 'tdd_abc123',
+            client_secret: 'secret123',
+            client_name: 'Test App',
+            redirect_uris: ['https://example.com/callback'],
+            scope: 'data:read_write task:add',
+            grant_types: ['authorization_code'],
+            response_types: ['code'],
+            token_endpoint_auth_method: 'client_secret_post',
+            client_id_issued_at: 1704067200,
+            client_secret_expires_at: 0,
+        }
+
+        test('returns values from successful registration', async () => {
+            server.use(
+                http.post(`${getAuthBaseUri()}register`, () => {
+                    return HttpResponse.json(successfulRegistrationResponse, { status: 200 })
+                }),
+            )
+
+            const result = await registerClient(defaultRegistrationRequest)
+
+            expect(result).toEqual({
+                clientId: 'tdd_abc123',
+                clientSecret: 'secret123',
+                clientName: 'Test App',
+                redirectUris: ['https://example.com/callback'],
+                scope: ['data:read_write', 'task:add'],
+                grantTypes: ['authorization_code'],
+                responseTypes: ['code'],
+                tokenEndpointAuthMethod: 'client_secret_post',
+                clientIdIssuedAt: new Date(1704067200 * 1000),
+                clientSecretExpiresAt: null,
+            })
+        })
+
+        test('throws error if non 200 response', async () => {
+            server.use(
+                http.post(`${getAuthBaseUri()}register`, () => {
+                    return HttpResponse.json({ error: 'invalid_client_metadata' }, { status: 400 })
+                }),
+            )
+
+            expect.assertions(3)
+
+            try {
+                await registerClient(defaultRegistrationRequest)
+            } catch (e: unknown) {
+                assertInstance(e, TodoistRequestError)
+                expect(e.message).toEqual('Dynamic client registration failed.')
+                expect(e.httpStatusCode).toEqual(400)
+                expect(e.responseData).toEqual({ error: 'invalid_client_metadata' })
+            }
+        })
+
+        test('throws error if clientId not present in response', async () => {
+            server.use(
+                http.post(`${getAuthBaseUri()}register`, () => {
+                    return HttpResponse.json(
+                        { ...successfulRegistrationResponse, client_id: undefined },
+                        { status: 200 },
+                    )
+                }),
+            )
+
+            expect.assertions(2)
+
+            try {
+                await registerClient(defaultRegistrationRequest)
+            } catch (e: unknown) {
+                assertInstance(e, TodoistRequestError)
+                expect(e.message).toEqual('Dynamic client registration failed.')
+                expect(e.responseData).toBeDefined()
+            }
+        })
+
+        test('works with custom baseUrl', async () => {
+            server.use(
+                http.post('https://staging.todoist.com/oauth/register', () => {
+                    return HttpResponse.json(successfulRegistrationResponse, { status: 200 })
+                }),
+            )
+
+            const result = await registerClient(defaultRegistrationRequest, {
+                baseUrl: 'https://staging.todoist.com',
+            })
+
+            expect(result.clientId).toEqual('tdd_abc123')
+        })
+
+        test('accepts 201 Created response per RFC 7591', async () => {
+            server.use(
+                http.post(`${getAuthBaseUri()}register`, () => {
+                    return HttpResponse.json(successfulRegistrationResponse, { status: 201 })
+                }),
+            )
+
+            const result = await registerClient(defaultRegistrationRequest)
+
+            expect(result.clientId).toEqual('tdd_abc123')
         })
     })
 
