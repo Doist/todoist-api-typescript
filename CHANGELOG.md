@@ -1,3 +1,9 @@
+## [8.1.0](https://github.com/Doist/todoist-sdk-typescript/compare/v8.0.1...v8.1.0) (2026-04-01)
+
+### Features
+
+* add dynamic client registration (RFC 7591) ([#535](https://github.com/Doist/todoist-sdk-typescript/issues/535)) ([c5367a8](https://github.com/Doist/todoist-sdk-typescript/commit/c5367a815de43d84ddfcca16cd8acba4ecbebf62))
+
 ## [8.0.1](https://github.com/Doist/todoist-sdk-typescript/compare/v8.0.0...v8.0.1) (2026-04-01)
 
 ### Bug Fixes
