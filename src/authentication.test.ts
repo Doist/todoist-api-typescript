@@ -289,6 +289,18 @@ describe('authentication', () => {
 
             expect(result.clientId).toEqual('tdd_abc123')
         })
+
+        test('accepts 201 Created response per RFC 7591', async () => {
+            server.use(
+                http.post(`${getAuthBaseUri()}register`, () => {
+                    return HttpResponse.json(successfulRegistrationResponse, { status: 201 })
+                }),
+            )
+
+            const result = await registerClient(defaultRegistrationRequest)
+
+            expect(result.clientId).toEqual('tdd_abc123')
+        })
     })
 
     describe('migratePersonalToken', () => {

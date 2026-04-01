@@ -64,15 +64,15 @@ export type ClientRegistrationRequest = {
 
 type RawClientRegistrationResponse = {
     clientId: string
-    clientSecret: string
+    clientSecret?: string
     clientName: string
     redirectUris: string[]
-    scope: string
+    scope?: string
     grantTypes: string[]
     responseTypes: string[]
     tokenEndpointAuthMethod: string
     clientIdIssuedAt: number
-    clientSecretExpiresAt: number
+    clientSecretExpiresAt?: number
     clientUri?: string
     logoUri?: string
 }
@@ -85,7 +85,7 @@ export type ClientRegistrationResponse = Omit<
     RawClientRegistrationResponse,
     'clientIdIssuedAt' | 'clientSecretExpiresAt' | 'scope'
 > & {
-    scope: Permission[]
+    scope?: Permission[]
     clientIdIssuedAt: Date
     /** `null` indicates the client secret never expires. */
     clientSecretExpiresAt: Date | null
@@ -211,7 +211,7 @@ export function getAuthorizationUrl({
     const scope = permissions.join(',')
     return `${getAuthBaseUri(
         baseUrl,
-    )}${ENDPOINT_AUTHORIZATION}?client_id=${clientId}&scope=${scope}&state=${state}`
+    )}${ENDPOINT_AUTHORIZATION}?client_id=${encodeURIComponent(clientId)}&scope=${scope}&state=${state}`
 }
 
 /**
@@ -421,7 +421,7 @@ export async function registerClient(
             customFetch,
         })
 
-        if (response.status !== 200 || !response.data?.clientId) {
+        if (!isSuccess(response) || !response.data?.clientId) {
             throw new TodoistRequestError(
                 'Dynamic client registration failed.',
                 response.status,
@@ -432,10 +432,11 @@ export async function registerClient(
         const { clientIdIssuedAt, clientSecretExpiresAt, scope, ...rest } = response.data
         return {
             ...rest,
-            scope: scope.split(' ') as Permission[],
+            scope: scope ? (scope.split(' ') as Permission[]) : undefined,
             clientIdIssuedAt: new Date(clientIdIssuedAt * 1000),
-            clientSecretExpiresAt:
-                clientSecretExpiresAt === 0 ? null : new Date(clientSecretExpiresAt * 1000),
+            clientSecretExpiresAt: !clientSecretExpiresAt
+                ? null
+                : new Date(clientSecretExpiresAt * 1000),
         }
     } catch (error) {
         const err = error as TodoistRequestError
