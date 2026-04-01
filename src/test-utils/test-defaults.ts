@@ -11,6 +11,8 @@ import {
     Reminder,
     Folder,
 } from '../types'
+import type { Collaborator, CollaboratorState } from '../types/sync/resources/collaborators'
+import type { Note } from '../types/sync/resources/notes'
 import { getProjectUrl, getTaskUrl, getSectionUrl } from '../utils/url-helpers'
 
 export const DEFAULT_TASK_ID = '1234'
@@ -332,5 +334,32 @@ export const DEFAULT_FOLDER: Folder = {
     workspaceId: '100',
     defaultOrder: 3,
     childOrder: 3,
+    isDeleted: false,
+}
+
+export const DEFAULT_COLLABORATOR: Collaborator = {
+    id: DEFAULT_USER_ID,
+    email: DEFAULT_USER_EMAIL,
+    fullName: DEFAULT_USER_NAME,
+    timezone: 'UTC',
+    imageId: null,
+}
+
+export const DEFAULT_COLLABORATOR_STATE: CollaboratorState = {
+    userId: DEFAULT_USER_ID,
+    projectId: DEFAULT_PROJECT_ID,
+    state: 'active',
+    isDeleted: false,
+}
+
+export const DEFAULT_NOTE: Note = {
+    id: DEFAULT_COMMENT_ID,
+    projectId: DEFAULT_PROJECT_ID,
+    content: DEFAULT_COMMENT_CONTENT,
+    postedAt: DEFAULT_DATE,
+    fileAttachment: DEFAULT_ATTACHMENT,
+    postedUid: DEFAULT_USER_ID,
+    uidsToNotify: null,
+    reactions: DEFAULT_COMMENT_REACTIONS,
     isDeleted: false,
 }
