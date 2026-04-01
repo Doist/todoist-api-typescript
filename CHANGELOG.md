@@ -1,3 +1,9 @@
+## [8.0.1](https://github.com/Doist/todoist-sdk-typescript/compare/v8.0.0...v8.0.1) (2026-04-01)
+
+### Bug Fixes
+
+* align joinProject with actual API response shape ([#534](https://github.com/Doist/todoist-sdk-typescript/issues/534)) ([0dad0e2](https://github.com/Doist/todoist-sdk-typescript/commit/0dad0e200f1998a4be2f02fba625603a1107fbc1))
+
 ## [8.0.0](https://github.com/Doist/todoist-sdk-typescript/compare/v7.9.1...v8.0.0) (2026-03-31)
 
 ### ⚠ BREAKING CHANGES
