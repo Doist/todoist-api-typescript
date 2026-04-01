@@ -231,8 +231,8 @@ describe('authentication', () => {
                 grantTypes: ['authorization_code'],
                 responseTypes: ['code'],
                 tokenEndpointAuthMethod: 'client_secret_post',
-                clientIdIssuedAt: 1704067200,
-                clientSecretExpiresAt: 0,
+                clientIdIssuedAt: new Date(1704067200 * 1000),
+                clientSecretExpiresAt: new Date(0),
             })
         })
 

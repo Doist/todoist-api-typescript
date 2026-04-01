@@ -75,8 +75,8 @@ export type ClientRegistrationResponse = {
     grantTypes: string[]
     responseTypes: string[]
     tokenEndpointAuthMethod: string
-    clientIdIssuedAt: number
-    clientSecretExpiresAt: number
+    clientIdIssuedAt: Date
+    clientSecretExpiresAt: Date
     clientUri?: string
     logoUri?: string
 }
@@ -419,7 +419,12 @@ export async function registerClient(
             )
         }
 
-        return response.data
+        const { clientIdIssuedAt, clientSecretExpiresAt, ...rest } = response.data
+        return {
+            ...rest,
+            clientIdIssuedAt: new Date((clientIdIssuedAt as unknown as number) * 1000),
+            clientSecretExpiresAt: new Date((clientSecretExpiresAt as unknown as number) * 1000),
+        }
     } catch (error) {
         const err = error as TodoistRequestError
         throw new TodoistRequestError(
