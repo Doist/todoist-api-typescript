@@ -12,6 +12,7 @@ import {
     DEFAULT_COLLABORATOR,
     DEFAULT_COLLABORATOR_STATE,
     DEFAULT_NOTE,
+    DEFAULT_WORKSPACE_PROJECT,
 } from './test-utils/test-defaults'
 import {
     getSyncBaseUri,
@@ -335,7 +336,7 @@ describe('TodoistApi project endpoints', () => {
     describe('joinProject', () => {
         test('returns full join data from rest client', async () => {
             const joinData = {
-                project: DEFAULT_PROJECT,
+                project: DEFAULT_WORKSPACE_PROJECT,
                 tasks: [DEFAULT_TASK],
                 sections: [DEFAULT_SECTION],
                 comments: [DEFAULT_NOTE],
@@ -356,7 +357,7 @@ describe('TodoistApi project endpoints', () => {
 
             const result = await api.joinProject('123')
 
-            expect(result.project).toEqual(DEFAULT_PROJECT)
+            expect(result.project).toEqual(DEFAULT_WORKSPACE_PROJECT)
             expect(result.tasks).toHaveLength(1)
             expect(result.sections).toHaveLength(1)
             expect(result.comments).toHaveLength(1)
@@ -368,7 +369,7 @@ describe('TodoistApi project endpoints', () => {
 
         test('returns null folder when project has no folder', async () => {
             const joinData = {
-                project: DEFAULT_PROJECT,
+                project: DEFAULT_WORKSPACE_PROJECT,
                 tasks: [],
                 sections: [],
                 comments: [],

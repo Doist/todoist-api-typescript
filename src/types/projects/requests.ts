@@ -204,12 +204,12 @@ export type GetFullProjectResponse = {
  * @see https://developer.todoist.com/api/v1/#tag/Projects/operation/join_project_api_v1_projects__project_id__join_post
  */
 export type JoinProjectResponse = {
-    project: PersonalProject | WorkspaceProject
+    project: WorkspaceProject
     tasks: Task[]
     sections: Section[]
     comments: Note[]
     collaborators: Collaborator[]
     collaboratorStates: CollaboratorState[]
     folder: Folder | null
-    subprojects: (PersonalProject | WorkspaceProject)[]
+    subprojects: WorkspaceProject[]
 }

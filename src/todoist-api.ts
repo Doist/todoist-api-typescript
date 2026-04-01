@@ -17,6 +17,7 @@ import {
 import {
     PersonalProject,
     WorkspaceProject,
+    WorkspaceProjectSchema,
     AddProjectArgs,
     UpdateProjectArgs,
     GetProjectsArgs,
@@ -1250,14 +1251,14 @@ export class TodoistApi {
             requestId: requestId,
         })
         return {
-            project: validateProject(data.project),
+            project: WorkspaceProjectSchema.parse(data.project),
             tasks: validateTaskArray(data.tasks),
             sections: validateSectionArray(data.sections),
             comments: validateNoteArray(data.comments),
             collaborators: validateCollaboratorArray(data.collaborators),
             collaboratorStates: validateCollaboratorStateArray(data.collaboratorStates),
             folder: data.folder ? validateFolder(data.folder) : null,
-            subprojects: validateProjectArray(data.subprojects),
+            subprojects: data.subprojects.map((p) => WorkspaceProjectSchema.parse(p)),
         }
     }
 
