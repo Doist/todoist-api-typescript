@@ -108,6 +108,9 @@ export function validateProjectArray(input: unknown[]): (PersonalProject | Works
     return input.map(validateProject)
 }
 
+export const validateWorkspaceProject = createValidator(WorkspaceProjectSchema)
+export const validateWorkspaceProjectArray = createArrayValidator(validateWorkspaceProject)
+
 export const validateSection = createValidator(SectionSchema)
 export const validateSectionArray = createArrayValidator(validateSection)
 

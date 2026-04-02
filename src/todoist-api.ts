@@ -121,7 +121,6 @@ import { ProductivityStats } from './types/productivity'
 import {
     PersonalProject,
     WorkspaceProject,
-    WorkspaceProjectSchema,
     AddProjectArgs,
     UpdateProjectArgs,
     GetProjectsArgs,
@@ -269,6 +268,8 @@ import {
     validateCollaboratorArray,
     validateCollaboratorStateArray,
     validateNoteArray,
+    validateWorkspaceProject,
+    validateWorkspaceProjectArray,
 } from './utils/validators'
 
 import { v4 as uuidv4 } from 'uuid'
@@ -1258,14 +1259,14 @@ export class TodoistApi {
             requestId: requestId,
         })
         return {
-            project: WorkspaceProjectSchema.parse(data.project),
+            project: validateWorkspaceProject(data.project),
             tasks: validateTaskArray(data.tasks),
             sections: validateSectionArray(data.sections),
             comments: validateNoteArray(data.comments),
             collaborators: validateCollaboratorArray(data.collaborators),
             collaboratorStates: validateCollaboratorStateArray(data.collaboratorStates),
             folder: data.folder ? validateFolder(data.folder) : null,
-            subprojects: data.subprojects.map((p) => WorkspaceProjectSchema.parse(p)),
+            subprojects: validateWorkspaceProjectArray(data.subprojects),
         }
     }
 

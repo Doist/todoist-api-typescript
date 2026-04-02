@@ -13,12 +13,15 @@ import {
     DEFAULT_USER,
     INVALID_USER,
     DEFAULT_RAW_COMMENT,
+    DEFAULT_WORKSPACE_PROJECT,
 } from '../test-utils/test-defaults'
 import {
     validateTask,
     validateTaskArray,
     validateProject,
     validateProjectArray,
+    validateWorkspaceProject,
+    validateWorkspaceProjectArray,
     validateSection,
     validateSectionArray,
     validateLabel,
@@ -88,6 +91,37 @@ describe('validators', () => {
         test('validation throws error for an invalid project array ', () => {
             expect(() => {
                 validateProjectArray([INVALID_PROJECT])
+            }).toThrow(ZodError)
+        })
+    })
+
+    describe('validateWorkspaceProject', () => {
+        test('validation passes for a valid workspace project', () => {
+            const result = validateWorkspaceProject(DEFAULT_WORKSPACE_PROJECT)
+            expect(result).toEqual(DEFAULT_WORKSPACE_PROJECT)
+        })
+
+        test('validation throws error for an invalid workspace project', () => {
+            expect(() => {
+                validateWorkspaceProject(INVALID_PROJECT)
+            }).toThrow(ZodError)
+        })
+    })
+
+    describe('validateWorkspaceProjectArray', () => {
+        test('validation passes for empty array', () => {
+            const result = validateWorkspaceProjectArray([])
+            expect(result).toEqual([])
+        })
+
+        test('validation passes for valid workspace project array', () => {
+            const result = validateWorkspaceProjectArray([DEFAULT_WORKSPACE_PROJECT])
+            expect(result).toEqual([DEFAULT_WORKSPACE_PROJECT])
+        })
+
+        test('validation throws error for an invalid workspace project array', () => {
+            expect(() => {
+                validateWorkspaceProjectArray([INVALID_PROJECT])
             }).toThrow(ZodError)
         })
     })
