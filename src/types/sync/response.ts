@@ -12,7 +12,6 @@ import type {
     Tooltips,
     WorkspaceFilter,
     WorkspaceGoal,
-    Goal,
     Calendar,
     CalendarAccount,
     Reminder,
@@ -68,7 +67,6 @@ export type SyncResponse = {
     roleActions?: Record<string, unknown>[]
     folders?: Folder[]
     workspaceGoals?: WorkspaceGoal[]
-    goals?: Goal[]
     dayOrders?: Record<string, number>
     calendars?: Calendar[]
     calendarAccounts?: CalendarAccount[]
