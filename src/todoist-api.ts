@@ -75,6 +75,9 @@ import {
     ENDPOINT_REST_FOLDERS,
     ENDPOINT_REST_GOALS,
     ENDPOINT_REST_GOALS_SEARCH,
+    GOAL_COMPLETE,
+    GOAL_UNCOMPLETE,
+    GOAL_ITEMS,
 } from './consts/endpoints'
 import { request, isSuccess } from './transport/http-client'
 import type { Reminder } from './types'
@@ -2660,7 +2663,7 @@ export class TodoistApi {
         const response = await request<Goal>({
             httpMethod: 'POST',
             baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_GOALS, id, 'complete'),
+            relativePath: generatePath(ENDPOINT_REST_GOALS, id, GOAL_COMPLETE),
             apiToken: this.authToken,
             customFetch: this.customFetch,
             requestId: requestId,
@@ -2673,7 +2676,7 @@ export class TodoistApi {
         const response = await request<Goal>({
             httpMethod: 'POST',
             baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_GOALS, id, 'uncomplete'),
+            relativePath: generatePath(ENDPOINT_REST_GOALS, id, GOAL_UNCOMPLETE),
             apiToken: this.authToken,
             customFetch: this.customFetch,
             requestId: requestId,
@@ -2687,7 +2690,7 @@ export class TodoistApi {
         const response = await request<Goal>({
             httpMethod: 'POST',
             baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_GOALS, goalId, 'items'),
+            relativePath: generatePath(ENDPOINT_REST_GOALS, goalId, GOAL_ITEMS),
             apiToken: this.authToken,
             customFetch: this.customFetch,
             payload: { itemId },
@@ -2702,7 +2705,7 @@ export class TodoistApi {
         const response = await request({
             httpMethod: 'DELETE',
             baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_GOALS, goalId, 'items', itemId),
+            relativePath: generatePath(ENDPOINT_REST_GOALS, goalId, GOAL_ITEMS, itemId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
             requestId: requestId,

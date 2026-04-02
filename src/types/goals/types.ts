@@ -1,5 +1,8 @@
 import { z } from 'zod'
 
+export const GOAL_OWNER_TYPES = ['USER', 'WORKSPACE'] as const
+export type GoalOwnerType = (typeof GOAL_OWNER_TYPES)[number]
+
 export const GoalProgressSchema = z.object({
     totalItemCount: z.number().int(),
     completedItemCount: z.number().int(),
@@ -8,7 +11,7 @@ export const GoalProgressSchema = z.object({
 
 export const GoalSchema = z.object({
     id: z.string(),
-    ownerType: z.string(),
+    ownerType: z.enum(GOAL_OWNER_TYPES),
     ownerId: z.string(),
     name: z.string(),
     description: z.string().nullable(),

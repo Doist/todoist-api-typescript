@@ -1,14 +1,14 @@
 import type { SearchArgs } from '../common'
-import type { Goal } from './types'
+import type { Goal, GoalOwnerType } from './types'
 
 export type GetGoalsArgs = {
-    ownerType?: string
+    ownerType?: GoalOwnerType
     cursor?: string | null
     limit?: number
 }
 
 export type SearchGoalsArgs = SearchArgs & {
-    ownerType?: string
+    ownerType?: GoalOwnerType
 }
 
 export type GetGoalsResponse = {
