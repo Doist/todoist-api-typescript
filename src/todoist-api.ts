@@ -162,6 +162,7 @@ import {
     GetSectionsResponse,
 } from './types/sections'
 import type { Folder } from './types/sync/resources/folders'
+import { GoalSchema } from './types/sync/resources/goals'
 import {
     Task,
     AddTaskArgs,
@@ -460,7 +461,13 @@ export class TodoistApi {
             })
         }
 
-        return response.data
+        const data = response.data
+
+        if (data.goals) {
+            data.goals = data.goals.map((goal) => GoalSchema.parse(goal))
+        }
+
+        return data
     }
 
     /**
