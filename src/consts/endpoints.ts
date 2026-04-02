@@ -83,6 +83,9 @@ export const ENDPOINT_REGISTER = 'register'
 
 export const ENDPOINT_REST_FOLDERS = 'folders'
 
+export const ENDPOINT_REST_GOALS = 'goals'
+export const ENDPOINT_REST_GOALS_SEARCH = ENDPOINT_REST_GOALS + '/search'
+
 // Workspace endpoints
 export const ENDPOINT_REST_WORKSPACES = 'workspaces'
 export const ENDPOINT_WORKSPACE_INVITATIONS = 'workspaces/invitations'
