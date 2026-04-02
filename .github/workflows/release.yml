@@ -4,6 +4,7 @@ on:
     push:
         branches:
             - main
+            - next
 
 permissions:
     # Enable `semantic-release` to publish a GitHub release and push commits
