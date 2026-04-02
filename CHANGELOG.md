@@ -1,3 +1,9 @@
+## [8.2.0](https://github.com/Doist/todoist-sdk-typescript/compare/v8.1.0...v8.2.0) (2026-04-02)
+
+### Features
+
+* add goal sync commands and resource types ([#538](https://github.com/Doist/todoist-sdk-typescript/issues/538)) ([6a28001](https://github.com/Doist/todoist-sdk-typescript/commit/6a2800190f4b6ed60b22e890573ae2aa7ff7d2e3))
+
 ## [8.1.0](https://github.com/Doist/todoist-sdk-typescript/compare/v8.0.1...v8.1.0) (2026-04-01)
 
 ### Features
