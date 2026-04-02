@@ -2,18 +2,21 @@
  * @type {import('semantic-release').GlobalConfig}
  */
 
-const isPrerelease = process.env.GITHUB_REF_NAME === 'next'
+const prereleaseBranches = [{ name: 'next', prerelease: true }]
+
+const isPrerelease = prereleaseBranches.some((b) => b.name === process.env.GITHUB_REF_NAME)
 
 export default {
-    branches: ['main', { name: 'next', prerelease: true }],
+    branches: ['main', ...prereleaseBranches],
     plugins: [
         ['@semantic-release/commit-analyzer', { preset: 'conventionalcommits' }],
         ['@semantic-release/release-notes-generator', { preset: 'conventionalcommits' }],
-        // Only update CHANGELOG.md and commit back on stable releases (main branch)
+        // Only update CHANGELOG.md and commit back on stable releases
+        ...(isPrerelease ? [] : ['@semantic-release/changelog']),
+        '@semantic-release/npm',
         ...(isPrerelease
             ? []
             : [
-                  '@semantic-release/changelog',
                   [
                       '@semantic-release/git',
                       {
@@ -24,7 +27,6 @@ export default {
                       },
                   ],
               ]),
-        '@semantic-release/npm',
         '@semantic-release/github',
     ],
 }
