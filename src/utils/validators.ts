@@ -3,6 +3,7 @@ import { type ZodType } from 'zod'
 import { ActivityEventSchema } from '../types/activity/types'
 import { BackupSchema } from '../types/backups/types'
 import { AttachmentSchema, CommentSchema } from '../types/comments/types'
+import { GoalSchema } from '../types/goals/types'
 import { IdMappingSchema, MovedIdSchema } from '../types/id-mappings/types'
 import {
     ProjectActivityStatsSchema,
@@ -185,6 +186,9 @@ export const validateCollaboratorStateArray = createArrayValidator(validateColla
 
 export const validateFolder = createValidator(FolderSchema)
 export const validateFolderArray = createArrayValidator(validateFolder)
+
+export const validateGoal = createValidator(GoalSchema)
+export const validateGoalArray = createArrayValidator(validateGoal)
 
 export const validateNote = createValidator(NoteSchema)
 export const validateNoteArray = createArrayValidator(validateNote)
