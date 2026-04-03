@@ -87,7 +87,7 @@ export const ENDPOINT_REST_GOALS = 'goals'
 export const ENDPOINT_REST_GOALS_SEARCH = ENDPOINT_REST_GOALS + '/search'
 export const GOAL_COMPLETE = 'complete'
 export const GOAL_UNCOMPLETE = 'uncomplete'
-export const GOAL_ITEMS = 'items'
+export const GOAL_TASKS = 'items'
 
 // Workspace endpoints
 export const ENDPOINT_REST_WORKSPACES = 'workspaces'

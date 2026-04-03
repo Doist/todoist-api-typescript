@@ -77,7 +77,7 @@ import {
     ENDPOINT_REST_GOALS_SEARCH,
     GOAL_COMPLETE,
     GOAL_UNCOMPLETE,
-    GOAL_ITEMS,
+    GOAL_TASKS,
 } from './consts/endpoints'
 import { request, isSuccess } from './transport/http-client'
 import type { Reminder } from './types'
@@ -2703,28 +2703,28 @@ export class TodoistApi {
         return validateGoal(response.data)
     }
 
-    async linkItemToGoal(goalId: string, itemId: string, requestId?: string): Promise<Goal> {
+    async linkTaskToGoal(goalId: string, taskId: string, requestId?: string): Promise<Goal> {
         z.string().parse(goalId)
-        z.string().parse(itemId)
+        z.string().parse(taskId)
         const response = await request<Goal>({
             httpMethod: 'POST',
             baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_GOALS, goalId, GOAL_ITEMS),
+            relativePath: generatePath(ENDPOINT_REST_GOALS, goalId, GOAL_TASKS),
             apiToken: this.authToken,
             customFetch: this.customFetch,
-            payload: { itemId },
+            payload: { itemId: taskId },
             requestId: requestId,
         })
         return validateGoal(response.data)
     }
 
-    async unlinkItemFromGoal(goalId: string, itemId: string, requestId?: string): Promise<boolean> {
+    async unlinkTaskFromGoal(goalId: string, taskId: string, requestId?: string): Promise<boolean> {
         z.string().parse(goalId)
-        z.string().parse(itemId)
+        z.string().parse(taskId)
         const response = await request({
             httpMethod: 'DELETE',
             baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_GOALS, goalId, GOAL_ITEMS, itemId),
+            relativePath: generatePath(ENDPOINT_REST_GOALS, goalId, GOAL_TASKS, taskId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
             requestId: requestId,
