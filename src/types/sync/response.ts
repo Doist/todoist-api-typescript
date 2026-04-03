@@ -1,9 +1,9 @@
+import type { Goal } from '../goals/types'
 import type { Label } from '../labels/types'
 import type { PersonalProject, WorkspaceProject } from '../projects/types'
 import type { Section } from '../sections/types'
 import type { Task } from '../tasks/types'
 import type { WorkspaceUser } from '../workspaces/types'
-import type { Goal } from '../goals/types'
 import type {
     Filter,
     Collaborator,

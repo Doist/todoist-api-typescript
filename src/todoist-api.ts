@@ -107,6 +107,7 @@ import type {
     AddGoalArgs,
     UpdateGoalArgs,
 } from './types/goals'
+import { GoalSchema } from './types/goals/types'
 import { CustomFetch, CustomFetchResponse } from './types/http'
 import { IdMapping, MovedId, GetIdMappingsArgs, GetMovedIdsArgs } from './types/id-mappings'
 import {
