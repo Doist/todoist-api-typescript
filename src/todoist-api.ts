@@ -106,6 +106,7 @@ import type {
     SearchGoalsArgs,
     AddGoalArgs,
     UpdateGoalArgs,
+    ItemLinkingArgs,
 } from './types/goals'
 import { GoalSchema } from './types/goals/types'
 import { CustomFetch, CustomFetchResponse } from './types/http'
@@ -2704,7 +2705,7 @@ export class TodoistApi {
         return validateGoal(response.data)
     }
 
-    async linkTaskToGoal(goalId: string, taskId: string, requestId?: string): Promise<Goal> {
+    async linkTaskToGoal({ goalId, taskId }: ItemLinkingArgs, requestId?: string): Promise<Goal> {
         z.string().parse(goalId)
         z.string().parse(taskId)
         const response = await request<Goal>({
@@ -2719,7 +2720,10 @@ export class TodoistApi {
         return validateGoal(response.data)
     }
 
-    async unlinkTaskFromGoal(goalId: string, taskId: string, requestId?: string): Promise<boolean> {
+    async unlinkTaskFromGoal(
+        { goalId, taskId }: ItemLinkingArgs,
+        requestId?: string,
+    ): Promise<boolean> {
         z.string().parse(goalId)
         z.string().parse(taskId)
         const response = await request({

@@ -30,3 +30,8 @@ export type UpdateGoalArgs = {
     deadline?: string | null
     responsibleUid?: string | null
 }
+
+export type ItemLinkingArgs = {
+    goalId: string
+    taskId: string
+}
