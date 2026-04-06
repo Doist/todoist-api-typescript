@@ -73,38 +73,32 @@ export const CALENDAR_LAYOUTS = ['WEEK', 'MONTH'] as const
 /** Calendar layout mode. */
 export type CalendarLayout = (typeof CALENDAR_LAYOUTS)[number]
 
-export const CalendarSettingsSchema = z
-    .object({
-        layout: z.enum(CALENDAR_LAYOUTS).optional(),
-    })
-    .passthrough()
+export const CalendarSettingsSchema = z.looseObject({
+    layout: z.enum(CALENDAR_LAYOUTS).optional(),
+})
 
-export const ViewOptionsSchema = z
-    .object({
-        viewType: ViewTypeSchema,
-        objectId: z.string().optional(),
-        groupedBy: GroupedBySchema.optional(),
-        filteredBy: z.string().nullable().optional(),
-        viewMode: ViewModeSchema.optional(),
-        showCompletedTasks: z.boolean().optional(),
-        sortedBy: SortedBySchema.optional(),
-        sortOrder: SortOrderSchema.optional(),
-    })
-    .passthrough()
+export const ViewOptionsSchema = z.looseObject({
+    viewType: ViewTypeSchema,
+    objectId: z.string().optional(),
+    groupedBy: GroupedBySchema.optional(),
+    filteredBy: z.string().nullable().optional(),
+    viewMode: ViewModeSchema.optional(),
+    showCompletedTasks: z.boolean().optional(),
+    sortedBy: SortedBySchema.optional(),
+    sortOrder: SortOrderSchema.optional(),
+})
 
 export type ViewOptions = z.infer<typeof ViewOptionsSchema>
 
-export const ProjectViewOptionsDefaultsSchema = z
-    .object({
-        projectId: z.string(),
-        viewMode: ViewModeSchema.nullable().optional(),
-        groupedBy: GroupedBySchema.optional(),
-        sortedBy: SortedBySchema.optional(),
-        sortOrder: SortOrderSchema.optional(),
-        showCompletedTasks: z.boolean().optional(),
-        filteredBy: z.string().nullable().optional(),
-        calendarSettings: CalendarSettingsSchema.nullable().optional(),
-    })
-    .passthrough()
+export const ProjectViewOptionsDefaultsSchema = z.looseObject({
+    projectId: z.string(),
+    viewMode: ViewModeSchema.nullable().optional(),
+    groupedBy: GroupedBySchema.optional(),
+    sortedBy: SortedBySchema.optional(),
+    sortOrder: SortOrderSchema.optional(),
+    showCompletedTasks: z.boolean().optional(),
+    filteredBy: z.string().nullable().optional(),
+    calendarSettings: CalendarSettingsSchema.nullable().optional(),
+})
 
 export type ProjectViewOptionsDefaults = z.infer<typeof ProjectViewOptionsDefaultsSchema>

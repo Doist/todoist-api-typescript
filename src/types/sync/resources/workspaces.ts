@@ -15,7 +15,7 @@ import {
  * domain settings, and sorting preferences.
  */
 export const SyncWorkspaceSchema = z
-    .object({
+    .looseObject({
         id: StringOrNumberSchema,
         name: z.string(),
         description: z.string(),
@@ -58,7 +58,6 @@ export const SyncWorkspaceSchema = z
             .optional(),
         properties: WorkspacePropertiesSchema.optional(),
     })
-    .passthrough()
     .transform(({ dateCreated, createdAt, ...rest }) => ({
         ...rest,
         createdAt: createdAt ?? dateCreated,
