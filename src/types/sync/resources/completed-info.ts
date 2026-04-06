@@ -1,32 +1,26 @@
 import { z } from 'zod'
 
-export const CompletedProjectMetadataSchema = z
-    .object({
-        projectId: z.string(),
-        archivedSections: z.number().int(),
-        completedItems: z.number().int(),
-    })
-    .passthrough()
+export const CompletedProjectMetadataSchema = z.looseObject({
+    projectId: z.string(),
+    archivedSections: z.number().int(),
+    completedItems: z.number().int(),
+})
 
 export type CompletedProjectMetadata = z.infer<typeof CompletedProjectMetadataSchema>
 
-export const CompletedSectionMetadataSchema = z
-    .object({
-        sectionId: z.string(),
-        id: z.string(),
-        completedItems: z.number().int(),
-    })
-    .passthrough()
+export const CompletedSectionMetadataSchema = z.looseObject({
+    sectionId: z.string(),
+    id: z.string(),
+    completedItems: z.number().int(),
+})
 
 export type CompletedSectionMetadata = z.infer<typeof CompletedSectionMetadataSchema>
 
-export const CompletedTaskMetadataSchema = z
-    .object({
-        itemId: z.string(),
-        id: z.string().optional(),
-        completedItems: z.number().int(),
-    })
-    .passthrough()
+export const CompletedTaskMetadataSchema = z.looseObject({
+    itemId: z.string(),
+    id: z.string().optional(),
+    completedItems: z.number().int(),
+})
 
 export type CompletedTaskMetadata = z.infer<typeof CompletedTaskMetadataSchema>
 

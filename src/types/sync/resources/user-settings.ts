@@ -13,32 +13,30 @@ export const QuickAddFeatureSchema = z.object({
 /**
  * Sync API user settings resource.
  */
-export const UserSettingsSchema = z
-    .object({
-        completedSoundDesktop: z.boolean(),
-        completedSoundMobile: z.boolean(),
-        debugLogSendingEnabledUntil: z.string().nullable(),
-        legacyPricing: z.boolean(),
-        navigation: z
-            .object({
-                countsShown: z.boolean(),
-                features: z.array(NavigationFeatureSchema),
-            })
-            .passthrough(),
-        reminderDesktop: z.boolean(),
-        reminderEmail: z.boolean(),
-        reminderPush: z.boolean(),
-        resetRecurringSubtasks: z.boolean(),
-        aiEmailAssist: z.boolean(),
-        theme: z.string().nullable().optional(),
-        syncTheme: z.boolean().optional(),
-        quickAdd: z
-            .object({
-                labelsShown: z.boolean(),
-                features: z.array(QuickAddFeatureSchema),
-            })
-            .passthrough(),
-    })
-    .passthrough()
+export const UserSettingsSchema = z.looseObject({
+    completedSoundDesktop: z.boolean(),
+    completedSoundMobile: z.boolean(),
+    debugLogSendingEnabledUntil: z.string().nullable(),
+    legacyPricing: z.boolean(),
+    navigation: z
+        .object({
+            countsShown: z.boolean(),
+            features: z.array(NavigationFeatureSchema),
+        })
+        .loose(),
+    reminderDesktop: z.boolean(),
+    reminderEmail: z.boolean(),
+    reminderPush: z.boolean(),
+    resetRecurringSubtasks: z.boolean(),
+    aiEmailAssist: z.boolean(),
+    theme: z.string().nullable().optional(),
+    syncTheme: z.boolean().optional(),
+    quickAdd: z
+        .object({
+            labelsShown: z.boolean(),
+            features: z.array(QuickAddFeatureSchema),
+        })
+        .loose(),
+})
 
 export type UserSettings = z.infer<typeof UserSettingsSchema>

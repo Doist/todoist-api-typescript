@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { DueDateSchema } from '../../tasks/types'
 
-export const ReminderBaseSchema = z.object({
+export const ReminderBaseSchema = z.looseObject({
     id: z.string(),
     notifyUid: z.string(),
     itemId: z.string(),
@@ -36,7 +36,7 @@ export const LocationReminderSchema = ReminderBaseSchema.extend({
     locLong: z.string(),
     locTrigger: z.enum(LOCATION_TRIGGERS),
     radius: z.number().int(),
-}).passthrough()
+})
 
 export type LocationReminder = z.infer<typeof LocationReminderSchema>
 
@@ -44,7 +44,7 @@ export const AbsoluteReminderSchema = ReminderBaseSchema.extend({
     type: z.literal(ReminderTypeEnum.Absolute),
     due: DueDateSchema,
     isUrgent: z.boolean().optional(),
-}).passthrough()
+})
 
 export type AbsoluteReminder = z.infer<typeof AbsoluteReminderSchema>
 
@@ -53,7 +53,7 @@ export const RelativeReminderSchema = ReminderBaseSchema.extend({
     minuteOffset: z.number().int(),
     due: DueDateSchema.optional(),
     isUrgent: z.boolean().optional(),
-}).passthrough()
+})
 
 export type RelativeReminder = z.infer<typeof RelativeReminderSchema>
 
