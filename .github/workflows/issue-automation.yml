@@ -15,7 +15,7 @@ jobs:
         timeout-minutes: 5
 
         # Don't run on forks
-        if: github.repository == 'Doist/todoist-api-typescript'
+        if: github.repository == 'Doist/todoist-sdk-typescript'
 
         steps:
             - name: Add issue to project
