@@ -8,20 +8,6 @@ slug: /
 
 This is the official TypeScript SDK for the Todoist API.
 
-:::caution Version 4.0.0 & 5.0.0 - Major Updates
-These versions introduce breaking changes to align with Todoist's new v1 API.
-### Important Changes
-
-We have transitioned from the [Todoist REST API v2](https://developer.todoist.com/rest/v2/) to the [Todoist API v1](https://todoist.com/api/v1). This migration brings several improvements:
-
-- New unified API structure
-- Enhanced TypeScript types and documentation
-- Better error handling with specific error types
-- New endpoint implementations
-
-For detailed migration instructions from v9, please refer to the [official Todoist API v1 migration guide](https://todoist.com/api/v1/docs#tag/Migrating-from-v9).
-:::
-
 ## Installation
 
 ```bash
