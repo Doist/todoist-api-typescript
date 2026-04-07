@@ -6,17 +6,16 @@ export const GOAL_OWNER_TYPES = ['USER', 'WORKSPACE'] as const
 export type GoalOwnerType = (typeof GOAL_OWNER_TYPES)[number]
 
 export const GoalProgressSchema = z
-    .object({
+    .looseObject({
         totalItemCount: z.number().int(),
         completedItemCount: z.number().int(),
         percentage: z.number(),
     })
-    .passthrough()
 
 export type GoalProgress = z.infer<typeof GoalProgressSchema>
 
 export const GoalSchema = z
-    .object({
+    .looseObject({
         id: z.string(),
         ownerType: z.enum(GOAL_OWNER_TYPES),
         ownerId: z.string(),
@@ -34,7 +33,6 @@ export const GoalSchema = z
         createdAt: z.coerce.date(),
         updatedAt: z.coerce.date(),
     })
-    .passthrough()
 
 /**
  * Represents a goal in Todoist.
