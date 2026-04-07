@@ -20,6 +20,7 @@ import {
     type PersonalProject,
 } from '../types/projects/types'
 import { SectionSchema } from '../types/sections/types'
+import type { SyncResponse } from '../types/sync/response'
 import { TaskSchema } from '../types/tasks/types'
 import { UserSchema, CurrentUserSchema } from '../types/users/types'
 import {
@@ -234,3 +235,74 @@ export const validateUserSettings = createValidator(UserSettingsSchema)
 
 export const validateSuggestion = createValidator(SuggestionSchema)
 export const validateSuggestionArray = createArrayValidator(validateSuggestion)
+
+export function parseSyncResponse(raw: Record<string, unknown>): SyncResponse {
+    return {
+        ...raw,
+        ...(Array.isArray(raw.items) ? { items: validateTaskArray(raw.items) } : {}),
+        ...(Array.isArray(raw.projects) ? { projects: validateProjectArray(raw.projects) } : {}),
+        ...(Array.isArray(raw.sections) ? { sections: validateSectionArray(raw.sections) } : {}),
+        ...(Array.isArray(raw.labels) ? { labels: validateLabelArray(raw.labels) } : {}),
+        ...(Array.isArray(raw.notes) ? { notes: validateNoteArray(raw.notes) } : {}),
+        ...(Array.isArray(raw.projectNotes)
+            ? { projectNotes: validateNoteArray(raw.projectNotes) }
+            : {}),
+        ...(Array.isArray(raw.filters) ? { filters: validateFilterArray(raw.filters) } : {}),
+        ...(Array.isArray(raw.reminders)
+            ? { reminders: validateReminderArray(raw.reminders) }
+            : {}),
+        ...(Array.isArray(raw.remindersLocation)
+            ? { remindersLocation: validateLocationReminderArray(raw.remindersLocation) }
+            : {}),
+        ...(raw.user ? { user: validateSyncUser(raw.user) } : {}),
+        ...(Array.isArray(raw.liveNotifications)
+            ? { liveNotifications: validateLiveNotificationArray(raw.liveNotifications) }
+            : {}),
+        ...(Array.isArray(raw.collaborators)
+            ? { collaborators: validateCollaboratorArray(raw.collaborators) }
+            : {}),
+        ...(Array.isArray(raw.collaboratorStates)
+            ? { collaboratorStates: validateCollaboratorStateArray(raw.collaboratorStates) }
+            : {}),
+        ...(raw.userSettings ? { userSettings: validateUserSettings(raw.userSettings) } : {}),
+        ...(raw.userPlanLimits
+            ? { userPlanLimits: validateUserPlanLimits(raw.userPlanLimits) }
+            : {}),
+        ...(Array.isArray(raw.completedInfo)
+            ? { completedInfo: validateCompletedInfoArray(raw.completedInfo) }
+            : {}),
+        ...(Array.isArray(raw.workspaces)
+            ? { workspaces: validateSyncWorkspaceArray(raw.workspaces) }
+            : {}),
+        ...(raw.workspaceUsers
+            ? { workspaceUsers: validateWorkspaceUserArray(raw.workspaceUsers) }
+            : {}),
+        ...(Array.isArray(raw.workspaceFilters)
+            ? { workspaceFilters: validateWorkspaceFilterArray(raw.workspaceFilters) }
+            : {}),
+        ...(Array.isArray(raw.viewOptions)
+            ? { viewOptions: validateViewOptionsArray(raw.viewOptions) }
+            : {}),
+        ...(Array.isArray(raw.projectViewOptionsDefaults)
+            ? {
+                  projectViewOptionsDefaults: validateProjectViewOptionsDefaultsArray(
+                      raw.projectViewOptionsDefaults,
+                  ),
+              }
+            : {}),
+        ...(Array.isArray(raw.folders) ? { folders: validateFolderArray(raw.folders) } : {}),
+        ...(Array.isArray(raw.workspaceGoals)
+            ? { workspaceGoals: validateWorkspaceGoalArray(raw.workspaceGoals) }
+            : {}),
+        ...(Array.isArray(raw.calendars)
+            ? { calendars: validateCalendarArray(raw.calendars) }
+            : {}),
+        ...(Array.isArray(raw.calendarAccounts)
+            ? { calendarAccounts: validateCalendarAccountArray(raw.calendarAccounts) }
+            : {}),
+        ...(Array.isArray(raw.suggestions)
+            ? { suggestions: validateSuggestionArray(raw.suggestions) }
+            : {}),
+        ...(raw.tooltips ? { tooltips: validateTooltips(raw.tooltips) } : {}),
+    } as SyncResponse
+}
