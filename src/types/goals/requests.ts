@@ -31,7 +31,7 @@ export type UpdateGoalArgs = {
     responsibleUid?: string | null
 }
 
-export type ItemLinkingArgs = {
+export type TaskLinkingArgs = {
     goalId: string
     taskId: string
 }
