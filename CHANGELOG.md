@@ -1,3 +1,9 @@
+## [8.3.0](https://github.com/Doist/todoist-sdk-typescript/compare/v8.2.1...v8.3.0) (2026-04-07)
+
+### Features
+
+* Parse sync response resources through Zod schemas ([#554](https://github.com/Doist/todoist-sdk-typescript/issues/554)) ([d5c4551](https://github.com/Doist/todoist-sdk-typescript/commit/d5c4551fd4bed350f8db742b772c3ba52e6655c5))
+
 ## [8.2.1](https://github.com/Doist/todoist-sdk-typescript/compare/v8.2.0...v8.2.1) (2026-04-02)
 
 ### Bug Fixes
