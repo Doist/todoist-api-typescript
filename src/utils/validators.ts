@@ -20,6 +20,7 @@ import {
     type PersonalProject,
 } from '../types/projects/types'
 import { SectionSchema } from '../types/sections/types'
+import type { SyncResponse } from '../types/sync/response'
 import { TaskSchema } from '../types/tasks/types'
 import { UserSchema, CurrentUserSchema } from '../types/users/types'
 import {
@@ -41,6 +42,7 @@ import {
     NoteSchema,
     TooltipsSchema,
     WorkspaceFilterSchema,
+    GoalSchema,
     WorkspaceGoalSchema,
     CalendarSchema,
     CalendarAccountSchema,
@@ -61,8 +63,13 @@ function createValidator<T>(schema: ZodType<T>): (input: unknown) => T {
     return (input: unknown): T => schema.parse(input)
 }
 
-function createArrayValidator<T>(validateItem: (input: unknown) => T): (input: unknown[]) => T[] {
-    return (input: unknown[]): T[] => input.map(validateItem)
+function createArrayValidator<T>(validateItem: (input: unknown) => T): (input: unknown) => T[] {
+    return (input: unknown): T[] => {
+        if (!Array.isArray(input)) {
+            throw new TypeError(`Expected array, got ${typeof input}`)
+        }
+        return input.map(validateItem)
+    }
 }
 
 // Entity validators
@@ -104,7 +111,10 @@ export function validateProject(input: unknown): PersonalProject | WorkspaceProj
     return PersonalProjectSchema.parse(input)
 }
 
-export function validateProjectArray(input: unknown[]): (PersonalProject | WorkspaceProject)[] {
+export function validateProjectArray(input: unknown): (PersonalProject | WorkspaceProject)[] {
+    if (!Array.isArray(input)) {
+        throw new TypeError(`Expected array, got ${typeof input}`)
+    }
     return input.map(validateProject)
 }
 
@@ -194,6 +204,9 @@ export const validateTooltips = createValidator(TooltipsSchema)
 export const validateWorkspaceFilter = createValidator(WorkspaceFilterSchema)
 export const validateWorkspaceFilterArray = createArrayValidator(validateWorkspaceFilter)
 
+export const validateGoal = createValidator(GoalSchema)
+export const validateGoalArray = createArrayValidator(validateGoal)
+
 export const validateWorkspaceGoal = createValidator(WorkspaceGoalSchema)
 export const validateWorkspaceGoalArray = createArrayValidator(validateWorkspaceGoal)
 
@@ -234,3 +247,63 @@ export const validateUserSettings = createValidator(UserSettingsSchema)
 
 export const validateSuggestion = createValidator(SuggestionSchema)
 export const validateSuggestionArray = createArrayValidator(validateSuggestion)
+
+export function parseSyncResponse(raw: Record<string, unknown>): SyncResponse {
+    return {
+        ...raw,
+        ...('items' in raw ? { items: validateTaskArray(raw.items) } : {}),
+        ...('projects' in raw ? { projects: validateProjectArray(raw.projects) } : {}),
+        ...('sections' in raw ? { sections: validateSectionArray(raw.sections) } : {}),
+        ...('labels' in raw ? { labels: validateLabelArray(raw.labels) } : {}),
+        ...('notes' in raw ? { notes: validateNoteArray(raw.notes) } : {}),
+        ...('projectNotes' in raw ? { projectNotes: validateNoteArray(raw.projectNotes) } : {}),
+        ...('filters' in raw ? { filters: validateFilterArray(raw.filters) } : {}),
+        ...('reminders' in raw ? { reminders: validateReminderArray(raw.reminders) } : {}),
+        ...('remindersLocation' in raw
+            ? { remindersLocation: validateLocationReminderArray(raw.remindersLocation) }
+            : {}),
+        ...('user' in raw ? { user: validateSyncUser(raw.user) } : {}),
+        ...('liveNotifications' in raw
+            ? { liveNotifications: validateLiveNotificationArray(raw.liveNotifications) }
+            : {}),
+        ...('collaborators' in raw
+            ? { collaborators: validateCollaboratorArray(raw.collaborators) }
+            : {}),
+        ...('collaboratorStates' in raw
+            ? { collaboratorStates: validateCollaboratorStateArray(raw.collaboratorStates) }
+            : {}),
+        ...('userSettings' in raw ? { userSettings: validateUserSettings(raw.userSettings) } : {}),
+        ...('userPlanLimits' in raw
+            ? { userPlanLimits: validateUserPlanLimits(raw.userPlanLimits) }
+            : {}),
+        ...('completedInfo' in raw
+            ? { completedInfo: validateCompletedInfoArray(raw.completedInfo) }
+            : {}),
+        ...('workspaces' in raw ? { workspaces: validateSyncWorkspaceArray(raw.workspaces) } : {}),
+        ...('workspaceUsers' in raw
+            ? { workspaceUsers: validateWorkspaceUserArray(raw.workspaceUsers) }
+            : {}),
+        ...('workspaceFilters' in raw
+            ? { workspaceFilters: validateWorkspaceFilterArray(raw.workspaceFilters) }
+            : {}),
+        ...('viewOptions' in raw ? { viewOptions: validateViewOptionsArray(raw.viewOptions) } : {}),
+        ...('projectViewOptionsDefaults' in raw
+            ? {
+                  projectViewOptionsDefaults: validateProjectViewOptionsDefaultsArray(
+                      raw.projectViewOptionsDefaults,
+                  ),
+              }
+            : {}),
+        ...('folders' in raw ? { folders: validateFolderArray(raw.folders) } : {}),
+        ...('goals' in raw ? { goals: validateGoalArray(raw.goals) } : {}),
+        ...('workspaceGoals' in raw
+            ? { workspaceGoals: validateWorkspaceGoalArray(raw.workspaceGoals) }
+            : {}),
+        ...('calendars' in raw ? { calendars: validateCalendarArray(raw.calendars) } : {}),
+        ...('calendarAccounts' in raw
+            ? { calendarAccounts: validateCalendarAccountArray(raw.calendarAccounts) }
+            : {}),
+        ...('suggestions' in raw ? { suggestions: validateSuggestionArray(raw.suggestions) } : {}),
+        ...('tooltips' in raw ? { tooltips: validateTooltips(raw.tooltips) } : {}),
+    } as SyncResponse
+}
