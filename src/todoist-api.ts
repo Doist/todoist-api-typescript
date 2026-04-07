@@ -269,6 +269,7 @@ import {
     validateNoteArray,
     validateWorkspaceProject,
     validateWorkspaceProjectArray,
+    parseSyncResponse,
 } from './utils/validators'
 
 import { v4 as uuidv4 } from 'uuid'
@@ -306,10 +307,18 @@ function spreadIfDefined<T, V extends Record<string, unknown>>(
 function serializeUserUpdateArgs(args: UserUpdateArgs): Record<string, unknown> {
     return {
         ...args,
-        ...spreadIfDefined(args.dateFormat, (v) => ({ dateFormat: DATE_FORMAT_TO_API[v] })),
-        ...spreadIfDefined(args.timeFormat, (v) => ({ timeFormat: TIME_FORMAT_TO_API[v] })),
-        ...spreadIfDefined(args.startDay, (v) => ({ startDay: DAY_OF_WEEK_TO_API[v] })),
-        ...spreadIfDefined(args.nextWeek, (v) => ({ nextWeek: DAY_OF_WEEK_TO_API[v] })),
+        ...spreadIfDefined(args.dateFormat, (v) => ({
+            dateFormat: DATE_FORMAT_TO_API[v],
+        })),
+        ...spreadIfDefined(args.timeFormat, (v) => ({
+            timeFormat: TIME_FORMAT_TO_API[v],
+        })),
+        ...spreadIfDefined(args.startDay, (v) => ({
+            startDay: DAY_OF_WEEK_TO_API[v],
+        })),
+        ...spreadIfDefined(args.nextWeek, (v) => ({
+            nextWeek: DAY_OF_WEEK_TO_API[v],
+        })),
     }
 }
 
@@ -319,7 +328,9 @@ function serializeTaskUpdateDateCompleteArgs(
     return {
         ...args,
         isForward: args.isForward ? 1 : 0,
-        ...spreadIfDefined(args.resetSubtasks, (v) => ({ resetSubtasks: v ? 1 : 0 })),
+        ...spreadIfDefined(args.resetSubtasks, (v) => ({
+            resetSubtasks: v ? 1 : 0,
+        })),
     }
 }
 
@@ -327,21 +338,29 @@ function serializeUpdateGoalsArgs(args: UpdateGoalsArgs): Record<string, unknown
     return {
         ...args,
         ...spreadIfDefined(args.vacationMode, (v) => ({ vacationMode: v ? 1 : 0 })),
-        ...spreadIfDefined(args.karmaDisabled, (v) => ({ karmaDisabled: v ? 1 : 0 })),
+        ...spreadIfDefined(args.karmaDisabled, (v) => ({
+            karmaDisabled: v ? 1 : 0,
+        })),
     }
 }
 
 function preprocessSyncCommands(commands: SyncCommand[]): SyncCommand[] {
     return commands.map((cmd): SyncCommand => {
         if (cmd.type === 'user_update')
-            return { ...cmd, args: serializeUserUpdateArgs(cmd.args as UserUpdateArgs) }
+            return {
+                ...cmd,
+                args: serializeUserUpdateArgs(cmd.args as UserUpdateArgs),
+            }
         if (cmd.type === 'item_update_date_complete')
             return {
                 ...cmd,
                 args: serializeTaskUpdateDateCompleteArgs(cmd.args as TaskUpdateDateCompleteArgs),
             }
         if (cmd.type === 'update_goals')
-            return { ...cmd, args: serializeUpdateGoalsArgs(cmd.args as UpdateGoalsArgs) }
+            return {
+                ...cmd,
+                args: serializeUpdateGoalsArgs(cmd.args as UpdateGoalsArgs),
+            }
         return cmd
     })
 }
@@ -439,9 +458,12 @@ export class TodoistApi {
         hasSyncCommands = false,
     ): Promise<SyncResponse> {
         const processedRequest = syncRequest.commands?.length
-            ? { ...syncRequest, commands: preprocessSyncCommands(syncRequest.commands) }
+            ? {
+                  ...syncRequest,
+                  commands: preprocessSyncCommands(syncRequest.commands),
+              }
             : syncRequest
-        const response = await request<SyncResponse>({
+        const response = await request<Record<string, unknown>>({
             httpMethod: 'POST',
             baseUri: this.syncApiBase,
             relativePath: ENDPOINT_SYNC,
@@ -461,7 +483,7 @@ export class TodoistApi {
             })
         }
 
-        return response.data
+        return parseSyncResponse(response.data)
     }
 
     /**
@@ -1130,7 +1152,9 @@ export class TodoistApi {
         args: MoveProjectToWorkspaceArgs,
         requestId?: string,
     ): Promise<PersonalProject | WorkspaceProject> {
-        const response = await request<{ project: PersonalProject | WorkspaceProject }>({
+        const response = await request<{
+            project: PersonalProject | WorkspaceProject
+        }>({
             httpMethod: 'POST',
             baseUri: this.syncApiBase,
             relativePath: ENDPOINT_REST_PROJECTS_MOVE_TO_WORKSPACE,
@@ -1153,7 +1177,9 @@ export class TodoistApi {
         args: MoveProjectToPersonalArgs,
         requestId?: string,
     ): Promise<PersonalProject | WorkspaceProject> {
-        const response = await request<{ project: PersonalProject | WorkspaceProject }>({
+        const response = await request<{
+            project: PersonalProject | WorkspaceProject
+        }>({
             httpMethod: 'POST',
             baseUri: this.syncApiBase,
             relativePath: ENDPOINT_REST_PROJECTS_MOVE_TO_PERSONAL,
