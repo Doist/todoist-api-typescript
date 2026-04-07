@@ -43,7 +43,6 @@ import {
     NoteSchema,
     TooltipsSchema,
     WorkspaceFilterSchema,
-    GoalSchema,
     WorkspaceGoalSchema,
     CalendarSchema,
     CalendarAccountSchema,
@@ -207,9 +206,6 @@ export const validateTooltips = createValidator(TooltipsSchema)
 
 export const validateWorkspaceFilter = createValidator(WorkspaceFilterSchema)
 export const validateWorkspaceFilterArray = createArrayValidator(validateWorkspaceFilter)
-
-export const validateGoal = createValidator(GoalSchema)
-export const validateGoalArray = createArrayValidator(validateGoal)
 
 export const validateWorkspaceGoal = createValidator(WorkspaceGoalSchema)
 export const validateWorkspaceGoalArray = createArrayValidator(validateWorkspaceGoal)
