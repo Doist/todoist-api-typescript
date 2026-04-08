@@ -1,5 +1,5 @@
 import type { SearchArgs } from '../common'
-import type { Workspace } from '../workspaces';
+import type { Workspace } from '../workspaces'
 import type { Goal, GoalOwnerType } from './types'
 
 export type GetGoalsArgs = {
