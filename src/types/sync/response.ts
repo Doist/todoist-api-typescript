@@ -1,3 +1,4 @@
+import type { Goal } from '../goals/types'
 import type { Label } from '../labels/types'
 import type { PersonalProject, WorkspaceProject } from '../projects/types'
 import type { Section } from '../sections/types'
@@ -12,7 +13,6 @@ import type {
     Tooltips,
     WorkspaceFilter,
     WorkspaceGoal,
-    Goal,
     Calendar,
     CalendarAccount,
     Reminder,

@@ -1,4 +1,4 @@
-import type { GoalOwnerType } from '../resources/goals'
+import type { GoalOwnerType } from '../../goals/types'
 
 export type GoalAddArgs = {
     ownerType: GoalOwnerType
