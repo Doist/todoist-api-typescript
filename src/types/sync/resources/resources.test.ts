@@ -283,12 +283,12 @@ describe('Sync resource schemas', () => {
         test('validates with progress', () => {
             const withProgress = {
                 ...validGoal,
-                progress: { totalItemCount: 10, completedItemCount: 3, percentage: 30 },
+                progress: { totalTaskCount: 10, completedTaskCount: 3, percentage: 30 },
             }
             const result = GoalSchema.parse(withProgress)
             expect(result.progress).toEqual({
-                totalItemCount: 10,
-                completedItemCount: 3,
+                totalTaskCount: 10,
+                completedTaskCount: 3,
                 percentage: 30,
             })
         })
@@ -306,12 +306,12 @@ describe('Sync resource schemas', () => {
 
     describe('GoalProgressSchema', () => {
         test('validates valid data', () => {
-            const data = { totalItemCount: 10, completedItemCount: 5, percentage: 50 }
+            const data = { totalTaskCount: 10, completedTaskCount: 5, percentage: 50 }
             expect(GoalProgressSchema.parse(data)).toEqual(data)
         })
 
         test('preserves unknown fields via passthrough', () => {
-            const data = { totalItemCount: 10, completedItemCount: 5, percentage: 50, extra: true }
+            const data = { totalTaskCount: 10, completedTaskCount: 5, percentage: 50, extra: true }
             const result = GoalProgressSchema.parse(data)
             expect(result).toHaveProperty('extra', true)
         })

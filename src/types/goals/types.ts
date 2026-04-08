@@ -6,8 +6,8 @@ export const GOAL_OWNER_TYPES = ['USER', 'WORKSPACE'] as const
 export type GoalOwnerType = (typeof GOAL_OWNER_TYPES)[number]
 
 export const GoalProgressSchema = z.looseObject({
-    totalItemCount: z.number().int(),
-    completedItemCount: z.number().int(),
+    totalTaskCount: z.number().int(),
+    completedTaskCount: z.number().int(),
     percentage: z.number(),
 })
 
