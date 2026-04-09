@@ -77,28 +77,6 @@ export const validateTask = createValidator(TaskSchema)
 export const validateTaskArray = createArrayValidator(validateTask)
 
 /**
- * Type guard to check if a project is a workspace project.
- * @param project The project to check
- * @returns True if the project is a workspace project
- */
-export function isWorkspaceProject(
-    project: PersonalProject | WorkspaceProject,
-): project is WorkspaceProject {
-    return 'workspaceId' in project
-}
-
-/**
- * Type guard to check if a project is a personal project.
- * @param project The project to check
- * @returns True if the project is a personal project
- */
-export function isPersonalProject(
-    project: PersonalProject | WorkspaceProject,
-): project is PersonalProject {
-    return !isWorkspaceProject(project)
-}
-
-/**
  * Validates and parses a project input.
  * @param input The input to validate
  * @returns A validated project (either PersonalProject or WorkspaceProject)
