@@ -29,7 +29,7 @@ import {
     SuggestionSchema,
 } from './resources'
 
-const SyncErrorSchema = z.object({
+export const SyncErrorSchema = z.object({
     error: z.string(),
     errorCode: z.number(),
     errorExtra: z.record(z.string(), z.unknown()),
