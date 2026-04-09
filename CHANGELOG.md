@@ -1,3 +1,9 @@
+## [8.4.0](https://github.com/Doist/todoist-sdk-typescript/compare/v8.3.1...v8.4.0) (2026-04-09)
+
+### Features
+
+* Exports project helper functions ([#556](https://github.com/Doist/todoist-sdk-typescript/issues/556)) ([2201095](https://github.com/Doist/todoist-sdk-typescript/commit/2201095186eaf2eae7706e6db52a358379e8dbf0))
+
 ## [8.3.1](https://github.com/Doist/todoist-sdk-typescript/compare/v8.3.0...v8.3.1) (2026-04-09)
 
 ### Bug Fixes
