@@ -1078,6 +1078,11 @@ export class TodoistApi {
     /**
      * Deletes a project by its ID.
      *
+     * If the project is a workspace project, it must have been
+     * archived first before it can be deleted, otherwise calling
+     * this function will result in an error. Personal projects can
+     * be deleted regardless of their archived status.
+     *
      * @param id - The unique identifier of the project to delete.
      * @param requestId - Optional custom identifier for the request.
      * @returns A promise that resolves to `true` if successful.
