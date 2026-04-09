@@ -75,6 +75,15 @@ export type PersonalProject = z.infer<typeof PersonalProjectSchema>
  */
 export type WorkspaceProject = z.infer<typeof WorkspaceProjectSchema>
 
+/**
+ * Schema for any project type in Todoist (personal or workspace).
+ * Attempts WorkspaceProjectSchema first (requires workspaceId), falls back to PersonalProjectSchema.
+ */
+export const ProjectSchema = z.union([WorkspaceProjectSchema, PersonalProjectSchema])
+
+/** A project in Todoist — either a {@link PersonalProject} or a {@link WorkspaceProject}. */
+export type Project = z.infer<typeof ProjectSchema>
+
 /** Available project view styles. */
 export const PROJECT_VIEW_STYLES = ['list', 'board', 'calendar'] as const
 /**

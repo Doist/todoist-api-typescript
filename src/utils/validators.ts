@@ -1,4 +1,4 @@
-import { type ZodType } from 'zod'
+import { z, type ZodType } from 'zod'
 
 import { ActivityEventSchema } from '../types/activity/types'
 import { BackupSchema } from '../types/backups/types'
@@ -13,19 +13,13 @@ import {
 } from '../types/insights/types'
 import { LabelSchema } from '../types/labels/types'
 import { ProductivityStatsSchema } from '../types/productivity/types'
-import {
-    PersonalProjectSchema,
-    WorkspaceProjectSchema,
-    type WorkspaceProject,
-    type PersonalProject,
-} from '../types/projects/types'
+import { WorkspaceProjectSchema, ProjectSchema, type Project } from '../types/projects/types'
 import { SectionSchema } from '../types/sections/types'
-import type { SyncResponse } from '../types/sync/response'
+import { type SyncResponse, SyncResponseSchema } from '../types/sync/response'
 import { TaskSchema } from '../types/tasks/types'
 import { UserSchema, CurrentUserSchema } from '../types/users/types'
 import {
     WorkspaceUserSchema,
-    type WorkspaceUser,
     WorkspaceInvitationSchema,
     WorkspacePlanDetailsSchema,
     JoinWorkspaceResultSchema,
@@ -62,87 +56,66 @@ function createValidator<T>(schema: ZodType<T>): (input: unknown) => T {
     return (input: unknown): T => schema.parse(input)
 }
 
-function createArrayValidator<T>(validateItem: (input: unknown) => T): (input: unknown) => T[] {
-    return (input: unknown): T[] => {
-        if (!Array.isArray(input)) {
-            throw new TypeError(`Expected array, got ${typeof input}`)
-        }
-        return input.map(validateItem)
-    }
+function createArrayValidator<T>(schema: ZodType<T>): (input: unknown) => T[] {
+    return (input: unknown): T[] => z.array(schema).parse(input)
 }
 
 // Entity validators
 
 export const validateTask = createValidator(TaskSchema)
-export const validateTaskArray = createArrayValidator(validateTask)
+export const validateTaskArray = createArrayValidator(TaskSchema)
 
 /**
  * Validates and parses a project input.
  * @param input The input to validate
  * @returns A validated project (either PersonalProject or WorkspaceProject)
  */
-export function validateProject(input: unknown): PersonalProject | WorkspaceProject {
-    if ('workspaceId' in (input as WorkspaceProject)) {
-        return WorkspaceProjectSchema.parse(input)
-    }
-    return PersonalProjectSchema.parse(input)
-}
-
-export function validateProjectArray(input: unknown): (PersonalProject | WorkspaceProject)[] {
-    if (!Array.isArray(input)) {
-        throw new TypeError(`Expected array, got ${typeof input}`)
-    }
-    return input.map(validateProject)
-}
+export const validateProject: (input: unknown) => Project = createValidator(ProjectSchema)
+export const validateProjectArray = createArrayValidator(ProjectSchema)
 
 export const validateWorkspaceProject = createValidator(WorkspaceProjectSchema)
-export const validateWorkspaceProjectArray = createArrayValidator(validateWorkspaceProject)
+export const validateWorkspaceProjectArray = createArrayValidator(WorkspaceProjectSchema)
 
 export const validateSection = createValidator(SectionSchema)
-export const validateSectionArray = createArrayValidator(validateSection)
+export const validateSectionArray = createArrayValidator(SectionSchema)
 
 export const validateLabel = createValidator(LabelSchema)
-export const validateLabelArray = createArrayValidator(validateLabel)
+export const validateLabelArray = createArrayValidator(LabelSchema)
 
 export const validateComment = createValidator(CommentSchema)
-export const validateCommentArray = createArrayValidator(validateComment)
+export const validateCommentArray = createArrayValidator(CommentSchema)
 
 export const validateUser = createValidator(UserSchema)
-export const validateUserArray = createArrayValidator(validateUser)
+export const validateUserArray = createArrayValidator(UserSchema)
 
 export const validateProductivityStats = createValidator(ProductivityStatsSchema)
 
 export const validateCurrentUser = createValidator(CurrentUserSchema)
 
 export const validateActivityEvent = createValidator(ActivityEventSchema)
-export const validateActivityEventArray = createArrayValidator(validateActivityEvent)
+export const validateActivityEventArray = createArrayValidator(ActivityEventSchema)
 
 export const validateAttachment = createValidator(AttachmentSchema)
 
 export const validateWorkspaceUser = createValidator(WorkspaceUserSchema)
 
-export function validateWorkspaceUserArray(input: unknown): WorkspaceUser[] {
-    if (!Array.isArray(input)) {
-        throw new Error(`Expected array for workspace users, got ${typeof input}`)
-    }
-    return input.map(validateWorkspaceUser)
-}
+export const validateWorkspaceUserArray = createArrayValidator(WorkspaceUserSchema)
 
 export const validateWorkspaceInvitation = createValidator(WorkspaceInvitationSchema)
-export const validateWorkspaceInvitationArray = createArrayValidator(validateWorkspaceInvitation)
+export const validateWorkspaceInvitationArray = createArrayValidator(WorkspaceInvitationSchema)
 
 export const validateWorkspacePlanDetails = createValidator(WorkspacePlanDetailsSchema)
 
 export const validateJoinWorkspaceResult = createValidator(JoinWorkspaceResultSchema)
 
 export const validateWorkspace = createValidator(WorkspaceSchema)
-export const validateWorkspaceArray = createArrayValidator(validateWorkspace)
+export const validateWorkspaceArray = createArrayValidator(WorkspaceSchema)
 
 export const validateMemberActivityInfo = createValidator(MemberActivityInfoSchema)
-export const validateMemberActivityInfoArray = createArrayValidator(validateMemberActivityInfo)
+export const validateMemberActivityInfoArray = createArrayValidator(MemberActivityInfoSchema)
 
 export const validateWorkspaceUserTask = createValidator(WorkspaceUserTaskSchema)
-export const validateWorkspaceUserTaskArray = createArrayValidator(validateWorkspaceUserTask)
+export const validateWorkspaceUserTaskArray = createArrayValidator(WorkspaceUserTaskSchema)
 
 export const validateProjectActivityStats = createValidator(ProjectActivityStatsSchema)
 export const validateProjectHealth = createValidator(ProjectHealthSchema)
@@ -151,132 +124,77 @@ export const validateProjectProgress = createValidator(ProjectProgressSchema)
 export const validateWorkspaceInsights = createValidator(WorkspaceInsightsSchema)
 
 export const validateBackup = createValidator(BackupSchema)
-export const validateBackupArray = createArrayValidator(validateBackup)
+export const validateBackupArray = createArrayValidator(BackupSchema)
 
 export const validateIdMapping = createValidator(IdMappingSchema)
-export const validateIdMappingArray = createArrayValidator(validateIdMapping)
+export const validateIdMappingArray = createArrayValidator(IdMappingSchema)
 
 export const validateMovedId = createValidator(MovedIdSchema)
-export const validateMovedIdArray = createArrayValidator(validateMovedId)
+export const validateMovedIdArray = createArrayValidator(MovedIdSchema)
 
 // Sync resource validators
 
 export const validateFilter = createValidator(FilterSchema)
-export const validateFilterArray = createArrayValidator(validateFilter)
+export const validateFilterArray = createArrayValidator(FilterSchema)
 
 export const validateCollaborator = createValidator(CollaboratorSchema)
-export const validateCollaboratorArray = createArrayValidator(validateCollaborator)
+export const validateCollaboratorArray = createArrayValidator(CollaboratorSchema)
 
 export const validateCollaboratorState = createValidator(CollaboratorStateSchema)
-export const validateCollaboratorStateArray = createArrayValidator(validateCollaboratorState)
+export const validateCollaboratorStateArray = createArrayValidator(CollaboratorStateSchema)
 
 export const validateFolder = createValidator(FolderSchema)
-export const validateFolderArray = createArrayValidator(validateFolder)
+export const validateFolderArray = createArrayValidator(FolderSchema)
 
 export const validateNote = createValidator(NoteSchema)
-export const validateNoteArray = createArrayValidator(validateNote)
+export const validateNoteArray = createArrayValidator(NoteSchema)
 
 export const validateTooltips = createValidator(TooltipsSchema)
 
 export const validateWorkspaceFilter = createValidator(WorkspaceFilterSchema)
-export const validateWorkspaceFilterArray = createArrayValidator(validateWorkspaceFilter)
+export const validateWorkspaceFilterArray = createArrayValidator(WorkspaceFilterSchema)
 
 export const validateWorkspaceGoal = createValidator(WorkspaceGoalSchema)
-export const validateWorkspaceGoalArray = createArrayValidator(validateWorkspaceGoal)
+export const validateWorkspaceGoalArray = createArrayValidator(WorkspaceGoalSchema)
 
 export const validateCalendar = createValidator(CalendarSchema)
-export const validateCalendarArray = createArrayValidator(validateCalendar)
+export const validateCalendarArray = createArrayValidator(CalendarSchema)
 
 export const validateCalendarAccount = createValidator(CalendarAccountSchema)
-export const validateCalendarAccountArray = createArrayValidator(validateCalendarAccount)
+export const validateCalendarAccountArray = createArrayValidator(CalendarAccountSchema)
 
 export const validateReminder = createValidator(ReminderSchema)
-export const validateReminderArray = createArrayValidator(validateReminder)
+export const validateReminderArray = createArrayValidator(ReminderSchema)
 
 export const validateLocationReminder = createValidator(LocationReminderSchema)
-export const validateLocationReminderArray = createArrayValidator(validateLocationReminder)
+export const validateLocationReminderArray = createArrayValidator(LocationReminderSchema)
 
 export const validateCompletedInfo = createValidator(CompletedInfoSchema)
-export const validateCompletedInfoArray = createArrayValidator(validateCompletedInfo)
+export const validateCompletedInfoArray = createArrayValidator(CompletedInfoSchema)
 
 export const validateViewOptions = createValidator(ViewOptionsSchema)
-export const validateViewOptionsArray = createArrayValidator(validateViewOptions)
+export const validateViewOptionsArray = createArrayValidator(ViewOptionsSchema)
 
 export const validateProjectViewOptionsDefaults = createValidator(ProjectViewOptionsDefaultsSchema)
 export const validateProjectViewOptionsDefaultsArray = createArrayValidator(
-    validateProjectViewOptionsDefaults,
+    ProjectViewOptionsDefaultsSchema,
 )
 
 export const validateUserPlanLimits = createValidator(UserPlanLimitsSchema)
 
 export const validateLiveNotification = createValidator(LiveNotificationSchema)
-export const validateLiveNotificationArray = createArrayValidator(validateLiveNotification)
+export const validateLiveNotificationArray = createArrayValidator(LiveNotificationSchema)
 
 export const validateSyncWorkspace = createValidator(SyncWorkspaceSchema)
-export const validateSyncWorkspaceArray = createArrayValidator(validateSyncWorkspace)
+export const validateSyncWorkspaceArray = createArrayValidator(SyncWorkspaceSchema)
 
 export const validateSyncUser = createValidator(SyncUserSchema)
 
 export const validateUserSettings = createValidator(UserSettingsSchema)
 
 export const validateSuggestion = createValidator(SuggestionSchema)
-export const validateSuggestionArray = createArrayValidator(validateSuggestion)
+export const validateSuggestionArray = createArrayValidator(SuggestionSchema)
 
 export function parseSyncResponse(raw: Record<string, unknown>): SyncResponse {
-    return {
-        ...raw,
-        ...('items' in raw ? { items: validateTaskArray(raw.items) } : {}),
-        ...('projects' in raw ? { projects: validateProjectArray(raw.projects) } : {}),
-        ...('sections' in raw ? { sections: validateSectionArray(raw.sections) } : {}),
-        ...('labels' in raw ? { labels: validateLabelArray(raw.labels) } : {}),
-        ...('notes' in raw ? { notes: validateNoteArray(raw.notes) } : {}),
-        ...('projectNotes' in raw ? { projectNotes: validateNoteArray(raw.projectNotes) } : {}),
-        ...('filters' in raw ? { filters: validateFilterArray(raw.filters) } : {}),
-        ...('reminders' in raw ? { reminders: validateReminderArray(raw.reminders) } : {}),
-        ...('remindersLocation' in raw
-            ? { remindersLocation: validateLocationReminderArray(raw.remindersLocation) }
-            : {}),
-        ...('user' in raw ? { user: validateSyncUser(raw.user) } : {}),
-        ...('liveNotifications' in raw
-            ? { liveNotifications: validateLiveNotificationArray(raw.liveNotifications) }
-            : {}),
-        ...('collaborators' in raw
-            ? { collaborators: validateCollaboratorArray(raw.collaborators) }
-            : {}),
-        ...('collaboratorStates' in raw
-            ? { collaboratorStates: validateCollaboratorStateArray(raw.collaboratorStates) }
-            : {}),
-        ...('userSettings' in raw ? { userSettings: validateUserSettings(raw.userSettings) } : {}),
-        ...('userPlanLimits' in raw
-            ? { userPlanLimits: validateUserPlanLimits(raw.userPlanLimits) }
-            : {}),
-        ...('completedInfo' in raw
-            ? { completedInfo: validateCompletedInfoArray(raw.completedInfo) }
-            : {}),
-        ...('workspaces' in raw ? { workspaces: validateSyncWorkspaceArray(raw.workspaces) } : {}),
-        ...('workspaceUsers' in raw
-            ? { workspaceUsers: validateWorkspaceUserArray(raw.workspaceUsers) }
-            : {}),
-        ...('workspaceFilters' in raw
-            ? { workspaceFilters: validateWorkspaceFilterArray(raw.workspaceFilters) }
-            : {}),
-        ...('viewOptions' in raw ? { viewOptions: validateViewOptionsArray(raw.viewOptions) } : {}),
-        ...('projectViewOptionsDefaults' in raw
-            ? {
-                  projectViewOptionsDefaults: validateProjectViewOptionsDefaultsArray(
-                      raw.projectViewOptionsDefaults,
-                  ),
-              }
-            : {}),
-        ...('folders' in raw ? { folders: validateFolderArray(raw.folders) } : {}),
-        ...('workspaceGoals' in raw
-            ? { workspaceGoals: validateWorkspaceGoalArray(raw.workspaceGoals) }
-            : {}),
-        ...('calendars' in raw ? { calendars: validateCalendarArray(raw.calendars) } : {}),
-        ...('calendarAccounts' in raw
-            ? { calendarAccounts: validateCalendarAccountArray(raw.calendarAccounts) }
-            : {}),
-        ...('suggestions' in raw ? { suggestions: validateSuggestionArray(raw.suggestions) } : {}),
-        ...('tooltips' in raw ? { tooltips: validateTooltips(raw.tooltips) } : {}),
-    } as SyncResponse
+    return SyncResponseSchema.parse(raw)
 }

@@ -286,6 +286,25 @@ describe('parseSyncResponse', () => {
         expect(result.workspaces?.[0].createdAt).toBe('2020-01-01')
     })
 
+    test('throws ZodError when resource has wrong type (object instead of array)', () => {
+        expect(() => parseSyncResponse({ items: {} })).toThrow(ZodError)
+    })
+
+    test('throws ZodError when resource is null', () => {
+        expect(() => parseSyncResponse({ items: null })).toThrow(ZodError)
+    })
+
+    test('preserves unknown top-level fields', () => {
+        const response = {
+            syncToken: 'token123',
+            someNewField: { nested: true },
+        }
+
+        const result = parseSyncResponse(response)
+
+        expect((result as Record<string, unknown>).someNewField).toEqual({ nested: true })
+    })
+
     test('does not parse absent resource fields', () => {
         const response = {
             syncToken: 'token123',
