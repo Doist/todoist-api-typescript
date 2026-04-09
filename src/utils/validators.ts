@@ -13,7 +13,7 @@ import {
 } from '../types/insights/types'
 import { LabelSchema } from '../types/labels/types'
 import { ProductivityStatsSchema } from '../types/productivity/types'
-import { WorkspaceProjectSchema, ProjectSchema, type Project } from '../types/projects/types'
+import { WorkspaceProjectSchema, ProjectSchema } from '../types/projects/types'
 import { SectionSchema } from '../types/sections/types'
 import { type SyncResponse, SyncResponseSchema } from '../types/sync/response'
 import { TaskSchema } from '../types/tasks/types'
@@ -52,148 +52,160 @@ import {
     SuggestionSchema,
 } from '../types/sync/resources'
 
-function createValidator<T>(schema: ZodType<T>): (input: unknown) => T {
-    return (input: unknown): T => schema.parse(input)
-}
-
-function createArrayValidator<T>(schema: ZodType<T>): (input: unknown) => T[] {
-    return (input: unknown): T[] => z.array(schema).parse(input)
+function createValidator<T>(schema: ZodType<T>) {
+    return {
+        validate: (input: unknown): T => schema.parse(input),
+        validateArray: (input: unknown): T[] => z.array(schema).parse(input),
+    }
 }
 
 // Entity validators
 
-export const validateTask = createValidator(TaskSchema)
-export const validateTaskArray = createArrayValidator(TaskSchema)
+export const { validate: validateTask, validateArray: validateTaskArray } =
+    createValidator(TaskSchema)
 
 /**
  * Validates and parses a project input.
  * @param input The input to validate
  * @returns A validated project (either PersonalProject or WorkspaceProject)
  */
-export const validateProject: (input: unknown) => Project = createValidator(ProjectSchema)
-export const validateProjectArray = createArrayValidator(ProjectSchema)
+export const { validate: validateProject, validateArray: validateProjectArray } =
+    createValidator(ProjectSchema)
 
-export const validateWorkspaceProject = createValidator(WorkspaceProjectSchema)
-export const validateWorkspaceProjectArray = createArrayValidator(WorkspaceProjectSchema)
+export const { validate: validateWorkspaceProject, validateArray: validateWorkspaceProjectArray } =
+    createValidator(WorkspaceProjectSchema)
 
-export const validateSection = createValidator(SectionSchema)
-export const validateSectionArray = createArrayValidator(SectionSchema)
+export const { validate: validateSection, validateArray: validateSectionArray } =
+    createValidator(SectionSchema)
 
-export const validateLabel = createValidator(LabelSchema)
-export const validateLabelArray = createArrayValidator(LabelSchema)
+export const { validate: validateLabel, validateArray: validateLabelArray } =
+    createValidator(LabelSchema)
 
-export const validateComment = createValidator(CommentSchema)
-export const validateCommentArray = createArrayValidator(CommentSchema)
+export const { validate: validateComment, validateArray: validateCommentArray } =
+    createValidator(CommentSchema)
 
-export const validateUser = createValidator(UserSchema)
-export const validateUserArray = createArrayValidator(UserSchema)
+export const { validate: validateUser, validateArray: validateUserArray } =
+    createValidator(UserSchema)
 
-export const validateProductivityStats = createValidator(ProductivityStatsSchema)
+export const { validate: validateProductivityStats } = createValidator(ProductivityStatsSchema)
 
-export const validateCurrentUser = createValidator(CurrentUserSchema)
+export const { validate: validateCurrentUser } = createValidator(CurrentUserSchema)
 
-export const validateActivityEvent = createValidator(ActivityEventSchema)
-export const validateActivityEventArray = createArrayValidator(ActivityEventSchema)
+export const { validate: validateActivityEvent, validateArray: validateActivityEventArray } =
+    createValidator(ActivityEventSchema)
 
-export const validateAttachment = createValidator(AttachmentSchema)
+export const { validate: validateAttachment } = createValidator(AttachmentSchema)
 
-export const validateWorkspaceUser = createValidator(WorkspaceUserSchema)
+export const { validate: validateWorkspaceUser, validateArray: validateWorkspaceUserArray } =
+    createValidator(WorkspaceUserSchema)
 
-export const validateWorkspaceUserArray = createArrayValidator(WorkspaceUserSchema)
+export const {
+    validate: validateWorkspaceInvitation,
+    validateArray: validateWorkspaceInvitationArray,
+} = createValidator(WorkspaceInvitationSchema)
 
-export const validateWorkspaceInvitation = createValidator(WorkspaceInvitationSchema)
-export const validateWorkspaceInvitationArray = createArrayValidator(WorkspaceInvitationSchema)
+export const { validate: validateWorkspacePlanDetails } = createValidator(
+    WorkspacePlanDetailsSchema,
+)
 
-export const validateWorkspacePlanDetails = createValidator(WorkspacePlanDetailsSchema)
+export const { validate: validateJoinWorkspaceResult } = createValidator(JoinWorkspaceResultSchema)
 
-export const validateJoinWorkspaceResult = createValidator(JoinWorkspaceResultSchema)
+export const { validate: validateWorkspace, validateArray: validateWorkspaceArray } =
+    createValidator(WorkspaceSchema)
 
-export const validateWorkspace = createValidator(WorkspaceSchema)
-export const validateWorkspaceArray = createArrayValidator(WorkspaceSchema)
+export const {
+    validate: validateMemberActivityInfo,
+    validateArray: validateMemberActivityInfoArray,
+} = createValidator(MemberActivityInfoSchema)
 
-export const validateMemberActivityInfo = createValidator(MemberActivityInfoSchema)
-export const validateMemberActivityInfoArray = createArrayValidator(MemberActivityInfoSchema)
+export const {
+    validate: validateWorkspaceUserTask,
+    validateArray: validateWorkspaceUserTaskArray,
+} = createValidator(WorkspaceUserTaskSchema)
 
-export const validateWorkspaceUserTask = createValidator(WorkspaceUserTaskSchema)
-export const validateWorkspaceUserTaskArray = createArrayValidator(WorkspaceUserTaskSchema)
+export const { validate: validateProjectActivityStats } = createValidator(
+    ProjectActivityStatsSchema,
+)
+export const { validate: validateProjectHealth } = createValidator(ProjectHealthSchema)
+export const { validate: validateProjectHealthContext } = createValidator(
+    ProjectHealthContextSchema,
+)
+export const { validate: validateProjectProgress } = createValidator(ProjectProgressSchema)
+export const { validate: validateWorkspaceInsights } = createValidator(WorkspaceInsightsSchema)
 
-export const validateProjectActivityStats = createValidator(ProjectActivityStatsSchema)
-export const validateProjectHealth = createValidator(ProjectHealthSchema)
-export const validateProjectHealthContext = createValidator(ProjectHealthContextSchema)
-export const validateProjectProgress = createValidator(ProjectProgressSchema)
-export const validateWorkspaceInsights = createValidator(WorkspaceInsightsSchema)
+export const { validate: validateBackup, validateArray: validateBackupArray } =
+    createValidator(BackupSchema)
 
-export const validateBackup = createValidator(BackupSchema)
-export const validateBackupArray = createArrayValidator(BackupSchema)
+export const { validate: validateIdMapping, validateArray: validateIdMappingArray } =
+    createValidator(IdMappingSchema)
 
-export const validateIdMapping = createValidator(IdMappingSchema)
-export const validateIdMappingArray = createArrayValidator(IdMappingSchema)
-
-export const validateMovedId = createValidator(MovedIdSchema)
-export const validateMovedIdArray = createArrayValidator(MovedIdSchema)
+export const { validate: validateMovedId, validateArray: validateMovedIdArray } =
+    createValidator(MovedIdSchema)
 
 // Sync resource validators
 
-export const validateFilter = createValidator(FilterSchema)
-export const validateFilterArray = createArrayValidator(FilterSchema)
+export const { validate: validateFilter, validateArray: validateFilterArray } =
+    createValidator(FilterSchema)
 
-export const validateCollaborator = createValidator(CollaboratorSchema)
-export const validateCollaboratorArray = createArrayValidator(CollaboratorSchema)
+export const { validate: validateCollaborator, validateArray: validateCollaboratorArray } =
+    createValidator(CollaboratorSchema)
 
-export const validateCollaboratorState = createValidator(CollaboratorStateSchema)
-export const validateCollaboratorStateArray = createArrayValidator(CollaboratorStateSchema)
+export const {
+    validate: validateCollaboratorState,
+    validateArray: validateCollaboratorStateArray,
+} = createValidator(CollaboratorStateSchema)
 
-export const validateFolder = createValidator(FolderSchema)
-export const validateFolderArray = createArrayValidator(FolderSchema)
+export const { validate: validateFolder, validateArray: validateFolderArray } =
+    createValidator(FolderSchema)
 
-export const validateNote = createValidator(NoteSchema)
-export const validateNoteArray = createArrayValidator(NoteSchema)
+export const { validate: validateNote, validateArray: validateNoteArray } =
+    createValidator(NoteSchema)
 
-export const validateTooltips = createValidator(TooltipsSchema)
+export const { validate: validateTooltips } = createValidator(TooltipsSchema)
 
-export const validateWorkspaceFilter = createValidator(WorkspaceFilterSchema)
-export const validateWorkspaceFilterArray = createArrayValidator(WorkspaceFilterSchema)
+export const { validate: validateWorkspaceFilter, validateArray: validateWorkspaceFilterArray } =
+    createValidator(WorkspaceFilterSchema)
 
-export const validateWorkspaceGoal = createValidator(WorkspaceGoalSchema)
-export const validateWorkspaceGoalArray = createArrayValidator(WorkspaceGoalSchema)
+export const { validate: validateWorkspaceGoal, validateArray: validateWorkspaceGoalArray } =
+    createValidator(WorkspaceGoalSchema)
 
-export const validateCalendar = createValidator(CalendarSchema)
-export const validateCalendarArray = createArrayValidator(CalendarSchema)
+export const { validate: validateCalendar, validateArray: validateCalendarArray } =
+    createValidator(CalendarSchema)
 
-export const validateCalendarAccount = createValidator(CalendarAccountSchema)
-export const validateCalendarAccountArray = createArrayValidator(CalendarAccountSchema)
+export const { validate: validateCalendarAccount, validateArray: validateCalendarAccountArray } =
+    createValidator(CalendarAccountSchema)
 
-export const validateReminder = createValidator(ReminderSchema)
-export const validateReminderArray = createArrayValidator(ReminderSchema)
+export const { validate: validateReminder, validateArray: validateReminderArray } =
+    createValidator(ReminderSchema)
 
-export const validateLocationReminder = createValidator(LocationReminderSchema)
-export const validateLocationReminderArray = createArrayValidator(LocationReminderSchema)
+export const { validate: validateLocationReminder, validateArray: validateLocationReminderArray } =
+    createValidator(LocationReminderSchema)
 
-export const validateCompletedInfo = createValidator(CompletedInfoSchema)
-export const validateCompletedInfoArray = createArrayValidator(CompletedInfoSchema)
+export const { validate: validateCompletedInfo, validateArray: validateCompletedInfoArray } =
+    createValidator(CompletedInfoSchema)
 
-export const validateViewOptions = createValidator(ViewOptionsSchema)
-export const validateViewOptionsArray = createArrayValidator(ViewOptionsSchema)
+export const { validate: validateViewOptions, validateArray: validateViewOptionsArray } =
+    createValidator(ViewOptionsSchema)
 
-export const validateProjectViewOptionsDefaults = createValidator(ProjectViewOptionsDefaultsSchema)
-export const validateProjectViewOptionsDefaultsArray = createArrayValidator(
-    ProjectViewOptionsDefaultsSchema,
-)
+export const {
+    validate: validateProjectViewOptionsDefaults,
+    validateArray: validateProjectViewOptionsDefaultsArray,
+} = createValidator(ProjectViewOptionsDefaultsSchema)
 
-export const validateUserPlanLimits = createValidator(UserPlanLimitsSchema)
+export const { validate: validateUserPlanLimits } = createValidator(UserPlanLimitsSchema)
 
-export const validateLiveNotification = createValidator(LiveNotificationSchema)
-export const validateLiveNotificationArray = createArrayValidator(LiveNotificationSchema)
+export const { validate: validateLiveNotification, validateArray: validateLiveNotificationArray } =
+    createValidator(LiveNotificationSchema)
 
-export const validateSyncWorkspace = createValidator(SyncWorkspaceSchema)
-export const validateSyncWorkspaceArray = createArrayValidator(SyncWorkspaceSchema)
+export const { validate: validateSyncWorkspace, validateArray: validateSyncWorkspaceArray } =
+    createValidator(SyncWorkspaceSchema)
 
-export const validateSyncUser = createValidator(SyncUserSchema)
+export const { validate: validateSyncUser } = createValidator(SyncUserSchema)
 
-export const validateUserSettings = createValidator(UserSettingsSchema)
+export const { validate: validateUserSettings } = createValidator(UserSettingsSchema)
 
-export const validateSuggestion = createValidator(SuggestionSchema)
-export const validateSuggestionArray = createArrayValidator(SuggestionSchema)
+export const { validate: validateSuggestion, validateArray: validateSuggestionArray } =
+    createValidator(SuggestionSchema)
 
 export function parseSyncResponse(raw: Record<string, unknown>): SyncResponse {
     return SyncResponseSchema.parse(raw)
