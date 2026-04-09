@@ -1076,10 +1076,10 @@ export class TodoistApi {
     }
 
     /**
-     * Deletes a project by its ID. 
-     * 
-     * If the project is a workspace project, it must have been 
-     * archived first before it can be deleted, otherwise calling 
+     * Deletes a project by its ID.
+     *
+     * If the project is a workspace project, it must have been
+     * archived first before it can be deleted, otherwise calling
      * this function will result in an error. Personal projects can
      * be deleted regardless of their archived status.
      *
