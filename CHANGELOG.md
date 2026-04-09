@@ -1,3 +1,9 @@
+## [8.3.1](https://github.com/Doist/todoist-sdk-typescript/compare/v8.3.0...v8.3.1) (2026-04-09)
+
+### Bug Fixes
+
+* Updates documentation for deleteProject ([#555](https://github.com/Doist/todoist-sdk-typescript/issues/555)) ([2c364fc](https://github.com/Doist/todoist-sdk-typescript/commit/2c364fc2c1420430e9cfdc9447b325257fb6f6fc))
+
 ## [8.3.0](https://github.com/Doist/todoist-sdk-typescript/compare/v8.2.1...v8.3.0) (2026-04-07)
 
 ### Features
