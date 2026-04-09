@@ -58,7 +58,7 @@
     "devDependencies": {
         "@semantic-release/changelog": "6.0.3",
         "@semantic-release/git": "10.0.1",
-        "conventional-changelog-conventionalcommits": "9.3.0",
+        "conventional-changelog-conventionalcommits": "9.3.1",
         "dotenv": "17.3.1",
         "husky": "9.1.7",
         "lint-staged": "16.2.7",
