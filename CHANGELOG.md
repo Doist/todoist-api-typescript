@@ -1,3 +1,13 @@
+## [9.0.0](https://github.com/Doist/todoist-sdk-typescript/compare/v8.4.0...v9.0.0) (2026-04-11)
+
+### ⚠ BREAKING CHANGES
+
+* Type corrections across schemas (workspaceId, dates, userIds) (#559)
+
+### Bug Fixes
+
+* Type corrections across schemas (workspaceId, dates, userIds) ([#559](https://github.com/Doist/todoist-sdk-typescript/issues/559)) ([dcacdce](https://github.com/Doist/todoist-sdk-typescript/commit/dcacdcedaf41986343bd670003e89eef288f23ef))
+
 ## [8.4.0](https://github.com/Doist/todoist-sdk-typescript/compare/v8.3.1...v8.4.0) (2026-04-09)
 
 ### Features
