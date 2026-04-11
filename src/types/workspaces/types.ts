@@ -101,7 +101,7 @@ export const WorkspacePlanDetailsSchema = z.object({
     currentActiveProjects: z.number(),
     maximumActiveProjects: z.number(),
     priceList: z.array(FormattedPriceListingSchema),
-    workspaceId: z.number(),
+    workspaceId: StringOrNumberSchema,
     isTrialing: z.boolean(),
     trialEndsAt: z.string().nullable(),
     cancelAtPeriodEnd: z.boolean(),
