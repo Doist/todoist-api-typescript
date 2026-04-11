@@ -87,7 +87,6 @@ import {
     GetTaskCommentsArgs,
     GetCommentsResponse,
 } from './types/comments'
-import type { WithNumberWorkspaceId } from './types/common'
 import { GetOrCreateEmailArgs, GetOrCreateEmailResponse, DisableEmailArgs } from './types/emails'
 import {
     GetFoldersArgs,
@@ -1204,31 +1203,15 @@ export class TodoistApi {
      * @returns A promise that resolves to the count of archived projects.
      */
     async getArchivedProjectsCount(
-        args?: GetArchivedProjectsCountArgs,
-    ): Promise<GetArchivedProjectsCountResponse>
-    /** @deprecated Pass `workspaceId` as a `string`. Number support will be removed in a future major version. */
-    async getArchivedProjectsCount(
-        args: WithNumberWorkspaceId<GetArchivedProjectsCountArgs>,
-    ): Promise<GetArchivedProjectsCountResponse>
-    async getArchivedProjectsCount(
-        args:
-            | GetArchivedProjectsCountArgs
-            | WithNumberWorkspaceId<GetArchivedProjectsCountArgs> = {},
+        args: GetArchivedProjectsCountArgs = {},
     ): Promise<GetArchivedProjectsCountResponse> {
-        const payload = {
-            ...args,
-            workspaceId:
-                args.workspaceId !== null && args.workspaceId !== undefined
-                    ? String(args.workspaceId)
-                    : args.workspaceId,
-        }
         const { data } = await request<GetArchivedProjectsCountResponse>({
             httpMethod: 'GET',
             baseUri: this.syncApiBase,
             relativePath: ENDPOINT_REST_PROJECTS_ARCHIVED_COUNT,
             apiToken: this.authToken,
             customFetch: this.customFetch,
-            payload,
+            payload: args,
         })
         return data
     }
@@ -2495,12 +2478,7 @@ export class TodoistApi {
      * @param args - Filter parameters such as workspace ID.
      * @returns A promise that resolves to a paginated response of folders.
      */
-    async getFolders(args: GetFoldersArgs): Promise<GetFoldersResponse>
-    /** @deprecated Pass `workspaceId` as a `string`. Number support will be removed in a future major version. */
-    async getFolders(args: WithNumberWorkspaceId<GetFoldersArgs>): Promise<GetFoldersResponse>
-    async getFolders(
-        args: GetFoldersArgs | WithNumberWorkspaceId<GetFoldersArgs>,
-    ): Promise<GetFoldersResponse> {
+    async getFolders(args: GetFoldersArgs): Promise<GetFoldersResponse> {
         const {
             data: { results, nextCursor },
         } = await request<GetFoldersResponse>({
@@ -2509,7 +2487,7 @@ export class TodoistApi {
             relativePath: ENDPOINT_REST_FOLDERS,
             apiToken: this.authToken,
             customFetch: this.customFetch,
-            payload: { ...args, workspaceId: String(args.workspaceId) },
+            payload: args,
         })
 
         return {
@@ -2544,20 +2522,14 @@ export class TodoistApi {
      * @param requestId - Optional custom identifier for the request.
      * @returns A promise that resolves to the created folder.
      */
-    async addFolder(args: AddFolderArgs, requestId?: string): Promise<Folder>
-    /** @deprecated Pass `workspaceId` as a `string`. Number support will be removed in a future major version. */
-    async addFolder(args: WithNumberWorkspaceId<AddFolderArgs>, requestId?: string): Promise<Folder>
-    async addFolder(
-        args: AddFolderArgs | WithNumberWorkspaceId<AddFolderArgs>,
-        requestId?: string,
-    ): Promise<Folder> {
+    async addFolder(args: AddFolderArgs, requestId?: string): Promise<Folder> {
         const response = await request<Folder>({
             httpMethod: 'POST',
             baseUri: this.syncApiBase,
             relativePath: ENDPOINT_REST_FOLDERS,
             apiToken: this.authToken,
             customFetch: this.customFetch,
-            payload: { ...args, workspaceId: String(args.workspaceId) },
+            payload: args,
             requestId: requestId,
         })
 
@@ -2903,15 +2875,6 @@ export class TodoistApi {
     async getWorkspaceInvitations(
         args: GetWorkspaceInvitationsArgs,
         requestId?: string,
-    ): Promise<WorkspaceInvitationsResponse>
-    /** @deprecated Pass `workspaceId` as a `string`. Number support will be removed in a future major version. */
-    async getWorkspaceInvitations(
-        args: WithNumberWorkspaceId<GetWorkspaceInvitationsArgs>,
-        requestId?: string,
-    ): Promise<WorkspaceInvitationsResponse>
-    async getWorkspaceInvitations(
-        args: GetWorkspaceInvitationsArgs | WithNumberWorkspaceId<GetWorkspaceInvitationsArgs>,
-        requestId?: string,
     ): Promise<WorkspaceInvitationsResponse> {
         const response = await request<WorkspaceInvitationsResponse>({
             httpMethod: 'GET',
@@ -2919,7 +2882,7 @@ export class TodoistApi {
             relativePath: ENDPOINT_WORKSPACE_INVITATIONS,
             apiToken: this.authToken,
             customFetch: this.customFetch,
-            payload: { workspace_id: String(args.workspaceId) },
+            payload: { workspace_id: args.workspaceId },
             requestId: requestId,
         })
 
@@ -2933,21 +2896,12 @@ export class TodoistApi {
      * @returns Array of email addresses with pending invitations.
      */
     async getAllWorkspaceInvitations(
-        args?: { workspaceId?: string },
-        requestId?: string,
-    ): Promise<AllWorkspaceInvitationsResponse>
-    /** @deprecated Pass `workspaceId` as a `string`. Number support will be removed in a future major version. */
-    async getAllWorkspaceInvitations(
-        args: { workspaceId: number },
-        requestId?: string,
-    ): Promise<AllWorkspaceInvitationsResponse>
-    async getAllWorkspaceInvitations(
-        args: { workspaceId?: string | number } = {},
+        args: { workspaceId?: string } = {},
         requestId?: string,
     ): Promise<AllWorkspaceInvitationsResponse> {
         const queryParams: Record<string, string> = {}
         if (args.workspaceId) {
-            queryParams.workspace_id = String(args.workspaceId)
+            queryParams.workspace_id = args.workspaceId
         }
 
         const response = await request<AllWorkspaceInvitationsResponse>({
@@ -2973,15 +2927,6 @@ export class TodoistApi {
     async deleteWorkspaceInvitation(
         args: DeleteWorkspaceInvitationArgs,
         requestId?: string,
-    ): Promise<WorkspaceInvitation>
-    /** @deprecated Pass `workspaceId` as a `string`. Number support will be removed in a future major version. */
-    async deleteWorkspaceInvitation(
-        args: WithNumberWorkspaceId<DeleteWorkspaceInvitationArgs>,
-        requestId?: string,
-    ): Promise<WorkspaceInvitation>
-    async deleteWorkspaceInvitation(
-        args: DeleteWorkspaceInvitationArgs | WithNumberWorkspaceId<DeleteWorkspaceInvitationArgs>,
-        requestId?: string,
     ): Promise<WorkspaceInvitation> {
         const response = await request<WorkspaceInvitation>({
             httpMethod: 'POST',
@@ -2990,7 +2935,7 @@ export class TodoistApi {
             apiToken: this.authToken,
             customFetch: this.customFetch,
             payload: {
-                workspace_id: String(args.workspaceId),
+                workspace_id: args.workspaceId,
                 user_email: args.userEmail,
             },
             requestId: requestId,
@@ -3052,16 +2997,7 @@ export class TodoistApi {
      * @param requestId - Optional request ID for idempotency.
      * @returns Workspace user information.
      */
-    async joinWorkspace(args: JoinWorkspaceArgs, requestId?: string): Promise<JoinWorkspaceResult>
-    /** @deprecated Pass `workspaceId` as a `string`. Number support will be removed in a future major version. */
-    async joinWorkspace(
-        args: WithNumberWorkspaceId<JoinWorkspaceArgs>,
-        requestId?: string,
-    ): Promise<JoinWorkspaceResult>
-    async joinWorkspace(
-        args: JoinWorkspaceArgs | WithNumberWorkspaceId<JoinWorkspaceArgs>,
-        requestId?: string,
-    ): Promise<JoinWorkspaceResult> {
+    async joinWorkspace(args: JoinWorkspaceArgs, requestId?: string): Promise<JoinWorkspaceResult> {
         const response = await request<JoinWorkspaceResult>({
             httpMethod: 'POST',
             baseUri: this.syncApiBase,
@@ -3070,10 +3006,7 @@ export class TodoistApi {
             customFetch: this.customFetch,
             payload: {
                 invite_code: args.inviteCode,
-                workspace_id:
-                    args.workspaceId !== null && args.workspaceId !== undefined
-                        ? String(args.workspaceId)
-                        : args.workspaceId,
+                workspace_id: args.workspaceId,
             },
             requestId: requestId,
         })
@@ -3091,17 +3024,7 @@ export class TodoistApi {
     async uploadWorkspaceLogo(
         args: WorkspaceLogoArgs,
         requestId?: string,
-    ): Promise<WorkspaceLogoResponse>
-    /** @deprecated Pass `workspaceId` as a `string`. Number support will be removed in a future major version. */
-    async uploadWorkspaceLogo(
-        args: WithNumberWorkspaceId<WorkspaceLogoArgs>,
-        requestId?: string,
-    ): Promise<WorkspaceLogoResponse>
-    async uploadWorkspaceLogo(
-        args: WorkspaceLogoArgs | WithNumberWorkspaceId<WorkspaceLogoArgs>,
-        requestId?: string,
     ): Promise<WorkspaceLogoResponse> {
-        const workspaceId = String(args.workspaceId)
         if (args.delete) {
             // Delete logo
             const data = await uploadMultipartFile<WorkspaceLogoResponse>({
@@ -3111,7 +3034,7 @@ export class TodoistApi {
                 file: Buffer.alloc(0), // Empty buffer for delete
                 fileName: 'delete',
                 additionalFields: {
-                    workspace_id: workspaceId,
+                    workspace_id: args.workspaceId,
                     delete: true,
                 },
                 requestId: requestId,
@@ -3130,7 +3053,7 @@ export class TodoistApi {
         }
 
         const additionalFields: Record<string, string | number | boolean> = {
-            workspace_id: workspaceId,
+            workspace_id: args.workspaceId,
         }
 
         const data = await uploadMultipartFile<WorkspaceLogoResponse>({
@@ -3157,15 +3080,6 @@ export class TodoistApi {
     async getWorkspacePlanDetails(
         args: GetWorkspacePlanDetailsArgs,
         requestId?: string,
-    ): Promise<WorkspacePlanDetails>
-    /** @deprecated Pass `workspaceId` as a `string`. Number support will be removed in a future major version. */
-    async getWorkspacePlanDetails(
-        args: WithNumberWorkspaceId<GetWorkspacePlanDetailsArgs>,
-        requestId?: string,
-    ): Promise<WorkspacePlanDetails>
-    async getWorkspacePlanDetails(
-        args: GetWorkspacePlanDetailsArgs | WithNumberWorkspaceId<GetWorkspacePlanDetailsArgs>,
-        requestId?: string,
     ): Promise<WorkspacePlanDetails> {
         const response = await request<WorkspacePlanDetails>({
             httpMethod: 'GET',
@@ -3173,7 +3087,7 @@ export class TodoistApi {
             relativePath: ENDPOINT_WORKSPACE_PLAN_DETAILS,
             apiToken: this.authToken,
             customFetch: this.customFetch,
-            payload: { workspace_id: String(args.workspaceId) },
+            payload: { workspace_id: args.workspaceId },
             requestId: requestId,
         })
 
@@ -3188,21 +3102,12 @@ export class TodoistApi {
      * @returns Paginated list of workspace users.
      */
     async getWorkspaceUsers(
-        args?: GetWorkspaceUsersArgs,
-        requestId?: string,
-    ): Promise<GetWorkspaceUsersResponse>
-    /** @deprecated Pass `workspaceId` as a `string`. Number support will be removed in a future major version. */
-    async getWorkspaceUsers(
-        args: WithNumberWorkspaceId<GetWorkspaceUsersArgs>,
-        requestId?: string,
-    ): Promise<GetWorkspaceUsersResponse>
-    async getWorkspaceUsers(
-        args: GetWorkspaceUsersArgs | WithNumberWorkspaceId<GetWorkspaceUsersArgs> = {},
+        args: GetWorkspaceUsersArgs = {},
         requestId?: string,
     ): Promise<GetWorkspaceUsersResponse> {
         const queryParams: Record<string, string | number> = {}
         if (args.workspaceId !== undefined && args.workspaceId !== null) {
-            queryParams.workspace_id = String(args.workspaceId)
+            queryParams.workspace_id = args.workspaceId
         }
         if (args.cursor) {
             queryParams.cursor = args.cursor
@@ -3474,15 +3379,6 @@ export class TodoistApi {
     async getWorkspaceActiveProjects(
         args: GetWorkspaceProjectsArgs,
         requestId?: string,
-    ): Promise<GetProjectsResponse>
-    /** @deprecated Pass `workspaceId` as a `string`. Number support will be removed in a future major version. */
-    async getWorkspaceActiveProjects(
-        args: WithNumberWorkspaceId<GetWorkspaceProjectsArgs>,
-        requestId?: string,
-    ): Promise<GetProjectsResponse>
-    async getWorkspaceActiveProjects(
-        args: GetWorkspaceProjectsArgs | WithNumberWorkspaceId<GetWorkspaceProjectsArgs>,
-        requestId?: string,
     ): Promise<GetProjectsResponse> {
         const queryParams: Record<string, string | number> = {}
         if (args.cursor) {
@@ -3495,7 +3391,7 @@ export class TodoistApi {
         const response = await request<GetProjectsResponse>({
             httpMethod: 'GET',
             baseUri: this.syncApiBase,
-            relativePath: getWorkspaceActiveProjectsEndpoint(String(args.workspaceId)),
+            relativePath: getWorkspaceActiveProjectsEndpoint(args.workspaceId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
             payload: queryParams,
@@ -3525,15 +3421,6 @@ export class TodoistApi {
     async getWorkspaceArchivedProjects(
         args: GetWorkspaceProjectsArgs,
         requestId?: string,
-    ): Promise<GetProjectsResponse>
-    /** @deprecated Pass `workspaceId` as a `string`. Number support will be removed in a future major version. */
-    async getWorkspaceArchivedProjects(
-        args: WithNumberWorkspaceId<GetWorkspaceProjectsArgs>,
-        requestId?: string,
-    ): Promise<GetProjectsResponse>
-    async getWorkspaceArchivedProjects(
-        args: GetWorkspaceProjectsArgs | WithNumberWorkspaceId<GetWorkspaceProjectsArgs>,
-        requestId?: string,
     ): Promise<GetProjectsResponse> {
         const queryParams: Record<string, string | number> = {}
         if (args.cursor) {
@@ -3546,7 +3433,7 @@ export class TodoistApi {
         const response = await request<GetProjectsResponse>({
             httpMethod: 'GET',
             baseUri: this.syncApiBase,
-            relativePath: getWorkspaceArchivedProjectsEndpoint(String(args.workspaceId)),
+            relativePath: getWorkspaceArchivedProjectsEndpoint(args.workspaceId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
             payload: queryParams,
