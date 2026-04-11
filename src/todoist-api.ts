@@ -1217,7 +1217,10 @@ export class TodoistApi {
     ): Promise<GetArchivedProjectsCountResponse> {
         const payload = {
             ...args,
-            workspaceId: args.workspaceId != null ? String(args.workspaceId) : args.workspaceId,
+            workspaceId:
+                args.workspaceId !== null && args.workspaceId !== undefined
+                    ? String(args.workspaceId)
+                    : args.workspaceId,
         }
         const { data } = await request<GetArchivedProjectsCountResponse>({
             httpMethod: 'GET',
@@ -3068,7 +3071,9 @@ export class TodoistApi {
             payload: {
                 invite_code: args.inviteCode,
                 workspace_id:
-                    args.workspaceId != null ? String(args.workspaceId) : args.workspaceId,
+                    args.workspaceId !== null && args.workspaceId !== undefined
+                        ? String(args.workspaceId)
+                        : args.workspaceId,
             },
             requestId: requestId,
         })
