@@ -59,7 +59,7 @@ export const ActivityEventSchema = z
         objectType: z.string(),
         objectId: z.string(),
         eventType: z.string(),
-        eventDate: z.string(),
+        eventDate: z.coerce.date(),
         id: z
             .union([z.string(), z.number()])
             .transform((val) => val?.toString() ?? null)

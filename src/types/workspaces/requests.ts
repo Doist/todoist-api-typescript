@@ -145,7 +145,7 @@ export type GetWorkspaceInvitationsArgs = {
     /**
      * The workspace ID to get invitations for.
      */
-    workspaceId: number
+    workspaceId: string
 }
 
 /**
@@ -155,7 +155,7 @@ export type DeleteWorkspaceInvitationArgs = {
     /**
      * The workspace ID.
      */
-    workspaceId: number
+    workspaceId: string
     /**
      * The email address of the invitation to delete.
      */
@@ -183,7 +183,7 @@ export type JoinWorkspaceArgs = {
     /**
      * Optional workspace ID to join via domain auto-join.
      */
-    workspaceId?: number | null
+    workspaceId?: string | null
 }
 
 /**
@@ -193,7 +193,7 @@ export type WorkspaceLogoArgs = {
     /**
      * The workspace ID.
      */
-    workspaceId: number
+    workspaceId: string
     /**
      * The image file to upload (Buffer, Stream, or file path).
      */
@@ -215,7 +215,7 @@ export type GetWorkspacePlanDetailsArgs = {
     /**
      * The workspace ID.
      */
-    workspaceId: number
+    workspaceId: string
 }
 
 /**
@@ -225,7 +225,7 @@ export type GetWorkspaceUsersArgs = {
     /**
      * Optional workspace ID. If not provided, returns users for all workspaces.
      */
-    workspaceId?: number | null
+    workspaceId?: string | null
     /**
      * Cursor for pagination.
      */
@@ -243,7 +243,7 @@ export type GetWorkspaceProjectsArgs = {
     /**
      * The workspace ID.
      */
-    workspaceId: number
+    workspaceId: string
     /**
      * Cursor for pagination.
      */

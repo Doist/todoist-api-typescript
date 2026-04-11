@@ -327,7 +327,7 @@ describe('parseSyncResponse', () => {
 
         const result = parseSyncResponse({ workspaces: [rawWorkspace] })
 
-        expect(result.workspaces?.[0].createdAt).toBe('2020-01-01')
+        expect(result.workspaces?.[0].createdAt).toEqual(new Date('2020-01-01'))
     })
 
     test('throws ZodError when resource has wrong type (object instead of array)', () => {

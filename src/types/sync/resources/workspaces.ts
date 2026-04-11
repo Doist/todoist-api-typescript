@@ -24,8 +24,8 @@ export const SyncWorkspaceSchema = z
         logoSmall: z.string().optional(),
         logoS640: z.string().optional(),
         creatorId: StringOrNumberSchema,
-        createdAt: z.string().optional(),
-        dateCreated: z.string().optional(),
+        createdAt: z.coerce.date().optional(),
+        dateCreated: z.coerce.date().optional(),
         isDeleted: z.boolean(),
         isCollapsed: z.boolean(),
         role: WorkspaceRoleSchema.optional(),
@@ -53,7 +53,7 @@ export const SyncWorkspaceSchema = z
         defaultCollaborators: z
             .object({
                 predefinedGroupIds: z.array(z.string()),
-                userIds: z.array(z.number()),
+                userIds: z.array(StringOrNumberSchema),
             })
             .optional(),
         properties: WorkspacePropertiesSchema.optional(),

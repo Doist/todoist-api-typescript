@@ -148,7 +148,10 @@ describe('TodoistApi section endpoints', () => {
 
             const section = await api.archiveSection('123')
 
-            expect(section).toEqual(archivedSection)
+            expect(section).toEqual({
+                ...archivedSection,
+                archivedAt: new Date('2025-03-28T14:01:23.334881Z'),
+            })
         })
     })
 

@@ -1,6 +1,8 @@
 import { z } from 'zod'
 
 export const DayActivitySchema = z.object({
+    // Kept as string: this is a calendar-day bucket (e.g. '2025-01-13'), not a timestamp.
+    // Coercing to Date would create UTC midnight, causing day-shift for non-UTC consumers.
     date: z.string(),
     totalCount: z.number().int(),
 })
@@ -47,7 +49,7 @@ export const ProjectHealthSchema = z.object({
     descriptionSummary: z.string().nullable().optional(),
     taskRecommendations: z.array(TaskRecommendationSchema).nullable().optional(),
     projectId: z.string().nullable().optional(),
-    updatedAt: z.string().nullable().optional(),
+    updatedAt: z.coerce.date().nullable().optional(),
     isStale: z.boolean().default(false),
     updateInProgress: z.boolean().default(false),
 })
@@ -72,9 +74,9 @@ export const TaskContextSchema = z.object({
     deadline: z.string().nullable().optional(),
     priority: z.string(),
     isCompleted: z.boolean(),
-    createdAt: z.string(),
-    updatedAt: z.string(),
-    completedAt: z.string().nullable(),
+    createdAt: z.coerce.date(),
+    updatedAt: z.coerce.date(),
+    completedAt: z.coerce.date().nullable(),
     completedByUid: z.string().nullable(),
     labels: z.array(z.string()),
 })
