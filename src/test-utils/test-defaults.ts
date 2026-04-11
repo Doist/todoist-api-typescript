@@ -32,7 +32,9 @@ const DEFAULT_PARENT_ID = '5678'
 const DEFAULT_ASSIGNEE = '1234'
 const DEFAULT_CREATOR = '1234'
 const DEFAULT_DATE = '2020-09-08T12:00:00Z'
-const DEFAULT_DATE_OBJ = new Date(DEFAULT_DATE)
+function defaultDate() {
+    return new Date(DEFAULT_DATE)
+}
 const DEFAULT_ENTITY_COLOR = 'berry_red'
 const DEFAULT_LABELS = ['personal', 'work', 'hobby']
 const DEFAULT_USER_ID = '5'
@@ -89,9 +91,9 @@ export const DEFAULT_TASK: Task = {
     duration: DEFAULT_DURATION,
     checked: false,
     isDeleted: DEFAULT_IS_DELETED,
-    addedAt: DEFAULT_DATE_OBJ,
+    addedAt: defaultDate(),
     completedAt: null,
-    updatedAt: DEFAULT_DATE_OBJ,
+    updatedAt: defaultDate(),
     due: DEFAULT_DUE_DATE,
     priority: DEFAULT_TASK_PRIORITY,
     childOrder: DEFAULT_ORDER,
@@ -122,9 +124,9 @@ export const TASK_WITH_OPTIONALS_AS_NULL: Task = {
     duration: null,
     checked: false,
     isDeleted: DEFAULT_IS_DELETED,
-    addedAt: DEFAULT_DATE_OBJ,
+    addedAt: defaultDate(),
     completedAt: null,
-    updatedAt: DEFAULT_DATE_OBJ,
+    updatedAt: defaultDate(),
     due: null,
     priority: DEFAULT_TASK_PRIORITY,
     childOrder: DEFAULT_ORDER,
@@ -150,8 +152,8 @@ export const DEFAULT_PROJECT: PersonalProject = {
     isArchived: DEFAULT_IS_ARCHIVED,
     isDeleted: DEFAULT_IS_DELETED,
     isFrozen: DEFAULT_IS_FROZEN,
-    createdAt: DEFAULT_DATE_OBJ,
-    updatedAt: DEFAULT_DATE_OBJ,
+    createdAt: defaultDate(),
+    updatedAt: defaultDate(),
     defaultOrder: DEFAULT_ORDER,
     description: '',
     isCollapsed: DEFAULT_IS_COLLAPSED,
@@ -180,8 +182,8 @@ export const DEFAULT_WORKSPACE_PROJECT: WorkspaceProject = {
     isArchived: DEFAULT_IS_ARCHIVED,
     isDeleted: DEFAULT_IS_DELETED,
     isFrozen: DEFAULT_IS_FROZEN,
-    createdAt: DEFAULT_DATE_OBJ,
-    updatedAt: DEFAULT_DATE_OBJ,
+    createdAt: defaultDate(),
+    updatedAt: defaultDate(),
     defaultOrder: DEFAULT_ORDER,
     description: '',
     isCollapsed: DEFAULT_IS_COLLAPSED,
@@ -258,7 +260,7 @@ export const DEFAULT_RAW_COMMENT: RawComment = {
     fileAttachment: DEFAULT_ATTACHMENT,
     uidsToNotify: null,
     isDeleted: false,
-    postedAt: DEFAULT_DATE_OBJ,
+    postedAt: defaultDate(),
     reactions: DEFAULT_COMMENT_REACTIONS,
     itemId: DEFAULT_TASK_ID,
 }
@@ -385,7 +387,7 @@ export const DEFAULT_NOTE: Note = {
     id: DEFAULT_COMMENT_ID,
     projectId: DEFAULT_PROJECT_ID,
     content: DEFAULT_COMMENT_CONTENT,
-    postedAt: DEFAULT_DATE_OBJ,
+    postedAt: defaultDate(),
     fileAttachment: DEFAULT_ATTACHMENT,
     postedUid: DEFAULT_USER_ID,
     uidsToNotify: null,

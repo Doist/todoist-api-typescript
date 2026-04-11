@@ -1,7 +1,9 @@
 import { z } from 'zod'
 
 export const DayActivitySchema = z.object({
-    date: z.coerce.date(),
+    // Kept as string: this is a calendar-day bucket (e.g. '2025-01-13'), not a timestamp.
+    // Coercing to Date would create UTC midnight, causing day-shift for non-UTC consumers.
+    date: z.string(),
     totalCount: z.number().int(),
 })
 /** Daily activity count for a specific date. */
