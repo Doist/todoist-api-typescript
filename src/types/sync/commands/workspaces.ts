@@ -16,7 +16,7 @@ export type SyncWorkspaceProperties = {
 
 export type DefaultCollaborators = {
     predefinedGroupIds?: string[]
-    userIds?: number[]
+    userIds?: string[]
 } | null
 
 export type WorkspaceAddArgs = {

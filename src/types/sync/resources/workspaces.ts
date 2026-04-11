@@ -53,7 +53,7 @@ export const SyncWorkspaceSchema = z
         defaultCollaborators: z
             .object({
                 predefinedGroupIds: z.array(z.string()),
-                userIds: z.array(z.number()),
+                userIds: z.array(StringOrNumberSchema),
             })
             .optional(),
         properties: WorkspacePropertiesSchema.optional(),

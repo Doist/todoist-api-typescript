@@ -582,7 +582,7 @@ describe('Sync resource schemas', () => {
             expect(result.domainName).toBe('example.com')
             expect(result.defaultCollaborators).toEqual({
                 predefinedGroupIds: ['group1'],
-                userIds: [123],
+                userIds: ['123'],
             })
         })
 
