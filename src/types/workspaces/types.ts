@@ -176,8 +176,8 @@ export const WorkspaceSchema = z
         logoMedium: z.string().nullish(),
         logoSmall: z.string().nullish(),
         logoS640: z.string().nullish(),
-        createdAt: z.string().optional(),
-        dateCreated: z.string().optional(),
+        createdAt: z.coerce.date().optional(),
+        dateCreated: z.coerce.date().optional(),
         creatorId: StringOrNumberSchema,
         properties: WorkspacePropertiesSchema,
     })

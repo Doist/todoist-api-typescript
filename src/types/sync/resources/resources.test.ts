@@ -149,7 +149,10 @@ describe('Sync resource schemas', () => {
         }
 
         test('validates valid data', () => {
-            expect(NoteSchema.parse(validNote)).toEqual(validNote)
+            expect(NoteSchema.parse(validNote)).toEqual({
+                ...validNote,
+                postedAt: new Date('2024-01-01T00:00:00Z'),
+            })
         })
 
         test('validates with projectId instead of itemId', () => {
@@ -186,7 +189,11 @@ describe('Sync resource schemas', () => {
         }
 
         test('validates valid data', () => {
-            expect(WorkspaceFilterSchema.parse(validWorkspaceFilter)).toEqual(validWorkspaceFilter)
+            expect(WorkspaceFilterSchema.parse(validWorkspaceFilter)).toEqual({
+                ...validWorkspaceFilter,
+                createdAt: new Date('2024-01-01T00:00:00Z'),
+                updatedAt: new Date('2024-01-01T00:00:00Z'),
+            })
         })
 
         test('throws on invalid data', () => {
@@ -216,7 +223,11 @@ describe('Sync resource schemas', () => {
         }
 
         test('validates valid data', () => {
-            expect(WorkspaceGoalSchema.parse(validGoal)).toEqual(validGoal)
+            expect(WorkspaceGoalSchema.parse(validGoal)).toEqual({
+                ...validGoal,
+                createdAt: new Date('2024-01-01T00:00:00Z'),
+                updatedAt: new Date('2024-01-01T00:00:00Z'),
+            })
         })
 
         test('validates with progress', () => {
@@ -491,7 +502,10 @@ describe('Sync resource schemas', () => {
         }
 
         test('validates valid data', () => {
-            expect(LiveNotificationSchema.parse(validNotification)).toEqual(validNotification)
+            expect(LiveNotificationSchema.parse(validNotification)).toEqual({
+                ...validNotification,
+                createdAt: new Date('2024-01-01T00:00:00Z'),
+            })
         })
 
         test('validates with optional fields', () => {
@@ -540,7 +554,10 @@ describe('Sync resource schemas', () => {
         }
 
         test('validates valid data', () => {
-            expect(SyncWorkspaceSchema.parse(validWorkspace)).toEqual(validWorkspace)
+            expect(SyncWorkspaceSchema.parse(validWorkspace)).toEqual({
+                ...validWorkspace,
+                createdAt: new Date('2024-01-01T00:00:00Z'),
+            })
         })
 
         test('validates with optional fields', () => {

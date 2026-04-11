@@ -10,7 +10,7 @@ export const NoteSchema = z.looseObject({
     itemId: z.string().optional(),
     projectId: z.string().optional(),
     content: z.string(),
-    postedAt: z.string(),
+    postedAt: z.coerce.date(),
     fileAttachment: AttachmentSchema.nullable(),
     postedUid: z.string(),
     uidsToNotify: z.array(z.string()).nullable(),

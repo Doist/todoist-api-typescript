@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 export const DayActivitySchema = z.object({
-    date: z.string(),
+    date: z.coerce.date(),
     totalCount: z.number().int(),
 })
 /** Daily activity count for a specific date. */
@@ -47,7 +47,7 @@ export const ProjectHealthSchema = z.object({
     descriptionSummary: z.string().nullable().optional(),
     taskRecommendations: z.array(TaskRecommendationSchema).nullable().optional(),
     projectId: z.string().nullable().optional(),
-    updatedAt: z.string().nullable().optional(),
+    updatedAt: z.coerce.date().nullable().optional(),
     isStale: z.boolean().default(false),
     updateInProgress: z.boolean().default(false),
 })
@@ -72,9 +72,9 @@ export const TaskContextSchema = z.object({
     deadline: z.string().nullable().optional(),
     priority: z.string(),
     isCompleted: z.boolean(),
-    createdAt: z.string(),
-    updatedAt: z.string(),
-    completedAt: z.string().nullable(),
+    createdAt: z.coerce.date(),
+    updatedAt: z.coerce.date(),
+    completedAt: z.coerce.date().nullable(),
     completedByUid: z.string().nullable(),
     labels: z.array(z.string()),
 })

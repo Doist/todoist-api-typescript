@@ -28,7 +28,7 @@ describe('TodoistApi insights endpoints', () => {
 
             expect(result.dayItems).toHaveLength(2)
             expect(result.dayItems[0]).toMatchObject({
-                date: '2025-01-13',
+                date: new Date('2025-01-13'),
                 totalCount: 3,
             })
             expect(result.weekItems).toBeNull()

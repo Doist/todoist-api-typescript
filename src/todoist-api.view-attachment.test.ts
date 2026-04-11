@@ -10,7 +10,7 @@ function createMockComment(overrides: Partial<Comment> = {}): Comment {
     return {
         id: 'comment-1',
         content: 'Check this out',
-        postedAt: '2024-01-01T00:00:00Z',
+        postedAt: new Date('2024-01-01T00:00:00Z'),
         postedUid: 'user-1',
         taskId: 'task-1',
         projectId: undefined,

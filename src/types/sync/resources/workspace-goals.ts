@@ -25,8 +25,8 @@ export const WorkspaceGoalSchema = z.looseObject({
     projectIds: z.array(z.string()),
     progress: WorkspaceGoalProgressSchema.nullable(),
     creatorUid: z.string(),
-    createdAt: z.string(),
-    updatedAt: z.string(),
+    createdAt: z.coerce.date(),
+    updatedAt: z.coerce.date(),
 })
 
 export type WorkspaceGoal = z.infer<typeof WorkspaceGoalSchema>
