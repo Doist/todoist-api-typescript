@@ -144,10 +144,10 @@ export function getWorkspaceUserEndpoint(workspaceId: string, userId: string): s
 }
 
 // Workspace projects (require workspace_id parameter)
-export function getWorkspaceActiveProjectsEndpoint(workspaceId: number): string {
+export function getWorkspaceActiveProjectsEndpoint(workspaceId: string): string {
     return `workspaces/${workspaceId}/projects/active`
 }
 
-export function getWorkspaceArchivedProjectsEndpoint(workspaceId: number): string {
+export function getWorkspaceArchivedProjectsEndpoint(workspaceId: string): string {
     return `workspaces/${workspaceId}/projects/archived`
 }

@@ -38,7 +38,7 @@ describe('TodoistApi folder endpoints', () => {
             )
             const api = getTarget()
 
-            const { results, nextCursor } = await api.getFolders({ workspaceId: 100 })
+            const { results, nextCursor } = await api.getFolders({ workspaceId: '100' })
 
             expect(results).toEqual(folders)
             expect(nextCursor).toBe('123')
@@ -48,7 +48,7 @@ describe('TodoistApi folder endpoints', () => {
     describe('addFolder', () => {
         const DEFAULT_ADD_FOLDER_ARGS = {
             name: 'This is a folder',
-            workspaceId: 100,
+            workspaceId: '100',
         }
 
         test('returns result from rest client', async () => {

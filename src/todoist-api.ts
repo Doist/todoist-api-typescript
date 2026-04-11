@@ -2896,10 +2896,10 @@ export class TodoistApi {
      * @returns Array of email addresses with pending invitations.
      */
     async getAllWorkspaceInvitations(
-        args: { workspaceId?: number } = {},
+        args: { workspaceId?: string } = {},
         requestId?: string,
     ): Promise<AllWorkspaceInvitationsResponse> {
-        const queryParams: Record<string, string | number> = {}
+        const queryParams: Record<string, string> = {}
         if (args.workspaceId) {
             queryParams.workspace_id = args.workspaceId
         }

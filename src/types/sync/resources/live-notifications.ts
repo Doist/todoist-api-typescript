@@ -10,7 +10,7 @@ import { z } from 'zod'
  */
 export const LiveNotificationSchema = z.looseObject({
     id: z.string(),
-    createdAt: z.string(),
+    createdAt: z.coerce.date(),
     fromUid: z.string(),
     notificationType: z.string(),
     isUnread: z.boolean(),

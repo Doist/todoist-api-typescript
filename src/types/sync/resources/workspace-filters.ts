@@ -12,8 +12,8 @@ export const WorkspaceFilterSchema = z.looseObject({
     isFrozen: z.boolean(),
     creatorUid: z.string(),
     updaterUid: z.string(),
-    createdAt: z.string(),
-    updatedAt: z.string(),
+    createdAt: z.coerce.date(),
+    updatedAt: z.coerce.date(),
 })
 
 export type WorkspaceFilter = z.infer<typeof WorkspaceFilterSchema>

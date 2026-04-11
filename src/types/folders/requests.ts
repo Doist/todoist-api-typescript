@@ -1,7 +1,7 @@
 import type { Folder } from '../sync/resources/folders'
 
 export type GetFoldersArgs = {
-    workspaceId: number
+    workspaceId: string
     cursor?: string | null
     limit?: number
 }
@@ -13,7 +13,7 @@ export type GetFoldersResponse = {
 
 export type AddFolderArgs = {
     name: string
-    workspaceId: number
+    workspaceId: string
     defaultOrder?: number | null
     childOrder?: number | null
 }

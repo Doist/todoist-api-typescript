@@ -127,7 +127,7 @@ export type MoveProjectToPersonalArgs = {
  * @see https://developer.todoist.com/api/v1/#tag/Projects/operation/count_projects_archived_api_v1_projects_archived_count_get
  */
 export type GetArchivedProjectsCountArgs = {
-    workspaceId?: number | null
+    workspaceId?: string | null
     joined?: boolean | null
 }
 

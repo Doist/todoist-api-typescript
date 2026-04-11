@@ -73,7 +73,7 @@ describe('TodoistApi workspaces', () => {
                 }),
             )
 
-            const result = await api.getWorkspaceInvitations({ workspaceId: 123 })
+            const result = await api.getWorkspaceInvitations({ workspaceId: '123' })
 
             expect(result).toEqual(mockResponse)
         })
@@ -87,7 +87,7 @@ describe('TodoistApi workspaces', () => {
             )
             const requestId = 'test-request'
 
-            const result = await api.getWorkspaceInvitations({ workspaceId: 456 }, requestId)
+            const result = await api.getWorkspaceInvitations({ workspaceId: '456' }, requestId)
 
             expect(result).toEqual(mockResponse)
         })
@@ -148,7 +148,7 @@ describe('TodoistApi workspaces', () => {
             )
 
             const result = await api.deleteWorkspaceInvitation({
-                workspaceId: 789,
+                workspaceId: '789',
                 userEmail: 'user@example.com',
             })
 
@@ -240,7 +240,7 @@ describe('TodoistApi workspaces', () => {
                 }),
             )
 
-            const result = await api.joinWorkspace({ workspaceId: 789 })
+            const result = await api.joinWorkspace({ workspaceId: '789' })
 
             expect(result).toEqual(expectedJoinResult)
         })
@@ -255,7 +255,7 @@ describe('TodoistApi workspaces', () => {
 
         test('uploads workspace logo from file', async () => {
             const result = await api.uploadWorkspaceLogo({
-                workspaceId: 123,
+                workspaceId: '123',
                 file: '/path/to/logo.png',
                 fileName: 'logo.png',
             })
@@ -266,7 +266,7 @@ describe('TodoistApi workspaces', () => {
                 endpoint: 'workspaces/logo',
                 file: '/path/to/logo.png',
                 fileName: 'logo.png',
-                additionalFields: { workspace_id: 123 },
+                additionalFields: { workspace_id: '123' },
                 requestId: undefined,
             })
             expect(result).toEqual(mockLogoResponse)
@@ -276,7 +276,7 @@ describe('TodoistApi workspaces', () => {
             const buffer = Buffer.from('logo data')
 
             await api.uploadWorkspaceLogo({
-                workspaceId: 456,
+                workspaceId: '456',
                 file: buffer,
                 fileName: 'logo.jpg',
             })
@@ -287,14 +287,14 @@ describe('TodoistApi workspaces', () => {
                 endpoint: 'workspaces/logo',
                 file: buffer,
                 fileName: 'logo.jpg',
-                additionalFields: { workspace_id: 456 },
+                additionalFields: { workspace_id: '456' },
                 requestId: undefined,
             })
         })
 
         test('deletes workspace logo', async () => {
             await api.uploadWorkspaceLogo({
-                workspaceId: 789,
+                workspaceId: '789',
                 delete: true,
             })
 
@@ -305,7 +305,7 @@ describe('TodoistApi workspaces', () => {
                 file: expect.any(Buffer),
                 fileName: 'delete',
                 additionalFields: {
-                    workspace_id: 789,
+                    workspace_id: '789',
                     delete: true,
                 },
                 requestId: undefined,
@@ -315,7 +315,7 @@ describe('TodoistApi workspaces', () => {
         test('throws error when file missing and not deleting', async () => {
             await expect(
                 api.uploadWorkspaceLogo({
-                    workspaceId: 123,
+                    workspaceId: '123',
                 }),
             ).rejects.toThrow('file is required when not deleting logo')
         })
@@ -347,9 +347,9 @@ describe('TodoistApi workspaces', () => {
                 }),
             )
 
-            const result = await api.getWorkspacePlanDetails({ workspaceId: 123 })
+            const result = await api.getWorkspacePlanDetails({ workspaceId: '123' })
 
-            expect(result).toEqual(mockPlanDetails)
+            expect(result).toEqual({ ...mockPlanDetails, workspaceId: '123' })
         })
     })
 
@@ -429,7 +429,7 @@ describe('TodoistApi workspaces', () => {
             )
 
             const result = await api.getWorkspaceUsers({
-                workspaceId: 456,
+                workspaceId: '456',
                 cursor: 'cursor123',
                 limit: 50,
             })
@@ -496,12 +496,18 @@ describe('TodoistApi workspaces', () => {
             )
 
             const result = await api.getWorkspaceActiveProjects({
-                workspaceId: 123,
+                workspaceId: '123',
                 cursor: 'cursor456',
                 limit: 25,
             })
 
-            expect(result.results).toEqual(mockProjects)
+            expect(result.results).toEqual(
+                mockProjects.map((p) => ({
+                    ...p,
+                    createdAt: new Date(p.createdAt),
+                    updatedAt: new Date(p.updatedAt),
+                })),
+            )
         })
     })
 
@@ -519,7 +525,7 @@ describe('TodoistApi workspaces', () => {
             )
 
             const result = await api.getWorkspaceArchivedProjects({
-                workspaceId: 789,
+                workspaceId: '789',
             })
 
             expect(result.results).toEqual([])
@@ -579,7 +585,7 @@ describe('TodoistApi workspaces', () => {
                 name: 'Numeric ID Workspace',
                 plan: 'BUSINESS',
                 creatorId: '499807',
-                createdAt: '2022-08-16T11:16:22.433711Z',
+                createdAt: new Date('2022-08-16T11:16:22.433711Z'),
             })
             // id and creatorId should be strings after coercion
             expect(typeof result[0].id).toBe('string')
@@ -613,7 +619,7 @@ describe('TodoistApi workspaces', () => {
             expect(result[0].role).toBeUndefined()
             expect(result[0].limits).toBeUndefined()
             // dateCreated from the API is normalized to createdAt
-            expect(result[0].createdAt).toBe('2023-06-01T00:00:00Z')
+            expect(result[0].createdAt).toEqual(new Date('2023-06-01T00:00:00Z'))
         })
 
         test('validates workspace schema', async () => {

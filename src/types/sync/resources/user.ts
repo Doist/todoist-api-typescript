@@ -64,7 +64,7 @@ export const SyncUserSchema = z.looseObject({
     daysOff: z.array(z.number().int()),
     featureIdentifier: z.string(),
     features: FeaturesSchema,
-    freeTrailExpires: z.string().optional(),
+    freeTrailExpires: z.coerce.date().optional(),
     hasMagicNumber: z.boolean(),
     hasPassword: z.boolean(),
     hasStartedATrial: z.boolean().optional(),
@@ -73,7 +73,7 @@ export const SyncUserSchema = z.looseObject({
     isCelebrationsEnabled: z.boolean(),
     isPremium: z.boolean(),
     joinableWorkspace: JoinableWorkspaceSchema.nullable(),
-    joinedAt: z.string(),
+    joinedAt: z.coerce.date(),
     gettingStartedGuideProjects: z.array(GettingStartedGuideProjectSchema).nullable(),
     karma: z.number(),
     karmaTrend: z.string(),
@@ -91,13 +91,13 @@ export const SyncUserSchema = z.looseObject({
     onboardingTeamMode: z.boolean().nullable().optional(),
     onboardingUseCases: z.array(z.string()).nullable().optional(),
     premiumStatus: z.enum(PREMIUM_STATUSES),
-    premiumUntil: z.string().nullable(),
+    premiumUntil: z.coerce.date().nullable(),
     rambleSessionsUsage: z
         .object({
             currentCount: z.number().int(),
             limit: z.number().int(),
             remaining: z.number().int(),
-            resetDate: z.string(),
+            resetDate: z.coerce.date(),
         })
         .nullable()
         .optional(),
