@@ -1,4 +1,5 @@
 import { ActivityClient } from './clients/activity-client'
+import { AppClient } from './clients/app-client'
 import { BackupClient } from './clients/backup-client'
 import { CommentClient } from './clients/comment-client'
 import { EmailClient } from './clients/email-client'
@@ -12,6 +13,7 @@ import { ReminderClient } from './clients/reminder-client'
 import { SectionClient } from './clients/section-client'
 import { TaskClient } from './clients/task-client'
 import { TemplateClient } from './clients/template-client'
+import { UiExtensionClient } from './clients/ui-extension-client'
 import { UploadClient } from './clients/upload-client'
 import { WorkspaceClient } from './clients/workspace-client'
 import { ENDPOINT_REST_USER, getSyncBaseUri } from './consts/endpoints'
@@ -19,6 +21,25 @@ import { request } from './transport/http-client'
 import { performSyncRequest } from './transport/sync-request'
 import type { Reminder } from './types'
 import { GetActivityLogsArgs, GetActivityLogsResponse } from './types/activity'
+import type {
+    AddAppArgs,
+    App,
+    AppByDistributionToken,
+    AppDistributionToken,
+    AppInstallation,
+    AppSecrets,
+    AppTestToken,
+    AppVerificationToken,
+    AppWebhook,
+    AppWithUserCount,
+    InstallAppArgs,
+    RevokeUserAuthorizationArgs,
+    UpdateAppArgs,
+    UpdateAppInstallationArgs,
+    UpdateAppWebhookArgs,
+    UploadAppIconArgs,
+    UserAuthorization,
+} from './types/apps'
 import { Backup, GetBackupsArgs, DownloadBackupArgs } from './types/backups'
 import {
     Attachment,
@@ -126,6 +147,12 @@ import {
     ImportTemplateFromIdArgs,
     ImportTemplateResponse,
 } from './types/templates'
+import type {
+    AddUiExtensionArgs,
+    UiExtension,
+    UpdateUiExtensionArgs,
+    UploadUiExtensionIconArgs,
+} from './types/ui-extensions'
 import { UploadFileArgs, DeleteUploadArgs } from './types/uploads'
 import { CurrentUser } from './types/users'
 import {
@@ -220,6 +247,8 @@ export class TodoistApi {
     private readonly activityClient: ActivityClient
     private readonly productivityClient: ProductivityClient
     private readonly workspaceClient: WorkspaceClient
+    private readonly appClient: AppClient
+    private readonly uiExtensionClient: UiExtensionClient
 
     constructor(
         /**
@@ -262,6 +291,8 @@ export class TodoistApi {
         this.activityClient = new ActivityClient(clientDeps)
         this.productivityClient = new ProductivityClient(clientDeps)
         this.workspaceClient = new WorkspaceClient(clientDeps)
+        this.appClient = new AppClient(clientDeps)
+        this.uiExtensionClient = new UiExtensionClient(clientDeps)
     }
 
     /**
@@ -1705,5 +1736,333 @@ export class TodoistApi {
         requestId?: string,
     ): Promise<GetProjectsResponse> {
         return this.workspaceClient.getWorkspaceArchivedProjects(args, requestId)
+    }
+
+    // ---------------------------------------------------------------------------
+    // App management (dev:app_console scope)
+    // ---------------------------------------------------------------------------
+
+    /**
+     * Lists all developer applications owned by the authenticated user.
+     *
+     * Requires the `dev:app_console` scope.
+     *
+     * @param requestId - Optional request ID for idempotency.
+     * @returns A promise that resolves to the list of apps.
+     */
+    async getApps(requestId?: string): Promise<App[]> {
+        return this.appClient.getApps(requestId)
+    }
+
+    /**
+     * Retrieves a single developer application by ID.
+     *
+     * Requires the `dev:app_console` scope.
+     */
+    async getApp(appId: string, requestId?: string): Promise<AppWithUserCount> {
+        return this.appClient.getApp(appId, requestId)
+    }
+
+    /**
+     * Creates a new developer application.
+     *
+     * Requires the `dev:app_console` scope.
+     */
+    async addApp(args: AddAppArgs, requestId?: string): Promise<App> {
+        return this.appClient.addApp(args, requestId)
+    }
+
+    /**
+     * Updates a developer application.
+     *
+     * Requires the `dev:app_console` scope.
+     */
+    async updateApp(
+        appId: string,
+        args: UpdateAppArgs,
+        requestId?: string,
+    ): Promise<AppWithUserCount> {
+        return this.appClient.updateApp(appId, args, requestId)
+    }
+
+    /**
+     * Deletes a developer application.
+     *
+     * Requires the `dev:app_console` scope.
+     */
+    async deleteApp(appId: string, requestId?: string): Promise<boolean> {
+        return this.appClient.deleteApp(appId, requestId)
+    }
+
+    /**
+     * Retrieves the OAuth client credentials (client ID and secret) for an app.
+     *
+     * Requires the `dev:app_console` scope.
+     */
+    async getAppSecrets(appId: string, requestId?: string): Promise<AppSecrets> {
+        return this.appClient.getAppSecrets(appId, requestId)
+    }
+
+    /**
+     * Rotates the app's OAuth client secret, returning the updated app record.
+     *
+     * Requires the `dev:app_console` scope.
+     */
+    async resetAppClientSecret(appId: string, requestId?: string): Promise<AppWithUserCount> {
+        return this.appClient.resetAppClientSecret(appId, requestId)
+    }
+
+    /**
+     * Revokes every access token issued for the given app.
+     *
+     * Requires the `dev:app_console` scope.
+     */
+    async revokeAppTokens(appId: string, requestId?: string): Promise<AppWithUserCount> {
+        return this.appClient.revokeAppTokens(appId, requestId)
+    }
+
+    /**
+     * Uploads an icon for a developer application. The `size` argument
+     * selects which icon slot to update (defaults to `'medium'`).
+     *
+     * Requires the `dev:app_console` scope.
+     */
+    async uploadAppIcon(args: UploadAppIconArgs, requestId?: string): Promise<AppWithUserCount> {
+        return this.appClient.uploadAppIcon(args, requestId)
+    }
+
+    /**
+     * Gets the currently issued developer test token for an app (null if none exists).
+     *
+     * Requires the `dev:app_console` scope.
+     */
+    async getAppTestToken(appId: string, requestId?: string): Promise<AppTestToken> {
+        return this.appClient.getAppTestToken(appId, requestId)
+    }
+
+    /**
+     * Creates (or rotates) a developer test token for an app.
+     *
+     * Requires the `dev:app_console` scope.
+     */
+    async createAppTestToken(appId: string, requestId?: string): Promise<AppTestToken> {
+        return this.appClient.createAppTestToken(appId, requestId)
+    }
+
+    /**
+     * Gets the distribution token for an app, which third parties use to install it.
+     *
+     * Requires the `dev:app_console` scope.
+     */
+    async getAppDistributionToken(
+        appId: string,
+        requestId?: string,
+    ): Promise<AppDistributionToken> {
+        return this.appClient.getAppDistributionToken(appId, requestId)
+    }
+
+    /**
+     * Gets the current webhook verification token for an app.
+     *
+     * Requires the `dev:app_console` scope.
+     */
+    async getAppVerificationToken(
+        appId: string,
+        requestId?: string,
+    ): Promise<AppVerificationToken> {
+        return this.appClient.getAppVerificationToken(appId, requestId)
+    }
+
+    /**
+     * Resets the webhook verification token for an app, returning the new value.
+     *
+     * Requires the `dev:app_console` scope.
+     */
+    async resetAppVerificationToken(
+        appId: string,
+        requestId?: string,
+    ): Promise<AppVerificationToken> {
+        return this.appClient.resetAppVerificationToken(appId, requestId)
+    }
+
+    /**
+     * Resolves a public-facing app view from a distribution token. Used during
+     * the installation flow to show prospective installers what the app does
+     * and which scopes it requests.
+     *
+     * Requires the `dev:app_console` scope.
+     */
+    async getAppByDistributionToken(
+        distributionToken: string,
+        requestId?: string,
+    ): Promise<AppByDistributionToken> {
+        return this.appClient.getAppByDistributionToken(distributionToken, requestId)
+    }
+
+    /**
+     * Gets the webhook configuration for an app (null if no webhook is configured).
+     *
+     * Requires the `dev:app_console` scope.
+     */
+    async getAppWebhook(appId: string, requestId?: string): Promise<AppWebhook | null> {
+        return this.appClient.getAppWebhook(appId, requestId)
+    }
+
+    /**
+     * Creates or updates an app webhook configuration (upsert).
+     *
+     * Requires the `dev:app_console` scope.
+     */
+    async updateAppWebhook(args: UpdateAppWebhookArgs, requestId?: string): Promise<AppWebhook> {
+        return this.appClient.updateAppWebhook(args, requestId)
+    }
+
+    /**
+     * Deletes an app webhook configuration.
+     *
+     * Requires the `dev:app_console` scope.
+     */
+    async deleteAppWebhook(appId: string, requestId?: string): Promise<boolean> {
+        return this.appClient.deleteAppWebhook(appId, requestId)
+    }
+
+    /**
+     * Lists all apps installed on the authenticated user's account.
+     *
+     * Requires the `dev:app_console` scope.
+     */
+    async getAppInstallations(requestId?: string): Promise<AppInstallation[]> {
+        return this.appClient.getAppInstallations(requestId)
+    }
+
+    /**
+     * Installs an application via its distribution token.
+     *
+     * Requires the `dev:app_console` scope.
+     */
+    async installApp(args: InstallAppArgs, requestId?: string): Promise<AppInstallation> {
+        return this.appClient.installApp(args, requestId)
+    }
+
+    /**
+     * Retrieves a single app installation by ID.
+     *
+     * Requires the `dev:app_console` scope.
+     */
+    async getAppInstallation(installationId: string, requestId?: string): Promise<AppInstallation> {
+        return this.appClient.getAppInstallation(installationId, requestId)
+    }
+
+    /**
+     * Updates an app installation.
+     *
+     * Requires the `dev:app_console` scope.
+     */
+    async updateAppInstallation(
+        installationId: string,
+        args: UpdateAppInstallationArgs,
+        requestId?: string,
+    ): Promise<AppInstallation> {
+        return this.appClient.updateAppInstallation(installationId, args, requestId)
+    }
+
+    /**
+     * Uninstalls (removes) an app installation.
+     *
+     * Requires the `dev:app_console` scope.
+     */
+    async uninstallApp(installationId: string, requestId?: string): Promise<boolean> {
+        return this.appClient.uninstallApp(installationId, requestId)
+    }
+
+    /**
+     * Retrieves a single UI extension by ID.
+     *
+     * Requires the `dev:app_console` scope.
+     */
+    async getUiExtension(uiExtensionId: string, requestId?: string): Promise<UiExtension> {
+        return this.uiExtensionClient.getUiExtension(uiExtensionId, requestId)
+    }
+
+    /**
+     * Lists UI extensions available (installed) in the web client for the current user.
+     *
+     * Requires the `dev:app_console` scope.
+     */
+    async getInstalledUiExtensions(requestId?: string): Promise<UiExtension[]> {
+        return this.uiExtensionClient.getInstalledUiExtensions(requestId)
+    }
+
+    /**
+     * Lists all UI extensions belonging to a given app (integration).
+     *
+     * Requires the `dev:app_console` scope.
+     */
+    async getUiExtensionsForApp(appId: string, requestId?: string): Promise<UiExtension[]> {
+        return this.uiExtensionClient.getUiExtensionsForApp(appId, requestId)
+    }
+
+    /**
+     * Adds a new UI extension to an app.
+     *
+     * Requires the `dev:app_console` scope.
+     */
+    async addUiExtension(args: AddUiExtensionArgs, requestId?: string): Promise<UiExtension> {
+        return this.uiExtensionClient.addUiExtension(args, requestId)
+    }
+
+    /**
+     * Updates an existing UI extension.
+     *
+     * Requires the `dev:app_console` scope.
+     */
+    async updateUiExtension(
+        uiExtensionId: string,
+        args: UpdateUiExtensionArgs,
+        requestId?: string,
+    ): Promise<UiExtension> {
+        return this.uiExtensionClient.updateUiExtension(uiExtensionId, args, requestId)
+    }
+
+    /**
+     * Deletes a UI extension.
+     *
+     * Requires the `dev:app_console` scope.
+     */
+    async deleteUiExtension(uiExtensionId: string, requestId?: string): Promise<boolean> {
+        return this.uiExtensionClient.deleteUiExtension(uiExtensionId, requestId)
+    }
+
+    /**
+     * Uploads an icon for a UI extension.
+     *
+     * Requires the `dev:app_console` scope.
+     */
+    async uploadUiExtensionIcon(
+        args: UploadUiExtensionIconArgs,
+        requestId?: string,
+    ): Promise<UiExtension> {
+        return this.uiExtensionClient.uploadUiExtensionIcon(args, requestId)
+    }
+
+    /**
+     * Lists all apps the user has authorized (granted a token to).
+     *
+     * Requires the `dev:app_console` scope.
+     */
+    async getUserAuthorizations(requestId?: string): Promise<UserAuthorization[]> {
+        return this.appClient.getUserAuthorizations(requestId)
+    }
+
+    /**
+     * Revokes a specific user authorization (access token granted to a third-party app).
+     *
+     * Requires the `dev:app_console` scope.
+     */
+    async revokeUserAuthorization(
+        args: RevokeUserAuthorizationArgs,
+        requestId?: string,
+    ): Promise<boolean> {
+        return this.appClient.revokeUserAuthorization(args, requestId)
     }
 }

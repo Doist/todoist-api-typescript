@@ -11,6 +11,16 @@ import {
     WorkspaceProject,
     Reminder,
     Folder,
+    App,
+    AppWithUserCount,
+    AppSecrets,
+    AppVerificationToken,
+    AppTestToken,
+    AppDistributionToken,
+    AppWebhook,
+    AppInstallation,
+    UserAuthorization,
+    UiExtension,
 } from '../types'
 import type { Collaborator, CollaboratorState } from '../types/sync/resources/collaborators'
 import type { Note } from '../types/sync/resources/notes'
@@ -381,6 +391,95 @@ export const DEFAULT_COLLABORATOR_STATE: CollaboratorState = {
     projectId: DEFAULT_PROJECT_ID,
     state: 'active',
     isDeleted: false,
+}
+
+export const DEFAULT_APP_ID = '42'
+export const DEFAULT_INSTALLATION_ID = '1001'
+export const DEFAULT_UI_EXTENSION_ID = '2002'
+export const DEFAULT_DISTRIBUTION_TOKEN = 'dist-token-abc'
+export const DEFAULT_ACCESS_TOKEN_ID = '3003'
+
+export const DEFAULT_APP: App = {
+    id: DEFAULT_APP_ID,
+    status: 'public',
+    displayName: 'Sample App',
+    userId: DEFAULT_USER_ID,
+    createdAt: defaultDate(),
+    serviceUrl: 'https://example.com',
+    oauthRedirectUri: 'https://example.com/callback',
+    description: 'A sample app',
+    iconSm: 'https://example.com/icon-sm.png',
+    iconMd: 'https://example.com/icon-md.png',
+    iconLg: 'https://example.com/icon-lg.png',
+    appTokenScopes: ['data:read', 'task:add'],
+}
+
+export const DEFAULT_APP_WITH_USER_COUNT: AppWithUserCount = {
+    ...DEFAULT_APP,
+    userCount: 12,
+}
+
+export const DEFAULT_APP_SECRETS: AppSecrets = {
+    clientId: 'client-id-xyz',
+    clientSecret: 'client-secret-xyz',
+}
+
+export const DEFAULT_APP_VERIFICATION_TOKEN: AppVerificationToken = {
+    verificationToken: 'verif-token-abc',
+}
+
+export const DEFAULT_APP_TEST_TOKEN: AppTestToken = {
+    accessToken: 'test-token-xyz',
+}
+
+export const DEFAULT_APP_DISTRIBUTION_TOKEN: AppDistributionToken = {
+    distributionToken: DEFAULT_DISTRIBUTION_TOKEN,
+}
+
+export const DEFAULT_APP_WEBHOOK: AppWebhook = {
+    status: 'active',
+    callbackUrl: 'https://example.com/webhook',
+    version: '1',
+    events: ['item:added', 'item:completed'],
+}
+
+export const DEFAULT_APP_INSTALLATION: AppInstallation = {
+    id: DEFAULT_INSTALLATION_ID,
+    creator: DEFAULT_USER_ID,
+    createdTs: 1700000000,
+    installationType: 'user',
+    appTokenScopesValidated: true,
+    integration: DEFAULT_APP,
+}
+
+export const DEFAULT_USER_AUTHORIZATION: UserAuthorization = {
+    accessTokenId: DEFAULT_ACCESS_TOKEN_ID,
+    scope: ['data:read', 'task:add'],
+    scopeDescriptions: ['Read data', 'Add tasks'],
+    createdAt: '2025-01-01T00:00:00Z',
+    app: {
+        id: DEFAULT_APP_ID,
+        displayName: 'Sample App',
+        description: 'A sample app',
+        serviceUrl: 'https://example.com',
+        iconMd: 'https://example.com/icon-md.png',
+    },
+}
+
+export const DEFAULT_UI_EXTENSION: UiExtension = {
+    id: DEFAULT_UI_EXTENSION_ID,
+    integrationId: DEFAULT_APP_ID,
+    extensionId: 'ext-guid-1',
+    extensionType: 'context-menu',
+    contextType: 'task',
+    url: 'https://example.com/extension',
+    icon: 'https://example.com/icon.png',
+    name: 'My Extension',
+    description: 'Does things in the task context menu',
+    width: 400,
+    height: 600,
+    defVersion: 2,
+    minimumCardistVersion: '0.60',
 }
 
 export const DEFAULT_NOTE: Note = {
