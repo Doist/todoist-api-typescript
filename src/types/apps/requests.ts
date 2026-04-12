@@ -28,8 +28,15 @@ export type UpdateAppArgs = {
     serviceUrl?: string
     /** Updated app description. */
     description?: string
-    /** Updated list of scopes the app may request. Pass `null` to clear. */
-    appTokenScopes?: readonly Permission[] | null
+    /**
+     * Updated list of scopes the app may request. Pass `null` to clear.
+     *
+     * Typed as `Permission | (string & {})` so known scopes get autocomplete
+     * while still permitting plain strings — needed so a fetched
+     * `App['appTokenScopes']` (typed `string[] | null`) can be passed back
+     * to `updateApp()` without casts.
+     */
+    appTokenScopes?: readonly (Permission | (string & {}))[] | null
 }
 
 /**

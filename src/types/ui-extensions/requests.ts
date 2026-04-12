@@ -3,15 +3,13 @@ import type {
     ContextMenuExtensionContext,
     UiExtensionType,
 } from './types'
+import { UiExtensionTypeEnum } from './types'
 
 /**
- * Arguments for adding a new UI extension to a developer application.
+ * Fields common to every UI extension variant — shared across all add/update
+ * request shapes.
  */
-export type AddUiExtensionArgs = {
-    /** The developer application (integration) ID the extension belongs to. */
-    integrationId: string
-    /** Kind of extension. */
-    extensionType: UiExtensionType
+type BaseUiExtensionFields = {
     /** HTTPS URL the extension loads. */
     url: string
     /** Extension display name. */
@@ -30,19 +28,47 @@ export type AddUiExtensionArgs = {
     minimumCardistVersion?: string
     /** Optional client-specified extension ID (server generates one if omitted). */
     extensionId?: string | null
-    /** Applicable only to `context-menu` extensions — the context they appear in. */
-    contextType?: ContextMenuExtensionContext
-    /** Applicable only to `composer` extensions — the composer they appear in. */
-    composerType?: ComposerExtensionContext
+}
+
+/** Arguments for adding a context-menu UI extension. */
+export type AddContextMenuExtensionArgs = BaseUiExtensionFields & {
+    /** The developer application (integration) ID the extension belongs to. */
+    integrationId: string
+    extensionType: typeof UiExtensionTypeEnum.ContextMenu
+    /** Where the extension appears. */
+    contextType: ContextMenuExtensionContext
+}
+
+/** Arguments for adding a composer UI extension. */
+export type AddComposerExtensionArgs = BaseUiExtensionFields & {
+    /** The developer application (integration) ID the extension belongs to. */
+    integrationId: string
+    extensionType: typeof UiExtensionTypeEnum.Composer
+    /** Which composer the extension appears in. */
+    composerType: ComposerExtensionContext
+}
+
+/** Arguments for adding a settings UI extension. */
+export type AddSettingsExtensionArgs = BaseUiExtensionFields & {
+    /** The developer application (integration) ID the extension belongs to. */
+    integrationId: string
+    extensionType: typeof UiExtensionTypeEnum.Settings
 }
 
 /**
- * Arguments for updating a UI extension. All fields are optional —
- * only provided fields are updated. Nullable shapes mirror the response
- * schema so a `UiExtension` can be round-tripped back into an update call.
+ * Arguments for adding a new UI extension to a developer application.
+ * Discriminated on `extensionType` so impossible combinations
+ * (e.g. `settings` + `contextType`) fail at compile time.
  */
-export type UpdateUiExtensionArgs = {
-    extensionType?: UiExtensionType
+export type AddUiExtensionArgs =
+    | AddContextMenuExtensionArgs
+    | AddComposerExtensionArgs
+    | AddSettingsExtensionArgs
+
+/**
+ * Fields that are optional on every update variant.
+ */
+type UpdateUiExtensionFields = {
     url?: string
     name?: string
     description?: string
@@ -52,9 +78,46 @@ export type UpdateUiExtensionArgs = {
     defVersion?: number
     minimumCardistVersion?: string
     extensionId?: string | null
+}
+
+/**
+ * Arguments for updating a context-menu UI extension.
+ * `extensionType` is required to discriminate the variant — callers
+ * already have it from the fetched `UiExtension`.
+ */
+export type UpdateContextMenuExtensionArgs = UpdateUiExtensionFields & {
+    extensionType: typeof UiExtensionTypeEnum.ContextMenu
     contextType?: ContextMenuExtensionContext
+}
+
+/**
+ * Arguments for updating a composer UI extension.
+ */
+export type UpdateComposerExtensionArgs = UpdateUiExtensionFields & {
+    extensionType: typeof UiExtensionTypeEnum.Composer
     composerType?: ComposerExtensionContext
 }
+
+/**
+ * Arguments for updating a settings UI extension.
+ */
+export type UpdateSettingsExtensionArgs = UpdateUiExtensionFields & {
+    extensionType: typeof UiExtensionTypeEnum.Settings
+}
+
+/**
+ * Arguments for updating a UI extension — all value fields are optional
+ * but `extensionType` is required so TypeScript can discriminate which
+ * variant-specific fields (`contextType`, `composerType`) apply.
+ */
+export type UpdateUiExtensionArgs =
+    | UpdateContextMenuExtensionArgs
+    | UpdateComposerExtensionArgs
+    | UpdateSettingsExtensionArgs
+
+// Retained as a type-level escape hatch for consumers that genuinely need
+// the variant-specific types.
+export type { UiExtensionType }
 
 /**
  * Arguments for uploading a UI extension icon.

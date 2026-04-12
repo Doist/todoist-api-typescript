@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { StringOrNumberSchema } from '../common'
+import { UI_EXTENSION_TYPES } from '../ui-extensions/types'
 
 /**
  * Available statuses for a developer application.
@@ -145,21 +146,25 @@ export type InstallationType = (typeof INSTALLATION_TYPES)[number]
 export const InstallationTypeSchema = z.enum(INSTALLATION_TYPES)
 
 /**
- * Transforms a comma-separated scope string into a `string[]`.
+ * Transforms a comma-separated scope string into `string[] | null`.
  *
  * The backend stores `app_token_scopes` as a single comma-separated string
  * (e.g. `"data:read,task:add"`). Reads are exposed as `string[]` (rather than
  * `Permission[]`) so that newly added backend scopes don't break parsing —
- * writes are still restricted to {@link Permission} via `UpdateAppArgs`.
+ * writes accept `Permission` for autocomplete while still permitting `string`
+ * (via `UpdateAppArgs`), so a fetched `App.appTokenScopes` can be round-tripped
+ * back into `updateApp()` without casts.
  *
- * Nullable because the backend may return `null` after a caller clears the
- * list via `updateApp({ appTokenScopes: null })`.
+ * Preserves `null` on read (backend returns `null` for apps that have had
+ * their scopes cleared via `updateApp({ appTokenScopes: null })`) so the
+ * read and write shapes line up and information is not lost.
  */
 export const AppTokenScopesSchema = z
     .string()
     .nullable()
-    .transform((value): string[] => {
-        if (!value) return []
+    .transform((value): string[] | null => {
+        if (value === null) return null
+        if (value === '') return []
         return value.split(',').filter(Boolean)
     })
 
@@ -257,7 +262,7 @@ export const AppByDistributionTokenUiExtensionSchema = z.object({
     name: z.string(),
     description: z.string(),
     icon: z.string().nullable(),
-    extensionType: z.string(),
+    extensionType: z.enum(UI_EXTENSION_TYPES),
 })
 
 /**
@@ -335,7 +340,7 @@ export const UserAuthorizationAppSchema = z.object({
     displayName: z.string(),
     description: z.string().nullable(),
     serviceUrl: z.string().nullable(),
-    iconMd: z.string(),
+    iconMd: z.string().nullable(),
 })
 
 /**
@@ -350,7 +355,7 @@ export const UserAuthorizationSchema = z.object({
     accessTokenId: StringOrNumberSchema,
     scope: z.array(z.string()),
     scopeDescriptions: z.array(z.string()),
-    createdAt: z.string(),
+    createdAt: z.coerce.date(),
     app: UserAuthorizationAppSchema.nullable(),
 })
 

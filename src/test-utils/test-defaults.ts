@@ -456,7 +456,7 @@ export const DEFAULT_USER_AUTHORIZATION: UserAuthorization = {
     accessTokenId: DEFAULT_ACCESS_TOKEN_ID,
     scope: ['data:read', 'task:add'],
     scopeDescriptions: ['Read data', 'Add tasks'],
-    createdAt: '2025-01-01T00:00:00Z',
+    createdAt: new Date('2025-01-01T00:00:00Z'),
     app: {
         id: DEFAULT_APP_ID,
         displayName: 'Sample App',
