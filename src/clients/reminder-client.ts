@@ -17,6 +17,7 @@ import {
     UpdateLocationReminderArgsSchema,
     UpdateReminderArgsSchema,
 } from '../types/reminders'
+import { ReminderTypeEnum } from '../types/sync/resources/reminders'
 import { generatePath } from '../utils/request-helpers'
 import {
     validateLocationReminderArray,
@@ -144,7 +145,7 @@ export class ReminderClient extends BaseClient {
             customFetch: this.customFetch,
             payload: {
                 ...args,
-                reminderType: 'location',
+                reminderType: ReminderTypeEnum.Location,
             },
             requestId: requestId,
         })
