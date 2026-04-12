@@ -1,9 +1,9 @@
-import { z } from 'zod'
 import { ActivityClient } from './clients/activity-client'
 import { BackupClient } from './clients/backup-client'
 import { CommentClient } from './clients/comment-client'
 import { EmailClient } from './clients/email-client'
 import { FolderClient } from './clients/folder-client'
+import { GoalsClient } from './clients/goals-client'
 import { IdMappingClient } from './clients/id-mapping-client'
 import { InsightsClient } from './clients/insights-client'
 import { LabelClient } from './clients/label-client'
@@ -15,16 +15,8 @@ import { TaskClient } from './clients/task-client'
 import { TemplateClient } from './clients/template-client'
 import { UploadClient } from './clients/upload-client'
 import { WorkspaceClient } from './clients/workspace-client'
-import {
-    ENDPOINT_REST_GOALS,
-    ENDPOINT_REST_GOALS_SEARCH,
-    ENDPOINT_REST_USER,
-    GOAL_COMPLETE,
-    GOAL_TASKS,
-    GOAL_UNCOMPLETE,
-    getSyncBaseUri,
-} from './consts/endpoints'
-import { isSuccess, request } from './transport/http-client'
+import { ENDPOINT_REST_USER, getSyncBaseUri } from './consts/endpoints'
+import { request } from './transport/http-client'
 import { performSyncRequest } from './transport/sync-request'
 import type { Reminder } from './types'
 import { GetActivityLogsArgs, GetActivityLogsResponse } from './types/activity'
@@ -174,8 +166,7 @@ import {
     AllWorkspaceInvitationsResponse,
     WorkspaceLogoResponse,
 } from './types/workspaces'
-import { generatePath } from './utils/request-helpers'
-import { validateCurrentUser, validateGoal, validateGoalArray } from './utils/validators'
+import { validateCurrentUser } from './utils/validators'
 
 import { type SyncResponse, type SyncRequest } from './types/sync'
 
@@ -239,6 +230,7 @@ export class TodoistApi {
     private readonly activityClient: ActivityClient
     private readonly productivityClient: ProductivityClient
     private readonly workspaceClient: WorkspaceClient
+    private readonly goalsClient: GoalsClient
 
     constructor(
         /**
@@ -281,6 +273,7 @@ export class TodoistApi {
         this.activityClient = new ActivityClient(clientDeps)
         this.productivityClient = new ProductivityClient(clientDeps)
         this.workspaceClient = new WorkspaceClient(clientDeps)
+        this.goalsClient = new GoalsClient(clientDeps)
     }
 
     /**
@@ -1308,147 +1301,43 @@ export class TodoistApi {
     // ── Goals ──
 
     async getGoals(args?: GetGoalsArgs): Promise<GetGoalsResponse> {
-        const {
-            data: { results, nextCursor },
-        } = await request<GetGoalsResponse>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_GOALS,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-        })
-        return {
-            results: validateGoalArray(results),
-            nextCursor,
-        }
+        return this.goalsClient.getGoals(args)
     }
 
     async searchGoals(args: SearchGoalsArgs): Promise<GetGoalsResponse> {
-        const {
-            data: { results, nextCursor },
-        } = await request<GetGoalsResponse>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_GOALS_SEARCH,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-        })
-        return {
-            results: validateGoalArray(results),
-            nextCursor,
-        }
+        return this.goalsClient.searchGoals(args)
     }
 
     async getGoal(id: string): Promise<Goal> {
-        z.string().parse(id)
-        const response = await request<Goal>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_GOALS, id),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-        })
-        return validateGoal(response.data)
+        return this.goalsClient.getGoal(id)
     }
 
     async addGoal(args: AddGoalArgs, requestId?: string): Promise<Goal> {
-        const response = await request<Goal>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_GOALS,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-            requestId: requestId,
-        })
-        return validateGoal(response.data)
+        return this.goalsClient.addGoal(args, requestId)
     }
 
     async updateGoal(id: string, args: UpdateGoalArgs, requestId?: string): Promise<Goal> {
-        z.string().parse(id)
-        const response = await request<Goal>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_GOALS, id),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-            requestId: requestId,
-        })
-        return validateGoal(response.data)
+        return this.goalsClient.updateGoal(id, args, requestId)
     }
 
     async deleteGoal(id: string, requestId?: string): Promise<boolean> {
-        z.string().parse(id)
-        const response = await request({
-            httpMethod: 'DELETE',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_GOALS, id),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            requestId: requestId,
-        })
-        return isSuccess(response)
+        return this.goalsClient.deleteGoal(id, requestId)
     }
 
     async completeGoal(id: string, requestId?: string): Promise<Goal> {
-        z.string().parse(id)
-        const response = await request<Goal>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_GOALS, id, GOAL_COMPLETE),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            requestId: requestId,
-        })
-        return validateGoal(response.data)
+        return this.goalsClient.completeGoal(id, requestId)
     }
 
     async uncompleteGoal(id: string, requestId?: string): Promise<Goal> {
-        z.string().parse(id)
-        const response = await request<Goal>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_GOALS, id, GOAL_UNCOMPLETE),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            requestId: requestId,
-        })
-        return validateGoal(response.data)
+        return this.goalsClient.uncompleteGoal(id, requestId)
     }
 
-    async linkTaskToGoal({ goalId, taskId }: TaskLinkingArgs, requestId?: string): Promise<Goal> {
-        z.string().parse(goalId)
-        z.string().parse(taskId)
-        const response = await request<Goal>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_GOALS, goalId, GOAL_TASKS),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: { itemId: taskId },
-            requestId: requestId,
-        })
-        return validateGoal(response.data)
+    async linkTaskToGoal(args: TaskLinkingArgs, requestId?: string): Promise<Goal> {
+        return this.goalsClient.linkTaskToGoal(args, requestId)
     }
 
-    async unlinkTaskFromGoal(
-        { goalId, taskId }: TaskLinkingArgs,
-        requestId?: string,
-    ): Promise<boolean> {
-        z.string().parse(goalId)
-        z.string().parse(taskId)
-        const response = await request({
-            httpMethod: 'DELETE',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_GOALS, goalId, GOAL_TASKS, taskId),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            requestId: requestId,
-        })
-        return isSuccess(response)
+    async unlinkTaskFromGoal(args: TaskLinkingArgs, requestId?: string): Promise<boolean> {
+        return this.goalsClient.unlinkTaskFromGoal(args, requestId)
     }
 
     // ── Backups ──
