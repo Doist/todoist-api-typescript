@@ -1,3 +1,9 @@
+## [9.1.0](https://github.com/Doist/todoist-sdk-typescript/compare/v9.0.0...v9.1.0) (2026-04-12)
+
+### Features
+
+* Add app management support (dev:app_console scope) ([#560](https://github.com/Doist/todoist-sdk-typescript/issues/560)) ([b8d4925](https://github.com/Doist/todoist-sdk-typescript/commit/b8d492575da1da015d64f80a7345c26c8a1883da))
+
 ## [9.0.0](https://github.com/Doist/todoist-sdk-typescript/compare/v8.4.0...v9.0.0) (2026-04-11)
 
 ### ⚠ BREAKING CHANGES
