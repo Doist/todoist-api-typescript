@@ -73,7 +73,7 @@ export class CommentClient extends BaseClient {
 
     async updateComment(id: string, args: UpdateCommentArgs, requestId?: string): Promise<Comment> {
         z.string().parse(id)
-        const response = await request<boolean>({
+        const response = await request<Comment>({
             httpMethod: 'POST',
             baseUri: this.syncApiBase,
             relativePath: generatePath(ENDPOINT_REST_COMMENTS, id),
