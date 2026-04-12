@@ -1,85 +1,31 @@
 import { z } from 'zod'
+import { ActivityClient } from './clients/activity-client'
+import { BackupClient } from './clients/backup-client'
+import { CommentClient } from './clients/comment-client'
+import { EmailClient } from './clients/email-client'
+import { FolderClient } from './clients/folder-client'
+import { IdMappingClient } from './clients/id-mapping-client'
+import { InsightsClient } from './clients/insights-client'
+import { LabelClient } from './clients/label-client'
+import { ProductivityClient } from './clients/productivity-client'
+import { ProjectClient } from './clients/project-client'
+import { ReminderClient } from './clients/reminder-client'
+import { SectionClient } from './clients/section-client'
+import { TaskClient } from './clients/task-client'
+import { TemplateClient } from './clients/template-client'
+import { UploadClient } from './clients/upload-client'
+import { WorkspaceClient } from './clients/workspace-client'
 import {
-    getSyncBaseUri,
-    ENDPOINT_REST_TASKS,
-    ENDPOINT_REST_TASKS_FILTER,
-    ENDPOINT_REST_TASKS_COMPLETED_BY_COMPLETION_DATE,
-    ENDPOINT_REST_TASKS_COMPLETED_BY_DUE_DATE,
-    ENDPOINT_REST_TASKS_COMPLETED_SEARCH,
-    ENDPOINT_REST_TASKS_COMPLETED,
-    ENDPOINT_REST_TEMPLATES_FILE,
-    ENDPOINT_REST_TEMPLATES_URL,
-    ENDPOINT_REST_TEMPLATES_CREATE_FROM_FILE,
-    ENDPOINT_REST_TEMPLATES_IMPORT_FROM_FILE,
-    ENDPOINT_REST_TEMPLATES_IMPORT_FROM_ID,
-    ENDPOINT_REST_PROJECTS,
-    ENDPOINT_REST_PROJECTS_SEARCH,
-    ENDPOINT_SYNC_QUICK_ADD,
-    ENDPOINT_REST_TASK_CLOSE,
-    ENDPOINT_REST_TASK_REOPEN,
-    ENDPOINT_REST_TASK_MOVE,
-    ENDPOINT_REST_LABELS,
-    ENDPOINT_REST_LABELS_SEARCH,
-    ENDPOINT_REST_PROJECT_COLLABORATORS,
-    ENDPOINT_REST_SECTIONS,
-    ENDPOINT_REST_SECTIONS_SEARCH,
-    ENDPOINT_REST_COMMENTS,
-    ENDPOINT_REST_LOCATION_REMINDERS,
-    ENDPOINT_REST_REMINDERS,
-    ENDPOINT_REST_LABELS_SHARED,
-    ENDPOINT_REST_LABELS_SHARED_RENAME,
-    ENDPOINT_REST_LABELS_SHARED_REMOVE,
-    ENDPOINT_SYNC,
-    PROJECT_ARCHIVE,
-    PROJECT_UNARCHIVE,
-    ENDPOINT_REST_PROJECTS_MOVE_TO_WORKSPACE,
-    ENDPOINT_REST_PROJECTS_MOVE_TO_PERSONAL,
-    ENDPOINT_REST_PROJECTS_ARCHIVED,
-    ENDPOINT_REST_PROJECTS_ARCHIVED_COUNT,
-    ENDPOINT_REST_PROJECTS_PERMISSIONS,
-    ENDPOINT_REST_PROJECT_FULL,
-    ENDPOINT_REST_PROJECT_JOIN,
-    SECTION_ARCHIVE,
-    SECTION_UNARCHIVE,
-    ENDPOINT_REST_USER,
-    ENDPOINT_REST_PRODUCTIVITY,
-    ENDPOINT_REST_ACTIVITIES,
-    ENDPOINT_REST_UPLOADS,
-    getProjectInsightsActivityStatsEndpoint,
-    getProjectInsightsHealthEndpoint,
-    getProjectInsightsHealthContextEndpoint,
-    getProjectInsightsProgressEndpoint,
-    getProjectInsightsHealthAnalyzeEndpoint,
-    getWorkspaceInsightsEndpoint,
-    ENDPOINT_REST_BACKUPS,
-    ENDPOINT_REST_BACKUPS_DOWNLOAD,
-    ENDPOINT_REST_EMAILS,
-    ENDPOINT_REST_ID_MAPPINGS,
-    ENDPOINT_REST_MOVED_IDS,
-    ENDPOINT_REST_WORKSPACES,
-    ENDPOINT_WORKSPACE_MEMBERS,
-    getWorkspaceUserTasksEndpoint,
-    getWorkspaceInviteUsersEndpoint,
-    getWorkspaceUserEndpoint,
-    ENDPOINT_WORKSPACE_INVITATIONS,
-    ENDPOINT_WORKSPACE_INVITATIONS_ALL,
-    ENDPOINT_WORKSPACE_INVITATIONS_DELETE,
-    getWorkspaceInvitationAcceptEndpoint,
-    getWorkspaceInvitationRejectEndpoint,
-    ENDPOINT_WORKSPACE_JOIN,
-    ENDPOINT_WORKSPACE_LOGO,
-    ENDPOINT_WORKSPACE_PLAN_DETAILS,
-    ENDPOINT_WORKSPACE_USERS,
-    getWorkspaceActiveProjectsEndpoint,
-    getWorkspaceArchivedProjectsEndpoint,
-    ENDPOINT_REST_FOLDERS,
     ENDPOINT_REST_GOALS,
     ENDPOINT_REST_GOALS_SEARCH,
+    ENDPOINT_REST_USER,
     GOAL_COMPLETE,
-    GOAL_UNCOMPLETE,
     GOAL_TASKS,
+    GOAL_UNCOMPLETE,
+    getSyncBaseUri,
 } from './consts/endpoints'
-import { request, isSuccess } from './transport/http-client'
+import { isSuccess, request } from './transport/http-client'
+import { performSyncRequest } from './transport/sync-request'
 import type { Reminder } from './types'
 import { GetActivityLogsArgs, GetActivityLogsResponse } from './types/activity'
 import { Backup, GetBackupsArgs, DownloadBackupArgs } from './types/backups'
@@ -100,15 +46,15 @@ import {
     UpdateFolderArgs,
 } from './types/folders'
 import type {
-    Goal,
+    AddGoalArgs,
     GetGoalsArgs,
     GetGoalsResponse,
+    Goal,
     SearchGoalsArgs,
-    AddGoalArgs,
-    UpdateGoalArgs,
     TaskLinkingArgs,
+    UpdateGoalArgs,
 } from './types/goals'
-import { CustomFetch, CustomFetchResponse } from './types/http'
+import { CustomFetch, FileResponse } from './types/http'
 import { IdMapping, MovedId, GetIdMappingsArgs, GetMovedIdsArgs } from './types/id-mappings'
 import {
     ProjectActivityStats,
@@ -162,9 +108,6 @@ import {
     GetRemindersResponse,
     GetLocationRemindersArgs,
     GetLocationRemindersResponse,
-    UpdateReminderArgsSchema,
-    UpdateLocationReminderArgsSchema,
-    ReminderIdSchema,
 } from './types/reminders'
 import {
     Section,
@@ -204,7 +147,6 @@ import {
 import { UploadFileArgs, DeleteUploadArgs } from './types/uploads'
 import { CurrentUser } from './types/users'
 import {
-    WorkspaceUser,
     WorkspaceInvitation,
     WorkspacePlanDetails,
     JoinWorkspaceResult,
@@ -232,154 +174,10 @@ import {
     AllWorkspaceInvitationsResponse,
     WorkspaceLogoResponse,
 } from './types/workspaces'
-import {
-    normalizeObjectEventTypeForApi,
-    denormalizeObjectTypeFromApi,
-} from './utils/activity-helpers'
-import { camelCaseKeys } from './utils/case-conversion'
-import { uploadMultipartFile } from './utils/multipart-upload'
-import { processTaskContent } from './utils/uncompletable-helpers'
-import { formatDateToYYYYMMDD } from './utils/url-helpers'
-import {
-    validateAttachment,
-    validateComment,
-    validateCommentArray,
-    validateCurrentUser,
-    validateLabel,
-    validateLabelArray,
-    validateProject,
-    validateProjectArray,
-    validateSection,
-    validateSectionArray,
-    validateTask,
-    validateTaskArray,
-    validateUserArray,
-    validateProductivityStats,
-    validateReminder,
-    validateReminderArray,
-    validateLocationReminderArray,
-    validateActivityEventArray,
-    validateWorkspaceUserArray,
-    validateWorkspaceInvitation,
-    validateWorkspaceInvitationArray,
-    validateWorkspacePlanDetails,
-    validateJoinWorkspaceResult,
-    validateWorkspace,
-    validateWorkspaceArray,
-    validateMemberActivityInfoArray,
-    validateWorkspaceUserTaskArray,
-    validateProjectActivityStats,
-    validateProjectHealth,
-    validateProjectHealthContext,
-    validateProjectProgress,
-    validateWorkspaceInsights,
-    validateBackupArray,
-    validateIdMappingArray,
-    validateMovedIdArray,
-    validateFolder,
-    validateFolderArray,
-    validateGoal,
-    validateGoalArray,
-    validateCollaboratorArray,
-    validateCollaboratorStateArray,
-    validateNoteArray,
-    validateWorkspaceProject,
-    validateWorkspaceProjectArray,
-    parseSyncResponse,
-} from './utils/validators'
+import { generatePath } from './utils/request-helpers'
+import { validateCurrentUser, validateGoal, validateGoalArray } from './utils/validators'
 
-import { v4 as uuidv4 } from 'uuid'
-import { TodoistArgumentError, TodoistRequestError } from './types'
-import {
-    type SyncResponse,
-    type SyncCommand,
-    type SyncRequest,
-    DATE_FORMAT_TO_API,
-    TIME_FORMAT_TO_API,
-    DAY_OF_WEEK_TO_API,
-    type UserUpdateArgs,
-    type TaskUpdateDateCompleteArgs,
-    type UpdateGoalsArgs,
-} from './types/sync'
-
-const MAX_COMMAND_COUNT = 100
-
-/**
- * Joins path segments using `/` separator.
- * @param segments A list of **valid** path segments.
- * @returns A joined path.
- */
-function generatePath(...segments: string[]): string {
-    return segments.join('/')
-}
-
-function spreadIfDefined<T, V extends Record<string, unknown>>(
-    value: T | undefined,
-    fn: (v: T) => V,
-): V | Record<string, never> {
-    return value !== undefined ? fn(value) : {}
-}
-
-function serializeUserUpdateArgs(args: UserUpdateArgs): Record<string, unknown> {
-    return {
-        ...args,
-        ...spreadIfDefined(args.dateFormat, (v) => ({
-            dateFormat: DATE_FORMAT_TO_API[v],
-        })),
-        ...spreadIfDefined(args.timeFormat, (v) => ({
-            timeFormat: TIME_FORMAT_TO_API[v],
-        })),
-        ...spreadIfDefined(args.startDay, (v) => ({
-            startDay: DAY_OF_WEEK_TO_API[v],
-        })),
-        ...spreadIfDefined(args.nextWeek, (v) => ({
-            nextWeek: DAY_OF_WEEK_TO_API[v],
-        })),
-    }
-}
-
-function serializeTaskUpdateDateCompleteArgs(
-    args: TaskUpdateDateCompleteArgs,
-): Record<string, unknown> {
-    return {
-        ...args,
-        isForward: args.isForward ? 1 : 0,
-        ...spreadIfDefined(args.resetSubtasks, (v) => ({
-            resetSubtasks: v ? 1 : 0,
-        })),
-    }
-}
-
-function serializeUpdateGoalsArgs(args: UpdateGoalsArgs): Record<string, unknown> {
-    return {
-        ...args,
-        ...spreadIfDefined(args.vacationMode, (v) => ({ vacationMode: v ? 1 : 0 })),
-        ...spreadIfDefined(args.karmaDisabled, (v) => ({
-            karmaDisabled: v ? 1 : 0,
-        })),
-    }
-}
-
-function preprocessSyncCommands(commands: SyncCommand[]): SyncCommand[] {
-    return commands.map((cmd): SyncCommand => {
-        if (cmd.type === 'user_update')
-            return {
-                ...cmd,
-                args: serializeUserUpdateArgs(cmd.args as UserUpdateArgs),
-            }
-        if (cmd.type === 'item_update_date_complete')
-            return {
-                ...cmd,
-                args: serializeTaskUpdateDateCompleteArgs(cmd.args as TaskUpdateDateCompleteArgs),
-            }
-        if (cmd.type === 'update_goals')
-            return {
-                ...cmd,
-                args: serializeUpdateGoalsArgs(cmd.args as UpdateGoalsArgs),
-            }
-        return cmd
-    })
-}
+import { type SyncResponse, type SyncRequest } from './types/sync'
 
 /**
  * A client for interacting with the Todoist API v1.
@@ -403,22 +201,6 @@ function preprocessSyncCommands(commands: SyncCommand[]): SyncCommand[] {
  * If you're migrating from v9, please refer to the [migration guide](https://todoist.com/api/v1/docs#tag/Migrating-from-v9).
  */
 
-function headersToRecord(headers: Headers): Record<string, string> {
-    const result: Record<string, string> = {}
-    headers.forEach((value, key) => {
-        result[key] = value
-    })
-    return result
-}
-
-/**
- * Response from viewAttachment, extending CustomFetchResponse with
- * arrayBuffer() support for binary file content.
- */
-export type FileResponse = CustomFetchResponse & {
-    arrayBuffer(): Promise<ArrayBuffer>
-}
-
 /**
  * Configuration options for the TodoistApi constructor
  */
@@ -437,6 +219,26 @@ export class TodoistApi {
     private authToken: string
     private syncApiBase: string
     private customFetch?: CustomFetch
+
+    // Internal domain sub-clients. See src/clients/* — each groups a set of
+    // related endpoints. The public methods on TodoistApi below delegate
+    // through these; sub-clients themselves are not exposed from the package.
+    private readonly taskClient: TaskClient
+    private readonly projectClient: ProjectClient
+    private readonly sectionClient: SectionClient
+    private readonly labelClient: LabelClient
+    private readonly commentClient: CommentClient
+    private readonly reminderClient: ReminderClient
+    private readonly insightsClient: InsightsClient
+    private readonly folderClient: FolderClient
+    private readonly templateClient: TemplateClient
+    private readonly uploadClient: UploadClient
+    private readonly backupClient: BackupClient
+    private readonly emailClient: EmailClient
+    private readonly idMappingClient: IdMappingClient
+    private readonly activityClient: ActivityClient
+    private readonly productivityClient: ProductivityClient
+    private readonly workspaceClient: WorkspaceClient
 
     constructor(
         /**
@@ -457,49 +259,28 @@ export class TodoistApi {
         const opts = options || {}
         this.syncApiBase = getSyncBaseUri(opts.baseUrl)
         this.customFetch = opts.customFetch
-    }
 
-    /**
-     * Makes a request to the Sync API and handles error checking.
-     *
-     * @param syncRequest - The sync request payload
-     * @param requestId - Optional request identifier
-     * @param hasSyncCommands - Whether this request contains sync commands (write operations)
-     * @returns The sync response data
-     * @throws TodoistRequestError if sync status contains errors
-     */
-    private async requestSync(
-        syncRequest: SyncRequest,
-        requestId?: string,
-        hasSyncCommands = false,
-    ): Promise<SyncResponse> {
-        const processedRequest = syncRequest.commands?.length
-            ? {
-                  ...syncRequest,
-                  commands: preprocessSyncCommands(syncRequest.commands),
-              }
-            : syncRequest
-        const response = await request<Record<string, unknown>>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_SYNC,
-            apiToken: this.authToken,
+        const clientDeps = {
+            authToken: this.authToken,
+            syncApiBase: this.syncApiBase,
             customFetch: this.customFetch,
-            payload: processedRequest,
-            requestId: requestId,
-            hasSyncCommands: hasSyncCommands,
-        })
-
-        // Check for sync errors and throw if any are found
-        if (response.data.syncStatus) {
-            Object.entries(response.data.syncStatus).forEach(([_, value]) => {
-                if (value === 'ok') return
-
-                throw new TodoistRequestError(value.error, value.httpCode, value.errorExtra)
-            })
         }
-
-        return parseSyncResponse(response.data)
+        this.taskClient = new TaskClient(clientDeps)
+        this.projectClient = new ProjectClient(clientDeps)
+        this.sectionClient = new SectionClient(clientDeps)
+        this.labelClient = new LabelClient(clientDeps)
+        this.commentClient = new CommentClient(clientDeps)
+        this.reminderClient = new ReminderClient(clientDeps)
+        this.insightsClient = new InsightsClient(clientDeps)
+        this.folderClient = new FolderClient(clientDeps)
+        this.templateClient = new TemplateClient(clientDeps)
+        this.uploadClient = new UploadClient(clientDeps)
+        this.backupClient = new BackupClient(clientDeps)
+        this.emailClient = new EmailClient(clientDeps)
+        this.idMappingClient = new IdMappingClient(clientDeps)
+        this.activityClient = new ActivityClient(clientDeps)
+        this.productivityClient = new ProductivityClient(clientDeps)
+        this.workspaceClient = new WorkspaceClient(clientDeps)
     }
 
     /**
@@ -527,7 +308,15 @@ export class TodoistApi {
      * ```
      */
     async sync(syncRequest: SyncRequest, requestId?: string): Promise<SyncResponse> {
-        return this.requestSync(syncRequest, requestId, Boolean(syncRequest.commands?.length))
+        return performSyncRequest(
+            {
+                authToken: this.authToken,
+                syncApiBase: this.syncApiBase,
+                customFetch: this.customFetch,
+            },
+            syncRequest,
+            { requestId, hasSyncCommands: Boolean(syncRequest.commands?.length) },
+        )
     }
 
     /**
@@ -554,16 +343,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the requested task.
      */
     async getTask(id: string): Promise<Task> {
-        z.string().parse(id)
-        const response = await request<Task>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_TASKS, id),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-        })
-
-        return validateTask(response.data)
+        return this.taskClient.getTask(id)
     }
 
     /**
@@ -573,21 +353,7 @@ export class TodoistApi {
      * @returns A promise that resolves to an array of tasks.
      */
     async getTasks(args: GetTasksArgs = {}): Promise<GetTasksResponse> {
-        const {
-            data: { results, nextCursor },
-        } = await request<GetTasksResponse>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_TASKS,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-        })
-
-        return {
-            results: validateTaskArray(results),
-            nextCursor,
-        }
+        return this.taskClient.getTasks(args)
     }
 
     /**
@@ -597,21 +363,7 @@ export class TodoistApi {
      * @returns A promise that resolves to a paginated response of tasks.
      */
     async getTasksByFilter(args: GetTasksByFilterArgs): Promise<GetTasksResponse> {
-        const {
-            data: { results, nextCursor },
-        } = await request<GetTasksResponse>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_TASKS_FILTER,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-        })
-
-        return {
-            results: validateTaskArray(results),
-            nextCursor,
-        }
+        return this.taskClient.getTasksByFilter(args)
     }
 
     /**
@@ -623,21 +375,7 @@ export class TodoistApi {
     async getCompletedTasksByCompletionDate(
         args: GetCompletedTasksByCompletionDateArgs,
     ): Promise<GetCompletedTasksResponse> {
-        const {
-            data: { items, nextCursor },
-        } = await request<GetCompletedTasksResponse>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_TASKS_COMPLETED_BY_COMPLETION_DATE,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-        })
-
-        return {
-            items: validateTaskArray(items),
-            nextCursor,
-        }
+        return this.taskClient.getCompletedTasksByCompletionDate(args)
     }
 
     /**
@@ -649,21 +387,7 @@ export class TodoistApi {
     async getCompletedTasksByDueDate(
         args: GetCompletedTasksByDueDateArgs,
     ): Promise<GetCompletedTasksResponse> {
-        const {
-            data: { items, nextCursor },
-        } = await request<GetCompletedTasksResponse>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_TASKS_COMPLETED_BY_DUE_DATE,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-        })
-
-        return {
-            items: validateTaskArray(items),
-            nextCursor,
-        }
+        return this.taskClient.getCompletedTasksByDueDate(args)
     }
 
     /**
@@ -673,21 +397,7 @@ export class TodoistApi {
      * @returns A promise that resolves to a paginated response of completed tasks.
      */
     async searchCompletedTasks(args: SearchCompletedTasksArgs): Promise<GetCompletedTasksResponse> {
-        const {
-            data: { items, nextCursor },
-        } = await request<GetCompletedTasksResponse>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_TASKS_COMPLETED_SEARCH,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-        })
-
-        return {
-            items: validateTaskArray(items),
-            nextCursor,
-        }
+        return this.taskClient.searchCompletedTasks(args)
     }
 
     /**
@@ -701,24 +411,7 @@ export class TodoistApi {
     async getAllCompletedTasks(
         args: GetAllCompletedTasksArgs = {},
     ): Promise<GetAllCompletedTasksResponse> {
-        const { since, until, ...rest } = args
-        const { data } = await request<Record<string, unknown>>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_TASKS_COMPLETED,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: {
-                ...rest,
-                ...(since ? { since: since.toISOString() } : {}),
-                ...(until ? { until: until.toISOString() } : {}),
-            },
-        })
-        return {
-            projects: data.projects as Record<string, Record<string, unknown>>,
-            sections: data.sections as Record<string, Record<string, unknown>>,
-            items: validateTaskArray(data.items as unknown[]),
-        }
+        return this.taskClient.getAllCompletedTasks(args)
     }
 
     /**
@@ -729,23 +422,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the created task.
      */
     async addTask(args: AddTaskArgs, requestId?: string): Promise<Task> {
-        // Process content based on isUncompletable flag
-        const processedArgs = {
-            ...args,
-            content: processTaskContent(args.content, args.isUncompletable),
-        }
-
-        const response = await request<Task>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_TASKS,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: processedArgs,
-            requestId: requestId,
-        })
-
-        return validateTask(response.data)
+        return this.taskClient.addTask(args, requestId)
     }
 
     /**
@@ -755,22 +432,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the created task.
      */
     async quickAddTask(args: QuickAddTaskArgs): Promise<Task> {
-        // Process text based on isUncompletable flag
-        const processedArgs = {
-            ...args,
-            text: processTaskContent(args.text, args.isUncompletable),
-        }
-
-        const response = await request<Task>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_SYNC_QUICK_ADD,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: processedArgs,
-        })
-
-        return validateTask(response.data)
+        return this.taskClient.quickAddTask(args)
     }
 
     /**
@@ -783,39 +445,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the updated task.
      */
     async updateTask(id: string, args: UpdateTaskArgs, requestId?: string): Promise<Task> {
-        z.string().parse(id)
-
-        // Translate SDK alias for due-date clearing to Todoist's accepted payload value.
-        const normalizedArgs = args.dueString === null ? { ...args, dueString: 'no date' } : args
-
-        // Process content if both content and isUncompletable are provided
-        const processedArgs =
-            normalizedArgs.content && normalizedArgs.isUncompletable !== undefined
-                ? {
-                      ...normalizedArgs,
-                      content: processTaskContent(
-                          normalizedArgs.content,
-                          normalizedArgs.isUncompletable,
-                      ),
-                  }
-                : normalizedArgs
-
-        // Remap `order` → `childOrder` so snakeCaseKeys() produces `child_order`
-        const { order, ...argsWithoutOrder } = processedArgs
-        const remappedArgs =
-            order !== undefined ? { ...argsWithoutOrder, childOrder: order } : argsWithoutOrder
-
-        const response = await request<Task>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_TASKS, id),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: remappedArgs,
-            requestId: requestId,
-        })
-
-        return validateTask(response.data)
+        return this.taskClient.updateTask(id, args, requestId)
     }
 
     /**
@@ -827,37 +457,7 @@ export class TodoistApi {
      * @returns - A promise that resolves to an array of the updated tasks.
      */
     async moveTasks(ids: string[], args: MoveTaskArgs, requestId?: string): Promise<Task[]> {
-        if (ids.length > MAX_COMMAND_COUNT) {
-            throw new TodoistRequestError(`Maximum number of items is ${MAX_COMMAND_COUNT}`, 400)
-        }
-        const commands: SyncCommand[] = ids.map((id) => ({
-            type: 'item_move',
-            uuid: uuidv4(),
-            args: {
-                id,
-                ...spreadIfDefined(args.projectId, (v) => ({ projectId: v })),
-                ...spreadIfDefined(args.sectionId, (v) => ({ sectionId: v })),
-                ...spreadIfDefined(args.parentId, (v) => ({ parentId: v })),
-            },
-        }))
-
-        const syncRequest: SyncRequest = {
-            commands,
-            resourceTypes: ['items'],
-        }
-
-        const syncResponse = await this.requestSync(syncRequest, requestId, true)
-
-        if (!syncResponse.items?.length) {
-            throw new TodoistRequestError('Tasks not found', 404)
-        }
-
-        const syncTasks = syncResponse.items.filter((task) => ids.includes(task.id))
-        if (!syncTasks.length) {
-            throw new TodoistRequestError('Tasks not found', 404)
-        }
-
-        return validateTaskArray(syncTasks)
+        return this.taskClient.moveTasks(ids, args, requestId)
     }
 
     /**
@@ -869,22 +469,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the updated task.
      */
     async moveTask(id: string, args: MoveTaskArgs, requestId?: string): Promise<Task> {
-        z.string().parse(id)
-        const response = await request<Task>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_TASKS, id, ENDPOINT_REST_TASK_MOVE),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: {
-                ...spreadIfDefined(args.projectId, (v) => ({ project_id: v })),
-                ...spreadIfDefined(args.sectionId, (v) => ({ section_id: v })),
-                ...spreadIfDefined(args.parentId, (v) => ({ parent_id: v })),
-            },
-            requestId: requestId,
-        })
-
-        return validateTask(response.data)
+        return this.taskClient.moveTask(id, args, requestId)
     }
 
     /**
@@ -895,16 +480,7 @@ export class TodoistApi {
      * @returns A promise that resolves to `true` if successful.
      */
     async closeTask(id: string, requestId?: string): Promise<boolean> {
-        z.string().parse(id)
-        const response = await request({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_TASKS, id, ENDPOINT_REST_TASK_CLOSE),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            requestId: requestId,
-        })
-        return isSuccess(response)
+        return this.taskClient.closeTask(id, requestId)
     }
 
     /**
@@ -915,16 +491,7 @@ export class TodoistApi {
      * @returns A promise that resolves to `true` if successful.
      */
     async reopenTask(id: string, requestId?: string): Promise<boolean> {
-        z.string().parse(id)
-        const response = await request({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_TASKS, id, ENDPOINT_REST_TASK_REOPEN),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            requestId: requestId,
-        })
-        return isSuccess(response)
+        return this.taskClient.reopenTask(id, requestId)
     }
 
     /**
@@ -935,16 +502,7 @@ export class TodoistApi {
      * @returns A promise that resolves to `true` if successful.
      */
     async deleteTask(id: string, requestId?: string): Promise<boolean> {
-        z.string().parse(id)
-        const response = await request({
-            httpMethod: 'DELETE',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_TASKS, id),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            requestId: requestId,
-        })
-        return isSuccess(response)
+        return this.taskClient.deleteTask(id, requestId)
     }
 
     /**
@@ -954,16 +512,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the requested project.
      */
     async getProject(id: string): Promise<PersonalProject | WorkspaceProject> {
-        z.string().parse(id)
-        const response = await request<PersonalProject | WorkspaceProject>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_PROJECTS, id),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-        })
-
-        return validateProject(response.data)
+        return this.projectClient.getProject(id)
     }
 
     /**
@@ -973,21 +522,7 @@ export class TodoistApi {
      * @returns A promise that resolves to an array of projects.
      */
     async getProjects(args: GetProjectsArgs = {}): Promise<GetProjectsResponse> {
-        const {
-            data: { results, nextCursor },
-        } = await request<GetProjectsResponse>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_PROJECTS,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-        })
-
-        return {
-            results: validateProjectArray(results),
-            nextCursor,
-        }
+        return this.projectClient.getProjects(args)
     }
 
     /**
@@ -997,21 +532,7 @@ export class TodoistApi {
      * @returns A promise that resolves to a paginated response of projects.
      */
     async searchProjects(args: SearchProjectsArgs): Promise<GetProjectsResponse> {
-        const {
-            data: { results, nextCursor },
-        } = await request<GetProjectsResponse>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_PROJECTS_SEARCH,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-        })
-
-        return {
-            results: validateProjectArray(results),
-            nextCursor,
-        }
+        return this.projectClient.searchProjects(args)
     }
 
     /**
@@ -1023,21 +544,7 @@ export class TodoistApi {
     async getArchivedProjects(
         args: GetArchivedProjectsArgs = {},
     ): Promise<GetArchivedProjectsResponse> {
-        const {
-            data: { results, nextCursor },
-        } = await request<GetArchivedProjectsResponse>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_PROJECTS_ARCHIVED,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-        })
-
-        return {
-            results: validateProjectArray(results),
-            nextCursor,
-        }
+        return this.projectClient.getArchivedProjects(args)
     }
 
     /**
@@ -1051,17 +558,7 @@ export class TodoistApi {
         args: AddProjectArgs,
         requestId?: string,
     ): Promise<PersonalProject | WorkspaceProject> {
-        const response = await request<PersonalProject | WorkspaceProject>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_PROJECTS,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-            requestId: requestId,
-        })
-
-        return validateProject(response.data)
+        return this.projectClient.addProject(args, requestId)
     }
 
     /**
@@ -1077,18 +574,7 @@ export class TodoistApi {
         args: UpdateProjectArgs,
         requestId?: string,
     ): Promise<PersonalProject | WorkspaceProject> {
-        z.string().parse(id)
-        const response = await request<PersonalProject | WorkspaceProject>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_PROJECTS, id),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-            requestId: requestId,
-        })
-
-        return validateProject(response.data)
+        return this.projectClient.updateProject(id, args, requestId)
     }
 
     /**
@@ -1104,16 +590,7 @@ export class TodoistApi {
      * @returns A promise that resolves to `true` if successful.
      */
     async deleteProject(id: string, requestId?: string): Promise<boolean> {
-        z.string().parse(id)
-        const response = await request({
-            httpMethod: 'DELETE',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_PROJECTS, id),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            requestId: requestId,
-        })
-        return isSuccess(response)
+        return this.projectClient.deleteProject(id, requestId)
     }
 
     /**
@@ -1127,16 +604,7 @@ export class TodoistApi {
         id: string,
         requestId?: string,
     ): Promise<PersonalProject | WorkspaceProject> {
-        z.string().parse(id)
-        const response = await request<PersonalProject | WorkspaceProject>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_PROJECTS, id, PROJECT_ARCHIVE),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            requestId: requestId,
-        })
-        return validateProject(response.data)
+        return this.projectClient.archiveProject(id, requestId)
     }
 
     /**
@@ -1150,16 +618,7 @@ export class TodoistApi {
         id: string,
         requestId?: string,
     ): Promise<PersonalProject | WorkspaceProject> {
-        z.string().parse(id)
-        const response = await request<PersonalProject | WorkspaceProject>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_PROJECTS, id, PROJECT_UNARCHIVE),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            requestId: requestId,
-        })
-        return validateProject(response.data)
+        return this.projectClient.unarchiveProject(id, requestId)
     }
 
     /**
@@ -1173,18 +632,7 @@ export class TodoistApi {
         args: MoveProjectToWorkspaceArgs,
         requestId?: string,
     ): Promise<PersonalProject | WorkspaceProject> {
-        const response = await request<{
-            project: PersonalProject | WorkspaceProject
-        }>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_PROJECTS_MOVE_TO_WORKSPACE,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-            requestId: requestId,
-        })
-        return validateProject(response.data.project)
+        return this.projectClient.moveProjectToWorkspace(args, requestId)
     }
 
     /**
@@ -1198,18 +646,7 @@ export class TodoistApi {
         args: MoveProjectToPersonalArgs,
         requestId?: string,
     ): Promise<PersonalProject | WorkspaceProject> {
-        const response = await request<{
-            project: PersonalProject | WorkspaceProject
-        }>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_PROJECTS_MOVE_TO_PERSONAL,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-            requestId: requestId,
-        })
-        return validateProject(response.data.project)
+        return this.projectClient.moveProjectToPersonal(args, requestId)
     }
 
     /**
@@ -1221,15 +658,7 @@ export class TodoistApi {
     async getArchivedProjectsCount(
         args: GetArchivedProjectsCountArgs = {},
     ): Promise<GetArchivedProjectsCountResponse> {
-        const { data } = await request<GetArchivedProjectsCountResponse>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_PROJECTS_ARCHIVED_COUNT,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-        })
-        return data
+        return this.projectClient.getArchivedProjectsCount(args)
     }
 
     /**
@@ -1238,14 +667,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the permission mappings.
      */
     async getProjectPermissions(): Promise<GetProjectPermissionsResponse> {
-        const { data } = await request<GetProjectPermissionsResponse>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_PROJECTS_PERMISSIONS,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-        })
-        return data
+        return this.projectClient.getProjectPermissions()
     }
 
     /**
@@ -1259,23 +681,7 @@ export class TodoistApi {
         id: string,
         args: GetFullProjectArgs = {},
     ): Promise<GetFullProjectResponse> {
-        z.string().parse(id)
-        const { data } = await request<Record<string, unknown>>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_PROJECTS, id, ENDPOINT_REST_PROJECT_FULL),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-        })
-        return {
-            project: data.project ? validateProject(data.project) : null,
-            commentsCount: data.commentsCount as number,
-            tasks: validateTaskArray(data.tasks as unknown[]),
-            sections: validateSectionArray(data.sections as unknown[]),
-            collaborators: validateUserArray(data.collaborators as unknown[]),
-            notes: validateCommentArray(data.notes as unknown[]),
-        }
+        return this.projectClient.getFullProject(id, args)
     }
 
     /**
@@ -1289,25 +695,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the full project data after joining.
      */
     async joinProject(id: string, requestId?: string): Promise<JoinProjectResponse> {
-        z.string().parse(id)
-        const { data } = await request<JoinProjectResponse>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_PROJECTS, id, ENDPOINT_REST_PROJECT_JOIN),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            requestId: requestId,
-        })
-        return {
-            project: validateWorkspaceProject(data.project),
-            tasks: validateTaskArray(data.tasks),
-            sections: validateSectionArray(data.sections),
-            comments: validateNoteArray(data.comments),
-            collaborators: validateCollaboratorArray(data.collaborators),
-            collaboratorStates: validateCollaboratorStateArray(data.collaboratorStates),
-            folder: data.folder ? validateFolder(data.folder) : null,
-            subprojects: validateWorkspaceProjectArray(data.subprojects),
-        }
+        return this.projectClient.joinProject(id, requestId)
     }
 
     /**
@@ -1321,26 +709,7 @@ export class TodoistApi {
         projectId: string,
         args: GetProjectCollaboratorsArgs = {},
     ): Promise<GetProjectCollaboratorsResponse> {
-        z.string().parse(projectId)
-        const {
-            data: { results, nextCursor },
-        } = await request<GetProjectCollaboratorsResponse>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(
-                ENDPOINT_REST_PROJECTS,
-                projectId,
-                ENDPOINT_REST_PROJECT_COLLABORATORS,
-            ),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-        })
-
-        return {
-            results: validateUserArray(results),
-            nextCursor,
-        }
+        return this.projectClient.getProjectCollaborators(projectId, args)
     }
 
     // ── Insights ──
@@ -1356,16 +725,7 @@ export class TodoistApi {
         projectId: string,
         args: GetProjectActivityStatsArgs = {},
     ): Promise<ProjectActivityStats> {
-        z.string().parse(projectId)
-        const response = await request<ProjectActivityStats>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: getProjectInsightsActivityStatsEndpoint(projectId),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: { objectType: 'ITEM', eventType: 'COMPLETED', ...args },
-        })
-        return validateProjectActivityStats(response.data)
+        return this.insightsClient.getProjectActivityStats(projectId, args)
     }
 
     /**
@@ -1375,15 +735,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the project health data.
      */
     async getProjectHealth(projectId: string): Promise<ProjectHealth> {
-        z.string().parse(projectId)
-        const response = await request<ProjectHealth>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: getProjectInsightsHealthEndpoint(projectId),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-        })
-        return validateProjectHealth(response.data)
+        return this.insightsClient.getProjectHealth(projectId)
     }
 
     /**
@@ -1393,15 +745,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the project health context.
      */
     async getProjectHealthContext(projectId: string): Promise<ProjectHealthContext> {
-        z.string().parse(projectId)
-        const response = await request<ProjectHealthContext>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: getProjectInsightsHealthContextEndpoint(projectId),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-        })
-        return validateProjectHealthContext(response.data)
+        return this.insightsClient.getProjectHealthContext(projectId)
     }
 
     /**
@@ -1411,15 +755,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the project progress data.
      */
     async getProjectProgress(projectId: string): Promise<ProjectProgress> {
-        z.string().parse(projectId)
-        const response = await request<ProjectProgress>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: getProjectInsightsProgressEndpoint(projectId),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-        })
-        return validateProjectProgress(response.data)
+        return this.insightsClient.getProjectProgress(projectId)
     }
 
     /**
@@ -1433,19 +769,7 @@ export class TodoistApi {
         workspaceId: string,
         args: GetWorkspaceInsightsArgs = {},
     ): Promise<WorkspaceInsights> {
-        z.string().parse(workspaceId)
-        const response = await request<WorkspaceInsights>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: getWorkspaceInsightsEndpoint(workspaceId),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: {
-                ...args,
-                ...(args.projectIds ? { projectIds: args.projectIds.join(',') } : {}),
-            },
-        })
-        return validateWorkspaceInsights(response.data)
+        return this.insightsClient.getWorkspaceInsights(workspaceId, args)
     }
 
     /**
@@ -1456,16 +780,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the updated project health data.
      */
     async analyzeProjectHealth(projectId: string, requestId?: string): Promise<ProjectHealth> {
-        z.string().parse(projectId)
-        const response = await request<ProjectHealth>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: getProjectInsightsHealthAnalyzeEndpoint(projectId),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            requestId: requestId,
-        })
-        return validateProjectHealth(response.data)
+        return this.insightsClient.analyzeProjectHealth(projectId, requestId)
     }
 
     // ── Sections ──
@@ -1478,21 +793,7 @@ export class TodoistApi {
      * @returns A promise that resolves to an array of sections.
      */
     async getSections(args?: GetSectionsArgs): Promise<GetSectionsResponse> {
-        const {
-            data: { results, nextCursor },
-        } = await request<GetSectionsResponse>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_SECTIONS,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-        })
-
-        return {
-            results: validateSectionArray(results),
-            nextCursor,
-        }
+        return this.sectionClient.getSections(args)
     }
 
     /**
@@ -1502,21 +803,7 @@ export class TodoistApi {
      * @returns A promise that resolves to a paginated response of sections.
      */
     async searchSections(args: SearchSectionsArgs): Promise<GetSectionsResponse> {
-        const {
-            data: { results, nextCursor },
-        } = await request<GetSectionsResponse>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_SECTIONS_SEARCH,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-        })
-
-        return {
-            results: validateSectionArray(results),
-            nextCursor,
-        }
+        return this.sectionClient.searchSections(args)
     }
 
     /**
@@ -1526,16 +813,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the requested section.
      */
     async getSection(id: string): Promise<Section> {
-        z.string().parse(id)
-        const response = await request<Section>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_SECTIONS, id),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-        })
-
-        return validateSection(response.data)
+        return this.sectionClient.getSection(id)
     }
 
     /**
@@ -1546,17 +824,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the created section.
      */
     async addSection(args: AddSectionArgs, requestId?: string): Promise<Section> {
-        const response = await request<Section>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_SECTIONS,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-            requestId: requestId,
-        })
-
-        return validateSection(response.data)
+        return this.sectionClient.addSection(args, requestId)
     }
 
     /**
@@ -1568,17 +836,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the updated section.
      */
     async updateSection(id: string, args: UpdateSectionArgs, requestId?: string): Promise<Section> {
-        z.string().parse(id)
-        const response = await request({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_SECTIONS, id),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-            requestId: requestId,
-        })
-        return validateSection(response.data)
+        return this.sectionClient.updateSection(id, args, requestId)
     }
 
     /**
@@ -1589,16 +847,7 @@ export class TodoistApi {
      * @returns A promise that resolves to `true` if successful.
      */
     async deleteSection(id: string, requestId?: string): Promise<boolean> {
-        z.string().parse(id)
-        const response = await request({
-            httpMethod: 'DELETE',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_SECTIONS, id),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            requestId: requestId,
-        })
-        return isSuccess(response)
+        return this.sectionClient.deleteSection(id, requestId)
     }
 
     /**
@@ -1609,16 +858,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the updated section.
      */
     async archiveSection(id: string, requestId?: string): Promise<Section> {
-        z.string().parse(id)
-        const response = await request<Section>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_SECTIONS, id, SECTION_ARCHIVE),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            requestId: requestId,
-        })
-        return validateSection(response.data)
+        return this.sectionClient.archiveSection(id, requestId)
     }
 
     /**
@@ -1629,16 +869,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the updated section.
      */
     async unarchiveSection(id: string, requestId?: string): Promise<Section> {
-        z.string().parse(id)
-        const response = await request<Section>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_SECTIONS, id, SECTION_UNARCHIVE),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            requestId: requestId,
-        })
-        return validateSection(response.data)
+        return this.sectionClient.unarchiveSection(id, requestId)
     }
 
     /**
@@ -1648,16 +879,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the requested label.
      */
     async getLabel(id: string): Promise<Label> {
-        z.string().parse(id)
-        const response = await request<Label>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_LABELS, id),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-        })
-
-        return validateLabel(response.data)
+        return this.labelClient.getLabel(id)
     }
 
     /**
@@ -1667,21 +889,7 @@ export class TodoistApi {
      * @returns A promise that resolves to an array of labels.
      */
     async getLabels(args: GetLabelsArgs = {}): Promise<GetLabelsResponse> {
-        const {
-            data: { results, nextCursor },
-        } = await request<GetLabelsResponse>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_LABELS,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-        })
-
-        return {
-            results: validateLabelArray(results),
-            nextCursor,
-        }
+        return this.labelClient.getLabels(args)
     }
 
     /**
@@ -1691,21 +899,7 @@ export class TodoistApi {
      * @returns A promise that resolves to a paginated response of labels.
      */
     async searchLabels(args: SearchLabelsArgs): Promise<GetLabelsResponse> {
-        const {
-            data: { results, nextCursor },
-        } = await request<GetLabelsResponse>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_LABELS_SEARCH,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-        })
-
-        return {
-            results: validateLabelArray(results),
-            nextCursor,
-        }
+        return this.labelClient.searchLabels(args)
     }
 
     /**
@@ -1716,17 +910,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the created label.
      */
     async addLabel(args: AddLabelArgs, requestId?: string): Promise<Label> {
-        const response = await request<Label>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_LABELS,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-            requestId: requestId,
-        })
-
-        return validateLabel(response.data)
+        return this.labelClient.addLabel(args, requestId)
     }
 
     /**
@@ -1738,17 +922,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the updated label.
      */
     async updateLabel(id: string, args: UpdateLabelArgs, requestId?: string): Promise<Label> {
-        z.string().parse(id)
-        const response = await request({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_LABELS, id),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-            requestId: requestId,
-        })
-        return validateLabel(response.data)
+        return this.labelClient.updateLabel(id, args, requestId)
     }
 
     /**
@@ -1759,16 +933,7 @@ export class TodoistApi {
      * @returns A promise that resolves to `true` if successful.
      */
     async deleteLabel(id: string, requestId?: string): Promise<boolean> {
-        z.string().parse(id)
-        const response = await request({
-            httpMethod: 'DELETE',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_LABELS, id),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            requestId: requestId,
-        })
-        return isSuccess(response)
+        return this.labelClient.deleteLabel(id, requestId)
     }
 
     /**
@@ -1778,18 +943,7 @@ export class TodoistApi {
      * @returns A promise that resolves to an array of shared labels.
      */
     async getSharedLabels(args?: GetSharedLabelsArgs): Promise<GetSharedLabelsResponse> {
-        const {
-            data: { results, nextCursor },
-        } = await request<GetSharedLabelsResponse>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_LABELS_SHARED,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-        })
-
-        return { results, nextCursor }
+        return this.labelClient.getSharedLabels(args)
     }
 
     /**
@@ -1799,16 +953,7 @@ export class TodoistApi {
      * @returns A promise that resolves to `true` if successful.
      */
     async renameSharedLabel(args: RenameSharedLabelArgs): Promise<boolean> {
-        const response = await request<void>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_LABELS_SHARED_RENAME,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-        })
-
-        return isSuccess(response)
+        return this.labelClient.renameSharedLabel(args)
     }
 
     /**
@@ -1818,16 +963,7 @@ export class TodoistApi {
      * @returns A promise that resolves to `true` if successful.
      */
     async removeSharedLabel(args: RemoveSharedLabelArgs): Promise<boolean> {
-        const response = await request<void>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_LABELS_SHARED_REMOVE,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-        })
-
-        return isSuccess(response)
+        return this.labelClient.removeSharedLabel(args)
     }
 
     /**
@@ -1839,21 +975,7 @@ export class TodoistApi {
     async getComments(
         args: GetTaskCommentsArgs | GetProjectCommentsArgs,
     ): Promise<GetCommentsResponse> {
-        const {
-            data: { results, nextCursor },
-        } = await request<GetCommentsResponse>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_COMMENTS,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-        })
-
-        return {
-            results: validateCommentArray(results),
-            nextCursor,
-        }
+        return this.commentClient.getComments(args)
     }
 
     /**
@@ -1863,16 +985,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the requested comment.
      */
     async getComment(id: string): Promise<Comment> {
-        z.string().parse(id)
-        const response = await request<Comment>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_COMMENTS, id),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-        })
-
-        return validateComment(response.data)
+        return this.commentClient.getComment(id)
     }
 
     /**
@@ -1883,21 +996,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the created comment.
      */
     async addComment(args: AddCommentArgs, requestId?: string): Promise<Comment> {
-        const { uidsToNotify, ...rest } = args
-        const response = await request<Comment>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_COMMENTS,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: {
-                ...rest,
-                ...(uidsToNotify ? { uidsToNotify: uidsToNotify.join(',') } : {}),
-            },
-            requestId: requestId,
-        })
-
-        return validateComment(response.data)
+        return this.commentClient.addComment(args, requestId)
     }
 
     /**
@@ -1909,17 +1008,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the updated comment.
      */
     async updateComment(id: string, args: UpdateCommentArgs, requestId?: string): Promise<Comment> {
-        z.string().parse(id)
-        const response = await request<boolean>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_COMMENTS, id),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-            requestId: requestId,
-        })
-        return validateComment(response.data)
+        return this.commentClient.updateComment(id, args, requestId)
     }
 
     /**
@@ -1930,16 +1019,7 @@ export class TodoistApi {
      * @returns A promise that resolves to `true` if successful.
      */
     async deleteComment(id: string, requestId?: string): Promise<boolean> {
-        z.string().parse(id)
-        const response = await request({
-            httpMethod: 'DELETE',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_COMMENTS, id),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            requestId: requestId,
-        })
-        return isSuccess(response)
+        return this.commentClient.deleteComment(id, requestId)
     }
 
     /**
@@ -1949,20 +1029,7 @@ export class TodoistApi {
      * @returns A promise that resolves to a paginated list of reminders.
      */
     async getReminders(args: GetRemindersArgs = {}): Promise<GetRemindersResponse> {
-        const {
-            data: { results, nextCursor },
-        } = await request<GetRemindersResponse>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_REMINDERS,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-        })
-        return {
-            results: validateReminderArray(results),
-            nextCursor,
-        }
+        return this.reminderClient.getReminders(args)
     }
 
     /**
@@ -1974,20 +1041,7 @@ export class TodoistApi {
     async getLocationReminders(
         args: GetLocationRemindersArgs = {},
     ): Promise<GetLocationRemindersResponse> {
-        const {
-            data: { results, nextCursor },
-        } = await request<GetLocationRemindersResponse>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_LOCATION_REMINDERS,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-        })
-        return {
-            results: validateLocationReminderArray(results),
-            nextCursor,
-        }
+        return this.reminderClient.getLocationReminders(args)
     }
 
     /**
@@ -1997,26 +1051,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the requested reminder.
      */
     async getReminder(id: string): Promise<Reminder> {
-        ReminderIdSchema.parse(id)
-        try {
-            const response = await request<Reminder>({
-                httpMethod: 'GET',
-                baseUri: this.syncApiBase,
-                relativePath: generatePath(ENDPOINT_REST_REMINDERS, id),
-                apiToken: this.authToken,
-                customFetch: this.customFetch,
-            })
-
-            return validateReminder(response.data)
-        } catch (error) {
-            if (!(error instanceof TodoistRequestError) || error.httpStatusCode !== 404) {
-                throw error
-            }
-
-            throw new TodoistArgumentError(
-                `Reminder ${id} was not found on the time-based reminder endpoint. If this is a location reminder, use getLocationReminder instead.`,
-            )
-        }
+        return this.reminderClient.getReminder(id)
     }
 
     /**
@@ -2026,26 +1061,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the requested reminder.
      */
     async getLocationReminder(id: string): Promise<Reminder> {
-        ReminderIdSchema.parse(id)
-        try {
-            const response = await request<Reminder>({
-                httpMethod: 'GET',
-                baseUri: this.syncApiBase,
-                relativePath: generatePath(ENDPOINT_REST_LOCATION_REMINDERS, id),
-                apiToken: this.authToken,
-                customFetch: this.customFetch,
-            })
-
-            return validateReminder(response.data)
-        } catch (error) {
-            if (!(error instanceof TodoistRequestError) || error.httpStatusCode !== 404) {
-                throw error
-            }
-
-            throw new TodoistArgumentError(
-                `Location reminder ${id} was not found on the location reminder endpoint. If this is a time-based reminder, use getReminder instead.`,
-            )
-        }
+        return this.reminderClient.getLocationReminder(id)
     }
 
     /**
@@ -2056,17 +1072,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the created reminder.
      */
     async addReminder(args: AddReminderArgs, requestId?: string): Promise<Reminder> {
-        const response = await request<Reminder>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_REMINDERS,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-            requestId: requestId,
-        })
-
-        return validateReminder(response.data)
+        return this.reminderClient.addReminder(args, requestId)
     }
 
     /**
@@ -2080,20 +1086,7 @@ export class TodoistApi {
         args: AddLocationReminderArgs,
         requestId?: string,
     ): Promise<Reminder> {
-        const response = await request<Reminder>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_LOCATION_REMINDERS,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: {
-                ...args,
-                reminderType: 'location',
-            },
-            requestId: requestId,
-        })
-
-        return validateReminder(response.data)
+        return this.reminderClient.addLocationReminder(args, requestId)
     }
 
     /**
@@ -2109,29 +1102,7 @@ export class TodoistApi {
         args: UpdateReminderArgs,
         requestId?: string,
     ): Promise<Reminder> {
-        ReminderIdSchema.parse(id)
-        const payload = UpdateReminderArgsSchema.parse(args)
-        try {
-            const response = await request<Reminder>({
-                httpMethod: 'POST',
-                baseUri: this.syncApiBase,
-                relativePath: generatePath(ENDPOINT_REST_REMINDERS, id),
-                apiToken: this.authToken,
-                customFetch: this.customFetch,
-                payload,
-                requestId: requestId,
-            })
-
-            return validateReminder(response.data)
-        } catch (error) {
-            if (!(error instanceof TodoistRequestError) || error.httpStatusCode !== 404) {
-                throw error
-            }
-
-            throw new TodoistArgumentError(
-                `Reminder ${id} was not found on the time-based reminder endpoint. If this is a location reminder, use updateLocationReminder instead.`,
-            )
-        }
+        return this.reminderClient.updateReminder(id, args, requestId)
     }
 
     /**
@@ -2147,29 +1118,7 @@ export class TodoistApi {
         args: UpdateLocationReminderArgs,
         requestId?: string,
     ): Promise<Reminder> {
-        ReminderIdSchema.parse(id)
-        const payload = UpdateLocationReminderArgsSchema.parse(args)
-        try {
-            const response = await request<Reminder>({
-                httpMethod: 'POST',
-                baseUri: this.syncApiBase,
-                relativePath: generatePath(ENDPOINT_REST_LOCATION_REMINDERS, id),
-                apiToken: this.authToken,
-                customFetch: this.customFetch,
-                payload,
-                requestId: requestId,
-            })
-
-            return validateReminder(response.data)
-        } catch (error) {
-            if (!(error instanceof TodoistRequestError) || error.httpStatusCode !== 404) {
-                throw error
-            }
-
-            throw new TodoistArgumentError(
-                `Location reminder ${id} was not found on the location reminder endpoint. If this is a time-based reminder, use updateReminder instead.`,
-            )
-        }
+        return this.reminderClient.updateLocationReminder(id, args, requestId)
     }
 
     /**
@@ -2180,26 +1129,7 @@ export class TodoistApi {
      * @returns A promise that resolves to `true` if successful.
      */
     async deleteReminder(id: string, requestId?: string): Promise<boolean> {
-        ReminderIdSchema.parse(id)
-        try {
-            const response = await request({
-                httpMethod: 'DELETE',
-                baseUri: this.syncApiBase,
-                relativePath: generatePath(ENDPOINT_REST_REMINDERS, id),
-                apiToken: this.authToken,
-                customFetch: this.customFetch,
-                requestId: requestId,
-            })
-            return isSuccess(response)
-        } catch (error) {
-            if (!(error instanceof TodoistRequestError) || error.httpStatusCode !== 404) {
-                throw error
-            }
-
-            throw new TodoistArgumentError(
-                `Reminder ${id} was not found on the time-based reminder endpoint. If this is a location reminder, use deleteLocationReminder instead.`,
-            )
-        }
+        return this.reminderClient.deleteReminder(id, requestId)
     }
 
     /**
@@ -2210,26 +1140,7 @@ export class TodoistApi {
      * @returns A promise that resolves to `true` if successful.
      */
     async deleteLocationReminder(id: string, requestId?: string): Promise<boolean> {
-        ReminderIdSchema.parse(id)
-        try {
-            const response = await request({
-                httpMethod: 'DELETE',
-                baseUri: this.syncApiBase,
-                relativePath: generatePath(ENDPOINT_REST_LOCATION_REMINDERS, id),
-                apiToken: this.authToken,
-                customFetch: this.customFetch,
-                requestId: requestId,
-            })
-            return isSuccess(response)
-        } catch (error) {
-            if (!(error instanceof TodoistRequestError) || error.httpStatusCode !== 404) {
-                throw error
-            }
-
-            throw new TodoistArgumentError(
-                `Location reminder ${id} was not found on the location reminder endpoint. If this is a time-based reminder, use deleteReminder instead.`,
-            )
-        }
+        return this.reminderClient.deleteLocationReminder(id, requestId)
     }
 
     /**
@@ -2238,14 +1149,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the productivity stats.
      */
     async getProductivityStats(): Promise<ProductivityStats> {
-        const response = await request<ProductivityStats>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_PRODUCTIVITY,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-        })
-        return validateProductivityStats(response.data)
+        return this.productivityClient.getProductivityStats()
     }
 
     /**
@@ -2255,63 +1159,7 @@ export class TodoistApi {
      * @returns A promise that resolves to a paginated response of activity events.
      */
     async getActivityLogs(args: GetActivityLogsArgs = {}): Promise<GetActivityLogsResponse> {
-        // Convert Date objects to YYYY-MM-DD strings
-        const dateFrom =
-            args.dateFrom instanceof Date ? formatDateToYYYYMMDD(args.dateFrom) : args.dateFrom
-        const dateTo = args.dateTo instanceof Date ? formatDateToYYYYMMDD(args.dateTo) : args.dateTo
-
-        // Destructure out raw date, filter-type, and removed legacy fields so they don't leak into payload
-        const {
-            dateFrom: _dateFrom,
-            dateTo: _dateTo,
-            objectEventTypes,
-            objectType: _objectType,
-            eventType: _eventType,
-            since: _since,
-            until: _until,
-            ...rest
-        } = args as GetActivityLogsArgs & Record<string, unknown>
-
-        // Build normalized objectEventTypes for the API
-        let normalizedObjectEventTypes: string[] | undefined
-        if (objectEventTypes !== undefined) {
-            const arr = Array.isArray(objectEventTypes) ? objectEventTypes : [objectEventTypes]
-            normalizedObjectEventTypes = arr.map(normalizeObjectEventTypeForApi)
-        }
-
-        const processedArgs = {
-            ...rest,
-            ...(dateFrom !== undefined ? { dateFrom } : {}),
-            ...(dateTo !== undefined ? { dateTo } : {}),
-            ...(normalizedObjectEventTypes !== undefined
-                ? { objectEventTypes: normalizedObjectEventTypes }
-                : {}),
-        }
-
-        const {
-            data: { results, nextCursor },
-        } = await request<GetActivityLogsResponse>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_ACTIVITIES,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: processedArgs as Record<string, unknown>,
-        })
-
-        // Convert legacy API object types back to modern SDK types
-        const normalizedResults = results.map((event) => {
-            const normalizedType = denormalizeObjectTypeFromApi(event.objectType)
-            return {
-                ...event,
-                objectType: normalizedType || event.objectType,
-            }
-        }) as unknown[]
-
-        return {
-            results: validateActivityEventArray(normalizedResults),
-            nextCursor,
-        }
+        return this.activityClient.getActivityLogs(args)
     }
 
     /**
@@ -2352,23 +1200,7 @@ export class TodoistApi {
      * ```
      */
     async uploadFile(args: UploadFileArgs, requestId?: string): Promise<Attachment> {
-        const additionalFields: Record<string, string | number | boolean> = {}
-        if (args.projectId) {
-            additionalFields.project_id = args.projectId
-        }
-
-        const data = await uploadMultipartFile<Attachment>({
-            baseUrl: this.syncApiBase,
-            authToken: this.authToken,
-            endpoint: ENDPOINT_REST_UPLOADS,
-            file: args.file,
-            fileName: args.fileName,
-            additionalFields: additionalFields,
-            requestId: requestId,
-            customFetch: this.customFetch,
-        })
-
-        return validateAttachment(data)
+        return this.uploadClient.uploadFile(args, requestId)
     }
 
     /**
@@ -2386,16 +1218,7 @@ export class TodoistApi {
      * ```
      */
     async deleteUpload(args: DeleteUploadArgs, requestId?: string): Promise<boolean> {
-        const response = await request({
-            httpMethod: 'DELETE',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_UPLOADS,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-            requestId: requestId,
-        })
-        return isSuccess(response)
+        return this.uploadClient.deleteUpload(args, requestId)
     }
 
     /**
@@ -2423,67 +1246,7 @@ export class TodoistApi {
      * ```
      */
     async viewAttachment(commentOrUrl: Comment | string): Promise<FileResponse> {
-        let fileUrl: string
-
-        if (typeof commentOrUrl === 'string') {
-            fileUrl = commentOrUrl
-        } else {
-            if (!commentOrUrl.fileAttachment?.fileUrl) {
-                throw new Error('Comment does not have a file attachment')
-            }
-            fileUrl = commentOrUrl.fileAttachment.fileUrl
-        }
-
-        // Validate the URL belongs to Todoist to prevent leaking the auth token
-        const urlHostname = new URL(fileUrl).hostname
-        if (!urlHostname.endsWith('.todoist.com')) {
-            throw new Error('Attachment URLs must be on a todoist.com domain')
-        }
-
-        const fetchOptions: RequestInit = {
-            method: 'GET',
-            headers: { Authorization: `Bearer ${this.authToken}` },
-        }
-
-        if (this.customFetch) {
-            const response = await this.customFetch(fileUrl, fetchOptions)
-
-            if (!response.ok) {
-                throw new Error(
-                    `Failed to fetch attachment: ${response.status} ${response.statusText}`,
-                )
-            }
-
-            // Convert text to ArrayBuffer for custom fetch implementations that lack arrayBuffer()
-            const text = await response.text()
-            const buffer = new TextEncoder().encode(text).buffer
-
-            return {
-                ok: response.ok,
-                status: response.status,
-                statusText: response.statusText,
-                headers: response.headers,
-                text: () => Promise.resolve(text),
-                json: () => response.json(),
-                arrayBuffer: () => Promise.resolve(buffer),
-            }
-        }
-
-        const response = await fetch(fileUrl, fetchOptions)
-
-        if (!response.ok) {
-            throw new Error(`Failed to fetch attachment: ${response.status} ${response.statusText}`)
-        }
-
-        return {
-            ok: response.ok,
-            status: response.status,
-            statusText: response.statusText,
-            headers: headersToRecord(response.headers),
-            text: () => response.text(),
-            json: () => response.json(),
-            arrayBuffer: () => response.arrayBuffer(),
-        }
+        return this.uploadClient.viewAttachment(commentOrUrl)
     }
 
     // ── Folders ──
@@ -2495,21 +1258,7 @@ export class TodoistApi {
      * @returns A promise that resolves to a paginated response of folders.
      */
     async getFolders(args: GetFoldersArgs): Promise<GetFoldersResponse> {
-        const {
-            data: { results, nextCursor },
-        } = await request<GetFoldersResponse>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_FOLDERS,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-        })
-
-        return {
-            results: validateFolderArray(results),
-            nextCursor,
-        }
+        return this.folderClient.getFolders(args)
     }
 
     /**
@@ -2519,16 +1268,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the requested folder.
      */
     async getFolder(id: string): Promise<Folder> {
-        z.string().parse(id)
-        const response = await request<Folder>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_FOLDERS, id),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-        })
-
-        return validateFolder(response.data)
+        return this.folderClient.getFolder(id)
     }
 
     /**
@@ -2539,17 +1279,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the created folder.
      */
     async addFolder(args: AddFolderArgs, requestId?: string): Promise<Folder> {
-        const response = await request<Folder>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_FOLDERS,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-            requestId: requestId,
-        })
-
-        return validateFolder(response.data)
+        return this.folderClient.addFolder(args, requestId)
     }
 
     /**
@@ -2561,18 +1291,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the updated folder.
      */
     async updateFolder(id: string, args: UpdateFolderArgs, requestId?: string): Promise<Folder> {
-        z.string().parse(id)
-        const response = await request<Folder>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_FOLDERS, id),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-            requestId: requestId,
-        })
-
-        return validateFolder(response.data)
+        return this.folderClient.updateFolder(id, args, requestId)
     }
 
     /**
@@ -2583,16 +1302,7 @@ export class TodoistApi {
      * @returns A promise that resolves to `true` if successful.
      */
     async deleteFolder(id: string, requestId?: string): Promise<boolean> {
-        z.string().parse(id)
-        const response = await request({
-            httpMethod: 'DELETE',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_FOLDERS, id),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            requestId: requestId,
-        })
-        return isSuccess(response)
+        return this.folderClient.deleteFolder(id, requestId)
     }
 
     // ── Goals ──
@@ -2750,15 +1460,7 @@ export class TodoistApi {
      * @returns A promise that resolves to an array of backups.
      */
     async getBackups(args: GetBackupsArgs = {}): Promise<Backup[]> {
-        const response = await request<unknown[]>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_BACKUPS,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-        })
-        return validateBackupArray(response.data)
+        return this.backupClient.getBackups(args)
     }
 
     /**
@@ -2768,44 +1470,7 @@ export class TodoistApi {
      * @returns A promise that resolves to a response with binary data accessible via arrayBuffer().
      */
     async downloadBackup(args: DownloadBackupArgs): Promise<FileResponse> {
-        const url = `${this.syncApiBase}${ENDPOINT_REST_BACKUPS_DOWNLOAD}?file=${encodeURIComponent(args.file)}`
-        const fetchOptions = {
-            headers: { Authorization: `Bearer ${this.authToken}` },
-        }
-
-        if (this.customFetch) {
-            const response = await this.customFetch(url, fetchOptions)
-            if (!response.ok) {
-                throw new Error(
-                    `Failed to download backup: ${response.status} ${response.statusText}`,
-                )
-            }
-            const text = await response.text()
-            const buffer = new TextEncoder().encode(text).buffer
-            return {
-                ok: response.ok,
-                status: response.status,
-                statusText: response.statusText,
-                headers: response.headers,
-                text: () => Promise.resolve(text),
-                json: () => response.json(),
-                arrayBuffer: () => Promise.resolve(buffer),
-            }
-        }
-
-        const response = await fetch(url, fetchOptions)
-        if (!response.ok) {
-            throw new Error(`Failed to download backup: ${response.status} ${response.statusText}`)
-        }
-        return {
-            ok: response.ok,
-            status: response.status,
-            statusText: response.statusText,
-            headers: headersToRecord(response.headers),
-            text: () => response.text(),
-            json: () => response.json(),
-            arrayBuffer: () => response.arrayBuffer(),
-        }
+        return this.backupClient.downloadBackup(args)
     }
 
     // ── Emails ──
@@ -2821,16 +1486,7 @@ export class TodoistApi {
         args: GetOrCreateEmailArgs,
         requestId?: string,
     ): Promise<GetOrCreateEmailResponse> {
-        const { data } = await request<GetOrCreateEmailResponse>({
-            httpMethod: 'PUT',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_EMAILS,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-            requestId: requestId,
-        })
-        return data
+        return this.emailClient.getOrCreateEmailForwarding(args, requestId)
     }
 
     /**
@@ -2841,19 +1497,7 @@ export class TodoistApi {
      * @returns A promise that resolves to `true` if successful.
      */
     async disableEmailForwarding(args: DisableEmailArgs, requestId?: string): Promise<boolean> {
-        const queryParams = new URLSearchParams({
-            obj_type: args.objType,
-            obj_id: args.objId,
-        })
-        const response = await request({
-            httpMethod: 'DELETE',
-            baseUri: this.syncApiBase,
-            relativePath: `${ENDPOINT_REST_EMAILS}?${queryParams.toString()}`,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            requestId: requestId,
-        })
-        return isSuccess(response)
+        return this.emailClient.disableEmailForwarding(args, requestId)
     }
 
     // ── ID Mappings ──
@@ -2865,18 +1509,7 @@ export class TodoistApi {
      * @returns A promise that resolves to an array of ID mappings.
      */
     async getIdMappings(args: GetIdMappingsArgs): Promise<IdMapping[]> {
-        const response = await request<unknown[]>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(
-                ENDPOINT_REST_ID_MAPPINGS,
-                args.objName,
-                args.objIds.join(','),
-            ),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-        })
-        return validateIdMappingArray(response.data)
+        return this.idMappingClient.getIdMappings(args)
     }
 
     /**
@@ -2886,15 +1519,7 @@ export class TodoistApi {
      * @returns A promise that resolves to an array of moved ID pairs.
      */
     async getMovedIds(args: GetMovedIdsArgs): Promise<MovedId[]> {
-        const response = await request<unknown[]>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_MOVED_IDS, args.objName),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args.oldIds ? { oldIds: args.oldIds.join(',') } : undefined,
-        })
-        return validateMovedIdArray(response.data)
+        return this.idMappingClient.getMovedIds(args)
     }
 
     // ── Templates ──
@@ -2906,15 +1531,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the template file content as a string.
      */
     async exportTemplateAsFile(args: ExportTemplateFileArgs): Promise<string> {
-        const response = await request<string>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_TEMPLATES_FILE,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-        })
-        return response.data
+        return this.templateClient.exportTemplateAsFile(args)
     }
 
     /**
@@ -2924,15 +1541,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the file name and URL.
      */
     async exportTemplateAsUrl(args: ExportTemplateUrlArgs): Promise<ExportTemplateUrlResponse> {
-        const { data } = await request<ExportTemplateUrlResponse>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_TEMPLATES_URL,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-        })
-        return data
+        return this.templateClient.exportTemplateAsUrl(args)
     }
 
     /**
@@ -2946,25 +1555,7 @@ export class TodoistApi {
         args: CreateProjectFromTemplateArgs,
         requestId?: string,
     ): Promise<CreateProjectFromTemplateResponse> {
-        const { file, fileName, name, workspaceId } = args
-        const additionalFields: Record<string, string> = { name }
-        if (workspaceId !== undefined && workspaceId !== null) {
-            additionalFields.workspace_id = workspaceId
-        }
-
-        const data = await uploadMultipartFile<Record<string, unknown>>({
-            baseUrl: this.syncApiBase,
-            authToken: this.authToken,
-            endpoint: ENDPOINT_REST_TEMPLATES_CREATE_FROM_FILE,
-            file,
-            fileName,
-            additionalFields,
-            customFetch: this.customFetch,
-            requestId,
-        })
-        return this.validateTemplateResponse(
-            camelCaseKeys(data),
-        ) as CreateProjectFromTemplateResponse
+        return this.templateClient.createProjectFromTemplate(args, requestId)
     }
 
     /**
@@ -2978,18 +1569,7 @@ export class TodoistApi {
         args: ImportTemplateIntoProjectArgs,
         requestId?: string,
     ): Promise<ImportTemplateResponse> {
-        const { file, fileName, projectId } = args
-        const data = await uploadMultipartFile<Record<string, unknown>>({
-            baseUrl: this.syncApiBase,
-            authToken: this.authToken,
-            endpoint: ENDPOINT_REST_TEMPLATES_IMPORT_FROM_FILE,
-            file,
-            fileName,
-            additionalFields: { project_id: projectId },
-            customFetch: this.customFetch,
-            requestId,
-        })
-        return this.validateTemplateResponse(camelCaseKeys(data)) as ImportTemplateResponse
+        return this.templateClient.importTemplateIntoProject(args, requestId)
     }
 
     /**
@@ -3003,26 +1583,7 @@ export class TodoistApi {
         args: ImportTemplateFromIdArgs,
         requestId?: string,
     ): Promise<ImportTemplateResponse> {
-        const { data } = await request<Record<string, unknown>>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_TEMPLATES_IMPORT_FROM_ID,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-            requestId: requestId,
-        })
-        return this.validateTemplateResponse(data) as ImportTemplateResponse
-    }
-
-    private validateTemplateResponse(data: Record<string, unknown>) {
-        return {
-            ...data,
-            projects: validateProjectArray((data.projects as unknown[]) ?? []),
-            sections: validateSectionArray((data.sections as unknown[]) ?? []),
-            tasks: validateTaskArray((data.tasks as unknown[]) ?? []),
-            comments: validateCommentArray((data.comments as unknown[]) ?? []),
-        }
+        return this.templateClient.importTemplateFromId(args, requestId)
     }
 
     /* Workspace methods */
@@ -3038,17 +1599,7 @@ export class TodoistApi {
         args: GetWorkspaceInvitationsArgs,
         requestId?: string,
     ): Promise<WorkspaceInvitationsResponse> {
-        const response = await request<WorkspaceInvitationsResponse>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_WORKSPACE_INVITATIONS,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: { workspace_id: args.workspaceId },
-            requestId: requestId,
-        })
-
-        return response.data
+        return this.workspaceClient.getWorkspaceInvitations(args, requestId)
     }
 
     /**
@@ -3061,22 +1612,7 @@ export class TodoistApi {
         args: { workspaceId?: string } = {},
         requestId?: string,
     ): Promise<AllWorkspaceInvitationsResponse> {
-        const queryParams: Record<string, string> = {}
-        if (args.workspaceId) {
-            queryParams.workspace_id = args.workspaceId
-        }
-
-        const response = await request<AllWorkspaceInvitationsResponse>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_WORKSPACE_INVITATIONS_ALL,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: queryParams,
-            requestId: requestId,
-        })
-
-        return validateWorkspaceInvitationArray(response.data)
+        return this.workspaceClient.getAllWorkspaceInvitations(args, requestId)
     }
 
     /**
@@ -3090,20 +1626,7 @@ export class TodoistApi {
         args: DeleteWorkspaceInvitationArgs,
         requestId?: string,
     ): Promise<WorkspaceInvitation> {
-        const response = await request<WorkspaceInvitation>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_WORKSPACE_INVITATIONS_DELETE,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: {
-                workspace_id: args.workspaceId,
-                user_email: args.userEmail,
-            },
-            requestId: requestId,
-        })
-
-        return validateWorkspaceInvitation(response.data)
+        return this.workspaceClient.deleteWorkspaceInvitation(args, requestId)
     }
 
     /**
@@ -3117,16 +1640,7 @@ export class TodoistApi {
         args: WorkspaceInvitationActionArgs,
         requestId?: string,
     ): Promise<WorkspaceInvitation> {
-        const response = await request<WorkspaceInvitation>({
-            httpMethod: 'PUT',
-            baseUri: this.syncApiBase,
-            relativePath: getWorkspaceInvitationAcceptEndpoint(args.inviteCode),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            requestId: requestId,
-        })
-
-        return validateWorkspaceInvitation(response.data)
+        return this.workspaceClient.acceptWorkspaceInvitation(args, requestId)
     }
 
     /**
@@ -3140,16 +1654,7 @@ export class TodoistApi {
         args: WorkspaceInvitationActionArgs,
         requestId?: string,
     ): Promise<WorkspaceInvitation> {
-        const response = await request<WorkspaceInvitation>({
-            httpMethod: 'PUT',
-            baseUri: this.syncApiBase,
-            relativePath: getWorkspaceInvitationRejectEndpoint(args.inviteCode),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            requestId: requestId,
-        })
-
-        return validateWorkspaceInvitation(response.data)
+        return this.workspaceClient.rejectWorkspaceInvitation(args, requestId)
     }
 
     /**
@@ -3160,20 +1665,7 @@ export class TodoistApi {
      * @returns Workspace user information.
      */
     async joinWorkspace(args: JoinWorkspaceArgs, requestId?: string): Promise<JoinWorkspaceResult> {
-        const response = await request<JoinWorkspaceResult>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_WORKSPACE_JOIN,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: {
-                invite_code: args.inviteCode,
-                workspace_id: args.workspaceId,
-            },
-            requestId: requestId,
-        })
-
-        return validateJoinWorkspaceResult(response.data)
+        return this.workspaceClient.joinWorkspace(args, requestId)
     }
 
     /**
@@ -3187,49 +1679,7 @@ export class TodoistApi {
         args: WorkspaceLogoArgs,
         requestId?: string,
     ): Promise<WorkspaceLogoResponse> {
-        if (args.delete) {
-            // Delete logo
-            const data = await uploadMultipartFile<WorkspaceLogoResponse>({
-                baseUrl: this.syncApiBase,
-                authToken: this.authToken,
-                endpoint: ENDPOINT_WORKSPACE_LOGO,
-                file: Buffer.alloc(0), // Empty buffer for delete
-                fileName: 'delete',
-                additionalFields: {
-                    workspace_id: args.workspaceId,
-                    delete: true,
-                },
-                requestId: requestId,
-                customFetch: this.customFetch,
-            })
-            return data
-        }
-
-        if (!args.file) {
-            throw new Error('file is required when not deleting logo')
-        }
-
-        // Validate buffer is not empty if it's a Buffer
-        if (Buffer.isBuffer(args.file) && args.file.length === 0) {
-            throw new Error('Cannot upload empty image file')
-        }
-
-        const additionalFields: Record<string, string | number | boolean> = {
-            workspace_id: args.workspaceId,
-        }
-
-        const data = await uploadMultipartFile<WorkspaceLogoResponse>({
-            baseUrl: this.syncApiBase,
-            authToken: this.authToken,
-            endpoint: ENDPOINT_WORKSPACE_LOGO,
-            file: args.file,
-            fileName: args.fileName,
-            additionalFields: additionalFields,
-            requestId: requestId,
-            customFetch: this.customFetch,
-        })
-
-        return data
+        return this.workspaceClient.uploadWorkspaceLogo(args, requestId)
     }
 
     /**
@@ -3243,17 +1693,7 @@ export class TodoistApi {
         args: GetWorkspacePlanDetailsArgs,
         requestId?: string,
     ): Promise<WorkspacePlanDetails> {
-        const response = await request<WorkspacePlanDetails>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_WORKSPACE_PLAN_DETAILS,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: { workspace_id: args.workspaceId },
-            requestId: requestId,
-        })
-
-        return validateWorkspacePlanDetails(response.data)
+        return this.workspaceClient.getWorkspacePlanDetails(args, requestId)
     }
 
     /**
@@ -3267,36 +1707,7 @@ export class TodoistApi {
         args: GetWorkspaceUsersArgs = {},
         requestId?: string,
     ): Promise<GetWorkspaceUsersResponse> {
-        const queryParams: Record<string, string | number> = {}
-        if (args.workspaceId !== undefined && args.workspaceId !== null) {
-            queryParams.workspace_id = args.workspaceId
-        }
-        if (args.cursor) {
-            queryParams.cursor = args.cursor
-        }
-        if (args.limit) {
-            queryParams.limit = args.limit
-        }
-
-        const response = await request<{
-            hasMore: boolean
-            nextCursor?: string
-            workspaceUsers: WorkspaceUser[]
-        }>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_WORKSPACE_USERS,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: queryParams,
-            requestId: requestId,
-        })
-
-        return {
-            hasMore: response.data.hasMore || false,
-            nextCursor: response.data.nextCursor,
-            workspaceUsers: validateWorkspaceUserArray(response.data.workspaceUsers || []),
-        }
+        return this.workspaceClient.getWorkspaceUsers(args, requestId)
     }
 
     /**
@@ -3314,15 +1725,7 @@ export class TodoistApi {
      * ```
      */
     async getWorkspaces(requestId?: string): Promise<Workspace[]> {
-        const response = await request<unknown[]>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_WORKSPACES,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            requestId: requestId,
-        })
-        return validateWorkspaceArray(response.data)
+        return this.workspaceClient.getWorkspaces(requestId)
     }
 
     /**
@@ -3333,16 +1736,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the requested workspace.
      */
     async getWorkspace(id: string, requestId?: string): Promise<Workspace> {
-        z.string().parse(id)
-        const response = await request<Workspace>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_WORKSPACES, id),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            requestId: requestId,
-        })
-        return validateWorkspace(response.data)
+        return this.workspaceClient.getWorkspace(id, requestId)
     }
 
     /**
@@ -3353,16 +1747,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the created workspace.
      */
     async addWorkspace(args: AddWorkspaceArgs, requestId?: string): Promise<Workspace> {
-        const response = await request<Workspace>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_WORKSPACES,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-            requestId: requestId,
-        })
-        return validateWorkspace(response.data)
+        return this.workspaceClient.addWorkspace(args, requestId)
     }
 
     /**
@@ -3378,17 +1763,7 @@ export class TodoistApi {
         args: UpdateWorkspaceArgs,
         requestId?: string,
     ): Promise<Workspace> {
-        z.string().parse(id)
-        const response = await request<Workspace>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_WORKSPACES, id),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-            requestId: requestId,
-        })
-        return validateWorkspace(response.data)
+        return this.workspaceClient.updateWorkspace(id, args, requestId)
     }
 
     /**
@@ -3399,16 +1774,7 @@ export class TodoistApi {
      * @returns A promise that resolves to `true` if successful.
      */
     async deleteWorkspace(id: string, requestId?: string): Promise<boolean> {
-        z.string().parse(id)
-        const response = await request({
-            httpMethod: 'DELETE',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_WORKSPACES, id),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            requestId: requestId,
-        })
-        return isSuccess(response)
+        return this.workspaceClient.deleteWorkspace(id, requestId)
     }
 
     /**
@@ -3422,19 +1788,7 @@ export class TodoistApi {
         args: GetWorkspaceMembersActivityArgs,
         requestId?: string,
     ): Promise<GetWorkspaceMembersActivityResponse> {
-        const { workspaceId, ...queryParams } = args
-        const { data } = await request<{ members: unknown[] }>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_WORKSPACE_MEMBERS,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: { workspaceId, ...queryParams },
-            requestId: requestId,
-        })
-        return {
-            members: validateMemberActivityInfoArray(data.members),
-        }
+        return this.workspaceClient.getWorkspaceMembersActivity(args, requestId)
     }
 
     /**
@@ -3448,19 +1802,7 @@ export class TodoistApi {
         args: GetWorkspaceUserTasksArgs,
         requestId?: string,
     ): Promise<GetWorkspaceUserTasksResponse> {
-        const { workspaceId, userId, ...queryParams } = args
-        const { data } = await request<{ tasks: unknown[] }>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: getWorkspaceUserTasksEndpoint(workspaceId, userId),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: queryParams,
-            requestId: requestId,
-        })
-        return {
-            tasks: validateWorkspaceUserTaskArray(data.tasks),
-        }
+        return this.workspaceClient.getWorkspaceUserTasks(args, requestId)
     }
 
     /**
@@ -3474,17 +1816,7 @@ export class TodoistApi {
         args: InviteWorkspaceUsersArgs,
         requestId?: string,
     ): Promise<InviteWorkspaceUsersResponse> {
-        const { workspaceId, ...payload } = args
-        const { data } = await request<InviteWorkspaceUsersResponse>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: getWorkspaceInviteUsersEndpoint(workspaceId),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: payload,
-            requestId: requestId,
-        })
-        return data
+        return this.workspaceClient.inviteWorkspaceUsers(args, requestId)
     }
 
     /**
@@ -3498,17 +1830,7 @@ export class TodoistApi {
         args: UpdateWorkspaceUserArgs,
         requestId?: string,
     ): Promise<JoinWorkspaceResult> {
-        const { workspaceId, userId, ...payload } = args
-        const response = await request<JoinWorkspaceResult>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: getWorkspaceUserEndpoint(workspaceId, userId),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: payload,
-            requestId: requestId,
-        })
-        return validateJoinWorkspaceResult(response.data)
+        return this.workspaceClient.updateWorkspaceUser(args, requestId)
     }
 
     /**
@@ -3519,16 +1841,7 @@ export class TodoistApi {
      * @returns A promise that resolves to `true` if successful.
      */
     async removeWorkspaceUser(args: RemoveWorkspaceUserArgs, requestId?: string): Promise<boolean> {
-        const { workspaceId, userId } = args
-        const response = await request({
-            httpMethod: 'DELETE',
-            baseUri: this.syncApiBase,
-            relativePath: getWorkspaceUserEndpoint(workspaceId, userId),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            requestId: requestId,
-        })
-        return isSuccess(response)
+        return this.workspaceClient.removeWorkspaceUser(args, requestId)
     }
 
     /**
@@ -3542,35 +1855,7 @@ export class TodoistApi {
         args: GetWorkspaceProjectsArgs,
         requestId?: string,
     ): Promise<GetProjectsResponse> {
-        const queryParams: Record<string, string | number> = {}
-        if (args.cursor) {
-            queryParams.cursor = args.cursor
-        }
-        if (args.limit) {
-            queryParams.limit = args.limit
-        }
-
-        const response = await request<GetProjectsResponse>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: getWorkspaceActiveProjectsEndpoint(args.workspaceId),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: queryParams,
-            requestId: requestId,
-        })
-
-        // oxlint-disable-next-line no-unsafe-assignment, no-unsafe-call, no-unsafe-member-access
-        const validatedProjects = response.data.results?.map((project: unknown) =>
-            validateProject(project),
-        )
-
-        return {
-            // oxlint-disable-next-line no-unsafe-assignment
-            ...response.data,
-            // oxlint-disable-next-line no-unsafe-assignment
-            results: validatedProjects || [],
-        } as GetProjectsResponse
+        return this.workspaceClient.getWorkspaceActiveProjects(args, requestId)
     }
 
     /**
@@ -3584,34 +1869,6 @@ export class TodoistApi {
         args: GetWorkspaceProjectsArgs,
         requestId?: string,
     ): Promise<GetProjectsResponse> {
-        const queryParams: Record<string, string | number> = {}
-        if (args.cursor) {
-            queryParams.cursor = args.cursor
-        }
-        if (args.limit) {
-            queryParams.limit = args.limit
-        }
-
-        const response = await request<GetProjectsResponse>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: getWorkspaceArchivedProjectsEndpoint(args.workspaceId),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: queryParams,
-            requestId: requestId,
-        })
-
-        // oxlint-disable-next-line no-unsafe-assignment, no-unsafe-call, no-unsafe-member-access
-        const validatedProjects = response.data.results?.map((project: unknown) =>
-            validateProject(project),
-        )
-
-        return {
-            // oxlint-disable-next-line no-unsafe-assignment
-            ...response.data,
-            // oxlint-disable-next-line no-unsafe-assignment
-            results: validatedProjects || [],
-        } as GetProjectsResponse
+        return this.workspaceClient.getWorkspaceArchivedProjects(args, requestId)
     }
 }
