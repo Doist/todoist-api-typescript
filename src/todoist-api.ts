@@ -1,4 +1,3 @@
-import { z } from 'zod'
 import { ActivityClient } from './clients/activity-client'
 import { BackupClient } from './clients/backup-client'
 import { CommentClient } from './clients/comment-client'
@@ -14,27 +13,9 @@ import { SectionClient } from './clients/section-client'
 import { TaskClient } from './clients/task-client'
 import { TemplateClient } from './clients/template-client'
 import { UploadClient } from './clients/upload-client'
-import {
-    getSyncBaseUri,
-    ENDPOINT_REST_USER,
-    ENDPOINT_REST_WORKSPACES,
-    ENDPOINT_WORKSPACE_MEMBERS,
-    getWorkspaceUserTasksEndpoint,
-    getWorkspaceInviteUsersEndpoint,
-    getWorkspaceUserEndpoint,
-    ENDPOINT_WORKSPACE_INVITATIONS,
-    ENDPOINT_WORKSPACE_INVITATIONS_ALL,
-    ENDPOINT_WORKSPACE_INVITATIONS_DELETE,
-    getWorkspaceInvitationAcceptEndpoint,
-    getWorkspaceInvitationRejectEndpoint,
-    ENDPOINT_WORKSPACE_JOIN,
-    ENDPOINT_WORKSPACE_LOGO,
-    ENDPOINT_WORKSPACE_PLAN_DETAILS,
-    ENDPOINT_WORKSPACE_USERS,
-    getWorkspaceActiveProjectsEndpoint,
-    getWorkspaceArchivedProjectsEndpoint,
-} from './consts/endpoints'
-import { request, isSuccess } from './transport/http-client'
+import { WorkspaceClient } from './clients/workspace-client'
+import { ENDPOINT_REST_USER, getSyncBaseUri } from './consts/endpoints'
+import { request } from './transport/http-client'
 import { performSyncRequest } from './transport/sync-request'
 import type { Reminder } from './types'
 import { GetActivityLogsArgs, GetActivityLogsResponse } from './types/activity'
@@ -148,7 +129,6 @@ import {
 import { UploadFileArgs, DeleteUploadArgs } from './types/uploads'
 import { CurrentUser } from './types/users'
 import {
-    WorkspaceUser,
     WorkspaceInvitation,
     WorkspacePlanDetails,
     JoinWorkspaceResult,
@@ -176,21 +156,7 @@ import {
     AllWorkspaceInvitationsResponse,
     WorkspaceLogoResponse,
 } from './types/workspaces'
-import { uploadMultipartFile } from './utils/multipart-upload'
-import { generatePath } from './utils/request-helpers'
-import {
-    validateCurrentUser,
-    validateProject,
-    validateWorkspaceUserArray,
-    validateWorkspaceInvitation,
-    validateWorkspaceInvitationArray,
-    validateWorkspacePlanDetails,
-    validateJoinWorkspaceResult,
-    validateWorkspace,
-    validateWorkspaceArray,
-    validateMemberActivityInfoArray,
-    validateWorkspaceUserTaskArray,
-} from './utils/validators'
+import { validateCurrentUser } from './utils/validators'
 
 import { type SyncResponse, type SyncRequest } from './types/sync'
 
@@ -253,6 +219,7 @@ export class TodoistApi {
     private readonly idMappingClient: IdMappingClient
     private readonly activityClient: ActivityClient
     private readonly productivityClient: ProductivityClient
+    private readonly workspaceClient: WorkspaceClient
 
     constructor(
         /**
@@ -294,6 +261,7 @@ export class TodoistApi {
         this.idMappingClient = new IdMappingClient(clientDeps)
         this.activityClient = new ActivityClient(clientDeps)
         this.productivityClient = new ProductivityClient(clientDeps)
+        this.workspaceClient = new WorkspaceClient(clientDeps)
     }
 
     /**
@@ -1466,17 +1434,7 @@ export class TodoistApi {
         args: GetWorkspaceInvitationsArgs,
         requestId?: string,
     ): Promise<WorkspaceInvitationsResponse> {
-        const response = await request<WorkspaceInvitationsResponse>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_WORKSPACE_INVITATIONS,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: { workspace_id: args.workspaceId },
-            requestId: requestId,
-        })
-
-        return response.data
+        return this.workspaceClient.getWorkspaceInvitations(args, requestId)
     }
 
     /**
@@ -1489,22 +1447,7 @@ export class TodoistApi {
         args: { workspaceId?: string } = {},
         requestId?: string,
     ): Promise<AllWorkspaceInvitationsResponse> {
-        const queryParams: Record<string, string> = {}
-        if (args.workspaceId) {
-            queryParams.workspace_id = args.workspaceId
-        }
-
-        const response = await request<AllWorkspaceInvitationsResponse>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_WORKSPACE_INVITATIONS_ALL,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: queryParams,
-            requestId: requestId,
-        })
-
-        return validateWorkspaceInvitationArray(response.data)
+        return this.workspaceClient.getAllWorkspaceInvitations(args, requestId)
     }
 
     /**
@@ -1518,20 +1461,7 @@ export class TodoistApi {
         args: DeleteWorkspaceInvitationArgs,
         requestId?: string,
     ): Promise<WorkspaceInvitation> {
-        const response = await request<WorkspaceInvitation>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_WORKSPACE_INVITATIONS_DELETE,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: {
-                workspace_id: args.workspaceId,
-                user_email: args.userEmail,
-            },
-            requestId: requestId,
-        })
-
-        return validateWorkspaceInvitation(response.data)
+        return this.workspaceClient.deleteWorkspaceInvitation(args, requestId)
     }
 
     /**
@@ -1545,16 +1475,7 @@ export class TodoistApi {
         args: WorkspaceInvitationActionArgs,
         requestId?: string,
     ): Promise<WorkspaceInvitation> {
-        const response = await request<WorkspaceInvitation>({
-            httpMethod: 'PUT',
-            baseUri: this.syncApiBase,
-            relativePath: getWorkspaceInvitationAcceptEndpoint(args.inviteCode),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            requestId: requestId,
-        })
-
-        return validateWorkspaceInvitation(response.data)
+        return this.workspaceClient.acceptWorkspaceInvitation(args, requestId)
     }
 
     /**
@@ -1568,16 +1489,7 @@ export class TodoistApi {
         args: WorkspaceInvitationActionArgs,
         requestId?: string,
     ): Promise<WorkspaceInvitation> {
-        const response = await request<WorkspaceInvitation>({
-            httpMethod: 'PUT',
-            baseUri: this.syncApiBase,
-            relativePath: getWorkspaceInvitationRejectEndpoint(args.inviteCode),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            requestId: requestId,
-        })
-
-        return validateWorkspaceInvitation(response.data)
+        return this.workspaceClient.rejectWorkspaceInvitation(args, requestId)
     }
 
     /**
@@ -1588,20 +1500,7 @@ export class TodoistApi {
      * @returns Workspace user information.
      */
     async joinWorkspace(args: JoinWorkspaceArgs, requestId?: string): Promise<JoinWorkspaceResult> {
-        const response = await request<JoinWorkspaceResult>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_WORKSPACE_JOIN,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: {
-                invite_code: args.inviteCode,
-                workspace_id: args.workspaceId,
-            },
-            requestId: requestId,
-        })
-
-        return validateJoinWorkspaceResult(response.data)
+        return this.workspaceClient.joinWorkspace(args, requestId)
     }
 
     /**
@@ -1615,49 +1514,7 @@ export class TodoistApi {
         args: WorkspaceLogoArgs,
         requestId?: string,
     ): Promise<WorkspaceLogoResponse> {
-        if (args.delete) {
-            // Delete logo
-            const data = await uploadMultipartFile<WorkspaceLogoResponse>({
-                baseUrl: this.syncApiBase,
-                authToken: this.authToken,
-                endpoint: ENDPOINT_WORKSPACE_LOGO,
-                file: Buffer.alloc(0), // Empty buffer for delete
-                fileName: 'delete',
-                additionalFields: {
-                    workspace_id: args.workspaceId,
-                    delete: true,
-                },
-                requestId: requestId,
-                customFetch: this.customFetch,
-            })
-            return data
-        }
-
-        if (!args.file) {
-            throw new Error('file is required when not deleting logo')
-        }
-
-        // Validate buffer is not empty if it's a Buffer
-        if (Buffer.isBuffer(args.file) && args.file.length === 0) {
-            throw new Error('Cannot upload empty image file')
-        }
-
-        const additionalFields: Record<string, string | number | boolean> = {
-            workspace_id: args.workspaceId,
-        }
-
-        const data = await uploadMultipartFile<WorkspaceLogoResponse>({
-            baseUrl: this.syncApiBase,
-            authToken: this.authToken,
-            endpoint: ENDPOINT_WORKSPACE_LOGO,
-            file: args.file,
-            fileName: args.fileName,
-            additionalFields: additionalFields,
-            requestId: requestId,
-            customFetch: this.customFetch,
-        })
-
-        return data
+        return this.workspaceClient.uploadWorkspaceLogo(args, requestId)
     }
 
     /**
@@ -1671,17 +1528,7 @@ export class TodoistApi {
         args: GetWorkspacePlanDetailsArgs,
         requestId?: string,
     ): Promise<WorkspacePlanDetails> {
-        const response = await request<WorkspacePlanDetails>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_WORKSPACE_PLAN_DETAILS,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: { workspace_id: args.workspaceId },
-            requestId: requestId,
-        })
-
-        return validateWorkspacePlanDetails(response.data)
+        return this.workspaceClient.getWorkspacePlanDetails(args, requestId)
     }
 
     /**
@@ -1695,36 +1542,7 @@ export class TodoistApi {
         args: GetWorkspaceUsersArgs = {},
         requestId?: string,
     ): Promise<GetWorkspaceUsersResponse> {
-        const queryParams: Record<string, string | number> = {}
-        if (args.workspaceId !== undefined && args.workspaceId !== null) {
-            queryParams.workspace_id = args.workspaceId
-        }
-        if (args.cursor) {
-            queryParams.cursor = args.cursor
-        }
-        if (args.limit) {
-            queryParams.limit = args.limit
-        }
-
-        const response = await request<{
-            hasMore: boolean
-            nextCursor?: string
-            workspaceUsers: WorkspaceUser[]
-        }>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_WORKSPACE_USERS,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: queryParams,
-            requestId: requestId,
-        })
-
-        return {
-            hasMore: response.data.hasMore || false,
-            nextCursor: response.data.nextCursor,
-            workspaceUsers: validateWorkspaceUserArray(response.data.workspaceUsers || []),
-        }
+        return this.workspaceClient.getWorkspaceUsers(args, requestId)
     }
 
     /**
@@ -1742,15 +1560,7 @@ export class TodoistApi {
      * ```
      */
     async getWorkspaces(requestId?: string): Promise<Workspace[]> {
-        const response = await request<unknown[]>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_WORKSPACES,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            requestId: requestId,
-        })
-        return validateWorkspaceArray(response.data)
+        return this.workspaceClient.getWorkspaces(requestId)
     }
 
     /**
@@ -1761,16 +1571,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the requested workspace.
      */
     async getWorkspace(id: string, requestId?: string): Promise<Workspace> {
-        z.string().parse(id)
-        const response = await request<Workspace>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_WORKSPACES, id),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            requestId: requestId,
-        })
-        return validateWorkspace(response.data)
+        return this.workspaceClient.getWorkspace(id, requestId)
     }
 
     /**
@@ -1781,16 +1582,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the created workspace.
      */
     async addWorkspace(args: AddWorkspaceArgs, requestId?: string): Promise<Workspace> {
-        const response = await request<Workspace>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_WORKSPACES,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-            requestId: requestId,
-        })
-        return validateWorkspace(response.data)
+        return this.workspaceClient.addWorkspace(args, requestId)
     }
 
     /**
@@ -1806,17 +1598,7 @@ export class TodoistApi {
         args: UpdateWorkspaceArgs,
         requestId?: string,
     ): Promise<Workspace> {
-        z.string().parse(id)
-        const response = await request<Workspace>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_WORKSPACES, id),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-            requestId: requestId,
-        })
-        return validateWorkspace(response.data)
+        return this.workspaceClient.updateWorkspace(id, args, requestId)
     }
 
     /**
@@ -1827,16 +1609,7 @@ export class TodoistApi {
      * @returns A promise that resolves to `true` if successful.
      */
     async deleteWorkspace(id: string, requestId?: string): Promise<boolean> {
-        z.string().parse(id)
-        const response = await request({
-            httpMethod: 'DELETE',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_WORKSPACES, id),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            requestId: requestId,
-        })
-        return isSuccess(response)
+        return this.workspaceClient.deleteWorkspace(id, requestId)
     }
 
     /**
@@ -1850,19 +1623,7 @@ export class TodoistApi {
         args: GetWorkspaceMembersActivityArgs,
         requestId?: string,
     ): Promise<GetWorkspaceMembersActivityResponse> {
-        const { workspaceId, ...queryParams } = args
-        const { data } = await request<{ members: unknown[] }>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_WORKSPACE_MEMBERS,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: { workspaceId, ...queryParams },
-            requestId: requestId,
-        })
-        return {
-            members: validateMemberActivityInfoArray(data.members),
-        }
+        return this.workspaceClient.getWorkspaceMembersActivity(args, requestId)
     }
 
     /**
@@ -1876,19 +1637,7 @@ export class TodoistApi {
         args: GetWorkspaceUserTasksArgs,
         requestId?: string,
     ): Promise<GetWorkspaceUserTasksResponse> {
-        const { workspaceId, userId, ...queryParams } = args
-        const { data } = await request<{ tasks: unknown[] }>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: getWorkspaceUserTasksEndpoint(workspaceId, userId),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: queryParams,
-            requestId: requestId,
-        })
-        return {
-            tasks: validateWorkspaceUserTaskArray(data.tasks),
-        }
+        return this.workspaceClient.getWorkspaceUserTasks(args, requestId)
     }
 
     /**
@@ -1902,17 +1651,7 @@ export class TodoistApi {
         args: InviteWorkspaceUsersArgs,
         requestId?: string,
     ): Promise<InviteWorkspaceUsersResponse> {
-        const { workspaceId, ...payload } = args
-        const { data } = await request<InviteWorkspaceUsersResponse>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: getWorkspaceInviteUsersEndpoint(workspaceId),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: payload,
-            requestId: requestId,
-        })
-        return data
+        return this.workspaceClient.inviteWorkspaceUsers(args, requestId)
     }
 
     /**
@@ -1926,17 +1665,7 @@ export class TodoistApi {
         args: UpdateWorkspaceUserArgs,
         requestId?: string,
     ): Promise<JoinWorkspaceResult> {
-        const { workspaceId, userId, ...payload } = args
-        const response = await request<JoinWorkspaceResult>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: getWorkspaceUserEndpoint(workspaceId, userId),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: payload,
-            requestId: requestId,
-        })
-        return validateJoinWorkspaceResult(response.data)
+        return this.workspaceClient.updateWorkspaceUser(args, requestId)
     }
 
     /**
@@ -1947,16 +1676,7 @@ export class TodoistApi {
      * @returns A promise that resolves to `true` if successful.
      */
     async removeWorkspaceUser(args: RemoveWorkspaceUserArgs, requestId?: string): Promise<boolean> {
-        const { workspaceId, userId } = args
-        const response = await request({
-            httpMethod: 'DELETE',
-            baseUri: this.syncApiBase,
-            relativePath: getWorkspaceUserEndpoint(workspaceId, userId),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            requestId: requestId,
-        })
-        return isSuccess(response)
+        return this.workspaceClient.removeWorkspaceUser(args, requestId)
     }
 
     /**
@@ -1970,35 +1690,7 @@ export class TodoistApi {
         args: GetWorkspaceProjectsArgs,
         requestId?: string,
     ): Promise<GetProjectsResponse> {
-        const queryParams: Record<string, string | number> = {}
-        if (args.cursor) {
-            queryParams.cursor = args.cursor
-        }
-        if (args.limit) {
-            queryParams.limit = args.limit
-        }
-
-        const response = await request<GetProjectsResponse>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: getWorkspaceActiveProjectsEndpoint(args.workspaceId),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: queryParams,
-            requestId: requestId,
-        })
-
-        // oxlint-disable-next-line no-unsafe-assignment, no-unsafe-call, no-unsafe-member-access
-        const validatedProjects = response.data.results?.map((project: unknown) =>
-            validateProject(project),
-        )
-
-        return {
-            // oxlint-disable-next-line no-unsafe-assignment
-            ...response.data,
-            // oxlint-disable-next-line no-unsafe-assignment
-            results: validatedProjects || [],
-        } as GetProjectsResponse
+        return this.workspaceClient.getWorkspaceActiveProjects(args, requestId)
     }
 
     /**
@@ -2012,34 +1704,6 @@ export class TodoistApi {
         args: GetWorkspaceProjectsArgs,
         requestId?: string,
     ): Promise<GetProjectsResponse> {
-        const queryParams: Record<string, string | number> = {}
-        if (args.cursor) {
-            queryParams.cursor = args.cursor
-        }
-        if (args.limit) {
-            queryParams.limit = args.limit
-        }
-
-        const response = await request<GetProjectsResponse>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: getWorkspaceArchivedProjectsEndpoint(args.workspaceId),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: queryParams,
-            requestId: requestId,
-        })
-
-        // oxlint-disable-next-line no-unsafe-assignment, no-unsafe-call, no-unsafe-member-access
-        const validatedProjects = response.data.results?.map((project: unknown) =>
-            validateProject(project),
-        )
-
-        return {
-            // oxlint-disable-next-line no-unsafe-assignment
-            ...response.data,
-            // oxlint-disable-next-line no-unsafe-assignment
-            results: validatedProjects || [],
-        } as GetProjectsResponse
+        return this.workspaceClient.getWorkspaceArchivedProjects(args, requestId)
     }
 }
