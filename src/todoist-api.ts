@@ -1,7 +1,10 @@
 import { z } from 'zod'
 import { CommentClient } from './clients/comment-client'
+import { FolderClient } from './clients/folder-client'
+import { InsightsClient } from './clients/insights-client'
 import { LabelClient } from './clients/label-client'
 import { ProjectClient } from './clients/project-client'
+import { ReminderClient } from './clients/reminder-client'
 import { SectionClient } from './clients/section-client'
 import { TaskClient } from './clients/task-client'
 import {
@@ -11,18 +14,10 @@ import {
     ENDPOINT_REST_TEMPLATES_CREATE_FROM_FILE,
     ENDPOINT_REST_TEMPLATES_IMPORT_FROM_FILE,
     ENDPOINT_REST_TEMPLATES_IMPORT_FROM_ID,
-    ENDPOINT_REST_LOCATION_REMINDERS,
-    ENDPOINT_REST_REMINDERS,
     ENDPOINT_REST_USER,
     ENDPOINT_REST_PRODUCTIVITY,
     ENDPOINT_REST_ACTIVITIES,
     ENDPOINT_REST_UPLOADS,
-    getProjectInsightsActivityStatsEndpoint,
-    getProjectInsightsHealthEndpoint,
-    getProjectInsightsHealthContextEndpoint,
-    getProjectInsightsProgressEndpoint,
-    getProjectInsightsHealthAnalyzeEndpoint,
-    getWorkspaceInsightsEndpoint,
     ENDPOINT_REST_BACKUPS,
     ENDPOINT_REST_BACKUPS_DOWNLOAD,
     ENDPOINT_REST_EMAILS,
@@ -44,7 +39,6 @@ import {
     ENDPOINT_WORKSPACE_USERS,
     getWorkspaceActiveProjectsEndpoint,
     getWorkspaceArchivedProjectsEndpoint,
-    ENDPOINT_REST_FOLDERS,
 } from './consts/endpoints'
 import { request, isSuccess } from './transport/http-client'
 import { performSyncRequest } from './transport/sync-request'
@@ -121,9 +115,6 @@ import {
     GetRemindersResponse,
     GetLocationRemindersArgs,
     GetLocationRemindersResponse,
-    UpdateReminderArgsSchema,
-    UpdateLocationReminderArgsSchema,
-    ReminderIdSchema,
 } from './types/reminders'
 import {
     Section,
@@ -208,9 +199,6 @@ import {
     validateSectionArray,
     validateTaskArray,
     validateProductivityStats,
-    validateReminder,
-    validateReminderArray,
-    validateLocationReminderArray,
     validateActivityEventArray,
     validateWorkspaceUserArray,
     validateWorkspaceInvitation,
@@ -221,19 +209,11 @@ import {
     validateWorkspaceArray,
     validateMemberActivityInfoArray,
     validateWorkspaceUserTaskArray,
-    validateProjectActivityStats,
-    validateProjectHealth,
-    validateProjectHealthContext,
-    validateProjectProgress,
-    validateWorkspaceInsights,
     validateBackupArray,
     validateIdMappingArray,
     validateMovedIdArray,
-    validateFolder,
-    validateFolderArray,
 } from './utils/validators'
 
-import { TodoistArgumentError, TodoistRequestError } from './types'
 import { type SyncResponse, type SyncRequest } from './types/sync'
 
 /**
@@ -301,6 +281,9 @@ export class TodoistApi {
     private readonly sectionClient: SectionClient
     private readonly labelClient: LabelClient
     private readonly commentClient: CommentClient
+    private readonly reminderClient: ReminderClient
+    private readonly insightsClient: InsightsClient
+    private readonly folderClient: FolderClient
 
     constructor(
         /**
@@ -332,6 +315,9 @@ export class TodoistApi {
         this.sectionClient = new SectionClient(clientDeps)
         this.labelClient = new LabelClient(clientDeps)
         this.commentClient = new CommentClient(clientDeps)
+        this.reminderClient = new ReminderClient(clientDeps)
+        this.insightsClient = new InsightsClient(clientDeps)
+        this.folderClient = new FolderClient(clientDeps)
     }
 
     /**
@@ -776,16 +762,7 @@ export class TodoistApi {
         projectId: string,
         args: GetProjectActivityStatsArgs = {},
     ): Promise<ProjectActivityStats> {
-        z.string().parse(projectId)
-        const response = await request<ProjectActivityStats>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: getProjectInsightsActivityStatsEndpoint(projectId),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: { objectType: 'ITEM', eventType: 'COMPLETED', ...args },
-        })
-        return validateProjectActivityStats(response.data)
+        return this.insightsClient.getProjectActivityStats(projectId, args)
     }
 
     /**
@@ -795,15 +772,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the project health data.
      */
     async getProjectHealth(projectId: string): Promise<ProjectHealth> {
-        z.string().parse(projectId)
-        const response = await request<ProjectHealth>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: getProjectInsightsHealthEndpoint(projectId),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-        })
-        return validateProjectHealth(response.data)
+        return this.insightsClient.getProjectHealth(projectId)
     }
 
     /**
@@ -813,15 +782,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the project health context.
      */
     async getProjectHealthContext(projectId: string): Promise<ProjectHealthContext> {
-        z.string().parse(projectId)
-        const response = await request<ProjectHealthContext>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: getProjectInsightsHealthContextEndpoint(projectId),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-        })
-        return validateProjectHealthContext(response.data)
+        return this.insightsClient.getProjectHealthContext(projectId)
     }
 
     /**
@@ -831,15 +792,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the project progress data.
      */
     async getProjectProgress(projectId: string): Promise<ProjectProgress> {
-        z.string().parse(projectId)
-        const response = await request<ProjectProgress>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: getProjectInsightsProgressEndpoint(projectId),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-        })
-        return validateProjectProgress(response.data)
+        return this.insightsClient.getProjectProgress(projectId)
     }
 
     /**
@@ -853,19 +806,7 @@ export class TodoistApi {
         workspaceId: string,
         args: GetWorkspaceInsightsArgs = {},
     ): Promise<WorkspaceInsights> {
-        z.string().parse(workspaceId)
-        const response = await request<WorkspaceInsights>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: getWorkspaceInsightsEndpoint(workspaceId),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: {
-                ...args,
-                ...(args.projectIds ? { projectIds: args.projectIds.join(',') } : {}),
-            },
-        })
-        return validateWorkspaceInsights(response.data)
+        return this.insightsClient.getWorkspaceInsights(workspaceId, args)
     }
 
     /**
@@ -876,16 +817,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the updated project health data.
      */
     async analyzeProjectHealth(projectId: string, requestId?: string): Promise<ProjectHealth> {
-        z.string().parse(projectId)
-        const response = await request<ProjectHealth>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: getProjectInsightsHealthAnalyzeEndpoint(projectId),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            requestId: requestId,
-        })
-        return validateProjectHealth(response.data)
+        return this.insightsClient.analyzeProjectHealth(projectId, requestId)
     }
 
     // ── Sections ──
@@ -1134,20 +1066,7 @@ export class TodoistApi {
      * @returns A promise that resolves to a paginated list of reminders.
      */
     async getReminders(args: GetRemindersArgs = {}): Promise<GetRemindersResponse> {
-        const {
-            data: { results, nextCursor },
-        } = await request<GetRemindersResponse>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_REMINDERS,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-        })
-        return {
-            results: validateReminderArray(results),
-            nextCursor,
-        }
+        return this.reminderClient.getReminders(args)
     }
 
     /**
@@ -1159,20 +1078,7 @@ export class TodoistApi {
     async getLocationReminders(
         args: GetLocationRemindersArgs = {},
     ): Promise<GetLocationRemindersResponse> {
-        const {
-            data: { results, nextCursor },
-        } = await request<GetLocationRemindersResponse>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_LOCATION_REMINDERS,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-        })
-        return {
-            results: validateLocationReminderArray(results),
-            nextCursor,
-        }
+        return this.reminderClient.getLocationReminders(args)
     }
 
     /**
@@ -1182,26 +1088,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the requested reminder.
      */
     async getReminder(id: string): Promise<Reminder> {
-        ReminderIdSchema.parse(id)
-        try {
-            const response = await request<Reminder>({
-                httpMethod: 'GET',
-                baseUri: this.syncApiBase,
-                relativePath: generatePath(ENDPOINT_REST_REMINDERS, id),
-                apiToken: this.authToken,
-                customFetch: this.customFetch,
-            })
-
-            return validateReminder(response.data)
-        } catch (error) {
-            if (!(error instanceof TodoistRequestError) || error.httpStatusCode !== 404) {
-                throw error
-            }
-
-            throw new TodoistArgumentError(
-                `Reminder ${id} was not found on the time-based reminder endpoint. If this is a location reminder, use getLocationReminder instead.`,
-            )
-        }
+        return this.reminderClient.getReminder(id)
     }
 
     /**
@@ -1211,26 +1098,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the requested reminder.
      */
     async getLocationReminder(id: string): Promise<Reminder> {
-        ReminderIdSchema.parse(id)
-        try {
-            const response = await request<Reminder>({
-                httpMethod: 'GET',
-                baseUri: this.syncApiBase,
-                relativePath: generatePath(ENDPOINT_REST_LOCATION_REMINDERS, id),
-                apiToken: this.authToken,
-                customFetch: this.customFetch,
-            })
-
-            return validateReminder(response.data)
-        } catch (error) {
-            if (!(error instanceof TodoistRequestError) || error.httpStatusCode !== 404) {
-                throw error
-            }
-
-            throw new TodoistArgumentError(
-                `Location reminder ${id} was not found on the location reminder endpoint. If this is a time-based reminder, use getReminder instead.`,
-            )
-        }
+        return this.reminderClient.getLocationReminder(id)
     }
 
     /**
@@ -1241,17 +1109,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the created reminder.
      */
     async addReminder(args: AddReminderArgs, requestId?: string): Promise<Reminder> {
-        const response = await request<Reminder>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_REMINDERS,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-            requestId: requestId,
-        })
-
-        return validateReminder(response.data)
+        return this.reminderClient.addReminder(args, requestId)
     }
 
     /**
@@ -1265,20 +1123,7 @@ export class TodoistApi {
         args: AddLocationReminderArgs,
         requestId?: string,
     ): Promise<Reminder> {
-        const response = await request<Reminder>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_LOCATION_REMINDERS,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: {
-                ...args,
-                reminderType: 'location',
-            },
-            requestId: requestId,
-        })
-
-        return validateReminder(response.data)
+        return this.reminderClient.addLocationReminder(args, requestId)
     }
 
     /**
@@ -1294,29 +1139,7 @@ export class TodoistApi {
         args: UpdateReminderArgs,
         requestId?: string,
     ): Promise<Reminder> {
-        ReminderIdSchema.parse(id)
-        const payload = UpdateReminderArgsSchema.parse(args)
-        try {
-            const response = await request<Reminder>({
-                httpMethod: 'POST',
-                baseUri: this.syncApiBase,
-                relativePath: generatePath(ENDPOINT_REST_REMINDERS, id),
-                apiToken: this.authToken,
-                customFetch: this.customFetch,
-                payload,
-                requestId: requestId,
-            })
-
-            return validateReminder(response.data)
-        } catch (error) {
-            if (!(error instanceof TodoistRequestError) || error.httpStatusCode !== 404) {
-                throw error
-            }
-
-            throw new TodoistArgumentError(
-                `Reminder ${id} was not found on the time-based reminder endpoint. If this is a location reminder, use updateLocationReminder instead.`,
-            )
-        }
+        return this.reminderClient.updateReminder(id, args, requestId)
     }
 
     /**
@@ -1332,29 +1155,7 @@ export class TodoistApi {
         args: UpdateLocationReminderArgs,
         requestId?: string,
     ): Promise<Reminder> {
-        ReminderIdSchema.parse(id)
-        const payload = UpdateLocationReminderArgsSchema.parse(args)
-        try {
-            const response = await request<Reminder>({
-                httpMethod: 'POST',
-                baseUri: this.syncApiBase,
-                relativePath: generatePath(ENDPOINT_REST_LOCATION_REMINDERS, id),
-                apiToken: this.authToken,
-                customFetch: this.customFetch,
-                payload,
-                requestId: requestId,
-            })
-
-            return validateReminder(response.data)
-        } catch (error) {
-            if (!(error instanceof TodoistRequestError) || error.httpStatusCode !== 404) {
-                throw error
-            }
-
-            throw new TodoistArgumentError(
-                `Location reminder ${id} was not found on the location reminder endpoint. If this is a time-based reminder, use updateReminder instead.`,
-            )
-        }
+        return this.reminderClient.updateLocationReminder(id, args, requestId)
     }
 
     /**
@@ -1365,26 +1166,7 @@ export class TodoistApi {
      * @returns A promise that resolves to `true` if successful.
      */
     async deleteReminder(id: string, requestId?: string): Promise<boolean> {
-        ReminderIdSchema.parse(id)
-        try {
-            const response = await request({
-                httpMethod: 'DELETE',
-                baseUri: this.syncApiBase,
-                relativePath: generatePath(ENDPOINT_REST_REMINDERS, id),
-                apiToken: this.authToken,
-                customFetch: this.customFetch,
-                requestId: requestId,
-            })
-            return isSuccess(response)
-        } catch (error) {
-            if (!(error instanceof TodoistRequestError) || error.httpStatusCode !== 404) {
-                throw error
-            }
-
-            throw new TodoistArgumentError(
-                `Reminder ${id} was not found on the time-based reminder endpoint. If this is a location reminder, use deleteLocationReminder instead.`,
-            )
-        }
+        return this.reminderClient.deleteReminder(id, requestId)
     }
 
     /**
@@ -1395,26 +1177,7 @@ export class TodoistApi {
      * @returns A promise that resolves to `true` if successful.
      */
     async deleteLocationReminder(id: string, requestId?: string): Promise<boolean> {
-        ReminderIdSchema.parse(id)
-        try {
-            const response = await request({
-                httpMethod: 'DELETE',
-                baseUri: this.syncApiBase,
-                relativePath: generatePath(ENDPOINT_REST_LOCATION_REMINDERS, id),
-                apiToken: this.authToken,
-                customFetch: this.customFetch,
-                requestId: requestId,
-            })
-            return isSuccess(response)
-        } catch (error) {
-            if (!(error instanceof TodoistRequestError) || error.httpStatusCode !== 404) {
-                throw error
-            }
-
-            throw new TodoistArgumentError(
-                `Location reminder ${id} was not found on the location reminder endpoint. If this is a time-based reminder, use deleteReminder instead.`,
-            )
-        }
+        return this.reminderClient.deleteLocationReminder(id, requestId)
     }
 
     /**
@@ -1680,21 +1443,7 @@ export class TodoistApi {
      * @returns A promise that resolves to a paginated response of folders.
      */
     async getFolders(args: GetFoldersArgs): Promise<GetFoldersResponse> {
-        const {
-            data: { results, nextCursor },
-        } = await request<GetFoldersResponse>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_FOLDERS,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-        })
-
-        return {
-            results: validateFolderArray(results),
-            nextCursor,
-        }
+        return this.folderClient.getFolders(args)
     }
 
     /**
@@ -1704,16 +1453,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the requested folder.
      */
     async getFolder(id: string): Promise<Folder> {
-        z.string().parse(id)
-        const response = await request<Folder>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_FOLDERS, id),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-        })
-
-        return validateFolder(response.data)
+        return this.folderClient.getFolder(id)
     }
 
     /**
@@ -1724,17 +1464,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the created folder.
      */
     async addFolder(args: AddFolderArgs, requestId?: string): Promise<Folder> {
-        const response = await request<Folder>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_FOLDERS,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-            requestId: requestId,
-        })
-
-        return validateFolder(response.data)
+        return this.folderClient.addFolder(args, requestId)
     }
 
     /**
@@ -1746,18 +1476,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the updated folder.
      */
     async updateFolder(id: string, args: UpdateFolderArgs, requestId?: string): Promise<Folder> {
-        z.string().parse(id)
-        const response = await request<Folder>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_FOLDERS, id),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-            requestId: requestId,
-        })
-
-        return validateFolder(response.data)
+        return this.folderClient.updateFolder(id, args, requestId)
     }
 
     /**
@@ -1768,16 +1487,7 @@ export class TodoistApi {
      * @returns A promise that resolves to `true` if successful.
      */
     async deleteFolder(id: string, requestId?: string): Promise<boolean> {
-        z.string().parse(id)
-        const response = await request({
-            httpMethod: 'DELETE',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_FOLDERS, id),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            requestId: requestId,
-        })
-        return isSuccess(response)
+        return this.folderClient.deleteFolder(id, requestId)
     }
 
     // ── Backups ──
