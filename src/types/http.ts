@@ -109,3 +109,11 @@ export type CustomFetch = (
     url: string,
     options?: RequestInit & { timeout?: number },
 ) => Promise<CustomFetchResponse>
+
+/**
+ * Response from a binary file endpoint (e.g. attachment view, backup download),
+ * extending CustomFetchResponse with `arrayBuffer()` support for binary content.
+ */
+export type FileResponse = CustomFetchResponse & {
+    arrayBuffer(): Promise<ArrayBuffer>
+}
