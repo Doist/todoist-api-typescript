@@ -1,28 +1,22 @@
 import { z } from 'zod'
+import { ActivityClient } from './clients/activity-client'
+import { BackupClient } from './clients/backup-client'
 import { CommentClient } from './clients/comment-client'
+import { EmailClient } from './clients/email-client'
 import { FolderClient } from './clients/folder-client'
+import { IdMappingClient } from './clients/id-mapping-client'
 import { InsightsClient } from './clients/insights-client'
 import { LabelClient } from './clients/label-client'
+import { ProductivityClient } from './clients/productivity-client'
 import { ProjectClient } from './clients/project-client'
 import { ReminderClient } from './clients/reminder-client'
 import { SectionClient } from './clients/section-client'
 import { TaskClient } from './clients/task-client'
+import { TemplateClient } from './clients/template-client'
+import { UploadClient } from './clients/upload-client'
 import {
     getSyncBaseUri,
-    ENDPOINT_REST_TEMPLATES_FILE,
-    ENDPOINT_REST_TEMPLATES_URL,
-    ENDPOINT_REST_TEMPLATES_CREATE_FROM_FILE,
-    ENDPOINT_REST_TEMPLATES_IMPORT_FROM_FILE,
-    ENDPOINT_REST_TEMPLATES_IMPORT_FROM_ID,
     ENDPOINT_REST_USER,
-    ENDPOINT_REST_PRODUCTIVITY,
-    ENDPOINT_REST_ACTIVITIES,
-    ENDPOINT_REST_UPLOADS,
-    ENDPOINT_REST_BACKUPS,
-    ENDPOINT_REST_BACKUPS_DOWNLOAD,
-    ENDPOINT_REST_EMAILS,
-    ENDPOINT_REST_ID_MAPPINGS,
-    ENDPOINT_REST_MOVED_IDS,
     ENDPOINT_REST_WORKSPACES,
     ENDPOINT_WORKSPACE_MEMBERS,
     getWorkspaceUserTasksEndpoint,
@@ -61,7 +55,7 @@ import {
     AddFolderArgs,
     UpdateFolderArgs,
 } from './types/folders'
-import { CustomFetch, CustomFetchResponse } from './types/http'
+import { CustomFetch, FileResponse } from './types/http'
 import { IdMapping, MovedId, GetIdMappingsArgs, GetMovedIdsArgs } from './types/id-mappings'
 import {
     ProjectActivityStats,
@@ -182,24 +176,11 @@ import {
     AllWorkspaceInvitationsResponse,
     WorkspaceLogoResponse,
 } from './types/workspaces'
-import {
-    normalizeObjectEventTypeForApi,
-    denormalizeObjectTypeFromApi,
-} from './utils/activity-helpers'
-import { camelCaseKeys } from './utils/case-conversion'
 import { uploadMultipartFile } from './utils/multipart-upload'
 import { generatePath } from './utils/request-helpers'
-import { formatDateToYYYYMMDD } from './utils/url-helpers'
 import {
-    validateAttachment,
-    validateCommentArray,
     validateCurrentUser,
     validateProject,
-    validateProjectArray,
-    validateSectionArray,
-    validateTaskArray,
-    validateProductivityStats,
-    validateActivityEventArray,
     validateWorkspaceUserArray,
     validateWorkspaceInvitation,
     validateWorkspaceInvitationArray,
@@ -209,9 +190,6 @@ import {
     validateWorkspaceArray,
     validateMemberActivityInfoArray,
     validateWorkspaceUserTaskArray,
-    validateBackupArray,
-    validateIdMappingArray,
-    validateMovedIdArray,
 } from './utils/validators'
 
 import { type SyncResponse, type SyncRequest } from './types/sync'
@@ -237,22 +215,6 @@ import { type SyncResponse, type SyncRequest } from './types/sync'
  * For more information about the Todoist API v1, see the [official documentation](https://todoist.com/api/v1).
  * If you're migrating from v9, please refer to the [migration guide](https://todoist.com/api/v1/docs#tag/Migrating-from-v9).
  */
-
-function headersToRecord(headers: Headers): Record<string, string> {
-    const result: Record<string, string> = {}
-    headers.forEach((value, key) => {
-        result[key] = value
-    })
-    return result
-}
-
-/**
- * Response from viewAttachment, extending CustomFetchResponse with
- * arrayBuffer() support for binary file content.
- */
-export type FileResponse = CustomFetchResponse & {
-    arrayBuffer(): Promise<ArrayBuffer>
-}
 
 /**
  * Configuration options for the TodoistApi constructor
@@ -284,6 +246,13 @@ export class TodoistApi {
     private readonly reminderClient: ReminderClient
     private readonly insightsClient: InsightsClient
     private readonly folderClient: FolderClient
+    private readonly templateClient: TemplateClient
+    private readonly uploadClient: UploadClient
+    private readonly backupClient: BackupClient
+    private readonly emailClient: EmailClient
+    private readonly idMappingClient: IdMappingClient
+    private readonly activityClient: ActivityClient
+    private readonly productivityClient: ProductivityClient
 
     constructor(
         /**
@@ -318,6 +287,13 @@ export class TodoistApi {
         this.reminderClient = new ReminderClient(clientDeps)
         this.insightsClient = new InsightsClient(clientDeps)
         this.folderClient = new FolderClient(clientDeps)
+        this.templateClient = new TemplateClient(clientDeps)
+        this.uploadClient = new UploadClient(clientDeps)
+        this.backupClient = new BackupClient(clientDeps)
+        this.emailClient = new EmailClient(clientDeps)
+        this.idMappingClient = new IdMappingClient(clientDeps)
+        this.activityClient = new ActivityClient(clientDeps)
+        this.productivityClient = new ProductivityClient(clientDeps)
     }
 
     /**
@@ -1186,14 +1162,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the productivity stats.
      */
     async getProductivityStats(): Promise<ProductivityStats> {
-        const response = await request<ProductivityStats>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_PRODUCTIVITY,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-        })
-        return validateProductivityStats(response.data)
+        return this.productivityClient.getProductivityStats()
     }
 
     /**
@@ -1203,63 +1172,7 @@ export class TodoistApi {
      * @returns A promise that resolves to a paginated response of activity events.
      */
     async getActivityLogs(args: GetActivityLogsArgs = {}): Promise<GetActivityLogsResponse> {
-        // Convert Date objects to YYYY-MM-DD strings
-        const dateFrom =
-            args.dateFrom instanceof Date ? formatDateToYYYYMMDD(args.dateFrom) : args.dateFrom
-        const dateTo = args.dateTo instanceof Date ? formatDateToYYYYMMDD(args.dateTo) : args.dateTo
-
-        // Destructure out raw date, filter-type, and removed legacy fields so they don't leak into payload
-        const {
-            dateFrom: _dateFrom,
-            dateTo: _dateTo,
-            objectEventTypes,
-            objectType: _objectType,
-            eventType: _eventType,
-            since: _since,
-            until: _until,
-            ...rest
-        } = args as GetActivityLogsArgs & Record<string, unknown>
-
-        // Build normalized objectEventTypes for the API
-        let normalizedObjectEventTypes: string[] | undefined
-        if (objectEventTypes !== undefined) {
-            const arr = Array.isArray(objectEventTypes) ? objectEventTypes : [objectEventTypes]
-            normalizedObjectEventTypes = arr.map(normalizeObjectEventTypeForApi)
-        }
-
-        const processedArgs = {
-            ...rest,
-            ...(dateFrom !== undefined ? { dateFrom } : {}),
-            ...(dateTo !== undefined ? { dateTo } : {}),
-            ...(normalizedObjectEventTypes !== undefined
-                ? { objectEventTypes: normalizedObjectEventTypes }
-                : {}),
-        }
-
-        const {
-            data: { results, nextCursor },
-        } = await request<GetActivityLogsResponse>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_ACTIVITIES,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: processedArgs as Record<string, unknown>,
-        })
-
-        // Convert legacy API object types back to modern SDK types
-        const normalizedResults = results.map((event) => {
-            const normalizedType = denormalizeObjectTypeFromApi(event.objectType)
-            return {
-                ...event,
-                objectType: normalizedType || event.objectType,
-            }
-        }) as unknown[]
-
-        return {
-            results: validateActivityEventArray(normalizedResults),
-            nextCursor,
-        }
+        return this.activityClient.getActivityLogs(args)
     }
 
     /**
@@ -1300,23 +1213,7 @@ export class TodoistApi {
      * ```
      */
     async uploadFile(args: UploadFileArgs, requestId?: string): Promise<Attachment> {
-        const additionalFields: Record<string, string | number | boolean> = {}
-        if (args.projectId) {
-            additionalFields.project_id = args.projectId
-        }
-
-        const data = await uploadMultipartFile<Attachment>({
-            baseUrl: this.syncApiBase,
-            authToken: this.authToken,
-            endpoint: ENDPOINT_REST_UPLOADS,
-            file: args.file,
-            fileName: args.fileName,
-            additionalFields: additionalFields,
-            requestId: requestId,
-            customFetch: this.customFetch,
-        })
-
-        return validateAttachment(data)
+        return this.uploadClient.uploadFile(args, requestId)
     }
 
     /**
@@ -1334,16 +1231,7 @@ export class TodoistApi {
      * ```
      */
     async deleteUpload(args: DeleteUploadArgs, requestId?: string): Promise<boolean> {
-        const response = await request({
-            httpMethod: 'DELETE',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_UPLOADS,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-            requestId: requestId,
-        })
-        return isSuccess(response)
+        return this.uploadClient.deleteUpload(args, requestId)
     }
 
     /**
@@ -1371,67 +1259,7 @@ export class TodoistApi {
      * ```
      */
     async viewAttachment(commentOrUrl: Comment | string): Promise<FileResponse> {
-        let fileUrl: string
-
-        if (typeof commentOrUrl === 'string') {
-            fileUrl = commentOrUrl
-        } else {
-            if (!commentOrUrl.fileAttachment?.fileUrl) {
-                throw new Error('Comment does not have a file attachment')
-            }
-            fileUrl = commentOrUrl.fileAttachment.fileUrl
-        }
-
-        // Validate the URL belongs to Todoist to prevent leaking the auth token
-        const urlHostname = new URL(fileUrl).hostname
-        if (!urlHostname.endsWith('.todoist.com')) {
-            throw new Error('Attachment URLs must be on a todoist.com domain')
-        }
-
-        const fetchOptions: RequestInit = {
-            method: 'GET',
-            headers: { Authorization: `Bearer ${this.authToken}` },
-        }
-
-        if (this.customFetch) {
-            const response = await this.customFetch(fileUrl, fetchOptions)
-
-            if (!response.ok) {
-                throw new Error(
-                    `Failed to fetch attachment: ${response.status} ${response.statusText}`,
-                )
-            }
-
-            // Convert text to ArrayBuffer for custom fetch implementations that lack arrayBuffer()
-            const text = await response.text()
-            const buffer = new TextEncoder().encode(text).buffer
-
-            return {
-                ok: response.ok,
-                status: response.status,
-                statusText: response.statusText,
-                headers: response.headers,
-                text: () => Promise.resolve(text),
-                json: () => response.json(),
-                arrayBuffer: () => Promise.resolve(buffer),
-            }
-        }
-
-        const response = await fetch(fileUrl, fetchOptions)
-
-        if (!response.ok) {
-            throw new Error(`Failed to fetch attachment: ${response.status} ${response.statusText}`)
-        }
-
-        return {
-            ok: response.ok,
-            status: response.status,
-            statusText: response.statusText,
-            headers: headersToRecord(response.headers),
-            text: () => response.text(),
-            json: () => response.json(),
-            arrayBuffer: () => response.arrayBuffer(),
-        }
+        return this.uploadClient.viewAttachment(commentOrUrl)
     }
 
     // ── Folders ──
@@ -1499,15 +1327,7 @@ export class TodoistApi {
      * @returns A promise that resolves to an array of backups.
      */
     async getBackups(args: GetBackupsArgs = {}): Promise<Backup[]> {
-        const response = await request<unknown[]>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_BACKUPS,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-        })
-        return validateBackupArray(response.data)
+        return this.backupClient.getBackups(args)
     }
 
     /**
@@ -1517,44 +1337,7 @@ export class TodoistApi {
      * @returns A promise that resolves to a response with binary data accessible via arrayBuffer().
      */
     async downloadBackup(args: DownloadBackupArgs): Promise<FileResponse> {
-        const url = `${this.syncApiBase}${ENDPOINT_REST_BACKUPS_DOWNLOAD}?file=${encodeURIComponent(args.file)}`
-        const fetchOptions = {
-            headers: { Authorization: `Bearer ${this.authToken}` },
-        }
-
-        if (this.customFetch) {
-            const response = await this.customFetch(url, fetchOptions)
-            if (!response.ok) {
-                throw new Error(
-                    `Failed to download backup: ${response.status} ${response.statusText}`,
-                )
-            }
-            const text = await response.text()
-            const buffer = new TextEncoder().encode(text).buffer
-            return {
-                ok: response.ok,
-                status: response.status,
-                statusText: response.statusText,
-                headers: response.headers,
-                text: () => Promise.resolve(text),
-                json: () => response.json(),
-                arrayBuffer: () => Promise.resolve(buffer),
-            }
-        }
-
-        const response = await fetch(url, fetchOptions)
-        if (!response.ok) {
-            throw new Error(`Failed to download backup: ${response.status} ${response.statusText}`)
-        }
-        return {
-            ok: response.ok,
-            status: response.status,
-            statusText: response.statusText,
-            headers: headersToRecord(response.headers),
-            text: () => response.text(),
-            json: () => response.json(),
-            arrayBuffer: () => response.arrayBuffer(),
-        }
+        return this.backupClient.downloadBackup(args)
     }
 
     // ── Emails ──
@@ -1570,16 +1353,7 @@ export class TodoistApi {
         args: GetOrCreateEmailArgs,
         requestId?: string,
     ): Promise<GetOrCreateEmailResponse> {
-        const { data } = await request<GetOrCreateEmailResponse>({
-            httpMethod: 'PUT',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_EMAILS,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-            requestId: requestId,
-        })
-        return data
+        return this.emailClient.getOrCreateEmailForwarding(args, requestId)
     }
 
     /**
@@ -1590,19 +1364,7 @@ export class TodoistApi {
      * @returns A promise that resolves to `true` if successful.
      */
     async disableEmailForwarding(args: DisableEmailArgs, requestId?: string): Promise<boolean> {
-        const queryParams = new URLSearchParams({
-            obj_type: args.objType,
-            obj_id: args.objId,
-        })
-        const response = await request({
-            httpMethod: 'DELETE',
-            baseUri: this.syncApiBase,
-            relativePath: `${ENDPOINT_REST_EMAILS}?${queryParams.toString()}`,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            requestId: requestId,
-        })
-        return isSuccess(response)
+        return this.emailClient.disableEmailForwarding(args, requestId)
     }
 
     // ── ID Mappings ──
@@ -1614,18 +1376,7 @@ export class TodoistApi {
      * @returns A promise that resolves to an array of ID mappings.
      */
     async getIdMappings(args: GetIdMappingsArgs): Promise<IdMapping[]> {
-        const response = await request<unknown[]>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(
-                ENDPOINT_REST_ID_MAPPINGS,
-                args.objName,
-                args.objIds.join(','),
-            ),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-        })
-        return validateIdMappingArray(response.data)
+        return this.idMappingClient.getIdMappings(args)
     }
 
     /**
@@ -1635,15 +1386,7 @@ export class TodoistApi {
      * @returns A promise that resolves to an array of moved ID pairs.
      */
     async getMovedIds(args: GetMovedIdsArgs): Promise<MovedId[]> {
-        const response = await request<unknown[]>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_MOVED_IDS, args.objName),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args.oldIds ? { oldIds: args.oldIds.join(',') } : undefined,
-        })
-        return validateMovedIdArray(response.data)
+        return this.idMappingClient.getMovedIds(args)
     }
 
     // ── Templates ──
@@ -1655,15 +1398,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the template file content as a string.
      */
     async exportTemplateAsFile(args: ExportTemplateFileArgs): Promise<string> {
-        const response = await request<string>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_TEMPLATES_FILE,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-        })
-        return response.data
+        return this.templateClient.exportTemplateAsFile(args)
     }
 
     /**
@@ -1673,15 +1408,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the file name and URL.
      */
     async exportTemplateAsUrl(args: ExportTemplateUrlArgs): Promise<ExportTemplateUrlResponse> {
-        const { data } = await request<ExportTemplateUrlResponse>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_TEMPLATES_URL,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-        })
-        return data
+        return this.templateClient.exportTemplateAsUrl(args)
     }
 
     /**
@@ -1695,25 +1422,7 @@ export class TodoistApi {
         args: CreateProjectFromTemplateArgs,
         requestId?: string,
     ): Promise<CreateProjectFromTemplateResponse> {
-        const { file, fileName, name, workspaceId } = args
-        const additionalFields: Record<string, string> = { name }
-        if (workspaceId !== undefined && workspaceId !== null) {
-            additionalFields.workspace_id = workspaceId
-        }
-
-        const data = await uploadMultipartFile<Record<string, unknown>>({
-            baseUrl: this.syncApiBase,
-            authToken: this.authToken,
-            endpoint: ENDPOINT_REST_TEMPLATES_CREATE_FROM_FILE,
-            file,
-            fileName,
-            additionalFields,
-            customFetch: this.customFetch,
-            requestId,
-        })
-        return this.validateTemplateResponse(
-            camelCaseKeys(data),
-        ) as CreateProjectFromTemplateResponse
+        return this.templateClient.createProjectFromTemplate(args, requestId)
     }
 
     /**
@@ -1727,18 +1436,7 @@ export class TodoistApi {
         args: ImportTemplateIntoProjectArgs,
         requestId?: string,
     ): Promise<ImportTemplateResponse> {
-        const { file, fileName, projectId } = args
-        const data = await uploadMultipartFile<Record<string, unknown>>({
-            baseUrl: this.syncApiBase,
-            authToken: this.authToken,
-            endpoint: ENDPOINT_REST_TEMPLATES_IMPORT_FROM_FILE,
-            file,
-            fileName,
-            additionalFields: { project_id: projectId },
-            customFetch: this.customFetch,
-            requestId,
-        })
-        return this.validateTemplateResponse(camelCaseKeys(data)) as ImportTemplateResponse
+        return this.templateClient.importTemplateIntoProject(args, requestId)
     }
 
     /**
@@ -1752,26 +1450,7 @@ export class TodoistApi {
         args: ImportTemplateFromIdArgs,
         requestId?: string,
     ): Promise<ImportTemplateResponse> {
-        const { data } = await request<Record<string, unknown>>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_TEMPLATES_IMPORT_FROM_ID,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-            requestId: requestId,
-        })
-        return this.validateTemplateResponse(data) as ImportTemplateResponse
-    }
-
-    private validateTemplateResponse(data: Record<string, unknown>) {
-        return {
-            ...data,
-            projects: validateProjectArray((data.projects as unknown[]) ?? []),
-            sections: validateSectionArray((data.sections as unknown[]) ?? []),
-            tasks: validateTaskArray((data.tasks as unknown[]) ?? []),
-            comments: validateCommentArray((data.comments as unknown[]) ?? []),
-        }
+        return this.templateClient.importTemplateFromId(args, requestId)
     }
 
     /* Workspace methods */
