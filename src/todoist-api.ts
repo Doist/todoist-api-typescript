@@ -1,5 +1,8 @@
 import { z } from 'zod'
+import { CommentClient } from './clients/comment-client'
+import { LabelClient } from './clients/label-client'
 import { ProjectClient } from './clients/project-client'
+import { SectionClient } from './clients/section-client'
 import { TaskClient } from './clients/task-client'
 import {
     getSyncBaseUri,
@@ -8,18 +11,8 @@ import {
     ENDPOINT_REST_TEMPLATES_CREATE_FROM_FILE,
     ENDPOINT_REST_TEMPLATES_IMPORT_FROM_FILE,
     ENDPOINT_REST_TEMPLATES_IMPORT_FROM_ID,
-    ENDPOINT_REST_LABELS,
-    ENDPOINT_REST_LABELS_SEARCH,
-    ENDPOINT_REST_SECTIONS,
-    ENDPOINT_REST_SECTIONS_SEARCH,
-    ENDPOINT_REST_COMMENTS,
     ENDPOINT_REST_LOCATION_REMINDERS,
     ENDPOINT_REST_REMINDERS,
-    ENDPOINT_REST_LABELS_SHARED,
-    ENDPOINT_REST_LABELS_SHARED_RENAME,
-    ENDPOINT_REST_LABELS_SHARED_REMOVE,
-    SECTION_ARCHIVE,
-    SECTION_UNARCHIVE,
     ENDPOINT_REST_USER,
     ENDPOINT_REST_PRODUCTIVITY,
     ENDPOINT_REST_ACTIVITIES,
@@ -208,14 +201,10 @@ import { generatePath } from './utils/request-helpers'
 import { formatDateToYYYYMMDD } from './utils/url-helpers'
 import {
     validateAttachment,
-    validateComment,
     validateCommentArray,
     validateCurrentUser,
-    validateLabel,
-    validateLabelArray,
     validateProject,
     validateProjectArray,
-    validateSection,
     validateSectionArray,
     validateTaskArray,
     validateProductivityStats,
@@ -309,6 +298,9 @@ export class TodoistApi {
     // through these; sub-clients themselves are not exposed from the package.
     private readonly taskClient: TaskClient
     private readonly projectClient: ProjectClient
+    private readonly sectionClient: SectionClient
+    private readonly labelClient: LabelClient
+    private readonly commentClient: CommentClient
 
     constructor(
         /**
@@ -337,6 +329,9 @@ export class TodoistApi {
         }
         this.taskClient = new TaskClient(clientDeps)
         this.projectClient = new ProjectClient(clientDeps)
+        this.sectionClient = new SectionClient(clientDeps)
+        this.labelClient = new LabelClient(clientDeps)
+        this.commentClient = new CommentClient(clientDeps)
     }
 
     /**
@@ -903,21 +898,7 @@ export class TodoistApi {
      * @returns A promise that resolves to an array of sections.
      */
     async getSections(args?: GetSectionsArgs): Promise<GetSectionsResponse> {
-        const {
-            data: { results, nextCursor },
-        } = await request<GetSectionsResponse>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_SECTIONS,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-        })
-
-        return {
-            results: validateSectionArray(results),
-            nextCursor,
-        }
+        return this.sectionClient.getSections(args)
     }
 
     /**
@@ -927,21 +908,7 @@ export class TodoistApi {
      * @returns A promise that resolves to a paginated response of sections.
      */
     async searchSections(args: SearchSectionsArgs): Promise<GetSectionsResponse> {
-        const {
-            data: { results, nextCursor },
-        } = await request<GetSectionsResponse>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_SECTIONS_SEARCH,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-        })
-
-        return {
-            results: validateSectionArray(results),
-            nextCursor,
-        }
+        return this.sectionClient.searchSections(args)
     }
 
     /**
@@ -951,16 +918,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the requested section.
      */
     async getSection(id: string): Promise<Section> {
-        z.string().parse(id)
-        const response = await request<Section>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_SECTIONS, id),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-        })
-
-        return validateSection(response.data)
+        return this.sectionClient.getSection(id)
     }
 
     /**
@@ -971,17 +929,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the created section.
      */
     async addSection(args: AddSectionArgs, requestId?: string): Promise<Section> {
-        const response = await request<Section>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_SECTIONS,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-            requestId: requestId,
-        })
-
-        return validateSection(response.data)
+        return this.sectionClient.addSection(args, requestId)
     }
 
     /**
@@ -993,17 +941,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the updated section.
      */
     async updateSection(id: string, args: UpdateSectionArgs, requestId?: string): Promise<Section> {
-        z.string().parse(id)
-        const response = await request({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_SECTIONS, id),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-            requestId: requestId,
-        })
-        return validateSection(response.data)
+        return this.sectionClient.updateSection(id, args, requestId)
     }
 
     /**
@@ -1014,16 +952,7 @@ export class TodoistApi {
      * @returns A promise that resolves to `true` if successful.
      */
     async deleteSection(id: string, requestId?: string): Promise<boolean> {
-        z.string().parse(id)
-        const response = await request({
-            httpMethod: 'DELETE',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_SECTIONS, id),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            requestId: requestId,
-        })
-        return isSuccess(response)
+        return this.sectionClient.deleteSection(id, requestId)
     }
 
     /**
@@ -1034,16 +963,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the updated section.
      */
     async archiveSection(id: string, requestId?: string): Promise<Section> {
-        z.string().parse(id)
-        const response = await request<Section>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_SECTIONS, id, SECTION_ARCHIVE),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            requestId: requestId,
-        })
-        return validateSection(response.data)
+        return this.sectionClient.archiveSection(id, requestId)
     }
 
     /**
@@ -1054,16 +974,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the updated section.
      */
     async unarchiveSection(id: string, requestId?: string): Promise<Section> {
-        z.string().parse(id)
-        const response = await request<Section>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_SECTIONS, id, SECTION_UNARCHIVE),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            requestId: requestId,
-        })
-        return validateSection(response.data)
+        return this.sectionClient.unarchiveSection(id, requestId)
     }
 
     /**
@@ -1073,16 +984,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the requested label.
      */
     async getLabel(id: string): Promise<Label> {
-        z.string().parse(id)
-        const response = await request<Label>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_LABELS, id),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-        })
-
-        return validateLabel(response.data)
+        return this.labelClient.getLabel(id)
     }
 
     /**
@@ -1092,21 +994,7 @@ export class TodoistApi {
      * @returns A promise that resolves to an array of labels.
      */
     async getLabels(args: GetLabelsArgs = {}): Promise<GetLabelsResponse> {
-        const {
-            data: { results, nextCursor },
-        } = await request<GetLabelsResponse>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_LABELS,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-        })
-
-        return {
-            results: validateLabelArray(results),
-            nextCursor,
-        }
+        return this.labelClient.getLabels(args)
     }
 
     /**
@@ -1116,21 +1004,7 @@ export class TodoistApi {
      * @returns A promise that resolves to a paginated response of labels.
      */
     async searchLabels(args: SearchLabelsArgs): Promise<GetLabelsResponse> {
-        const {
-            data: { results, nextCursor },
-        } = await request<GetLabelsResponse>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_LABELS_SEARCH,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-        })
-
-        return {
-            results: validateLabelArray(results),
-            nextCursor,
-        }
+        return this.labelClient.searchLabels(args)
     }
 
     /**
@@ -1141,17 +1015,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the created label.
      */
     async addLabel(args: AddLabelArgs, requestId?: string): Promise<Label> {
-        const response = await request<Label>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_LABELS,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-            requestId: requestId,
-        })
-
-        return validateLabel(response.data)
+        return this.labelClient.addLabel(args, requestId)
     }
 
     /**
@@ -1163,17 +1027,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the updated label.
      */
     async updateLabel(id: string, args: UpdateLabelArgs, requestId?: string): Promise<Label> {
-        z.string().parse(id)
-        const response = await request({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_LABELS, id),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-            requestId: requestId,
-        })
-        return validateLabel(response.data)
+        return this.labelClient.updateLabel(id, args, requestId)
     }
 
     /**
@@ -1184,16 +1038,7 @@ export class TodoistApi {
      * @returns A promise that resolves to `true` if successful.
      */
     async deleteLabel(id: string, requestId?: string): Promise<boolean> {
-        z.string().parse(id)
-        const response = await request({
-            httpMethod: 'DELETE',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_LABELS, id),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            requestId: requestId,
-        })
-        return isSuccess(response)
+        return this.labelClient.deleteLabel(id, requestId)
     }
 
     /**
@@ -1203,18 +1048,7 @@ export class TodoistApi {
      * @returns A promise that resolves to an array of shared labels.
      */
     async getSharedLabels(args?: GetSharedLabelsArgs): Promise<GetSharedLabelsResponse> {
-        const {
-            data: { results, nextCursor },
-        } = await request<GetSharedLabelsResponse>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_LABELS_SHARED,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-        })
-
-        return { results, nextCursor }
+        return this.labelClient.getSharedLabels(args)
     }
 
     /**
@@ -1224,16 +1058,7 @@ export class TodoistApi {
      * @returns A promise that resolves to `true` if successful.
      */
     async renameSharedLabel(args: RenameSharedLabelArgs): Promise<boolean> {
-        const response = await request<void>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_LABELS_SHARED_RENAME,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-        })
-
-        return isSuccess(response)
+        return this.labelClient.renameSharedLabel(args)
     }
 
     /**
@@ -1243,16 +1068,7 @@ export class TodoistApi {
      * @returns A promise that resolves to `true` if successful.
      */
     async removeSharedLabel(args: RemoveSharedLabelArgs): Promise<boolean> {
-        const response = await request<void>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_LABELS_SHARED_REMOVE,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-        })
-
-        return isSuccess(response)
+        return this.labelClient.removeSharedLabel(args)
     }
 
     /**
@@ -1264,21 +1080,7 @@ export class TodoistApi {
     async getComments(
         args: GetTaskCommentsArgs | GetProjectCommentsArgs,
     ): Promise<GetCommentsResponse> {
-        const {
-            data: { results, nextCursor },
-        } = await request<GetCommentsResponse>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_COMMENTS,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-        })
-
-        return {
-            results: validateCommentArray(results),
-            nextCursor,
-        }
+        return this.commentClient.getComments(args)
     }
 
     /**
@@ -1288,16 +1090,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the requested comment.
      */
     async getComment(id: string): Promise<Comment> {
-        z.string().parse(id)
-        const response = await request<Comment>({
-            httpMethod: 'GET',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_COMMENTS, id),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-        })
-
-        return validateComment(response.data)
+        return this.commentClient.getComment(id)
     }
 
     /**
@@ -1308,21 +1101,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the created comment.
      */
     async addComment(args: AddCommentArgs, requestId?: string): Promise<Comment> {
-        const { uidsToNotify, ...rest } = args
-        const response = await request<Comment>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: ENDPOINT_REST_COMMENTS,
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: {
-                ...rest,
-                ...(uidsToNotify ? { uidsToNotify: uidsToNotify.join(',') } : {}),
-            },
-            requestId: requestId,
-        })
-
-        return validateComment(response.data)
+        return this.commentClient.addComment(args, requestId)
     }
 
     /**
@@ -1334,17 +1113,7 @@ export class TodoistApi {
      * @returns A promise that resolves to the updated comment.
      */
     async updateComment(id: string, args: UpdateCommentArgs, requestId?: string): Promise<Comment> {
-        z.string().parse(id)
-        const response = await request<boolean>({
-            httpMethod: 'POST',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_COMMENTS, id),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            payload: args,
-            requestId: requestId,
-        })
-        return validateComment(response.data)
+        return this.commentClient.updateComment(id, args, requestId)
     }
 
     /**
@@ -1355,16 +1124,7 @@ export class TodoistApi {
      * @returns A promise that resolves to `true` if successful.
      */
     async deleteComment(id: string, requestId?: string): Promise<boolean> {
-        z.string().parse(id)
-        const response = await request({
-            httpMethod: 'DELETE',
-            baseUri: this.syncApiBase,
-            relativePath: generatePath(ENDPOINT_REST_COMMENTS, id),
-            apiToken: this.authToken,
-            customFetch: this.customFetch,
-            requestId: requestId,
-        })
-        return isSuccess(response)
+        return this.commentClient.deleteComment(id, requestId)
     }
 
     /**
