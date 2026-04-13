@@ -1,5 +1,5 @@
 import {
-    getSyncBaseUri,
+    getApiRootBaseUri,
     ENDPOINT_REST_USER_AUTHORIZATIONS,
     ENDPOINT_REST_USER_AUTHORIZATIONS_DELETE,
 } from './consts/endpoints'
@@ -19,7 +19,7 @@ describe('TodoistApi user authorization endpoints', () => {
     describe('getUserAuthorizations', () => {
         test('lists authorizations', async () => {
             server.use(
-                http.get(`${getSyncBaseUri()}${ENDPOINT_REST_USER_AUTHORIZATIONS}`, () => {
+                http.get(`${getApiRootBaseUri()}${ENDPOINT_REST_USER_AUTHORIZATIONS}`, () => {
                     return HttpResponse.json(
                         [
                             {
@@ -50,7 +50,7 @@ describe('TodoistApi user authorization endpoints', () => {
             let receivedBody: unknown
             server.use(
                 http.post(
-                    `${getSyncBaseUri()}${ENDPOINT_REST_USER_AUTHORIZATIONS_DELETE}`,
+                    `${getApiRootBaseUri()}${ENDPOINT_REST_USER_AUTHORIZATIONS_DELETE}`,
                     async ({ request }) => {
                         receivedBody = await request.json()
                         return HttpResponse.json({ status: 'ok' }, { status: 200 })

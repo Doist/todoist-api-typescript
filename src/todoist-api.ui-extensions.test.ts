@@ -1,6 +1,6 @@
 import { vi } from 'vitest'
 import {
-    getSyncBaseUri,
+    getApiRootBaseUri,
     ENDPOINT_REST_APPS_UI_EXTENSIONS,
     ENDPOINT_REST_APPS_UI_EXTENSIONS_INSTALLED,
     getUiExtensionEndpoint,
@@ -33,7 +33,7 @@ describe('TodoistApi UI extension endpoints', () => {
         test('returns a single UI extension', async () => {
             server.use(
                 http.get(
-                    `${getSyncBaseUri()}${getUiExtensionEndpoint(DEFAULT_UI_EXTENSION_ID)}`,
+                    `${getApiRootBaseUri()}${getUiExtensionEndpoint(DEFAULT_UI_EXTENSION_ID)}`,
                     () => HttpResponse.json(DEFAULT_UI_EXTENSION, { status: 200 }),
                 ),
             )
@@ -45,8 +45,9 @@ describe('TodoistApi UI extension endpoints', () => {
     describe('getInstalledUiExtensions', () => {
         test('returns installed extensions as a discriminated union', async () => {
             server.use(
-                http.get(`${getSyncBaseUri()}${ENDPOINT_REST_APPS_UI_EXTENSIONS_INSTALLED}`, () =>
-                    HttpResponse.json([DEFAULT_UI_EXTENSION], { status: 200 }),
+                http.get(
+                    `${getApiRootBaseUri()}${ENDPOINT_REST_APPS_UI_EXTENSIONS_INSTALLED}`,
+                    () => HttpResponse.json([DEFAULT_UI_EXTENSION], { status: 200 }),
                 ),
             )
             const installed = await getTarget().getInstalledUiExtensions()
@@ -58,7 +59,7 @@ describe('TodoistApi UI extension endpoints', () => {
         test('lists extensions for an app', async () => {
             server.use(
                 http.get(
-                    `${getSyncBaseUri()}${getUiExtensionsByIntegrationEndpoint(DEFAULT_APP_ID)}`,
+                    `${getApiRootBaseUri()}${getUiExtensionsByIntegrationEndpoint(DEFAULT_APP_ID)}`,
                     () => HttpResponse.json([DEFAULT_UI_EXTENSION], { status: 200 }),
                 ),
             )
@@ -72,7 +73,7 @@ describe('TodoistApi UI extension endpoints', () => {
             let receivedBody: unknown
             server.use(
                 http.post(
-                    `${getSyncBaseUri()}${ENDPOINT_REST_APPS_UI_EXTENSIONS}`,
+                    `${getApiRootBaseUri()}${ENDPOINT_REST_APPS_UI_EXTENSIONS}`,
                     async ({ request }) => {
                         receivedBody = await request.json()
                         return HttpResponse.json(DEFAULT_UI_EXTENSION, { status: 200 })
@@ -104,7 +105,7 @@ describe('TodoistApi UI extension endpoints', () => {
             let receivedMethod: string | undefined
             server.use(
                 http.patch(
-                    `${getSyncBaseUri()}${getUiExtensionEndpoint(DEFAULT_UI_EXTENSION_ID)}`,
+                    `${getApiRootBaseUri()}${getUiExtensionEndpoint(DEFAULT_UI_EXTENSION_ID)}`,
                     ({ request }) => {
                         receivedMethod = request.method
                         return HttpResponse.json(DEFAULT_UI_EXTENSION, { status: 200 })
@@ -123,7 +124,7 @@ describe('TodoistApi UI extension endpoints', () => {
         test('returns true on success', async () => {
             server.use(
                 http.delete(
-                    `${getSyncBaseUri()}${getUiExtensionEndpoint(DEFAULT_UI_EXTENSION_ID)}`,
+                    `${getApiRootBaseUri()}${getUiExtensionEndpoint(DEFAULT_UI_EXTENSION_ID)}`,
                     () => HttpResponse.json({ status: 'ok' }, { status: 200 }),
                 ),
             )
@@ -145,7 +146,7 @@ describe('TodoistApi UI extension endpoints', () => {
             })
 
             expect(mockedUploadMultipartFile).toHaveBeenCalledWith({
-                baseUrl: getSyncBaseUri(),
+                baseUrl: getApiRootBaseUri(),
                 authToken: DEFAULT_AUTH_TOKEN,
                 endpoint: getUiExtensionIconEndpoint(DEFAULT_UI_EXTENSION_ID),
                 file: '/path/to/icon.png',

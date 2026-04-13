@@ -1,6 +1,6 @@
 import { vi } from 'vitest'
 import {
-    getSyncBaseUri,
+    getApiRootBaseUri,
     ENDPOINT_REST_APPS,
     getAppEndpoint,
     getAppSecretsEndpoint,
@@ -55,7 +55,7 @@ describe('TodoistApi app management endpoints', () => {
     describe('getApps', () => {
         test('lists apps', async () => {
             server.use(
-                http.get(`${getSyncBaseUri()}${ENDPOINT_REST_APPS}`, () => {
+                http.get(`${getApiRootBaseUri()}${ENDPOINT_REST_APPS}`, () => {
                     return HttpResponse.json([appWire], { status: 200 })
                 }),
             )
@@ -67,7 +67,7 @@ describe('TodoistApi app management endpoints', () => {
     describe('getApp', () => {
         test('returns a single app with user count', async () => {
             server.use(
-                http.get(`${getSyncBaseUri()}${getAppEndpoint(DEFAULT_APP_ID)}`, () => {
+                http.get(`${getApiRootBaseUri()}${getAppEndpoint(DEFAULT_APP_ID)}`, () => {
                     return HttpResponse.json(appWithUserCountWire, { status: 200 })
                 }),
             )
@@ -79,7 +79,7 @@ describe('TodoistApi app management endpoints', () => {
     describe('addApp', () => {
         test('creates an app', async () => {
             server.use(
-                http.post(`${getSyncBaseUri()}${ENDPOINT_REST_APPS}`, () => {
+                http.post(`${getApiRootBaseUri()}${ENDPOINT_REST_APPS}`, () => {
                     return HttpResponse.json(appWire, { status: 200 })
                 }),
             )
@@ -94,7 +94,7 @@ describe('TodoistApi app management endpoints', () => {
     describe('updateApp', () => {
         test('updates an app', async () => {
             server.use(
-                http.post(`${getSyncBaseUri()}${getAppEndpoint(DEFAULT_APP_ID)}`, () => {
+                http.post(`${getApiRootBaseUri()}${getAppEndpoint(DEFAULT_APP_ID)}`, () => {
                     return HttpResponse.json(appWithUserCountWire, { status: 200 })
                 }),
             )
@@ -109,7 +109,7 @@ describe('TodoistApi app management endpoints', () => {
             let receivedBody: unknown
             server.use(
                 http.post(
-                    `${getSyncBaseUri()}${getAppEndpoint(DEFAULT_APP_ID)}`,
+                    `${getApiRootBaseUri()}${getAppEndpoint(DEFAULT_APP_ID)}`,
                     async ({ request }) => {
                         receivedBody = await request.json()
                         return HttpResponse.json(appWithUserCountWire, { status: 200 })
@@ -126,7 +126,7 @@ describe('TodoistApi app management endpoints', () => {
             let receivedBody: unknown
             server.use(
                 http.post(
-                    `${getSyncBaseUri()}${getAppEndpoint(DEFAULT_APP_ID)}`,
+                    `${getApiRootBaseUri()}${getAppEndpoint(DEFAULT_APP_ID)}`,
                     async ({ request }) => {
                         receivedBody = await request.json()
                         return HttpResponse.json(appWithUserCountWire, { status: 200 })
@@ -141,7 +141,7 @@ describe('TodoistApi app management endpoints', () => {
     describe('deleteApp', () => {
         test('returns true on success', async () => {
             server.use(
-                http.delete(`${getSyncBaseUri()}${getAppEndpoint(DEFAULT_APP_ID)}`, () => {
+                http.delete(`${getApiRootBaseUri()}${getAppEndpoint(DEFAULT_APP_ID)}`, () => {
                     return HttpResponse.json({ message: 'ok' }, { status: 200 })
                 }),
             )
@@ -153,7 +153,7 @@ describe('TodoistApi app management endpoints', () => {
     describe('getAppSecrets', () => {
         test('returns client credentials', async () => {
             server.use(
-                http.get(`${getSyncBaseUri()}${getAppSecretsEndpoint(DEFAULT_APP_ID)}`, () => {
+                http.get(`${getApiRootBaseUri()}${getAppSecretsEndpoint(DEFAULT_APP_ID)}`, () => {
                     return HttpResponse.json(
                         {
                             client_id: DEFAULT_APP_SECRETS.clientId,
@@ -172,7 +172,7 @@ describe('TodoistApi app management endpoints', () => {
         test('rotates the client secret', async () => {
             server.use(
                 http.delete(
-                    `${getSyncBaseUri()}${getAppClientSecretEndpoint(DEFAULT_APP_ID)}`,
+                    `${getApiRootBaseUri()}${getAppClientSecretEndpoint(DEFAULT_APP_ID)}`,
                     () => {
                         return HttpResponse.json(appWithUserCountWire, { status: 200 })
                     },
@@ -186,7 +186,7 @@ describe('TodoistApi app management endpoints', () => {
     describe('revokeAppTokens', () => {
         test('revokes all tokens for the app', async () => {
             server.use(
-                http.delete(`${getSyncBaseUri()}${getAppTokensEndpoint(DEFAULT_APP_ID)}`, () => {
+                http.delete(`${getApiRootBaseUri()}${getAppTokensEndpoint(DEFAULT_APP_ID)}`, () => {
                     return HttpResponse.json(appWithUserCountWire, { status: 200 })
                 }),
             )
@@ -208,7 +208,7 @@ describe('TodoistApi app management endpoints', () => {
             })
 
             expect(mockedUploadMultipartFile).toHaveBeenCalledWith({
-                baseUrl: getSyncBaseUri(),
+                baseUrl: getApiRootBaseUri(),
                 authToken: DEFAULT_AUTH_TOKEN,
                 endpoint: getAppIconEndpoint(DEFAULT_APP_ID, 'medium'),
                 file: '/path/to/icon.png',
@@ -264,7 +264,7 @@ describe('TodoistApi app management endpoints', () => {
     describe('app test token', () => {
         test('getAppTestToken', async () => {
             server.use(
-                http.get(`${getSyncBaseUri()}${getAppTestTokenEndpoint(DEFAULT_APP_ID)}`, () => {
+                http.get(`${getApiRootBaseUri()}${getAppTestTokenEndpoint(DEFAULT_APP_ID)}`, () => {
                     return HttpResponse.json(
                         { access_token: DEFAULT_APP_TEST_TOKEN.accessToken },
                         { status: 200 },
@@ -279,7 +279,7 @@ describe('TodoistApi app management endpoints', () => {
             let receivedMethod: string | undefined
             server.use(
                 http.put(
-                    `${getSyncBaseUri()}${getAppTestTokenEndpoint(DEFAULT_APP_ID)}`,
+                    `${getApiRootBaseUri()}${getAppTestTokenEndpoint(DEFAULT_APP_ID)}`,
                     ({ request }) => {
                         receivedMethod = request.method
                         return HttpResponse.json(
@@ -296,7 +296,7 @@ describe('TodoistApi app management endpoints', () => {
 
         test('getAppTestToken handles null access_token', async () => {
             server.use(
-                http.get(`${getSyncBaseUri()}${getAppTestTokenEndpoint(DEFAULT_APP_ID)}`, () => {
+                http.get(`${getApiRootBaseUri()}${getAppTestTokenEndpoint(DEFAULT_APP_ID)}`, () => {
                     return HttpResponse.json({ access_token: null }, { status: 200 })
                 }),
             )
@@ -309,7 +309,7 @@ describe('TodoistApi app management endpoints', () => {
         test('returns the distribution token', async () => {
             server.use(
                 http.get(
-                    `${getSyncBaseUri()}${getAppDistributionTokenEndpoint(DEFAULT_APP_ID)}`,
+                    `${getApiRootBaseUri()}${getAppDistributionTokenEndpoint(DEFAULT_APP_ID)}`,
                     () => {
                         return HttpResponse.json(
                             {
@@ -330,7 +330,7 @@ describe('TodoistApi app management endpoints', () => {
         test('getAppVerificationToken', async () => {
             server.use(
                 http.get(
-                    `${getSyncBaseUri()}${getAppVerificationTokenEndpoint(DEFAULT_APP_ID)}`,
+                    `${getApiRootBaseUri()}${getAppVerificationTokenEndpoint(DEFAULT_APP_ID)}`,
                     () => {
                         return HttpResponse.json(
                             {
@@ -349,7 +349,7 @@ describe('TodoistApi app management endpoints', () => {
         test('resetAppVerificationToken', async () => {
             server.use(
                 http.delete(
-                    `${getSyncBaseUri()}${getAppVerificationTokenEndpoint(DEFAULT_APP_ID)}`,
+                    `${getApiRootBaseUri()}${getAppVerificationTokenEndpoint(DEFAULT_APP_ID)}`,
                     () => {
                         return HttpResponse.json(
                             {
@@ -370,7 +370,7 @@ describe('TodoistApi app management endpoints', () => {
         test('resolves an app by distribution token', async () => {
             server.use(
                 http.get(
-                    `${getSyncBaseUri()}${getAppByDistributionTokenEndpoint(
+                    `${getApiRootBaseUri()}${getAppByDistributionTokenEndpoint(
                         DEFAULT_DISTRIBUTION_TOKEN,
                     )}`,
                     () => {

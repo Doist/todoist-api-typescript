@@ -1,4 +1,4 @@
-import { getSyncBaseUri, getAppWebhookEndpoint } from './consts/endpoints'
+import { getApiRootBaseUri, getAppWebhookEndpoint } from './consts/endpoints'
 import { server, http, HttpResponse } from './test-utils/msw-setup'
 import { DEFAULT_AUTH_TOKEN, DEFAULT_APP_ID, DEFAULT_APP_WEBHOOK } from './test-utils/test-defaults'
 import { TodoistApi } from './todoist-api'
@@ -11,7 +11,7 @@ describe('TodoistApi app webhook endpoints', () => {
     describe('getAppWebhook', () => {
         test('translates wire-format event names to pretty names', async () => {
             server.use(
-                http.get(`${getSyncBaseUri()}${getAppWebhookEndpoint(DEFAULT_APP_ID)}`, () => {
+                http.get(`${getApiRootBaseUri()}${getAppWebhookEndpoint(DEFAULT_APP_ID)}`, () => {
                     return HttpResponse.json(
                         {
                             status: 'active',
@@ -30,7 +30,7 @@ describe('TodoistApi app webhook endpoints', () => {
 
         test('returns null when no webhook configured', async () => {
             server.use(
-                http.get(`${getSyncBaseUri()}${getAppWebhookEndpoint(DEFAULT_APP_ID)}`, () => {
+                http.get(`${getApiRootBaseUri()}${getAppWebhookEndpoint(DEFAULT_APP_ID)}`, () => {
                     return HttpResponse.json(null, { status: 200 })
                 }),
             )
@@ -44,7 +44,7 @@ describe('TodoistApi app webhook endpoints', () => {
             let receivedBody: unknown
             server.use(
                 http.post(
-                    `${getSyncBaseUri()}${getAppWebhookEndpoint(DEFAULT_APP_ID)}`,
+                    `${getApiRootBaseUri()}${getAppWebhookEndpoint(DEFAULT_APP_ID)}`,
                     async ({ request }) => {
                         receivedBody = await request.json()
                         return HttpResponse.json(
@@ -77,9 +77,12 @@ describe('TodoistApi app webhook endpoints', () => {
     describe('deleteAppWebhook', () => {
         test('returns true on 204', async () => {
             server.use(
-                http.delete(`${getSyncBaseUri()}${getAppWebhookEndpoint(DEFAULT_APP_ID)}`, () => {
-                    return HttpResponse.json(undefined, { status: 204 })
-                }),
+                http.delete(
+                    `${getApiRootBaseUri()}${getAppWebhookEndpoint(DEFAULT_APP_ID)}`,
+                    () => {
+                        return HttpResponse.json(undefined, { status: 204 })
+                    },
+                ),
             )
             const result = await getTarget().deleteAppWebhook(DEFAULT_APP_ID)
             expect(result).toBe(true)
