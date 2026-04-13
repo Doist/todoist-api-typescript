@@ -22,7 +22,7 @@ export abstract class BaseClient {
     constructor(context: SyncRequestContext) {
         this.authToken = context.authToken
         this.syncApiBase = context.syncApiBase
-        this.apiRootBase = context.apiRootBase ?? context.syncApiBase
+        this.apiRootBase = new URL('/', context.syncApiBase).toString()
         this.customFetch = context.customFetch
     }
 

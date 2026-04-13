@@ -16,7 +16,7 @@ import { TemplateClient } from './clients/template-client'
 import { UiExtensionClient } from './clients/ui-extension-client'
 import { UploadClient } from './clients/upload-client'
 import { WorkspaceClient } from './clients/workspace-client'
-import { ENDPOINT_REST_USER, getApiRootBaseUri, getSyncBaseUri } from './consts/endpoints'
+import { ENDPOINT_REST_USER, getSyncBaseUri } from './consts/endpoints'
 import { request } from './transport/http-client'
 import { performSyncRequest } from './transport/sync-request'
 import type { Reminder } from './types'
@@ -273,7 +273,6 @@ export class TodoistApi {
         const clientDeps = {
             authToken: this.authToken,
             syncApiBase: this.syncApiBase,
-            apiRootBase: getApiRootBaseUri(opts.baseUrl),
             customFetch: this.customFetch,
         }
         this.taskClient = new TaskClient(clientDeps)

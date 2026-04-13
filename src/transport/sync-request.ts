@@ -26,7 +26,6 @@ import { request } from './http-client'
 export type SyncRequestContext = {
     authToken: string
     syncApiBase: string
-    apiRootBase?: string
     customFetch?: CustomFetch
 }
 
