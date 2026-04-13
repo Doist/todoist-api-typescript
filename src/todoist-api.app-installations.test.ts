@@ -1,5 +1,5 @@
 import {
-    getSyncBaseUri,
+    getApiRootBaseUri,
     ENDPOINT_REST_APPS_INSTALLATIONS,
     getAppInstallationEndpoint,
 } from './consts/endpoints'
@@ -33,7 +33,7 @@ describe('TodoistApi app installation endpoints', () => {
     describe('getAppInstallations', () => {
         test('lists installations', async () => {
             server.use(
-                http.get(`${getSyncBaseUri()}${ENDPOINT_REST_APPS_INSTALLATIONS}`, () => {
+                http.get(`${getApiRootBaseUri()}${ENDPOINT_REST_APPS_INSTALLATIONS}`, () => {
                     return HttpResponse.json([installationWire], { status: 200 })
                 }),
             )
@@ -47,7 +47,7 @@ describe('TodoistApi app installation endpoints', () => {
             let receivedBody: unknown
             server.use(
                 http.post(
-                    `${getSyncBaseUri()}${ENDPOINT_REST_APPS_INSTALLATIONS}`,
+                    `${getApiRootBaseUri()}${ENDPOINT_REST_APPS_INSTALLATIONS}`,
                     async ({ request }) => {
                         receivedBody = await request.json()
                         return HttpResponse.json(installationWire, { status: 200 })
@@ -72,7 +72,7 @@ describe('TodoistApi app installation endpoints', () => {
         test('fetches one installation', async () => {
             server.use(
                 http.get(
-                    `${getSyncBaseUri()}${getAppInstallationEndpoint(DEFAULT_INSTALLATION_ID)}`,
+                    `${getApiRootBaseUri()}${getAppInstallationEndpoint(DEFAULT_INSTALLATION_ID)}`,
                     () => HttpResponse.json(installationWire, { status: 200 }),
                 ),
             )
@@ -85,7 +85,7 @@ describe('TodoistApi app installation endpoints', () => {
         test('updates an installation', async () => {
             server.use(
                 http.post(
-                    `${getSyncBaseUri()}${getAppInstallationEndpoint(DEFAULT_INSTALLATION_ID)}`,
+                    `${getApiRootBaseUri()}${getAppInstallationEndpoint(DEFAULT_INSTALLATION_ID)}`,
                     () => HttpResponse.json(installationWire, { status: 200 }),
                 ),
             )
@@ -100,7 +100,7 @@ describe('TodoistApi app installation endpoints', () => {
         test('returns true on success', async () => {
             server.use(
                 http.delete(
-                    `${getSyncBaseUri()}${getAppInstallationEndpoint(DEFAULT_INSTALLATION_ID)}`,
+                    `${getApiRootBaseUri()}${getAppInstallationEndpoint(DEFAULT_INSTALLATION_ID)}`,
                     () => HttpResponse.json({ status: 'ok' }, { status: 200 }),
                 ),
             )

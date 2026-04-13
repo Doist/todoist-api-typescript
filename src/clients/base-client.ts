@@ -16,11 +16,13 @@ import type { CustomFetch } from '../types/http'
 export abstract class BaseClient {
     protected readonly authToken: string
     protected readonly syncApiBase: string
+    protected readonly apiRootBase: string
     protected readonly customFetch?: CustomFetch
 
     constructor(context: SyncRequestContext) {
         this.authToken = context.authToken
         this.syncApiBase = context.syncApiBase
+        this.apiRootBase = context.apiRootBase ?? context.syncApiBase
         this.customFetch = context.customFetch
     }
 

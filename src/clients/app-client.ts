@@ -67,7 +67,7 @@ export class AppClient extends BaseClient {
     async getApps(requestId?: string): Promise<App[]> {
         const response = await request<unknown[]>({
             httpMethod: 'GET',
-            baseUri: this.syncApiBase,
+            baseUri: this.apiRootBase,
             relativePath: ENDPOINT_REST_APPS,
             apiToken: this.authToken,
             customFetch: this.customFetch,
@@ -80,7 +80,7 @@ export class AppClient extends BaseClient {
         z.string().parse(appId)
         const response = await request<AppWithUserCount>({
             httpMethod: 'GET',
-            baseUri: this.syncApiBase,
+            baseUri: this.apiRootBase,
             relativePath: getAppEndpoint(appId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
@@ -92,7 +92,7 @@ export class AppClient extends BaseClient {
     async addApp(args: AddAppArgs, requestId?: string): Promise<App> {
         const response = await request<App>({
             httpMethod: 'POST',
-            baseUri: this.syncApiBase,
+            baseUri: this.apiRootBase,
             relativePath: ENDPOINT_REST_APPS,
             apiToken: this.authToken,
             customFetch: this.customFetch,
@@ -115,7 +115,7 @@ export class AppClient extends BaseClient {
         }
         const response = await request<AppWithUserCount>({
             httpMethod: 'POST',
-            baseUri: this.syncApiBase,
+            baseUri: this.apiRootBase,
             relativePath: getAppEndpoint(appId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
@@ -129,7 +129,7 @@ export class AppClient extends BaseClient {
         z.string().parse(appId)
         const response = await request({
             httpMethod: 'DELETE',
-            baseUri: this.syncApiBase,
+            baseUri: this.apiRootBase,
             relativePath: getAppEndpoint(appId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
@@ -142,7 +142,7 @@ export class AppClient extends BaseClient {
         z.string().parse(appId)
         const response = await request<AppSecrets>({
             httpMethod: 'GET',
-            baseUri: this.syncApiBase,
+            baseUri: this.apiRootBase,
             relativePath: getAppSecretsEndpoint(appId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
@@ -155,7 +155,7 @@ export class AppClient extends BaseClient {
         z.string().parse(appId)
         const response = await request<AppWithUserCount>({
             httpMethod: 'DELETE',
-            baseUri: this.syncApiBase,
+            baseUri: this.apiRootBase,
             relativePath: getAppClientSecretEndpoint(appId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
@@ -168,7 +168,7 @@ export class AppClient extends BaseClient {
         z.string().parse(appId)
         const response = await request<AppWithUserCount>({
             httpMethod: 'DELETE',
-            baseUri: this.syncApiBase,
+            baseUri: this.apiRootBase,
             relativePath: getAppTokensEndpoint(appId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
@@ -184,7 +184,7 @@ export class AppClient extends BaseClient {
 
         const size = args.size ?? 'medium'
         const data = await uploadMultipartFile<unknown>({
-            baseUrl: this.syncApiBase,
+            baseUrl: this.apiRootBase,
             authToken: this.authToken,
             endpoint: getAppIconEndpoint(args.appId, size),
             file: args.file,
@@ -200,7 +200,7 @@ export class AppClient extends BaseClient {
         z.string().parse(appId)
         const response = await request<AppTestToken>({
             httpMethod: 'GET',
-            baseUri: this.syncApiBase,
+            baseUri: this.apiRootBase,
             relativePath: getAppTestTokenEndpoint(appId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
@@ -213,7 +213,7 @@ export class AppClient extends BaseClient {
         z.string().parse(appId)
         const response = await request<AppTestToken>({
             httpMethod: 'PUT',
-            baseUri: this.syncApiBase,
+            baseUri: this.apiRootBase,
             relativePath: getAppTestTokenEndpoint(appId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
@@ -229,7 +229,7 @@ export class AppClient extends BaseClient {
         z.string().parse(appId)
         const response = await request<AppDistributionToken>({
             httpMethod: 'GET',
-            baseUri: this.syncApiBase,
+            baseUri: this.apiRootBase,
             relativePath: getAppDistributionTokenEndpoint(appId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
@@ -245,7 +245,7 @@ export class AppClient extends BaseClient {
         z.string().parse(appId)
         const response = await request<AppVerificationToken>({
             httpMethod: 'GET',
-            baseUri: this.syncApiBase,
+            baseUri: this.apiRootBase,
             relativePath: getAppVerificationTokenEndpoint(appId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
@@ -261,7 +261,7 @@ export class AppClient extends BaseClient {
         z.string().parse(appId)
         const response = await request<AppVerificationToken>({
             httpMethod: 'DELETE',
-            baseUri: this.syncApiBase,
+            baseUri: this.apiRootBase,
             relativePath: getAppVerificationTokenEndpoint(appId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
@@ -277,7 +277,7 @@ export class AppClient extends BaseClient {
         z.string().parse(distributionToken)
         const response = await request<AppByDistributionToken>({
             httpMethod: 'GET',
-            baseUri: this.syncApiBase,
+            baseUri: this.apiRootBase,
             relativePath: getAppByDistributionTokenEndpoint(distributionToken),
             apiToken: this.authToken,
             customFetch: this.customFetch,
@@ -292,7 +292,7 @@ export class AppClient extends BaseClient {
         z.string().parse(appId)
         const response = await request<AppWebhook | null>({
             httpMethod: 'GET',
-            baseUri: this.syncApiBase,
+            baseUri: this.apiRootBase,
             relativePath: getAppWebhookEndpoint(appId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
@@ -305,7 +305,7 @@ export class AppClient extends BaseClient {
         const { appId, events, ...rest } = args
         const response = await request<AppWebhook>({
             httpMethod: 'POST',
-            baseUri: this.syncApiBase,
+            baseUri: this.apiRootBase,
             relativePath: getAppWebhookEndpoint(appId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
@@ -322,7 +322,7 @@ export class AppClient extends BaseClient {
         z.string().parse(appId)
         const response = await request({
             httpMethod: 'DELETE',
-            baseUri: this.syncApiBase,
+            baseUri: this.apiRootBase,
             relativePath: getAppWebhookEndpoint(appId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
@@ -336,7 +336,7 @@ export class AppClient extends BaseClient {
     async getAppInstallations(requestId?: string): Promise<AppInstallation[]> {
         const response = await request<unknown[]>({
             httpMethod: 'GET',
-            baseUri: this.syncApiBase,
+            baseUri: this.apiRootBase,
             relativePath: ENDPOINT_REST_APPS_INSTALLATIONS,
             apiToken: this.authToken,
             customFetch: this.customFetch,
@@ -348,7 +348,7 @@ export class AppClient extends BaseClient {
     async installApp(args: InstallAppArgs, requestId?: string): Promise<AppInstallation> {
         const response = await request<AppInstallation>({
             httpMethod: 'POST',
-            baseUri: this.syncApiBase,
+            baseUri: this.apiRootBase,
             relativePath: ENDPOINT_REST_APPS_INSTALLATIONS,
             apiToken: this.authToken,
             customFetch: this.customFetch,
@@ -362,7 +362,7 @@ export class AppClient extends BaseClient {
         z.string().parse(installationId)
         const response = await request<AppInstallation>({
             httpMethod: 'GET',
-            baseUri: this.syncApiBase,
+            baseUri: this.apiRootBase,
             relativePath: getAppInstallationEndpoint(installationId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
@@ -379,7 +379,7 @@ export class AppClient extends BaseClient {
         z.string().parse(installationId)
         const response = await request<AppInstallation>({
             httpMethod: 'POST',
-            baseUri: this.syncApiBase,
+            baseUri: this.apiRootBase,
             relativePath: getAppInstallationEndpoint(installationId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
@@ -393,7 +393,7 @@ export class AppClient extends BaseClient {
         z.string().parse(installationId)
         const response = await request({
             httpMethod: 'DELETE',
-            baseUri: this.syncApiBase,
+            baseUri: this.apiRootBase,
             relativePath: getAppInstallationEndpoint(installationId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
@@ -407,7 +407,7 @@ export class AppClient extends BaseClient {
     async getUserAuthorizations(requestId?: string): Promise<UserAuthorization[]> {
         const response = await request<unknown[]>({
             httpMethod: 'GET',
-            baseUri: this.syncApiBase,
+            baseUri: this.apiRootBase,
             relativePath: ENDPOINT_REST_USER_AUTHORIZATIONS,
             apiToken: this.authToken,
             customFetch: this.customFetch,
@@ -422,7 +422,7 @@ export class AppClient extends BaseClient {
     ): Promise<boolean> {
         const response = await request({
             httpMethod: 'POST',
-            baseUri: this.syncApiBase,
+            baseUri: this.apiRootBase,
             relativePath: ENDPOINT_REST_USER_AUTHORIZATIONS_DELETE,
             apiToken: this.authToken,
             customFetch: this.customFetch,

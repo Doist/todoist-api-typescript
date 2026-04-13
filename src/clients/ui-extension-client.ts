@@ -30,7 +30,7 @@ export class UiExtensionClient extends BaseClient {
         z.string().parse(uiExtensionId)
         const response = await request<UiExtension>({
             httpMethod: 'GET',
-            baseUri: this.syncApiBase,
+            baseUri: this.apiRootBase,
             relativePath: getUiExtensionEndpoint(uiExtensionId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
@@ -42,7 +42,7 @@ export class UiExtensionClient extends BaseClient {
     async getInstalledUiExtensions(requestId?: string): Promise<UiExtension[]> {
         const response = await request<unknown[]>({
             httpMethod: 'GET',
-            baseUri: this.syncApiBase,
+            baseUri: this.apiRootBase,
             relativePath: ENDPOINT_REST_APPS_UI_EXTENSIONS_INSTALLED,
             apiToken: this.authToken,
             customFetch: this.customFetch,
@@ -55,7 +55,7 @@ export class UiExtensionClient extends BaseClient {
         z.string().parse(appId)
         const response = await request<unknown[]>({
             httpMethod: 'GET',
-            baseUri: this.syncApiBase,
+            baseUri: this.apiRootBase,
             relativePath: getUiExtensionsByIntegrationEndpoint(appId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
@@ -67,7 +67,7 @@ export class UiExtensionClient extends BaseClient {
     async addUiExtension(args: AddUiExtensionArgs, requestId?: string): Promise<UiExtension> {
         const response = await request<UiExtension>({
             httpMethod: 'POST',
-            baseUri: this.syncApiBase,
+            baseUri: this.apiRootBase,
             relativePath: ENDPOINT_REST_APPS_UI_EXTENSIONS,
             apiToken: this.authToken,
             customFetch: this.customFetch,
@@ -85,7 +85,7 @@ export class UiExtensionClient extends BaseClient {
         z.string().parse(uiExtensionId)
         const response = await request<UiExtension>({
             httpMethod: 'PATCH',
-            baseUri: this.syncApiBase,
+            baseUri: this.apiRootBase,
             relativePath: getUiExtensionEndpoint(uiExtensionId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
@@ -99,7 +99,7 @@ export class UiExtensionClient extends BaseClient {
         z.string().parse(uiExtensionId)
         const response = await request({
             httpMethod: 'DELETE',
-            baseUri: this.syncApiBase,
+            baseUri: this.apiRootBase,
             relativePath: getUiExtensionEndpoint(uiExtensionId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
@@ -117,7 +117,7 @@ export class UiExtensionClient extends BaseClient {
         }
 
         const data = await uploadMultipartFile<unknown>({
-            baseUrl: this.syncApiBase,
+            baseUrl: this.apiRootBase,
             authToken: this.authToken,
             endpoint: getUiExtensionIconEndpoint(args.uiExtensionId),
             file: args.file,
