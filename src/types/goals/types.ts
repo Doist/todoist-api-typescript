@@ -17,7 +17,7 @@ export type GoalOwnerType = (typeof GOAL_OWNER_TYPES)[number]
  */
 export const GoalProgressSchema = z.preprocess(
     (raw) => {
-        if (raw === null || raw === undefined || typeof raw !== 'object') {
+        if (raw === null || raw === undefined || typeof raw !== 'object' || Array.isArray(raw)) {
             return raw
         }
         const { totalItemCount, completedItemCount, totalTaskCount, completedTaskCount, ...rest } =
