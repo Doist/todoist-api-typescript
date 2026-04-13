@@ -1,3 +1,9 @@
+## [9.1.1](https://github.com/Doist/todoist-sdk-typescript/compare/v9.1.0...v9.1.1) (2026-04-13)
+
+### Bug Fixes
+
+* Use API root base URL for app and UI extension endpoints ([#568](https://github.com/Doist/todoist-sdk-typescript/issues/568)) ([c39a169](https://github.com/Doist/todoist-sdk-typescript/commit/c39a169fcd9844b2d3a4b559ab2dbd103426e81b))
+
 ## [9.1.0](https://github.com/Doist/todoist-sdk-typescript/compare/v9.0.0...v9.1.0) (2026-04-12)
 
 ### Features
