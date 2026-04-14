@@ -1,3 +1,9 @@
+## [9.1.3](https://github.com/Doist/todoist-sdk-typescript/compare/v9.1.2...v9.1.3) (2026-04-14)
+
+### Bug Fixes
+
+* **deps:** update docusaurus monorepo to v3.10.0 ([#581](https://github.com/Doist/todoist-sdk-typescript/issues/581)) ([15a16b6](https://github.com/Doist/todoist-sdk-typescript/commit/15a16b6caeb5aef7940dc2132c21db1c4025df7a))
+
 ## [9.1.2](https://github.com/Doist/todoist-sdk-typescript/compare/v9.1.1...v9.1.2) (2026-04-14)
 
 ### Bug Fixes
