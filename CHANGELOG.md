@@ -1,3 +1,9 @@
+## [9.1.2](https://github.com/Doist/todoist-sdk-typescript/compare/v9.1.1...v9.1.2) (2026-04-14)
+
+### Bug Fixes
+
+* Use nullish() for SyncWorkspaceSchema fields that API returns as null ([#573](https://github.com/Doist/todoist-sdk-typescript/issues/573)) ([13496c6](https://github.com/Doist/todoist-sdk-typescript/commit/13496c6ff6b7364290f00a3a47f3f0c79a1c9598))
+
 ## [9.1.1](https://github.com/Doist/todoist-sdk-typescript/compare/v9.1.0...v9.1.1) (2026-04-13)
 
 ### Bug Fixes
