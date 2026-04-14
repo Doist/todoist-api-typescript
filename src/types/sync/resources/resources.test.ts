@@ -595,6 +595,14 @@ describe('Sync resource schemas', () => {
                 currentActiveProjects: null,
                 currentMemberCount: null,
                 currentTemplateCount: null,
+                domainName: null,
+                logoBig: null,
+                logoMedium: null,
+                logoSmall: null,
+                logoS640: null,
+                projectSortPreference: null,
+                domainDiscovery: null,
+                restrictEmailDomains: null,
             }
             expect(SyncWorkspaceSchema.parse(withNulls).currentActiveProjects).toBeNull()
         })
