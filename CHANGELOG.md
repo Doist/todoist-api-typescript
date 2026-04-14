@@ -1,3 +1,27 @@
+## [9.1.3](https://github.com/Doist/todoist-sdk-typescript/compare/v9.1.2...v9.1.3) (2026-04-14)
+
+### Bug Fixes
+
+* **deps:** update docusaurus monorepo to v3.10.0 ([#581](https://github.com/Doist/todoist-sdk-typescript/issues/581)) ([15a16b6](https://github.com/Doist/todoist-sdk-typescript/commit/15a16b6caeb5aef7940dc2132c21db1c4025df7a))
+
+## [9.1.2](https://github.com/Doist/todoist-sdk-typescript/compare/v9.1.1...v9.1.2) (2026-04-14)
+
+### Bug Fixes
+
+* Use nullish() for SyncWorkspaceSchema fields that API returns as null ([#573](https://github.com/Doist/todoist-sdk-typescript/issues/573)) ([13496c6](https://github.com/Doist/todoist-sdk-typescript/commit/13496c6ff6b7364290f00a3a47f3f0c79a1c9598))
+
+## [9.1.1](https://github.com/Doist/todoist-sdk-typescript/compare/v9.1.0...v9.1.1) (2026-04-13)
+
+### Bug Fixes
+
+* Use API root base URL for app and UI extension endpoints ([#568](https://github.com/Doist/todoist-sdk-typescript/issues/568)) ([c39a169](https://github.com/Doist/todoist-sdk-typescript/commit/c39a169fcd9844b2d3a4b559ab2dbd103426e81b))
+
+## [9.1.0](https://github.com/Doist/todoist-sdk-typescript/compare/v9.0.0...v9.1.0) (2026-04-12)
+
+### Features
+
+* Add app management support (dev:app_console scope) ([#560](https://github.com/Doist/todoist-sdk-typescript/issues/560)) ([b8d4925](https://github.com/Doist/todoist-sdk-typescript/commit/b8d492575da1da015d64f80a7345c26c8a1883da))
+
 ## [9.0.0](https://github.com/Doist/todoist-sdk-typescript/compare/v8.4.0...v9.0.0) (2026-04-11)
 
 ### ⚠ BREAKING CHANGES

@@ -13,6 +13,10 @@ export function getSyncBaseUri(domainBase: string = BASE_URI): string {
     return new URL(API_BASE_URI, domainBase).toString()
 }
 
+export function getApiRootBaseUri(domainBase: string = BASE_URI): string {
+    return new URL('/', domainBase).toString()
+}
+
 export function getAuthBaseUri(domainBase: string = TODOIST_URI): string {
     return new URL(API_AUTHORIZATION_BASE_URI, domainBase).toString()
 }
@@ -156,4 +160,73 @@ export function getWorkspaceActiveProjectsEndpoint(workspaceId: string): string 
 
 export function getWorkspaceArchivedProjectsEndpoint(workspaceId: string): string {
     return `workspaces/${workspaceId}/projects/archived`
+}
+
+// App management endpoints (dev:app_console scope)
+export const ENDPOINT_REST_APPS = 'apps'
+export const ENDPOINT_REST_APPS_INSTALLATIONS = 'apps/installations'
+export const ENDPOINT_REST_APPS_UI_EXTENSIONS = 'apps/ui_extensions'
+export const ENDPOINT_REST_APPS_UI_EXTENSIONS_INSTALLED = 'apps/ui_extensions/installed'
+export const ENDPOINT_REST_USER_AUTHORIZATIONS = 'user/authorizations'
+export const ENDPOINT_REST_USER_AUTHORIZATIONS_DELETE = 'user/authorizations/delete'
+
+/** Available app icon sizes (small 60x60, medium 300x300, large 600x600). */
+export const APP_ICON_SIZES = ['small', 'medium', 'large'] as const
+/** Size of an app icon. */
+export type AppIconSize = (typeof APP_ICON_SIZES)[number]
+
+export function getAppEndpoint(appId: string): string {
+    return `apps/${appId}`
+}
+
+export function getAppSecretsEndpoint(appId: string): string {
+    return `apps/${appId}/secrets`
+}
+
+export function getAppClientSecretEndpoint(appId: string): string {
+    return `apps/${appId}/client_secret`
+}
+
+export function getAppTokensEndpoint(appId: string): string {
+    return `apps/${appId}/tokens`
+}
+
+export function getAppTestTokenEndpoint(appId: string): string {
+    return `apps/${appId}/test_token`
+}
+
+export function getAppDistributionTokenEndpoint(appId: string): string {
+    return `apps/${appId}/distribution_token`
+}
+
+export function getAppVerificationTokenEndpoint(appId: string): string {
+    return `apps/${appId}/verification_token`
+}
+
+export function getAppWebhookEndpoint(appId: string): string {
+    return `apps/${appId}/webhook`
+}
+
+export function getAppIconEndpoint(appId: string, size: AppIconSize): string {
+    return size === 'medium' ? `apps/${appId}/icon` : `apps/${appId}/icon/${size}`
+}
+
+export function getAppInstallationEndpoint(installationId: string): string {
+    return `apps/installations/${installationId}`
+}
+
+export function getAppByDistributionTokenEndpoint(distributionToken: string): string {
+    return `apps/by_distribution_token/${distributionToken}`
+}
+
+export function getUiExtensionEndpoint(uiExtensionId: string): string {
+    return `apps/ui_extensions/${uiExtensionId}`
+}
+
+export function getUiExtensionIconEndpoint(uiExtensionId: string): string {
+    return `apps/ui_extensions/${uiExtensionId}/icon`
+}
+
+export function getUiExtensionsByIntegrationEndpoint(integrationId: string): string {
+    return `apps/ui_extensions/integration/${integrationId}`
 }

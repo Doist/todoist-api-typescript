@@ -1,4 +1,4 @@
-export type HttpMethod = 'POST' | 'GET' | 'DELETE' | 'PUT'
+export type HttpMethod = 'POST' | 'GET' | 'DELETE' | 'PUT' | 'PATCH'
 
 /**
  * HTTP response type that replaces AxiosResponse

@@ -1,6 +1,18 @@
 import { z, type ZodType } from 'zod'
 
 import { ActivityEventSchema } from '../types/activity/types'
+import {
+    AppSchema,
+    AppWithUserCountSchema,
+    AppSecretsSchema,
+    AppVerificationTokenSchema,
+    AppTestTokenSchema,
+    AppDistributionTokenSchema,
+    AppByDistributionTokenSchema,
+    AppWebhookSchema,
+    AppInstallationSchema,
+    UserAuthorizationSchema,
+} from '../types/apps/types'
 import { BackupSchema } from '../types/backups/types'
 import { AttachmentSchema, CommentSchema } from '../types/comments/types'
 import { GoalSchema } from '../types/goals/types'
@@ -18,6 +30,7 @@ import { WorkspaceProjectSchema, ProjectSchema } from '../types/projects/types'
 import { SectionSchema } from '../types/sections/types'
 import { type SyncResponse, SyncResponseSchema } from '../types/sync/response'
 import { TaskSchema } from '../types/tasks/types'
+import { UiExtensionSchema } from '../types/ui-extensions/types'
 import { UserSchema, CurrentUserSchema } from '../types/users/types'
 import {
     WorkspaceUserSchema,
@@ -214,3 +227,38 @@ export const { validate: validateSuggestion, validateArray: validateSuggestionAr
 export function parseSyncResponse(raw: Record<string, unknown>): SyncResponse {
     return SyncResponseSchema.parse(raw)
 }
+
+// App management validators
+
+export const { validate: validateApp, validateArray: validateAppArray } = createValidator(AppSchema)
+
+export const { validate: validateAppWithUserCount } = createValidator(AppWithUserCountSchema)
+
+export const { validate: validateAppSecrets } = createValidator(AppSecretsSchema)
+
+export const { validate: validateAppVerificationToken } = createValidator(
+    AppVerificationTokenSchema,
+)
+
+export const { validate: validateAppTestToken } = createValidator(AppTestTokenSchema)
+
+export const { validate: validateAppDistributionToken } = createValidator(
+    AppDistributionTokenSchema,
+)
+
+export const { validate: validateAppByDistributionToken } = createValidator(
+    AppByDistributionTokenSchema,
+)
+
+export const { validate: validateAppWebhook } = createValidator(AppWebhookSchema)
+
+export const { validate: validateAppInstallation, validateArray: validateAppInstallationArray } =
+    createValidator(AppInstallationSchema)
+
+export const {
+    validate: validateUserAuthorization,
+    validateArray: validateUserAuthorizationArray,
+} = createValidator(UserAuthorizationSchema)
+
+export const { validate: validateUiExtension, validateArray: validateUiExtensionArray } =
+    createValidator(UiExtensionSchema)

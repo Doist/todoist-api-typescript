@@ -163,6 +163,7 @@ export async function request<T>(args: RequestArgs): Promise<HttpResponse<T>> {
                 break
             case 'POST':
             case 'PUT':
+            case 'PATCH':
             case 'DELETE': {
                 // Convert payload from camelCase to snake_case
                 // Note: While DELETE with body is uncommon, the Todoist API uses it for some endpoints

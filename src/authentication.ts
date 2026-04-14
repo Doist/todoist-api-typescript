@@ -28,6 +28,7 @@ export const PERMISSIONS = [
     'data:delete',
     'project:delete',
     'backups:read',
+    'dev:app_console',
 ] as const
 /**
  * Permission scope that can be requested during OAuth2 authorization.
