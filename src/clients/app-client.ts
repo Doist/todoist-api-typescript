@@ -181,6 +181,7 @@ export class AppClient extends BaseClient {
         { appId, file, fileName = '', size = 'medium' }: UploadAppIconArgs,
         requestId?: string,
     ): Promise<AppWithUserCount> {
+        z.string().min(1).parse(appId)
         if (Buffer.isBuffer(file) && file.length === 0) {
             throw new Error('Cannot upload empty image file')
         }
