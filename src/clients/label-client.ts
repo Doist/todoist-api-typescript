@@ -31,7 +31,7 @@ import { BaseClient } from './base-client'
  */
 export class LabelClient extends BaseClient {
     async getLabel(id: string): Promise<Label> {
-        z.string().parse(id)
+        z.string().min(1).parse(id)
         const response = await request<Label>({
             httpMethod: 'GET',
             baseUri: this.syncApiBase,
@@ -94,7 +94,7 @@ export class LabelClient extends BaseClient {
     }
 
     async updateLabel(id: string, args: UpdateLabelArgs, requestId?: string): Promise<Label> {
-        z.string().parse(id)
+        z.string().min(1).parse(id)
         const response = await request({
             httpMethod: 'POST',
             baseUri: this.syncApiBase,
@@ -108,7 +108,7 @@ export class LabelClient extends BaseClient {
     }
 
     async deleteLabel(id: string, requestId?: string): Promise<boolean> {
-        z.string().parse(id)
+        z.string().min(1).parse(id)
         const response = await request({
             httpMethod: 'DELETE',
             baseUri: this.syncApiBase,

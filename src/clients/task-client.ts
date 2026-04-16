@@ -47,7 +47,7 @@ const MAX_COMMAND_COUNT = 100
  */
 export class TaskClient extends BaseClient {
     async getTask(id: string): Promise<Task> {
-        z.string().parse(id)
+        z.string().min(1).parse(id)
         const response = await request<Task>({
             httpMethod: 'GET',
             baseUri: this.syncApiBase,
@@ -216,7 +216,7 @@ export class TaskClient extends BaseClient {
     }
 
     async updateTask(id: string, args: UpdateTaskArgs, requestId?: string): Promise<Task> {
-        z.string().parse(id)
+        z.string().min(1).parse(id)
 
         // Translate SDK alias for due-date clearing to Todoist's accepted payload value.
         const normalizedArgs = args.dueString === null ? { ...args, dueString: 'no date' } : args
@@ -289,7 +289,7 @@ export class TaskClient extends BaseClient {
     }
 
     async moveTask(id: string, args: MoveTaskArgs, requestId?: string): Promise<Task> {
-        z.string().parse(id)
+        z.string().min(1).parse(id)
         const response = await request<Task>({
             httpMethod: 'POST',
             baseUri: this.syncApiBase,
@@ -308,7 +308,7 @@ export class TaskClient extends BaseClient {
     }
 
     async closeTask(id: string, requestId?: string): Promise<boolean> {
-        z.string().parse(id)
+        z.string().min(1).parse(id)
         const response = await request({
             httpMethod: 'POST',
             baseUri: this.syncApiBase,
@@ -321,7 +321,7 @@ export class TaskClient extends BaseClient {
     }
 
     async reopenTask(id: string, requestId?: string): Promise<boolean> {
-        z.string().parse(id)
+        z.string().min(1).parse(id)
         const response = await request({
             httpMethod: 'POST',
             baseUri: this.syncApiBase,
@@ -334,7 +334,7 @@ export class TaskClient extends BaseClient {
     }
 
     async deleteTask(id: string, requestId?: string): Promise<boolean> {
-        z.string().parse(id)
+        z.string().min(1).parse(id)
         const response = await request({
             httpMethod: 'DELETE',
             baseUri: this.syncApiBase,

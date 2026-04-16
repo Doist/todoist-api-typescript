@@ -297,7 +297,7 @@ export class WorkspaceClient extends BaseClient {
     }
 
     async getWorkspace(id: string, requestId?: string): Promise<Workspace> {
-        z.string().parse(id)
+        z.string().min(1).parse(id)
         const response = await request<Workspace>({
             httpMethod: 'GET',
             baseUri: this.syncApiBase,
@@ -327,7 +327,7 @@ export class WorkspaceClient extends BaseClient {
         args: UpdateWorkspaceArgs,
         requestId?: string,
     ): Promise<Workspace> {
-        z.string().parse(id)
+        z.string().min(1).parse(id)
         const response = await request<Workspace>({
             httpMethod: 'POST',
             baseUri: this.syncApiBase,
@@ -341,7 +341,7 @@ export class WorkspaceClient extends BaseClient {
     }
 
     async deleteWorkspace(id: string, requestId?: string): Promise<boolean> {
-        z.string().parse(id)
+        z.string().min(1).parse(id)
         const response = await request({
             httpMethod: 'DELETE',
             baseUri: this.syncApiBase,

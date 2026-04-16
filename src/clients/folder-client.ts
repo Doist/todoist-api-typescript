@@ -38,7 +38,7 @@ export class FolderClient extends BaseClient {
     }
 
     async getFolder(id: string): Promise<Folder> {
-        z.string().parse(id)
+        z.string().min(1).parse(id)
         const response = await request<Folder>({
             httpMethod: 'GET',
             baseUri: this.syncApiBase,
@@ -65,7 +65,7 @@ export class FolderClient extends BaseClient {
     }
 
     async updateFolder(id: string, args: UpdateFolderArgs, requestId?: string): Promise<Folder> {
-        z.string().parse(id)
+        z.string().min(1).parse(id)
         const response = await request<Folder>({
             httpMethod: 'POST',
             baseUri: this.syncApiBase,
@@ -80,7 +80,7 @@ export class FolderClient extends BaseClient {
     }
 
     async deleteFolder(id: string, requestId?: string): Promise<boolean> {
-        z.string().parse(id)
+        z.string().min(1).parse(id)
         const response = await request({
             httpMethod: 'DELETE',
             baseUri: this.syncApiBase,

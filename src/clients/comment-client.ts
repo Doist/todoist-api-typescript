@@ -41,7 +41,7 @@ export class CommentClient extends BaseClient {
     }
 
     async getComment(id: string): Promise<Comment> {
-        z.string().parse(id)
+        z.string().min(1).parse(id)
         const response = await request<Comment>({
             httpMethod: 'GET',
             baseUri: this.syncApiBase,
@@ -72,7 +72,7 @@ export class CommentClient extends BaseClient {
     }
 
     async updateComment(id: string, args: UpdateCommentArgs, requestId?: string): Promise<Comment> {
-        z.string().parse(id)
+        z.string().min(1).parse(id)
         const response = await request<Comment>({
             httpMethod: 'POST',
             baseUri: this.syncApiBase,
@@ -86,7 +86,7 @@ export class CommentClient extends BaseClient {
     }
 
     async deleteComment(id: string, requestId?: string): Promise<boolean> {
-        z.string().parse(id)
+        z.string().min(1).parse(id)
         const response = await request({
             httpMethod: 'DELETE',
             baseUri: this.syncApiBase,
