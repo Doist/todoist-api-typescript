@@ -27,7 +27,7 @@ import { BaseClient } from './base-client'
  */
 export class UiExtensionClient extends BaseClient {
     async getUiExtension(uiExtensionId: string, requestId?: string): Promise<UiExtension> {
-        z.string().parse(uiExtensionId)
+        z.string().min(1).parse(uiExtensionId)
         const response = await request<UiExtension>({
             httpMethod: 'GET',
             baseUri: this.apiRootBase,
@@ -52,7 +52,7 @@ export class UiExtensionClient extends BaseClient {
     }
 
     async getUiExtensionsForApp(appId: string, requestId?: string): Promise<UiExtension[]> {
-        z.string().parse(appId)
+        z.string().min(1).parse(appId)
         const response = await request<unknown[]>({
             httpMethod: 'GET',
             baseUri: this.apiRootBase,
@@ -82,7 +82,7 @@ export class UiExtensionClient extends BaseClient {
         args: UpdateUiExtensionArgs,
         requestId?: string,
     ): Promise<UiExtension> {
-        z.string().parse(uiExtensionId)
+        z.string().min(1).parse(uiExtensionId)
         const response = await request<UiExtension>({
             httpMethod: 'PATCH',
             baseUri: this.apiRootBase,
@@ -96,7 +96,7 @@ export class UiExtensionClient extends BaseClient {
     }
 
     async deleteUiExtension(uiExtensionId: string, requestId?: string): Promise<boolean> {
-        z.string().parse(uiExtensionId)
+        z.string().min(1).parse(uiExtensionId)
         const response = await request({
             httpMethod: 'DELETE',
             baseUri: this.apiRootBase,

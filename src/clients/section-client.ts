@@ -62,7 +62,7 @@ export class SectionClient extends BaseClient {
     }
 
     async getSection(id: string): Promise<Section> {
-        z.string().parse(id)
+        z.string().min(1).parse(id)
         const response = await request<Section>({
             httpMethod: 'GET',
             baseUri: this.syncApiBase,
@@ -89,7 +89,7 @@ export class SectionClient extends BaseClient {
     }
 
     async updateSection(id: string, args: UpdateSectionArgs, requestId?: string): Promise<Section> {
-        z.string().parse(id)
+        z.string().min(1).parse(id)
         const response = await request({
             httpMethod: 'POST',
             baseUri: this.syncApiBase,
@@ -103,7 +103,7 @@ export class SectionClient extends BaseClient {
     }
 
     async deleteSection(id: string, requestId?: string): Promise<boolean> {
-        z.string().parse(id)
+        z.string().min(1).parse(id)
         const response = await request({
             httpMethod: 'DELETE',
             baseUri: this.syncApiBase,
@@ -116,7 +116,7 @@ export class SectionClient extends BaseClient {
     }
 
     async archiveSection(id: string, requestId?: string): Promise<Section> {
-        z.string().parse(id)
+        z.string().min(1).parse(id)
         const response = await request<Section>({
             httpMethod: 'POST',
             baseUri: this.syncApiBase,
@@ -129,7 +129,7 @@ export class SectionClient extends BaseClient {
     }
 
     async unarchiveSection(id: string, requestId?: string): Promise<Section> {
-        z.string().parse(id)
+        z.string().min(1).parse(id)
         const response = await request<Section>({
             httpMethod: 'POST',
             baseUri: this.syncApiBase,
