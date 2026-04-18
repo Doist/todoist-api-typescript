@@ -1,3 +1,9 @@
+## [9.3.0](https://github.com/Doist/todoist-sdk-typescript/compare/v9.2.0...v9.3.0) (2026-04-18)
+
+### Features
+
+* reject tmp- placeholder IDs in client validators ([#585](https://github.com/Doist/todoist-sdk-typescript/issues/585)) ([6a0b48f](https://github.com/Doist/todoist-sdk-typescript/commit/6a0b48f217b3b7a3d36ed79cd86510bc44bd7b57))
+
 ## [9.2.0](https://github.com/Doist/todoist-sdk-typescript/compare/v9.1.3...v9.2.0) (2026-04-18)
 
 ### Features
