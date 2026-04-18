@@ -1,3 +1,9 @@
+## [9.2.0](https://github.com/Doist/todoist-sdk-typescript/compare/v9.1.3...v9.2.0) (2026-04-18)
+
+### Features
+
+* include clientId in app list and detail responses ([#584](https://github.com/Doist/todoist-sdk-typescript/issues/584)) ([b4c2c1e](https://github.com/Doist/todoist-sdk-typescript/commit/b4c2c1e5ce535bb5a1c70d3a03a5b20bb4fdcfd5))
+
 ## [9.1.3](https://github.com/Doist/todoist-sdk-typescript/compare/v9.1.2...v9.1.3) (2026-04-14)
 
 ### Bug Fixes
