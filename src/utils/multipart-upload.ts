@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from 'uuid'
 import { fetchWithRetry } from '../transport/fetch-with-retry'
+import { toTodoistRequestError } from '../transport/http-client'
 import type { HttpResponse, CustomFetch } from '../types/http'
 import { camelCaseKeys } from './case-conversion'
 
@@ -181,6 +182,8 @@ function buildMultipartBody(args: {
  * @param additionalFields - Additional form fields to include (e.g., project_id, workspace_id)
  * @param requestId - Optional request ID for idempotency
  * @returns The response data from the server
+ * @throws TodoistRequestError if the upload fails, carrying the HTTP status and
+ * the server's error body like any other API request.
  *
  * @example
  * ```typescript
@@ -217,6 +220,9 @@ export async function uploadMultipartFile(args: UploadMultipartFileArgs): Promis
         requestId,
         customFetch,
     } = args
+
+    // Capture original stack for better error reporting
+    const originalStack = new Error()
 
     // Build the full URL
     const url = `${baseUrl}${endpoint}`
@@ -277,22 +283,29 @@ export async function uploadMultipartFile(args: UploadMultipartFileArgs): Promis
     body = multipart.body
 
     // Make the request using fetch
-    const response: HttpResponse<unknown> = await fetchWithRetry({
-        url,
-        options: {
-            method: 'POST',
-            body,
-            headers,
-            timeout: 30000, // 30 second timeout for file uploads
-            // Required by fetch whenever the body is a stream. Harmless on the
-            // Blob path, and not in the DOM RequestInit types.
-            ...(multipart.isStreamed ? { duplex: 'half' } : {}),
-        } as RequestInit & { timeout?: number },
-        // A stream can only be read once, so a retry would resend an empty
-        // body. Blob-backed uploads stay replayable and keep the default.
-        ...(multipart.isStreamed ? { retryConfig: { retries: 0 } } : {}),
-        customFetch,
-    })
+    let response: HttpResponse<unknown>
+    try {
+        response = await fetchWithRetry({
+            url,
+            options: {
+                method: 'POST',
+                body,
+                headers,
+                timeout: 30000, // 30 second timeout for file uploads
+                // Required by fetch whenever the body is a stream. Harmless on the
+                // Blob path, and not in the DOM RequestInit types.
+                ...(multipart.isStreamed ? { duplex: 'half' } : {}),
+            } as RequestInit & { timeout?: number },
+            // A stream can only be read once, so a retry would resend an empty
+            // body. Blob-backed uploads stay replayable and keep the default.
+            ...(multipart.isStreamed ? { retryConfig: { retries: 0 } } : {}),
+            customFetch,
+        })
+    } catch (error: unknown) {
+        // `fetchWithRetry` throws a plain `Error` for non-2xx responses; convert
+        // it so callers get the same error type as every other API request.
+        throw toTodoistRequestError(error, originalStack)
+    }
 
     return camelCaseKeys(response.data)
 }
