@@ -72,7 +72,7 @@ function getRetryDelay(retryCount: number) {
     return retryCount === 1 ? 0 : 500
 }
 
-function getTodoistRequestError(args: GetTodoistRequestErrorArgs): TodoistRequestError {
+export function getTodoistRequestError(args: GetTodoistRequestErrorArgs): TodoistRequestError {
     const { error, originalStack } = args
     const requestError = new TodoistRequestError(error.message)
 

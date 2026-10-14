@@ -2,6 +2,7 @@ import * as fs from 'fs'
 import { Readable } from 'stream'
 import { vi } from 'vitest'
 import { captureRequest, getLastRequest, http, HttpResponse, server } from '../test-utils/msw-setup'
+import { TodoistRequestError } from '../types/errors'
 import { uploadMultipartFile } from './multipart-upload'
 
 // Mock fs
@@ -422,6 +423,46 @@ describe('uploadMultipartFile', () => {
             const capturedRequest = getLastRequest()
             expect(capturedRequest).toBeDefined()
             expect(capturedRequest?.headers['x-request-id']).toBeUndefined()
+        })
+    })
+
+    describe('error handling', () => {
+        test('rejects with a TodoistRequestError carrying the status and response body', async () => {
+            const errorBody = {
+                error: 'Invalid argument value',
+                error_code: 20,
+                error_extra: {
+                    error_fields: [
+                        {
+                            field: 'icon_md',
+                            error: 'Invalid image dimension (accept only 300px * 300px)',
+                        },
+                    ],
+                },
+                error_tag: 'INVALID_ARGUMENT_VALUE',
+                http_code: 400,
+            }
+            server.use(
+                http.post(`${baseUrl}${endpoint}`, () =>
+                    HttpResponse.json(errorBody, { status: 400 }),
+                ),
+            )
+
+            const error = await uploadMultipartFile({
+                baseUrl: baseUrl,
+                authToken: authToken,
+                endpoint: endpoint,
+                file: Buffer.from('test'),
+                fileName: 'icon.png',
+                additionalFields: {},
+            }).catch((e: unknown) => e)
+
+            expect(error).toBeInstanceOf(TodoistRequestError)
+            expect(error).toMatchObject({
+                message: 'HTTP 400: Bad Request',
+                httpStatusCode: 400,
+                responseData: errorBody,
+            })
         })
     })
 
