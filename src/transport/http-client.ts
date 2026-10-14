@@ -72,7 +72,7 @@ function getRetryDelay(retryCount: number) {
     return retryCount === 1 ? 0 : 500
 }
 
-export function getTodoistRequestError(args: GetTodoistRequestErrorArgs): TodoistRequestError {
+function getTodoistRequestError(args: GetTodoistRequestErrorArgs): TodoistRequestError {
     const { error, originalStack } = args
     const requestError = new TodoistRequestError(error.message)
 
@@ -84,6 +84,20 @@ export function getTodoistRequestError(args: GetTodoistRequestErrorArgs): Todois
     }
 
     return requestError
+}
+
+/**
+ * Normalises anything thrown while making an API request into the error a
+ * caller should see: a `TodoistRequestError` (carrying the HTTP status and
+ * response body when there is one) reported against `originalStack`, or a
+ * generic `Error` when the thrown value isn't an `Error` at all.
+ */
+export function toTodoistRequestError(error: unknown, originalStack?: Error): Error {
+    if (!(error instanceof Error)) {
+        return new Error('An unknown error occurred during the request')
+    }
+
+    return getTodoistRequestError({ error, originalStack })
 }
 
 function getRequestConfiguration(args: GetRequestConfigurationArgs) {
@@ -191,10 +205,6 @@ export async function request<T>(args: RequestArgs): Promise<HttpResponse<T>> {
         const convertedData = camelCaseKeys(response.data)
         return { ...response, data: convertedData }
     } catch (error: unknown) {
-        if (!(error instanceof Error)) {
-            throw new Error('An unknown error occurred during the request')
-        }
-
-        throw getTodoistRequestError({ error, originalStack })
+        throw toTodoistRequestError(error, originalStack)
     }
 }

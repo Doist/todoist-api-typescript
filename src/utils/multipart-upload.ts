@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid'
 import { fetchWithRetry } from '../transport/fetch-with-retry'
-import { getTodoistRequestError } from '../transport/http-client'
+import { toTodoistRequestError } from '../transport/http-client'
 import type { HttpResponse, CustomFetch } from '../types/http'
 import { camelCaseKeys } from './case-conversion'
 
@@ -302,13 +302,9 @@ export async function uploadMultipartFile(args: UploadMultipartFileArgs): Promis
             customFetch,
         })
     } catch (error: unknown) {
-        if (!(error instanceof Error)) {
-            throw new Error('An unknown error occurred during the request')
-        }
-
         // `fetchWithRetry` throws a plain `Error` for non-2xx responses; convert
         // it so callers get the same error type as every other API request.
-        throw getTodoistRequestError({ error, originalStack })
+        throw toTodoistRequestError(error, originalStack)
     }
 
     return camelCaseKeys(response.data)
