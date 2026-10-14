@@ -29,6 +29,15 @@ export type SyncRequestContext = {
     customFetch?: CustomFetch
 }
 
+// An invalid Date would otherwise be sent as `null`, which the API reads as "no expiry".
+function serializeStatusActiveUntil(value: Date | string | null): string | null {
+    if (!(value instanceof Date)) return value
+    if (Number.isNaN(value.getTime())) {
+        throw new TodoistArgumentError('status.activeUntil is an invalid Date')
+    }
+    return value.toISOString()
+}
+
 function serializeUserUpdateArgs(args: UserUpdateArgs): Record<string, unknown> {
     return {
         ...args,
@@ -49,7 +58,7 @@ function serializeUserUpdateArgs(args: UserUpdateArgs): Record<string, unknown> 
                   status: {
                       ...args.status,
                       ...spreadIfDefined(args.status.activeUntil, (v) => ({
-                          activeUntil: v instanceof Date ? v.toISOString() : v,
+                          activeUntil: serializeStatusActiveUntil(v),
                       })),
                   },
               }

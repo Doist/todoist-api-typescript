@@ -1,8 +1,8 @@
 import { z } from 'zod'
 
 /**
- * Scope of a status effect. `mode` stays a plain string and `scope` optional so
- * that a mode or an effect shape added by another client does not break parsing.
+ * `mode` stays a plain string and `scope` optional so that a new mode, or an effect another
+ * client stored without a scope, does not break parsing.
  */
 export const UserStatusEffectSchema = z.looseObject({
     scope: z.looseObject({ mode: z.string() }).optional(),
@@ -25,7 +25,7 @@ export const UserStatusSchema = z.looseObject({
     message: z.string(),
     emoji: z.string().nullish(),
     activeUntil: z.coerce.date().nullish(),
-    effects: UserStatusEffectsSchema,
+    effects: UserStatusEffectsSchema.default({}),
 })
 
 export type UserStatus = z.infer<typeof UserStatusSchema>

@@ -2,9 +2,10 @@ import { TodoistApi } from '.'
 import { getSyncBaseUri } from './consts/endpoints'
 import { captureRequest, getLastRequest, http, HttpResponse, server } from './test-utils/msw-setup'
 import { DEFAULT_AUTH_TOKEN } from './test-utils/test-defaults'
-import type { SyncCommand } from './types/sync'
+import { TodoistArgumentError } from './types'
+import type { SyncCommand, UserUpdateArgs } from './types/sync'
 
-async function sendUserUpdate(args: Record<string, unknown>) {
+async function sendUserUpdate(args: UserUpdateArgs) {
     server.use(
         http.post(`${getSyncBaseUri()}sync`, async ({ request }) => {
             captureRequest({ request, body: await request.clone().json() })
@@ -13,14 +14,14 @@ async function sendUserUpdate(args: Record<string, unknown>) {
     )
     const api = new TodoistApi(DEFAULT_AUTH_TOKEN)
     await api.sync({
-        commands: [{ type: 'user_update', uuid: 'u1', args } as SyncCommand],
+        commands: [{ type: 'user_update', uuid: 'u1', args } satisfies SyncCommand<'user_update'>],
     })
     const body = getLastRequest()?.body as { commands: { args: Record<string, unknown> }[] }
     return body.commands[0].args
 }
 
 describe('user_update status serialization', () => {
-    test('sends a Date activeUntil as an ISO string, not an empty object', async () => {
+    test('sends a Date activeUntil as an ISO string', async () => {
         const args = await sendUserUpdate({
             status: {
                 message: 'Deep work',
@@ -72,6 +73,27 @@ describe('user_update status serialization', () => {
         const args = await sendUserUpdate({ fullName: 'Ada' })
 
         expect(args).toEqual({ full_name: 'Ada' })
-        expect('status' in args).toBe(false)
+    })
+
+    test('sends activeUntil: null so a status with no expiry can be written back', async () => {
+        const args = await sendUserUpdate({ status: { message: 'Away', activeUntil: null } })
+
+        expect(args).toEqual({ status: { message: 'Away', active_until: null } })
+    })
+
+    test('rejects an invalid Date instead of sending it as a null expiry', async () => {
+        const api = new TodoistApi(DEFAULT_AUTH_TOKEN)
+
+        await expect(
+            api.sync({
+                commands: [
+                    {
+                        type: 'user_update',
+                        uuid: 'u1',
+                        args: { status: { message: 'Away', activeUntil: new Date('nope') } },
+                    },
+                ],
+            }),
+        ).rejects.toBeInstanceOf(TodoistArgumentError)
     })
 })

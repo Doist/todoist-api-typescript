@@ -772,6 +772,42 @@ describe('Sync resource schemas', () => {
                 expect(SyncUserSchema.parse({ ...validUser, status: null }).status).toBeNull()
             })
 
+            test('keeps an explicit null emoji and activeUntil as null', () => {
+                const result = SyncUserSchema.parse({
+                    ...validUser,
+                    status: { message: 'Away', emoji: null, activeUntil: null, effects: {} },
+                })
+                expect(result.status?.emoji).toBeNull()
+                expect(result.status?.activeUntil).toBeNull()
+            })
+
+            test('parses a status without effects instead of failing the whole user', () => {
+                const result = SyncUserSchema.parse({ ...validUser, status: { message: 'Away' } })
+                expect(result.status?.effects).toEqual({})
+            })
+
+            test('rejects a status without a message', () => {
+                expect(() =>
+                    SyncUserSchema.parse({ ...validUser, status: { effects: {} } }),
+                ).toThrow(ZodError)
+            })
+
+            test('keeps unknown keys at the status, effect and scope level', () => {
+                const result = SyncUserSchema.parse({
+                    ...validUser,
+                    status: {
+                        message: 'Away',
+                        color: 'red',
+                        effects: {
+                            pauseActivity: { note: 'x', scope: { mode: 'all', ids: ['1'] } },
+                        },
+                    },
+                })
+                expect(result.status).toHaveProperty('color', 'red')
+                expect(result.status?.effects.pauseActivity).toHaveProperty('note', 'x')
+                expect(result.status?.effects.pauseActivity?.scope).toHaveProperty('ids', ['1'])
+            })
+
             test('accepts a missing status key', () => {
                 expect(SyncUserSchema.parse(validUser).status).toBeUndefined()
             })

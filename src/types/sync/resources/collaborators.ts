@@ -8,6 +8,7 @@ export const CollaboratorSchema = z.looseObject({
     fullName: z.string(),
     timezone: z.string(),
     imageId: z.string().nullable(),
+    /** The collaborator's shared status. Not related to {@link CollaboratorStatus}. */
     status: UserStatusSchema.nullish(),
 })
 

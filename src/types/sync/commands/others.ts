@@ -8,8 +8,8 @@ export type UserStatusEffectArgs = {
 export type UserStatusArgs = {
     message: string
     emoji?: string | null
-    /** Must be in the future. A `Date` is sent as an ISO 8601 string. */
-    activeUntil?: Date | string
+    /** Must be in the future; `null` or omitted means no expiry. A `Date` is sent as an ISO 8601 string. */
+    activeUntil?: Date | string | null
     effects?: {
         pauseNotifications?: UserStatusEffectArgs
         pauseActivity?: UserStatusEffectArgs
