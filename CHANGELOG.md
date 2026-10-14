@@ -1,3 +1,10 @@
+## [15.3.2](https://github.com/Doist/todoist-sdk-typescript/compare/v15.3.1...v15.3.2) (2026-10-14)
+
+### Bug Fixes
+
+* encode ID path segments so an ID cannot address another resource ([#700](https://github.com/Doist/todoist-sdk-typescript/issues/700)) ([c7412eb](https://github.com/Doist/todoist-sdk-typescript/commit/c7412eb6c44859fe63ee7da7d27254cc30981217))
+* throw TodoistRequestError from multipart uploads ([#704](https://github.com/Doist/todoist-sdk-typescript/issues/704)) ([da2a807](https://github.com/Doist/todoist-sdk-typescript/commit/da2a80770455451702e1d4e70453ff02e1d67283))
+
 ## [15.3.1](https://github.com/Doist/todoist-sdk-typescript/compare/v15.3.0...v15.3.1) (2026-09-25)
 
 ### Bug Fixes
