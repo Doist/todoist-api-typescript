@@ -1,20 +1,21 @@
 import { TodoistApi } from '.'
-import { getSyncBaseUri } from './consts/endpoints'
+import { ENDPOINT_SYNC, getSyncBaseUri } from './consts/endpoints'
 import { captureRequest, getLastRequest, http, HttpResponse, server } from './test-utils/msw-setup'
 import { DEFAULT_AUTH_TOKEN } from './test-utils/test-defaults'
 import { TodoistArgumentError } from './types'
-import type { SyncCommand, UserUpdateArgs } from './types/sync'
+import type { UserUpdateArgs } from './types/sync'
+import { createCommand } from './utils/sync-helpers'
 
 async function sendUserUpdate(args: UserUpdateArgs) {
     server.use(
-        http.post(`${getSyncBaseUri()}sync`, async ({ request }) => {
+        http.post(`${getSyncBaseUri()}${ENDPOINT_SYNC}`, async ({ request }) => {
             captureRequest({ request, body: await request.clone().json() })
             return HttpResponse.json({ sync_status: { u1: 'ok' } }, { status: 200 })
         }),
     )
     const api = new TodoistApi(DEFAULT_AUTH_TOKEN)
     await api.sync({
-        commands: [{ type: 'user_update', uuid: 'u1', args } satisfies SyncCommand<'user_update'>],
+        commands: [createCommand('user_update', args)],
     })
     const body = getLastRequest()?.body as { commands: { args: Record<string, unknown> }[] }
     return body.commands[0].args
@@ -87,11 +88,9 @@ describe('user_update status serialization', () => {
         await expect(
             api.sync({
                 commands: [
-                    {
-                        type: 'user_update',
-                        uuid: 'u1',
-                        args: { status: { message: 'Away', activeUntil: new Date('nope') } },
-                    },
+                    createCommand('user_update', {
+                        status: { message: 'Away', activeUntil: new Date('nope') },
+                    }),
                 ],
             }),
         ).rejects.toBeInstanceOf(TodoistArgumentError)

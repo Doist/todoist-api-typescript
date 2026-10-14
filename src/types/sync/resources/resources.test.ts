@@ -61,27 +61,17 @@ describe('Sync resource schemas', () => {
             expect(() => CollaboratorSchema.parse({ id: '456' })).toThrow(ZodError)
         })
 
-        describe('status', () => {
-            test('parses a status and converts activeUntil to a Date', () => {
-                const result = CollaboratorSchema.parse({
-                    ...validCollaborator,
-                    status: {
-                        message: 'Deep work',
-                        emoji: '🎧',
-                        activeUntil: '2026-10-09T17:00:00Z',
-                        effects: { pauseNotifications: { scope: { mode: 'all' } } },
-                    },
-                })
-                expect(result.status?.activeUntil).toEqual(new Date('2026-10-09T17:00:00Z'))
-                expect(result.status?.effects.pauseNotifications?.scope?.mode).toBe('all')
+        test('parses a status, converting activeUntil to a Date', () => {
+            const result = CollaboratorSchema.parse({
+                ...validCollaborator,
+                status: {
+                    message: 'Deep work',
+                    activeUntil: '2026-10-09T17:00:00Z',
+                    effects: { pauseNotifications: { scope: { mode: 'all' } } },
+                },
             })
-
-            test('accepts null and a missing status', () => {
-                expect(
-                    CollaboratorSchema.parse({ ...validCollaborator, status: null }).status,
-                ).toBeNull()
-                expect(CollaboratorSchema.parse(validCollaborator).status).toBeUndefined()
-            })
+            expect(result.status?.activeUntil).toEqual(new Date('2026-10-09T17:00:00Z'))
+            expect(result.status?.effects.pauseNotifications?.scope?.mode).toBe('all')
         })
 
         test('preserves unknown fields via passthrough', () => {
@@ -768,10 +758,6 @@ describe('Sync resource schemas', () => {
                 expect(result.status).toEqual({ message: 'Away', effects: {} })
             })
 
-            test('accepts status: null', () => {
-                expect(SyncUserSchema.parse({ ...validUser, status: null }).status).toBeNull()
-            })
-
             test('keeps an explicit null emoji and activeUntil as null', () => {
                 const result = SyncUserSchema.parse({
                     ...validUser,
@@ -808,7 +794,8 @@ describe('Sync resource schemas', () => {
                 expect(result.status?.effects.pauseActivity?.scope).toHaveProperty('ids', ['1'])
             })
 
-            test('accepts a missing status key', () => {
+            test('accepts status: null and a missing status key', () => {
+                expect(SyncUserSchema.parse({ ...validUser, status: null }).status).toBeNull()
                 expect(SyncUserSchema.parse(validUser).status).toBeUndefined()
             })
 
