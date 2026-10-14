@@ -44,6 +44,16 @@ function serializeUserUpdateArgs(args: UserUpdateArgs): Record<string, unknown> 
         ...spreadIfDefined(args.nextWeek, (v) => ({
             nextWeek: DAY_OF_WEEK_TO_API[v],
         })),
+        ...(args.status
+            ? {
+                  status: {
+                      ...args.status,
+                      ...spreadIfDefined(args.status.activeUntil, (v) => ({
+                          activeUntil: v instanceof Date ? v.toISOString() : v,
+                      })),
+                  },
+              }
+            : {}),
     }
 }
 

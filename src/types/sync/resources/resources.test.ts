@@ -61,6 +61,29 @@ describe('Sync resource schemas', () => {
             expect(() => CollaboratorSchema.parse({ id: '456' })).toThrow(ZodError)
         })
 
+        describe('status', () => {
+            test('parses a status and converts activeUntil to a Date', () => {
+                const result = CollaboratorSchema.parse({
+                    ...validCollaborator,
+                    status: {
+                        message: 'Deep work',
+                        emoji: '🎧',
+                        activeUntil: '2026-10-09T17:00:00Z',
+                        effects: { pauseNotifications: { scope: { mode: 'all' } } },
+                    },
+                })
+                expect(result.status?.activeUntil).toEqual(new Date('2026-10-09T17:00:00Z'))
+                expect(result.status?.effects.pauseNotifications?.scope?.mode).toBe('all')
+            })
+
+            test('accepts null and a missing status', () => {
+                expect(
+                    CollaboratorSchema.parse({ ...validCollaborator, status: null }).status,
+                ).toBeNull()
+                expect(CollaboratorSchema.parse(validCollaborator).status).toBeUndefined()
+            })
+        })
+
         test('preserves unknown fields via passthrough', () => {
             const withExtra = { ...validCollaborator, avatarUrl: 'http://example.com/img.png' }
             const result = CollaboratorSchema.parse(withExtra)
@@ -716,6 +739,61 @@ describe('Sync resource schemas', () => {
             expect(result.id).toBe(validUser.id)
             expect(result.email).toBe(validUser.email)
             expect(result.fullName).toBe(validUser.fullName)
+        })
+
+        describe('status', () => {
+            const status = {
+                message: 'Deep work',
+                emoji: '🎧',
+                activeUntil: '2026-10-09T17:00:00Z',
+                effects: {
+                    pauseNotifications: { scope: { mode: 'all' } },
+                    pauseActivity: { scope: { mode: 'all' } },
+                },
+            }
+
+            test('parses a status, converting activeUntil to a Date', () => {
+                const result = SyncUserSchema.parse({ ...validUser, status })
+                expect(result.status).toEqual({
+                    ...status,
+                    activeUntil: new Date('2026-10-09T17:00:00Z'),
+                })
+            })
+
+            test('parses a status without emoji, activeUntil or effects content', () => {
+                const result = SyncUserSchema.parse({
+                    ...validUser,
+                    status: { message: 'Away', effects: {} },
+                })
+                expect(result.status).toEqual({ message: 'Away', effects: {} })
+            })
+
+            test('accepts status: null', () => {
+                expect(SyncUserSchema.parse({ ...validUser, status: null }).status).toBeNull()
+            })
+
+            test('accepts a missing status key', () => {
+                expect(SyncUserSchema.parse(validUser).status).toBeUndefined()
+            })
+
+            test('tolerates an unknown future effect, mode and an effect without scope', () => {
+                const result = SyncUserSchema.parse({
+                    ...validUser,
+                    status: {
+                        message: 'Away',
+                        effects: {
+                            pauseNotifications: { scope: { mode: 'some-future-mode' } },
+                            pauseActivity: {},
+                            somethingNew: { scope: { mode: 'all' } },
+                        },
+                    },
+                })
+                expect(result.status?.effects.pauseNotifications?.scope?.mode).toBe(
+                    'some-future-mode',
+                )
+                expect(result.status?.effects.pauseActivity?.scope).toBeUndefined()
+                expect(result.status?.effects).toHaveProperty('somethingNew')
+            })
         })
 
         test('accepts numeric and boolean karmaDisabled values', () => {
