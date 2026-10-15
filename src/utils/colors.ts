@@ -1,3 +1,4 @@
+import { colorForDisplay } from '@doist/sdk-kmp/shared-todoist-all'
 import type { Color } from '../types/productivity/types'
 
 export const berryRed = {
@@ -101,6 +102,11 @@ export const taupe = {
     hexValue: '#ccac93',
 } as const
 
+/**
+ * Every color, in the order the apps show them. The keys mirror `TodoistColor` from
+ * `@doist/sdk-kmp/shared-todoist-all`, which a test checks; the display names and hex values are
+ * the SDK's own.
+ */
 export const colors = [
     berryRed,
     red,
@@ -141,6 +147,6 @@ export const defaultColor: Color = charcoal
  * ```
  */
 export function getColorByKey(colorKey: string): Color {
-    const color = colors.find((color) => color.key === colorKey)
-    return color ?? defaultColor
+    const { key } = colorForDisplay(colorKey)
+    return colors.find((color) => color.key === key) ?? defaultColor
 }
