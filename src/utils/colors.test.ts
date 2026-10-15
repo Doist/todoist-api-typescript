@@ -7,6 +7,10 @@ describe('colors', () => {
             TodoistColor.values().map((color) => color.key),
         )
     })
+
+    test.each(colors)('finds $key by its own key', (color) => {
+        expect(getColorByKey(color.key)).toEqual(color)
+    })
 })
 
 describe('getColorByKey', () => {
