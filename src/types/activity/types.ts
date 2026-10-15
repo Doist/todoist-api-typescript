@@ -1,29 +1,44 @@
 import { z } from 'zod'
 
 /**
+ * Known activity object types, using modern names (`task`, `comment`) rather
+ * than legacy API names (`item`, `note`).
+ */
+export const ACTIVITY_OBJECT_TYPES = ['task', 'comment', 'project'] as const
+
+/**
+ * Known activity event types.
+ */
+export const ACTIVITY_EVENT_TYPES = [
+    'added',
+    'updated',
+    'deleted',
+    'completed',
+    'uncompleted',
+    'archived',
+    'unarchived',
+    'shared',
+    'left',
+    'moved',
+] as const
+
+// `string & Record<string, never>` is a TypeScript trick that allows any string
+// to be passed (for forward compatibility) while still providing autocomplete
+// for the known literal values.
+
+/**
  * Type hints for known object types. Accepts any string for forward compatibility.
  */
-export type ActivityObjectType = 'task' | 'comment' | 'project' | (string & Record<string, never>)
+export type ActivityObjectType =
+    | (typeof ACTIVITY_OBJECT_TYPES)[number]
+    | (string & Record<string, never>)
 
 /**
  * Type hints for known event types. Accepts any string for forward compatibility.
  */
 export type ActivityEventType =
-    | 'added'
-    | 'updated'
-    | 'deleted'
-    | 'completed'
-    | 'uncompleted'
-    | 'archived'
-    | 'unarchived'
-    | 'shared'
-    | 'left'
+    | (typeof ACTIVITY_EVENT_TYPES)[number]
     | (string & Record<string, never>)
-
-// `string & Record<string, never>` is a TypeScript trick that allows any string
-// to be passed (for forward compatibility) while still providing autocomplete
-// for the known literal values above.
-type ModernActivityObjectType = 'task' | 'comment' | 'project' | (string & Record<string, never>)
 
 /**
  * Combined object:event filter string for the `objectEventTypes` parameter of `getActivityLogs`.
@@ -39,8 +54,8 @@ type ModernActivityObjectType = 'task' | 'comment' | 'project' | (string & Recor
  * the known combinations above.
  */
 export type ActivityObjectEventType =
-    | `${ModernActivityObjectType}:${ActivityEventType}`
-    | `${ModernActivityObjectType}:`
+    | `${ActivityObjectType}:${ActivityEventType}`
+    | `${ActivityObjectType}:`
     | `:${ActivityEventType}`
     | (string & Record<string, never>)
 
