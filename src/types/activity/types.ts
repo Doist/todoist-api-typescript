@@ -18,6 +18,7 @@ export type ActivityEventType =
     | 'unarchived'
     | 'shared'
     | 'left'
+    | 'moved'
     | (string & Record<string, never>)
 
 // `string & Record<string, never>` is a TypeScript trick that allows any string
