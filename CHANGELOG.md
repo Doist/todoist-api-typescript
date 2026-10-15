@@ -1,3 +1,9 @@
+## [15.4.0](https://github.com/Doist/todoist-sdk-typescript/compare/v15.3.2...v15.4.0) (2026-10-15)
+
+### Features
+
+* export activity event and object types as runtime arrays ([#710](https://github.com/Doist/todoist-sdk-typescript/issues/710)) ([0a35579](https://github.com/Doist/todoist-sdk-typescript/commit/0a35579224a8034307dbe7a636a9911a676f044c))
+
 ## [15.3.2](https://github.com/Doist/todoist-sdk-typescript/compare/v15.3.1...v15.3.2) (2026-10-14)
 
 ### Bug Fixes
