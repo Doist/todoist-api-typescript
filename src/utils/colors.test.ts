@@ -1,4 +1,13 @@
-import { berryRed, taupe, getColorByKey, defaultColor } from './colors'
+import { TodoistColor } from '@doist/sdk-kmp/shared-todoist-all'
+import { berryRed, taupe, getColorByKey, defaultColor, colors } from './colors'
+
+describe('colors', () => {
+    test('has the same keys as shared-todoist-all, in the same order', () => {
+        expect(colors.map((color) => color.key)).toEqual(
+            TodoistColor.values().map((color) => color.key),
+        )
+    })
+})
 
 describe('getColorByKey', () => {
     const colorTheories = [
