@@ -1,3 +1,9 @@
+## [15.5.0](https://github.com/Doist/todoist-sdk-typescript/compare/v15.4.0...v15.5.0) (2026-10-17)
+
+### Features
+
+* add shared user status to Sync user, collaborator and user_update ([#703](https://github.com/Doist/todoist-sdk-typescript/issues/703)) ([44640d7](https://github.com/Doist/todoist-sdk-typescript/commit/44640d70890c3e5793af4ab77021b5c4aa1ebc31))
+
 ## [15.4.0](https://github.com/Doist/todoist-sdk-typescript/compare/v15.3.2...v15.4.0) (2026-10-15)
 
 ### Features
