@@ -76,10 +76,10 @@ describe('user_update status serialization', () => {
         expect(args).toEqual({ full_name: 'Ada' })
     })
 
-    test('sends activeUntil: null so a status with no expiry can be written back', async () => {
-        const args = await sendUserUpdate({ status: { message: 'Away', activeUntil: null } })
+    test('omits emoji and active_until when a status sets only a message', async () => {
+        const args = await sendUserUpdate({ status: { message: 'Away' } })
 
-        expect(args).toEqual({ status: { message: 'Away', active_until: null } })
+        expect(args).toEqual({ status: { message: 'Away' } })
     })
 
     test('rejects an invalid Date instead of sending it as a null expiry', async () => {
