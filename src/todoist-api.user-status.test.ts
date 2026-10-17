@@ -1,18 +1,17 @@
 import { TodoistApi } from '.'
 import { ENDPOINT_SYNC, getSyncBaseUri } from './consts/endpoints'
-import { captureRequest, getLastRequest, http, HttpResponse, server } from './test-utils/msw-setup'
+import { getLastRequest, mockApiResponse } from './test-utils/msw-setup'
 import { DEFAULT_AUTH_TOKEN } from './test-utils/test-defaults'
 import { TodoistArgumentError } from './types'
 import type { UserUpdateArgs } from './types/sync'
 import { createCommand } from './utils/sync-helpers'
 
 async function sendUserUpdate(args: UserUpdateArgs) {
-    server.use(
-        http.post(`${getSyncBaseUri()}${ENDPOINT_SYNC}`, async ({ request }) => {
-            captureRequest({ request, body: await request.clone().json() })
-            return HttpResponse.json({ sync_status: { u1: 'ok' } }, { status: 200 })
-        }),
-    )
+    mockApiResponse({
+        endpoint: `${getSyncBaseUri()}${ENDPOINT_SYNC}`,
+        data: { sync_status: {} },
+        options: { method: 'POST' },
+    })
     const api = new TodoistApi(DEFAULT_AUTH_TOKEN)
     await api.sync({
         commands: [createCommand('user_update', args)],
