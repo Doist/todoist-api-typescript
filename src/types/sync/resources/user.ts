@@ -6,6 +6,7 @@ import {
     DayOfWeekSchema,
     TimeFormatSchema,
 } from '../user-preferences'
+import { UserStatusSchema } from './user-status'
 
 export const FeaturesSchema = z.looseObject({
     karmaDisabled: z.union([z.boolean(), BooleanFromZeroOneSchema]),
@@ -105,6 +106,7 @@ export const SyncUserSchema = z.looseObject({
     sortOrder: z.number().int(),
     startDay: DayOfWeekSchema,
     startPage: z.string(),
+    status: UserStatusSchema.nullish(),
     themeId: z.string(),
     timeFormat: TimeFormatSchema,
     token: z.string().optional(),

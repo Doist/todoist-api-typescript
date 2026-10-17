@@ -1,5 +1,21 @@
 import type { DateFormat, DayOfWeek, TimeFormat } from '../user-preferences'
 
+export type UserStatusEffectArgs = {
+    scope?: { mode: string }
+}
+
+/** The complete status to set. It replaces any existing status. */
+export type UserStatusArgs = {
+    message: string
+    emoji?: string
+    /** Must be in the future; omit it for no expiry. A `Date` is sent as an ISO 8601 string. */
+    activeUntil?: Date | string
+    effects?: {
+        pauseNotifications?: UserStatusEffectArgs
+        pauseActivity?: UserStatusEffectArgs
+    }
+}
+
 export type UserUpdateArgs = {
     fullName?: string
     autoReminder?: number
@@ -10,6 +26,8 @@ export type UserUpdateArgs = {
     themeId?: string
     timeFormat?: TimeFormat
     timezone?: string
+    /** `null` clears the status; omitting it leaves the current status unchanged. */
+    status?: UserStatusArgs | null
 }
 
 export type DeleteCollaboratorArgs = {

@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { WorkspaceRoleSchema } from '../../workspaces/types'
+import { UserStatusSchema } from './user-status'
 
 export const CollaboratorSchema = z.looseObject({
     id: z.string(),
@@ -7,6 +8,8 @@ export const CollaboratorSchema = z.looseObject({
     fullName: z.string(),
     timezone: z.string(),
     imageId: z.string().nullable(),
+    /** The collaborator's shared status. Not related to {@link CollaboratorStatus}. */
+    status: UserStatusSchema.nullish(),
 })
 
 export type Collaborator = z.infer<typeof CollaboratorSchema>

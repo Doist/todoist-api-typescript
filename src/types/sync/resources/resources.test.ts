@@ -61,6 +61,19 @@ describe('Sync resource schemas', () => {
             expect(() => CollaboratorSchema.parse({ id: '456' })).toThrow(ZodError)
         })
 
+        test('parses a status, converting activeUntil to a Date', () => {
+            const result = CollaboratorSchema.parse({
+                ...validCollaborator,
+                status: {
+                    message: 'Deep work',
+                    activeUntil: '2026-10-09T17:00:00Z',
+                    effects: { pauseNotifications: { scope: { mode: 'all' } } },
+                },
+            })
+            expect(result.status?.activeUntil).toEqual(new Date('2026-10-09T17:00:00Z'))
+            expect(result.status?.effects.pauseNotifications?.scope?.mode).toBe('all')
+        })
+
         test('preserves unknown fields via passthrough', () => {
             const withExtra = { ...validCollaborator, avatarUrl: 'http://example.com/img.png' }
             const result = CollaboratorSchema.parse(withExtra)
@@ -716,6 +729,94 @@ describe('Sync resource schemas', () => {
             expect(result.id).toBe(validUser.id)
             expect(result.email).toBe(validUser.email)
             expect(result.fullName).toBe(validUser.fullName)
+        })
+
+        describe('status', () => {
+            const status = {
+                message: 'Deep work',
+                emoji: '🎧',
+                activeUntil: '2026-10-09T17:00:00Z',
+                effects: {
+                    pauseNotifications: { scope: { mode: 'all' } },
+                    pauseActivity: { scope: { mode: 'all' } },
+                },
+            }
+
+            test('parses a status, converting activeUntil to a Date', () => {
+                const result = SyncUserSchema.parse({ ...validUser, status })
+                expect(result.status).toEqual({
+                    ...status,
+                    activeUntil: new Date('2026-10-09T17:00:00Z'),
+                })
+            })
+
+            test('parses a status without emoji, activeUntil or effects content', () => {
+                const result = SyncUserSchema.parse({
+                    ...validUser,
+                    status: { message: 'Away', effects: {} },
+                })
+                expect(result.status).toEqual({ message: 'Away', effects: {} })
+            })
+
+            test('keeps an explicit null emoji and activeUntil as null', () => {
+                const result = SyncUserSchema.parse({
+                    ...validUser,
+                    status: { message: 'Away', emoji: null, activeUntil: null, effects: {} },
+                })
+                expect(result.status?.emoji).toBeNull()
+                expect(result.status?.activeUntil).toBeNull()
+            })
+
+            test('parses a status without effects instead of failing the whole user', () => {
+                const result = SyncUserSchema.parse({ ...validUser, status: { message: 'Away' } })
+                expect(result.status?.effects).toEqual({})
+            })
+
+            test('rejects a status without a message', () => {
+                expect(() =>
+                    SyncUserSchema.parse({ ...validUser, status: { effects: {} } }),
+                ).toThrow(ZodError)
+            })
+
+            test('keeps unknown keys at the status, effect and scope level', () => {
+                const result = SyncUserSchema.parse({
+                    ...validUser,
+                    status: {
+                        message: 'Away',
+                        color: 'red',
+                        effects: {
+                            pauseActivity: { note: 'x', scope: { mode: 'all', ids: ['1'] } },
+                        },
+                    },
+                })
+                expect(result.status).toHaveProperty('color', 'red')
+                expect(result.status?.effects.pauseActivity).toHaveProperty('note', 'x')
+                expect(result.status?.effects.pauseActivity?.scope).toHaveProperty('ids', ['1'])
+            })
+
+            test('accepts status: null and a missing status key', () => {
+                expect(SyncUserSchema.parse({ ...validUser, status: null }).status).toBeNull()
+                expect(SyncUserSchema.parse(validUser).status).toBeUndefined()
+            })
+
+            test('tolerates an unknown future effect, mode and an effect without scope', () => {
+                const result = SyncUserSchema.parse({
+                    ...validUser,
+                    status: {
+                        message: 'Away',
+                        effects: {
+                            pauseNotifications: { scope: { mode: 'some-future-mode' } },
+                            pauseActivity: {},
+                            somethingNew: { scope: { mode: 'all' } },
+                        },
+                    },
+                })
+                expect(result.status?.effects.pauseNotifications?.scope?.mode).toBe(
+                    'some-future-mode',
+                )
+                expect(result.status?.effects.pauseActivity?.scope).toBeUndefined()
+                expect(result.status?.effects).toHaveProperty('somethingNew')
+            })
         })
 
         test('accepts numeric and boolean karmaDisabled values', () => {
