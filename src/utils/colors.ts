@@ -104,8 +104,7 @@ export const taupe = {
 
 /**
  * Every color, in the order the apps show them. The keys mirror `TodoistColor` from
- * `@doist/sdk-kmp/shared-todoist-all`, which a test checks; the display names and hex values are
- * the SDK's own.
+ * `@doist/sdk-kmp/shared-todoist-all`; the display names and hex values are the SDK's own.
  */
 export const colors = [
     berryRed,
