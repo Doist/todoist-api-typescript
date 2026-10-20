@@ -244,12 +244,19 @@ export type TodoistApiOptions = {
      * Optional custom fetch function for alternative HTTP clients (e.g., Obsidian's requestUrl, React Native fetch)
      */
     customFetch?: CustomFetch
+    /**
+     * Optional headers sent with every API request, e.g. `{ 'Doist-Platform': 'cli' }` for client
+     * attribution. Cannot replace `Authorization` or `X-Request-Id`. Not sent on attachment
+     * downloads, which redirect to a third-party CDN.
+     */
+    headers?: Record<string, string>
 }
 
 export class TodoistApi {
     private authToken: string
     private syncApiBase: string
     private customFetch?: CustomFetch
+    private customHeaders?: Record<string, string>
 
     // Internal domain sub-clients. See src/clients/* — each groups a set of
     // related endpoints. The public methods on TodoistApi below delegate
@@ -294,11 +301,13 @@ export class TodoistApi {
         const opts = options || {}
         this.syncApiBase = getSyncBaseUri(opts.baseUrl)
         this.customFetch = opts.customFetch
+        this.customHeaders = opts.headers
 
         const clientDeps = {
             authToken: this.authToken,
             syncApiBase: this.syncApiBase,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
         }
         this.taskClient = new TaskClient(clientDeps)
         this.projectClient = new ProjectClient(clientDeps)
@@ -352,6 +361,7 @@ export class TodoistApi {
                 authToken: this.authToken,
                 syncApiBase: this.syncApiBase,
                 customFetch: this.customFetch,
+                customHeaders: this.customHeaders,
             },
             syncRequest,
             { requestId, hasSyncCommands: Boolean(syncRequest.commands?.length) },
@@ -401,6 +411,7 @@ export class TodoistApi {
             relativePath: ENDPOINT_REST_USER,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
         })
 
         return validateCurrentUser(response.data)

@@ -40,6 +40,18 @@ Key changes in v1 include:
 - Object renames (e.g., items → tasks, notes → comments)
 - URL renames and endpoint signature changes
 
+## Custom Headers
+
+Pass `headers` to send extra headers with every API request, for example to tell the backend which client is calling:
+
+```typescript
+const api = new TodoistApi('YOURTOKEN', {
+    headers: { 'Doist-Platform': 'cli' },
+})
+```
+
+These headers cannot replace `Authorization`, `X-Request-Id` or the multipart `Content-Type`; the SDK's own values always win. They are not sent on attachment downloads (`viewAttachment`), which redirect to a third-party CDN. The OAuth helpers (`getAuthToken`, `refreshAuthToken`, `revokeToken`, …) take their own options and do not send them.
+
 ## Custom HTTP Clients
 
 The Todoist API client supports custom HTTP implementations to enable usage in environments with specific networking requirements, such as:

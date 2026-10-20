@@ -46,6 +46,7 @@ export class InsightsClient extends BaseClient {
             relativePath: getProjectInsightsActivityStatsEndpoint(projectId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: { objectType: 'ITEM', eventType: 'COMPLETED', ...args },
         })
         return validateProjectActivityStats(response.data)
@@ -59,6 +60,7 @@ export class InsightsClient extends BaseClient {
             relativePath: getProjectInsightsHealthEndpoint(projectId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
         })
         return validateProjectHealth(response.data)
     }
@@ -71,6 +73,7 @@ export class InsightsClient extends BaseClient {
             relativePath: getProjectInsightsHealthContextEndpoint(projectId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
         })
         return validateProjectHealthContext(response.data)
     }
@@ -83,6 +86,7 @@ export class InsightsClient extends BaseClient {
             relativePath: getProjectInsightsProgressEndpoint(projectId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
         })
         return validateProjectProgress(response.data)
     }
@@ -98,6 +102,7 @@ export class InsightsClient extends BaseClient {
             relativePath: getWorkspaceInsightsEndpoint(workspaceId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: {
                 ...args,
                 ...(args.projectIds ? { projectIds: args.projectIds.join(',') } : {}),
@@ -114,6 +119,7 @@ export class InsightsClient extends BaseClient {
             relativePath: getProjectInsightsHealthAnalyzeEndpoint(projectId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             requestId: requestId,
         })
         return validateProjectHealth(response.data)

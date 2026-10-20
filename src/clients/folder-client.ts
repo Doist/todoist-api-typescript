@@ -27,6 +27,7 @@ export class FolderClient extends BaseClient {
             relativePath: ENDPOINT_REST_FOLDERS,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
         })
 
@@ -44,6 +45,7 @@ export class FolderClient extends BaseClient {
             relativePath: generatePath(ENDPOINT_REST_FOLDERS, id),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
         })
 
         return validateFolder(response.data)
@@ -56,6 +58,7 @@ export class FolderClient extends BaseClient {
             relativePath: ENDPOINT_REST_FOLDERS,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
             requestId: requestId,
         })
@@ -71,6 +74,7 @@ export class FolderClient extends BaseClient {
             relativePath: generatePath(ENDPOINT_REST_FOLDERS, id),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
             requestId: requestId,
         })
@@ -86,6 +90,7 @@ export class FolderClient extends BaseClient {
             relativePath: generatePath(ENDPOINT_REST_FOLDERS, id),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             requestId: requestId,
         })
         return isSuccess(response)

@@ -37,6 +37,7 @@ export class LabelClient extends BaseClient {
             relativePath: generatePath(ENDPOINT_REST_LABELS, id),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
         })
 
         return validateLabel(response.data)
@@ -51,6 +52,7 @@ export class LabelClient extends BaseClient {
             relativePath: ENDPOINT_REST_LABELS,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
         })
 
@@ -69,6 +71,7 @@ export class LabelClient extends BaseClient {
             relativePath: ENDPOINT_REST_LABELS_SEARCH,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
         })
 
@@ -85,6 +88,7 @@ export class LabelClient extends BaseClient {
             relativePath: ENDPOINT_REST_LABELS,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
             requestId: requestId,
         })
@@ -100,6 +104,7 @@ export class LabelClient extends BaseClient {
             relativePath: generatePath(ENDPOINT_REST_LABELS, id),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
             requestId: requestId,
         })
@@ -114,6 +119,7 @@ export class LabelClient extends BaseClient {
             relativePath: generatePath(ENDPOINT_REST_LABELS, id),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             requestId: requestId,
         })
         return isSuccess(response)
@@ -128,6 +134,7 @@ export class LabelClient extends BaseClient {
             relativePath: ENDPOINT_REST_LABELS_SHARED,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
         })
 
@@ -141,6 +148,7 @@ export class LabelClient extends BaseClient {
             relativePath: ENDPOINT_REST_LABELS_SHARED_RENAME,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
         })
 
@@ -154,6 +162,7 @@ export class LabelClient extends BaseClient {
             relativePath: ENDPOINT_REST_LABELS_SHARED_REMOVE,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
         })
 

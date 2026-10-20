@@ -32,6 +32,7 @@ export class UiExtensionClient extends BaseClient {
             relativePath: getUiExtensionEndpoint(uiExtensionId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             requestId: requestId,
         })
         return validateUiExtension(response.data)
@@ -44,6 +45,7 @@ export class UiExtensionClient extends BaseClient {
             relativePath: ENDPOINT_REST_APPS_UI_EXTENSIONS_INSTALLED,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             requestId: requestId,
         })
         return validateUiExtensionArray(response.data)
@@ -57,6 +59,7 @@ export class UiExtensionClient extends BaseClient {
             relativePath: getUiExtensionsByIntegrationEndpoint(appId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             requestId: requestId,
         })
         return validateUiExtensionArray(response.data)
@@ -69,6 +72,7 @@ export class UiExtensionClient extends BaseClient {
             relativePath: ENDPOINT_REST_APPS_UI_EXTENSIONS,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
             requestId: requestId,
         })
@@ -87,6 +91,7 @@ export class UiExtensionClient extends BaseClient {
             relativePath: getUiExtensionEndpoint(uiExtensionId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
             requestId: requestId,
         })
@@ -101,6 +106,7 @@ export class UiExtensionClient extends BaseClient {
             relativePath: getUiExtensionEndpoint(uiExtensionId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             requestId: requestId,
         })
         return isSuccess(response)
@@ -123,6 +129,7 @@ export class UiExtensionClient extends BaseClient {
             additionalFields: { file_name: args.fileName ?? '' },
             requestId: requestId,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
         })
         return validateUiExtension(data)
     }

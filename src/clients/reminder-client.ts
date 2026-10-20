@@ -46,6 +46,7 @@ export class ReminderClient extends BaseClient {
             relativePath: ENDPOINT_REST_REMINDERS,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
         })
         return {
@@ -65,6 +66,7 @@ export class ReminderClient extends BaseClient {
             relativePath: ENDPOINT_REST_LOCATION_REMINDERS,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
         })
         return {
@@ -82,6 +84,7 @@ export class ReminderClient extends BaseClient {
                 relativePath: generatePath(ENDPOINT_REST_REMINDERS, id),
                 apiToken: this.authToken,
                 customFetch: this.customFetch,
+                customHeaders: this.customHeaders,
             })
 
             return validateReminder(response.data)
@@ -105,6 +108,7 @@ export class ReminderClient extends BaseClient {
                 relativePath: generatePath(ENDPOINT_REST_LOCATION_REMINDERS, id),
                 apiToken: this.authToken,
                 customFetch: this.customFetch,
+                customHeaders: this.customHeaders,
             })
 
             return validateReminder(response.data)
@@ -126,6 +130,7 @@ export class ReminderClient extends BaseClient {
             relativePath: ENDPOINT_REST_REMINDERS,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
             requestId: requestId,
         })
@@ -143,6 +148,7 @@ export class ReminderClient extends BaseClient {
             relativePath: ENDPOINT_REST_LOCATION_REMINDERS,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: {
                 ...args,
                 reminderType: ReminderTypeEnum.Location,
@@ -167,6 +173,7 @@ export class ReminderClient extends BaseClient {
                 relativePath: generatePath(ENDPOINT_REST_REMINDERS, id),
                 apiToken: this.authToken,
                 customFetch: this.customFetch,
+                customHeaders: this.customHeaders,
                 payload,
                 requestId: requestId,
             })
@@ -197,6 +204,7 @@ export class ReminderClient extends BaseClient {
                 relativePath: generatePath(ENDPOINT_REST_LOCATION_REMINDERS, id),
                 apiToken: this.authToken,
                 customFetch: this.customFetch,
+                customHeaders: this.customHeaders,
                 payload,
                 requestId: requestId,
             })
@@ -222,6 +230,7 @@ export class ReminderClient extends BaseClient {
                 relativePath: generatePath(ENDPOINT_REST_REMINDERS, id),
                 apiToken: this.authToken,
                 customFetch: this.customFetch,
+                customHeaders: this.customHeaders,
                 requestId: requestId,
             })
             return isSuccess(response)
@@ -245,6 +254,7 @@ export class ReminderClient extends BaseClient {
                 relativePath: generatePath(ENDPOINT_REST_LOCATION_REMINDERS, id),
                 apiToken: this.authToken,
                 customFetch: this.customFetch,
+                customHeaders: this.customHeaders,
                 requestId: requestId,
             })
             return isSuccess(response)

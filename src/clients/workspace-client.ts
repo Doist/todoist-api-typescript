@@ -84,6 +84,7 @@ export class WorkspaceClient extends BaseClient {
             relativePath: ENDPOINT_WORKSPACE_INVITATIONS,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: { workspace_id: args.workspaceId },
             requestId: requestId,
         })
@@ -106,6 +107,7 @@ export class WorkspaceClient extends BaseClient {
             relativePath: ENDPOINT_WORKSPACE_INVITATIONS_ALL,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: queryParams,
             requestId: requestId,
         })
@@ -123,6 +125,7 @@ export class WorkspaceClient extends BaseClient {
             relativePath: ENDPOINT_WORKSPACE_INVITATIONS_DELETE,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: {
                 workspace_id: args.workspaceId,
                 user_email: args.userEmail,
@@ -143,6 +146,7 @@ export class WorkspaceClient extends BaseClient {
             relativePath: getWorkspaceInvitationAcceptEndpoint(args.inviteCode),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             requestId: requestId,
         })
 
@@ -159,6 +163,7 @@ export class WorkspaceClient extends BaseClient {
             relativePath: getWorkspaceInvitationRejectEndpoint(args.inviteCode),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             requestId: requestId,
         })
 
@@ -172,6 +177,7 @@ export class WorkspaceClient extends BaseClient {
             relativePath: ENDPOINT_WORKSPACE_JOIN,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: {
                 invite_code: args.inviteCode,
                 workspace_id: args.workspaceId,
@@ -200,6 +206,7 @@ export class WorkspaceClient extends BaseClient {
                 },
                 requestId: requestId,
                 customFetch: this.customFetch,
+                customHeaders: this.customHeaders,
             })
             return data as WorkspaceLogoResponse
         }
@@ -226,6 +233,7 @@ export class WorkspaceClient extends BaseClient {
             additionalFields: additionalFields,
             requestId: requestId,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
         })
 
         return data as WorkspaceLogoResponse
@@ -241,6 +249,7 @@ export class WorkspaceClient extends BaseClient {
             relativePath: ENDPOINT_WORKSPACE_PLAN_DETAILS,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: { workspace_id: args.workspaceId },
             requestId: requestId,
         })
@@ -273,6 +282,7 @@ export class WorkspaceClient extends BaseClient {
             relativePath: ENDPOINT_WORKSPACE_USERS,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: queryParams,
             requestId: requestId,
         })
@@ -291,6 +301,7 @@ export class WorkspaceClient extends BaseClient {
             relativePath: ENDPOINT_REST_WORKSPACES,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             requestId: requestId,
         })
         return validateWorkspaceArray(response.data)
@@ -304,6 +315,7 @@ export class WorkspaceClient extends BaseClient {
             relativePath: generatePath(ENDPOINT_REST_WORKSPACES, id),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             requestId: requestId,
         })
         return validateWorkspace(response.data)
@@ -316,6 +328,7 @@ export class WorkspaceClient extends BaseClient {
             relativePath: ENDPOINT_REST_WORKSPACES,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
             requestId: requestId,
         })
@@ -334,6 +347,7 @@ export class WorkspaceClient extends BaseClient {
             relativePath: generatePath(ENDPOINT_REST_WORKSPACES, id),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
             requestId: requestId,
         })
@@ -348,6 +362,7 @@ export class WorkspaceClient extends BaseClient {
             relativePath: generatePath(ENDPOINT_REST_WORKSPACES, id),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             requestId: requestId,
         })
         return isSuccess(response)
@@ -364,6 +379,7 @@ export class WorkspaceClient extends BaseClient {
             relativePath: ENDPOINT_WORKSPACE_MEMBERS,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: { workspaceId, ...queryParams },
             requestId: requestId,
         })
@@ -383,6 +399,7 @@ export class WorkspaceClient extends BaseClient {
             relativePath: getWorkspaceUserTasksEndpoint(workspaceId, userId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: queryParams,
             requestId: requestId,
         })
@@ -402,6 +419,7 @@ export class WorkspaceClient extends BaseClient {
             relativePath: getWorkspaceInviteUsersEndpoint(workspaceId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: payload,
             requestId: requestId,
         })
@@ -419,6 +437,7 @@ export class WorkspaceClient extends BaseClient {
             relativePath: getWorkspaceUserEndpoint(workspaceId, userId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: payload,
             requestId: requestId,
         })
@@ -433,6 +452,7 @@ export class WorkspaceClient extends BaseClient {
             relativePath: getWorkspaceUserEndpoint(workspaceId, userId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             requestId: requestId,
         })
         return isSuccess(response)
@@ -456,6 +476,7 @@ export class WorkspaceClient extends BaseClient {
             relativePath: getWorkspaceActiveProjectsEndpoint(args.workspaceId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: queryParams,
             requestId: requestId,
         })
@@ -491,6 +512,7 @@ export class WorkspaceClient extends BaseClient {
             relativePath: getWorkspaceArchivedProjectsEndpoint(args.workspaceId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: queryParams,
             requestId: requestId,
         })

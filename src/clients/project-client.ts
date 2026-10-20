@@ -68,6 +68,7 @@ export class ProjectClient extends BaseClient {
             relativePath: generatePath(ENDPOINT_REST_PROJECTS, id),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
         })
 
         return validateProject(response.data)
@@ -82,6 +83,7 @@ export class ProjectClient extends BaseClient {
             relativePath: ENDPOINT_REST_PROJECTS,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
         })
 
@@ -100,6 +102,7 @@ export class ProjectClient extends BaseClient {
             relativePath: ENDPOINT_REST_PROJECTS_SEARCH,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
         })
 
@@ -120,6 +123,7 @@ export class ProjectClient extends BaseClient {
             relativePath: ENDPOINT_REST_PROJECTS_ARCHIVED,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
         })
 
@@ -139,6 +143,7 @@ export class ProjectClient extends BaseClient {
             relativePath: ENDPOINT_REST_PROJECTS,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
             requestId: requestId,
         })
@@ -158,6 +163,7 @@ export class ProjectClient extends BaseClient {
             relativePath: generatePath(ENDPOINT_REST_PROJECTS, id),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
             requestId: requestId,
         })
@@ -173,6 +179,7 @@ export class ProjectClient extends BaseClient {
             relativePath: generatePath(ENDPOINT_REST_PROJECTS, id),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             requestId: requestId,
         })
         return isSuccess(response)
@@ -189,6 +196,7 @@ export class ProjectClient extends BaseClient {
             relativePath: generatePath(ENDPOINT_REST_PROJECTS, id, PROJECT_ARCHIVE),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             requestId: requestId,
         })
         return validateProject(response.data)
@@ -205,6 +213,7 @@ export class ProjectClient extends BaseClient {
             relativePath: generatePath(ENDPOINT_REST_PROJECTS, id, PROJECT_UNARCHIVE),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             requestId: requestId,
         })
         return validateProject(response.data)
@@ -222,6 +231,7 @@ export class ProjectClient extends BaseClient {
             relativePath: ENDPOINT_REST_PROJECTS_MOVE_TO_WORKSPACE,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
             requestId: requestId,
         })
@@ -240,6 +250,7 @@ export class ProjectClient extends BaseClient {
             relativePath: ENDPOINT_REST_PROJECTS_MOVE_TO_PERSONAL,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
             requestId: requestId,
         })
@@ -255,6 +266,7 @@ export class ProjectClient extends BaseClient {
             relativePath: ENDPOINT_REST_PROJECTS_ARCHIVED_COUNT,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
         })
         return data
@@ -267,6 +279,7 @@ export class ProjectClient extends BaseClient {
             relativePath: ENDPOINT_REST_PROJECTS_PERMISSIONS,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
         })
         return data
     }
@@ -282,6 +295,7 @@ export class ProjectClient extends BaseClient {
             relativePath: generatePath(ENDPOINT_REST_PROJECTS, id, ENDPOINT_REST_PROJECT_FULL),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
         })
         return {
@@ -308,6 +322,7 @@ export class ProjectClient extends BaseClient {
             relativePath: generatePath(ENDPOINT_REST_PROJECTS, id, ENDPOINT_REST_PROJECT_JOIN),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             requestId: requestId,
         })
         return {
@@ -339,6 +354,7 @@ export class ProjectClient extends BaseClient {
             ),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
         })
 

@@ -75,6 +75,34 @@ describe('httpClient', () => {
         expect(capturedRequest?.headers['content-type']).toBe('application/json')
     })
 
+    test('request sends custom headers without letting them replace auth or request id', async () => {
+        const url = `${DEFAULT_BASE_URI}${DEFAULT_ENDPOINT}`
+
+        server.use(
+            http.post(url, ({ request }) => {
+                captureRequest({ request, body: undefined })
+                return HttpResponse.json(DEFAULT_RESPONSE_DATA, { status: 200 })
+            }),
+        )
+
+        await request({
+            httpMethod: 'POST',
+            baseUri: DEFAULT_BASE_URI,
+            relativePath: DEFAULT_ENDPOINT,
+            apiToken: DEFAULT_AUTH_TOKEN,
+            customHeaders: {
+                'Doist-Platform': 'cli',
+                authorization: 'Bearer forged',
+                'x-request-id': 'forged',
+            },
+        })
+
+        const capturedRequest = getLastRequest()
+        expect(capturedRequest?.headers['doist-platform']).toBe('cli')
+        expect(capturedRequest?.headers['authorization']).toBe(`Bearer ${DEFAULT_AUTH_TOKEN}`)
+        expect(capturedRequest?.headers['x-request-id']).toBe(RANDOM_ID)
+    })
+
     test('paramsSerializer works correctly', () => {
         const params = {
             filter: 'today',

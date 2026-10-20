@@ -51,6 +51,7 @@ export class BillingClient extends BaseClient {
             relativePath: ENDPOINT_PAYMENTS_SUBSCRIPTION_INFO,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
         })
         return validateSubscriptionInfo(response.data)
     }
@@ -62,6 +63,7 @@ export class BillingClient extends BaseClient {
             relativePath: ENDPOINT_PAYMENTS_CANCEL_PLAN,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
             requestId: requestId,
         })
@@ -75,6 +77,7 @@ export class BillingClient extends BaseClient {
             relativePath: ENDPOINT_PAYMENTS_REACTIVATE_PLAN,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             requestId: requestId,
         })
         return validateSubscriptionInfo(response.data)
@@ -90,6 +93,7 @@ export class BillingClient extends BaseClient {
             relativePath: ENDPOINT_PRO_UPGRADE,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
             requestId: requestId,
         })
@@ -106,6 +110,7 @@ export class BillingClient extends BaseClient {
             relativePath: ENDPOINT_PRO_TRIAL,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
             requestId: requestId,
         })
@@ -122,6 +127,7 @@ export class BillingClient extends BaseClient {
             relativePath: ENDPOINT_PRO_BILLING_PORTAL,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
             requestId: requestId,
         })
@@ -135,6 +141,7 @@ export class BillingClient extends BaseClient {
             relativePath: ENDPOINT_PRO_PLAN_DETAILS,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
         })
         return validateProPlanDetails(response.data)
     }
@@ -149,6 +156,7 @@ export class BillingClient extends BaseClient {
             relativePath: ENDPOINT_WORKSPACE_UPGRADE,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
             requestId: requestId,
         })
@@ -165,6 +173,7 @@ export class BillingClient extends BaseClient {
             relativePath: ENDPOINT_WORKSPACE_TRIAL,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
             requestId: requestId,
         })
@@ -181,6 +190,7 @@ export class BillingClient extends BaseClient {
             relativePath: ENDPOINT_WORKSPACE_BILLING_PORTAL,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
             requestId: requestId,
         })
@@ -194,6 +204,7 @@ export class BillingClient extends BaseClient {
             relativePath: ENDPOINT_PRICES,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
         })
         return validatePrices(response.data)
     }
@@ -205,6 +216,7 @@ export class BillingClient extends BaseClient {
             relativePath: ENDPOINT_PRICING,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
         })
         return validatePricing(response.data)
