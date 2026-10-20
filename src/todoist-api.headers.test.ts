@@ -1,3 +1,4 @@
+import { vi } from 'vitest'
 import {
     ENDPOINT_REST_BACKUPS_DOWNLOAD,
     ENDPOINT_REST_TASKS,
@@ -8,6 +9,7 @@ import {
 import { captureRequest, getLastRequest, http, HttpResponse, server } from './test-utils/msw-setup'
 import { DEFAULT_AUTH_TOKEN, DEFAULT_TASK } from './test-utils/test-defaults'
 import { TodoistApi } from './todoist-api'
+import type { CustomFetchResponse } from './types/http'
 import { snakeCaseKeys } from './utils/case-conversion'
 
 const CUSTOM_HEADERS = { 'Doist-Platform': 'cli' }
@@ -89,6 +91,27 @@ describe('TodoistApi headers option', () => {
         const capturedRequest = getLastRequest()
         expect(capturedRequest?.headers['doist-platform']).toBe('cli')
         expect(capturedRequest?.headers['authorization']).toBe(`Bearer ${DEFAULT_AUTH_TOKEN}`)
+    })
+
+    test('sends configured headers on backup downloads through a custom fetch', async () => {
+        const customFetch = vi.fn().mockResolvedValue({
+            ok: true,
+            status: 200,
+            statusText: 'OK',
+            headers: {},
+            text: () => Promise.resolve('binary-content'),
+            json: () => Promise.resolve({}),
+        } satisfies CustomFetchResponse)
+        const api = new TodoistApi(DEFAULT_AUTH_TOKEN, { headers: CUSTOM_HEADERS, customFetch })
+
+        await api.downloadBackup({ file: 'backup123.zip' })
+
+        expect(customFetch).toHaveBeenCalledWith(
+            expect.stringContaining(ENDPOINT_REST_BACKUPS_DOWNLOAD),
+            expect.objectContaining({
+                headers: { 'Doist-Platform': 'cli', Authorization: `Bearer ${DEFAULT_AUTH_TOKEN}` },
+            }),
+        )
     })
 
     test('does not send configured headers on attachment downloads', async () => {
