@@ -1,3 +1,9 @@
+## [15.7.0](https://github.com/Doist/todoist-sdk-typescript/compare/v15.6.0...v15.7.0) (2026-10-20)
+
+### Features
+
+* accept a function for the headers option ([#716](https://github.com/Doist/todoist-sdk-typescript/issues/716)) ([41ed0bf](https://github.com/Doist/todoist-sdk-typescript/commit/41ed0bfbf71592b5436283760afa6ed1af8fa2ea))
+
 ## [15.6.0](https://github.com/Doist/todoist-sdk-typescript/compare/v15.5.0...v15.6.0) (2026-10-20)
 
 ### Features
