@@ -109,6 +109,13 @@ export type CustomFetchResponse = {
 }
 
 /**
+ * Extra headers sent with every API request: either a fixed record, or a function
+ * the SDK calls once per request (retries reuse its result) for values that change
+ * between requests, such as a per-request ID or the command currently running.
+ */
+export type CustomHeaders = Record<string, string> | (() => Record<string, string>)
+
+/**
  * Custom fetch function type for alternative HTTP clients
  */
 export type CustomFetch = (

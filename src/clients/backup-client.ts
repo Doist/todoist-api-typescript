@@ -3,7 +3,7 @@ import { request } from '../transport/http-client'
 import type { Backup, DownloadBackupArgs, GetBackupsArgs } from '../types/backups'
 import type { FileResponse } from '../types/http'
 import { wrapAsFileResponse } from '../utils/file-response'
-import { mergeHeaders } from '../utils/headers'
+import { mergeHeaders, resolveCustomHeaders } from '../utils/headers'
 import { validateBackupArray } from '../utils/validators'
 import { BaseClient } from './base-client'
 
@@ -31,7 +31,7 @@ export class BackupClient extends BaseClient {
     async downloadBackup(args: DownloadBackupArgs): Promise<FileResponse> {
         const url = `${this.syncApiBase}${ENDPOINT_REST_BACKUPS_DOWNLOAD}?file=${encodeURIComponent(args.file)}`
         const fetchOptions = {
-            headers: mergeHeaders(this.customHeaders, {
+            headers: mergeHeaders(resolveCustomHeaders(this.customHeaders), {
                 Authorization: `Bearer ${this.authToken}`,
             }),
         }

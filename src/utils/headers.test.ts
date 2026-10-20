@@ -1,4 +1,4 @@
-import { mergeHeaders } from './headers'
+import { mergeHeaders, resolveCustomHeaders } from './headers'
 
 describe('mergeHeaders', () => {
     test('combines headers from every source', () => {
@@ -20,5 +20,22 @@ describe('mergeHeaders', () => {
         expect(mergeHeaders(undefined, { Accept: 'text/plain' }, undefined)).toEqual({
             Accept: 'text/plain',
         })
+    })
+})
+
+describe('resolveCustomHeaders', () => {
+    test('returns a record unchanged', () => {
+        const headers = { 'Doist-Platform': 'cli' }
+        expect(resolveCustomHeaders(headers)).toBe(headers)
+    })
+
+    test('calls a function and returns its result', () => {
+        expect(resolveCustomHeaders(() => ({ 'Doist-Platform': 'cli' }))).toEqual({
+            'Doist-Platform': 'cli',
+        })
+    })
+
+    test('returns undefined when no headers are configured', () => {
+        expect(resolveCustomHeaders(undefined)).toBeUndefined()
     })
 })

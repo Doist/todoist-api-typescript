@@ -1,10 +1,10 @@
 import { v4 as uuidv4 } from 'uuid'
 import { API_BASE_URI } from '../consts/endpoints'
 import { TodoistRequestError } from '../types/errors'
-import type { CustomFetch, HttpMethod, HttpResponse } from '../types/http'
+import type { CustomFetch, CustomHeaders, HttpMethod, HttpResponse } from '../types/http'
 import { isHttpError, isNetworkError } from '../types/http'
 import { camelCaseKeys, snakeCaseKeys } from '../utils/case-conversion'
-import { mergeHeaders } from '../utils/headers'
+import { mergeHeaders, resolveCustomHeaders } from '../utils/headers'
 import { fetchWithRetry } from './fetch-with-retry'
 
 type GetTodoistRequestErrorArgs = {
@@ -16,14 +16,14 @@ type GetRequestConfigurationArgs = {
     baseURL: string
     apiToken?: string
     requestId?: string
-    customHeaders?: Record<string, string>
+    customHeaders?: CustomHeaders
 }
 
 type GetHttpClientArgs = {
     baseURL: string
     apiToken?: string
     requestId?: string
-    customHeaders?: Record<string, string>
+    customHeaders?: CustomHeaders
 }
 
 type RequestArgs = {
@@ -34,7 +34,7 @@ type RequestArgs = {
     payload?: Record<string, unknown>
     requestId?: string
     hasSyncCommands?: boolean
-    customHeaders?: Record<string, string>
+    customHeaders?: CustomHeaders
     customFetch?: CustomFetch
 }
 
@@ -106,7 +106,12 @@ function getRequestConfiguration(args: GetRequestConfigurationArgs) {
     const authHeader = apiToken ? { Authorization: getAuthHeader(apiToken) } : undefined
     const requestIdHeader = requestId ? { 'X-Request-Id': requestId } : undefined
     // Custom headers sit below auth and request id so they can never replace them.
-    const headers = mergeHeaders(defaultHeaders, customHeaders, authHeader, requestIdHeader)
+    const headers = mergeHeaders(
+        defaultHeaders,
+        resolveCustomHeaders(customHeaders),
+        authHeader,
+        requestIdHeader,
+    )
 
     return { baseURL, headers }
 }
