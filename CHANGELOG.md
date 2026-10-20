@@ -1,3 +1,9 @@
+## [15.6.0](https://github.com/Doist/todoist-sdk-typescript/compare/v15.5.0...v15.6.0) (2026-10-20)
+
+### Features
+
+* add headers option to send extra headers on every request ([#715](https://github.com/Doist/todoist-sdk-typescript/issues/715)) ([3501f4e](https://github.com/Doist/todoist-sdk-typescript/commit/3501f4eb2035886bee83059577c5420803d35ce2))
+
 ## [15.5.0](https://github.com/Doist/todoist-sdk-typescript/compare/v15.4.0...v15.5.0) (2026-10-17)
 
 ### Features
