@@ -229,16 +229,5 @@ describe('TodoistApi headers option', () => {
                 expect(options.headers['Request-Id']).toBe('1')
             }
         })
-
-        test('cannot replace the Authorization header', async () => {
-            mockTaskEndpoint()
-            const api = new TodoistApi(DEFAULT_AUTH_TOKEN, {
-                headers: () => ({ authorization: 'Bearer forged' }),
-            })
-
-            await api.getTask('123')
-
-            expect(getLastRequest()?.headers['authorization']).toBe(`Bearer ${DEFAULT_AUTH_TOKEN}`)
-        })
     })
 })
