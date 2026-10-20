@@ -75,7 +75,7 @@ import {
     AddFolderArgs,
     UpdateFolderArgs,
 } from './types/folders'
-import { CustomFetch, FileResponse } from './types/http'
+import { CustomFetch, CustomHeaders, FileResponse } from './types/http'
 import { IdMapping, MovedId, GetIdMappingsArgs, GetMovedIdsArgs } from './types/id-mappings'
 import {
     ProjectActivityStats,
@@ -246,17 +246,18 @@ export type TodoistApiOptions = {
     customFetch?: CustomFetch
     /**
      * Optional headers sent with every API request, e.g. `{ 'Doist-Platform': 'cli' }` for client
-     * attribution. Cannot replace `Authorization` or `X-Request-Id`. Not sent on attachment
-     * downloads, which redirect to a third-party CDN.
+     * attribution. Pass a function instead to compute them per request, e.g. a fresh request ID;
+     * it is called once per request and retries reuse its result. Cannot replace `Authorization`
+     * or `X-Request-Id`. Not sent on attachment downloads, which redirect to a third-party CDN.
      */
-    headers?: Record<string, string>
+    headers?: CustomHeaders
 }
 
 export class TodoistApi {
     private authToken: string
     private syncApiBase: string
     private customFetch?: CustomFetch
-    private customHeaders?: Record<string, string>
+    private customHeaders?: CustomHeaders
 
     // Internal domain sub-clients. See src/clients/* — each groups a set of
     // related endpoints. The public methods on TodoistApi below delegate

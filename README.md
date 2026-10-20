@@ -50,6 +50,16 @@ const api = new TodoistApi('YOURTOKEN', {
 })
 ```
 
+For values that change between requests, pass a function instead. The SDK calls it once per request, and a retried request reuses its result:
+
+```typescript
+import { randomUUID } from 'node:crypto'
+
+const api = new TodoistApi('YOURTOKEN', {
+    headers: () => ({ 'Doist-Platform': 'cli', 'Request-Id': randomUUID() }),
+})
+```
+
 These headers cannot replace `Authorization`, `X-Request-Id` or the multipart `Content-Type`; the SDK's own values always win. They are not sent on attachment downloads (`viewAttachment`), which redirect to a third-party CDN. The OAuth helpers (`getAuthToken`, `refreshAuthToken`, `revokeToken`, …) take their own options and do not send them.
 
 ## Custom HTTP Clients

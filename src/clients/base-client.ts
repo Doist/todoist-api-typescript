@@ -1,5 +1,5 @@
 import type { SyncRequestContext } from '../transport/sync-request'
-import type { CustomFetch } from '../types/http'
+import type { CustomFetch, CustomHeaders } from '../types/http'
 
 /**
  * Internal base class for every domain sub-client (tasks, projects, …).
@@ -18,7 +18,7 @@ export abstract class BaseClient {
     protected readonly syncApiBase: string
     protected readonly apiRootBase: string
     protected readonly customFetch?: CustomFetch
-    protected readonly customHeaders?: Record<string, string>
+    protected readonly customHeaders?: CustomHeaders
 
     constructor(context: SyncRequestContext) {
         this.authToken = context.authToken

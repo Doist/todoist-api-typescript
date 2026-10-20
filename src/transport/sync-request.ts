@@ -1,6 +1,6 @@
 import { ENDPOINT_SYNC } from '../consts/endpoints'
 import { TodoistArgumentError, TodoistRequestError } from '../types'
-import type { CustomFetch } from '../types/http'
+import type { CustomFetch, CustomHeaders } from '../types/http'
 import {
     type SyncCommand,
     type SyncRequest,
@@ -27,7 +27,7 @@ export type SyncRequestContext = {
     authToken: string
     syncApiBase: string
     customFetch?: CustomFetch
-    customHeaders?: Record<string, string>
+    customHeaders?: CustomHeaders
 }
 
 // An invalid Date would otherwise be sent as `null`, which the API reads as "no expiry".

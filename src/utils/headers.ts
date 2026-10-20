@@ -1,3 +1,5 @@
+import type { CustomHeaders } from '../types/http'
+
 /**
  * Converts a native Fetch `Headers` object into a plain `Record<string, string>`.
  * Used when wrapping a native `fetch` response into the SDK's `FileResponse`
@@ -33,4 +35,14 @@ export function mergeHeaders(
         }
     }
     return merged
+}
+
+/**
+ * Turns the `headers` option into the record to send with one request, calling
+ * it when it is a function so per-request values are fresh.
+ */
+export function resolveCustomHeaders(
+    headers: CustomHeaders | undefined,
+): Record<string, string> | undefined {
+    return typeof headers === 'function' ? headers() : headers
 }

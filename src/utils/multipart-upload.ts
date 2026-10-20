@@ -1,9 +1,9 @@
 import { v4 as uuidv4 } from 'uuid'
 import { fetchWithRetry } from '../transport/fetch-with-retry'
 import { toTodoistRequestError } from '../transport/http-client'
-import type { HttpResponse, CustomFetch } from '../types/http'
+import type { HttpResponse, CustomFetch, CustomHeaders } from '../types/http'
 import { camelCaseKeys } from './case-conversion'
-import { mergeHeaders } from './headers'
+import { mergeHeaders, resolveCustomHeaders } from './headers'
 
 type UploadMultipartFileArgs = {
     baseUrl: string
@@ -14,7 +14,7 @@ type UploadMultipartFileArgs = {
     additionalFields: Record<string, string | number | boolean>
     requestId?: string
     /** Extra headers sent with the upload. Cannot replace `Authorization`, `X-Request-Id` or `Content-Type`. */
-    customHeaders?: Record<string, string>
+    customHeaders?: CustomHeaders
     customFetch?: CustomFetch
 }
 
@@ -275,7 +275,7 @@ export async function uploadMultipartFile(args: UploadMultipartFileArgs): Promis
     })
 
     // Custom headers come first so they can never replace the SDK's own.
-    const headers = mergeHeaders(customHeaders, {
+    const headers = mergeHeaders(resolveCustomHeaders(customHeaders), {
         Authorization: `Bearer ${authToken}`,
         ...(requestId ? { 'X-Request-Id': requestId } : {}),
         // The boundary is ours, so Content-Type has to be set explicitly —

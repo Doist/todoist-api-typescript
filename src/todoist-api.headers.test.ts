@@ -143,4 +143,102 @@ describe('TodoistApi headers option', () => {
 
         expect(getLastRequest()?.headers['authorization']).toBe(`Bearer ${DEFAULT_AUTH_TOKEN}`)
     })
+
+    describe('as a function', () => {
+        function mockTaskEndpoint() {
+            server.use(
+                http.get(`${getSyncBaseUri()}${ENDPOINT_REST_TASKS}/123`, ({ request }) => {
+                    captureRequest({ request, body: undefined })
+                    return HttpResponse.json(DEFAULT_TASK, { status: 200 })
+                }),
+            )
+        }
+
+        test('calls the function on every request', async () => {
+            mockTaskEndpoint()
+            let count = 0
+            const api = new TodoistApi(DEFAULT_AUTH_TOKEN, {
+                headers: () => ({ 'Request-Id': String(++count) }),
+            })
+
+            await api.getTask('123')
+            expect(getLastRequest()?.headers['request-id']).toBe('1')
+
+            await api.getTask('123')
+            expect(getLastRequest()?.headers['request-id']).toBe('2')
+        })
+
+        test('calls the function for Sync, upload and backup requests', async () => {
+            server.use(
+                http.post(`${getSyncBaseUri()}${ENDPOINT_SYNC}`, () =>
+                    HttpResponse.json({ sync_token: 'token123' }, { status: 200 }),
+                ),
+                http.post(`${getSyncBaseUri()}${ENDPOINT_REST_UPLOADS}`, () =>
+                    HttpResponse.json(
+                        snakeCaseKeys({
+                            fileUrl: 'https://files.todoist.com/uploads/test-file.pdf',
+                            fileName: 'test-file.pdf',
+                            fileSize: 1024,
+                            fileType: 'application/pdf',
+                            resourceType: 'file',
+                            uploadState: 'completed',
+                            image: null,
+                            imageWidth: null,
+                            imageHeight: null,
+                        }),
+                        { status: 200 },
+                    ),
+                ),
+                http.get(
+                    `${getSyncBaseUri()}${ENDPOINT_REST_BACKUPS_DOWNLOAD}`,
+                    () => new HttpResponse('binary-content', { status: 200 }),
+                ),
+            )
+            const headers = vi.fn(() => CUSTOM_HEADERS)
+            const api = new TodoistApi(DEFAULT_AUTH_TOKEN, { headers })
+
+            await api.sync({ resourceTypes: ['items'], syncToken: '*' })
+            await api.getViewOptions()
+            await api.uploadFile({ file: Buffer.from('test'), fileName: 'test-file.pdf' })
+            await api.downloadBackup({ file: 'backup123.zip' })
+
+            expect(headers).toHaveBeenCalledTimes(4)
+        })
+
+        test('reuses the result when a request is retried', async () => {
+            const customFetch = vi
+                .fn()
+                .mockRejectedValueOnce(new TypeError('fetch failed'))
+                .mockResolvedValueOnce({
+                    ok: true,
+                    status: 200,
+                    statusText: 'OK',
+                    headers: {},
+                    text: () => Promise.resolve(JSON.stringify(DEFAULT_TASK)),
+                    json: () => Promise.resolve(DEFAULT_TASK),
+                } satisfies CustomFetchResponse)
+            let count = 0
+            const headers = vi.fn(() => ({ 'Request-Id': String(++count) }))
+            const api = new TodoistApi(DEFAULT_AUTH_TOKEN, { headers, customFetch })
+
+            await api.getTask('123')
+
+            expect(headers).toHaveBeenCalledTimes(1)
+            expect(customFetch).toHaveBeenCalledTimes(2)
+            for (const [, options] of customFetch.mock.calls) {
+                expect(options.headers['Request-Id']).toBe('1')
+            }
+        })
+
+        test('cannot replace the Authorization header', async () => {
+            mockTaskEndpoint()
+            const api = new TodoistApi(DEFAULT_AUTH_TOKEN, {
+                headers: () => ({ authorization: 'Bearer forged' }),
+            })
+
+            await api.getTask('123')
+
+            expect(getLastRequest()?.headers['authorization']).toBe(`Bearer ${DEFAULT_AUTH_TOKEN}`)
+        })
+    })
 })
