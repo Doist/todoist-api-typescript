@@ -3,6 +3,7 @@ import { fetchWithRetry } from '../transport/fetch-with-retry'
 import { toTodoistRequestError } from '../transport/http-client'
 import type { HttpResponse, CustomFetch } from '../types/http'
 import { camelCaseKeys } from './case-conversion'
+import { mergeHeaders } from './headers'
 
 type UploadMultipartFileArgs = {
     baseUrl: string
@@ -12,6 +13,8 @@ type UploadMultipartFileArgs = {
     fileName?: string
     additionalFields: Record<string, string | number | boolean>
     requestId?: string
+    /** Extra headers sent with the upload. Cannot replace `Authorization`, `X-Request-Id` or `Content-Type`. */
+    customHeaders?: Record<string, string>
     customFetch?: CustomFetch
 }
 
@@ -218,6 +221,7 @@ export async function uploadMultipartFile(args: UploadMultipartFileArgs): Promis
         fileName,
         additionalFields,
         requestId,
+        customHeaders,
         customFetch,
     } = args
 
@@ -228,13 +232,6 @@ export async function uploadMultipartFile(args: UploadMultipartFileArgs): Promis
     const url = `${baseUrl}${endpoint}`
 
     let body: BodyInit
-    const headers: Record<string, string> = {
-        Authorization: `Bearer ${authToken}`,
-    }
-
-    if (requestId) {
-        headers['X-Request-Id'] = requestId
-    }
 
     // Resolve the file to something every `fetch` accepts as a body part: a
     // Blob where the size is known up front, or a Node stream that gets piped
@@ -277,9 +274,14 @@ export async function uploadMultipartFile(args: UploadMultipartFileArgs): Promis
         additionalFields,
     })
 
-    // The boundary is ours, so Content-Type has to be set explicitly — `fetch`
-    // only fills it in for a `FormData` body.
-    headers['Content-Type'] = multipart.contentType
+    // Custom headers come first so they can never replace the SDK's own.
+    const headers = mergeHeaders(customHeaders, {
+        Authorization: `Bearer ${authToken}`,
+        ...(requestId ? { 'X-Request-Id': requestId } : {}),
+        // The boundary is ours, so Content-Type has to be set explicitly —
+        // `fetch` only fills it in for a `FormData` body.
+        'Content-Type': multipart.contentType,
+    })
     body = multipart.body
 
     // Make the request using fetch

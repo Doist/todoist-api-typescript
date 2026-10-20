@@ -71,6 +71,7 @@ export class AppClient extends BaseClient {
             relativePath: ENDPOINT_REST_APPS,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             requestId: requestId,
         })
         return validateAppArray(response.data)
@@ -84,6 +85,7 @@ export class AppClient extends BaseClient {
             relativePath: getAppEndpoint(appId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             requestId: requestId,
         })
         return validateAppWithUserCount(response.data)
@@ -96,6 +98,7 @@ export class AppClient extends BaseClient {
             relativePath: ENDPOINT_REST_APPS,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
             requestId: requestId,
         })
@@ -119,6 +122,7 @@ export class AppClient extends BaseClient {
             relativePath: getAppEndpoint(appId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: payload,
             requestId: requestId,
         })
@@ -133,6 +137,7 @@ export class AppClient extends BaseClient {
             relativePath: getAppEndpoint(appId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             requestId: requestId,
         })
         return isSuccess(response)
@@ -146,6 +151,7 @@ export class AppClient extends BaseClient {
             relativePath: getAppSecretsEndpoint(appId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             requestId: requestId,
         })
         return validateAppSecrets(response.data)
@@ -159,6 +165,7 @@ export class AppClient extends BaseClient {
             relativePath: getAppClientSecretEndpoint(appId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             requestId: requestId,
         })
         return validateAppWithUserCount(response.data)
@@ -172,6 +179,7 @@ export class AppClient extends BaseClient {
             relativePath: getAppTokensEndpoint(appId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             requestId: requestId,
         })
         return validateAppWithUserCount(response.data)
@@ -195,6 +203,7 @@ export class AppClient extends BaseClient {
             additionalFields: { file_name: fileName },
             requestId: requestId,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
         })
         return validateAppWithUserCount(data)
     }
@@ -207,6 +216,7 @@ export class AppClient extends BaseClient {
             relativePath: getAppTestTokenEndpoint(appId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             requestId: requestId,
         })
         return validateAppTestToken(response.data)
@@ -220,6 +230,7 @@ export class AppClient extends BaseClient {
             relativePath: getAppTestTokenEndpoint(appId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             requestId: requestId,
         })
         return validateAppTestToken(response.data)
@@ -236,6 +247,7 @@ export class AppClient extends BaseClient {
             relativePath: getAppDistributionTokenEndpoint(appId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             requestId: requestId,
         })
         return validateAppDistributionToken(response.data)
@@ -252,6 +264,7 @@ export class AppClient extends BaseClient {
             relativePath: getAppVerificationTokenEndpoint(appId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             requestId: requestId,
         })
         return validateAppVerificationToken(response.data)
@@ -268,6 +281,7 @@ export class AppClient extends BaseClient {
             relativePath: getAppVerificationTokenEndpoint(appId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             requestId: requestId,
         })
         return validateAppVerificationToken(response.data)
@@ -284,6 +298,7 @@ export class AppClient extends BaseClient {
             relativePath: getAppByDistributionTokenEndpoint(distributionToken),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             requestId: requestId,
         })
         return validateAppByDistributionToken(response.data)
@@ -299,6 +314,7 @@ export class AppClient extends BaseClient {
             relativePath: getAppWebhookEndpoint(appId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             requestId: requestId,
         })
         return response.data ? validateAppWebhook(response.data) : null
@@ -312,6 +328,7 @@ export class AppClient extends BaseClient {
             relativePath: getAppWebhookEndpoint(appId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: {
                 ...rest,
                 events: events.map(webhookEventToWireName),
@@ -329,6 +346,7 @@ export class AppClient extends BaseClient {
             relativePath: getAppWebhookEndpoint(appId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             requestId: requestId,
         })
         return isSuccess(response)
@@ -343,6 +361,7 @@ export class AppClient extends BaseClient {
             relativePath: ENDPOINT_REST_APPS_INSTALLATIONS,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             requestId: requestId,
         })
         return validateAppInstallationArray(response.data)
@@ -355,6 +374,7 @@ export class AppClient extends BaseClient {
             relativePath: ENDPOINT_REST_APPS_INSTALLATIONS,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
             requestId: requestId,
         })
@@ -369,6 +389,7 @@ export class AppClient extends BaseClient {
             relativePath: getAppInstallationEndpoint(installationId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             requestId: requestId,
         })
         return validateAppInstallation(response.data)
@@ -386,6 +407,7 @@ export class AppClient extends BaseClient {
             relativePath: getAppInstallationEndpoint(installationId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
             requestId: requestId,
         })
@@ -400,6 +422,7 @@ export class AppClient extends BaseClient {
             relativePath: getAppInstallationEndpoint(installationId),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             requestId: requestId,
         })
         return isSuccess(response)
@@ -414,6 +437,7 @@ export class AppClient extends BaseClient {
             relativePath: ENDPOINT_REST_USER_AUTHORIZATIONS,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             requestId: requestId,
         })
         return validateUserAuthorizationArray(response.data)
@@ -429,6 +453,7 @@ export class AppClient extends BaseClient {
             relativePath: ENDPOINT_REST_USER_AUTHORIZATIONS_DELETE,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
             requestId: requestId,
         })

@@ -33,6 +33,7 @@ export class SectionClient extends BaseClient {
             relativePath: ENDPOINT_REST_SECTIONS,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
         })
 
@@ -51,6 +52,7 @@ export class SectionClient extends BaseClient {
             relativePath: ENDPOINT_REST_SECTIONS_SEARCH,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
         })
 
@@ -68,6 +70,7 @@ export class SectionClient extends BaseClient {
             relativePath: generatePath(ENDPOINT_REST_SECTIONS, id),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
         })
 
         return validateSection(response.data)
@@ -80,6 +83,7 @@ export class SectionClient extends BaseClient {
             relativePath: ENDPOINT_REST_SECTIONS,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
             requestId: requestId,
         })
@@ -95,6 +99,7 @@ export class SectionClient extends BaseClient {
             relativePath: generatePath(ENDPOINT_REST_SECTIONS, id),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
             requestId: requestId,
         })
@@ -109,6 +114,7 @@ export class SectionClient extends BaseClient {
             relativePath: generatePath(ENDPOINT_REST_SECTIONS, id),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             requestId: requestId,
         })
         return isSuccess(response)
@@ -122,6 +128,7 @@ export class SectionClient extends BaseClient {
             relativePath: generatePath(ENDPOINT_REST_SECTIONS, id, SECTION_ARCHIVE),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             requestId: requestId,
         })
         return validateSection(response.data)
@@ -135,6 +142,7 @@ export class SectionClient extends BaseClient {
             relativePath: generatePath(ENDPOINT_REST_SECTIONS, id, SECTION_UNARCHIVE),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             requestId: requestId,
         })
         return validateSection(response.data)

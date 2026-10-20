@@ -40,6 +40,7 @@ export class TemplateClient extends BaseClient {
             relativePath: ENDPOINT_REST_TEMPLATES_FILE,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
         })
         return response.data
@@ -52,6 +53,7 @@ export class TemplateClient extends BaseClient {
             relativePath: ENDPOINT_REST_TEMPLATES_URL,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
         })
         return data
@@ -75,6 +77,7 @@ export class TemplateClient extends BaseClient {
             fileName,
             additionalFields,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             requestId,
         })
         return this.validateTemplateResponse(
@@ -95,6 +98,7 @@ export class TemplateClient extends BaseClient {
             fileName,
             additionalFields: { project_id: projectId },
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             requestId,
         })
         return this.validateTemplateResponse(
@@ -112,6 +116,7 @@ export class TemplateClient extends BaseClient {
             relativePath: ENDPOINT_REST_TEMPLATES_IMPORT_FROM_ID,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
             requestId: requestId,
         })

@@ -424,6 +424,29 @@ describe('uploadMultipartFile', () => {
             expect(capturedRequest).toBeDefined()
             expect(capturedRequest?.headers['x-request-id']).toBeUndefined()
         })
+
+        test('sends custom headers without letting them replace auth or content type', async () => {
+            await uploadMultipartFile({
+                baseUrl: baseUrl,
+                authToken: authToken,
+                endpoint: endpoint,
+                file: Buffer.from('test'),
+                fileName: 'test.pdf',
+                additionalFields: {},
+                customHeaders: {
+                    'Doist-Platform': 'cli',
+                    authorization: 'Bearer forged',
+                    'content-type': 'application/json',
+                },
+            })
+
+            const capturedRequest = getLastRequest()
+            expect(capturedRequest?.headers['doist-platform']).toBe('cli')
+            expect(capturedRequest?.headers['authorization']).toBe('Bearer test-token')
+            expect(capturedRequest?.headers['content-type']).toMatch(
+                /^multipart\/form-data; boundary=/,
+            )
+        })
     })
 
     describe('error handling', () => {

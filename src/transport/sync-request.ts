@@ -27,6 +27,7 @@ export type SyncRequestContext = {
     authToken: string
     syncApiBase: string
     customFetch?: CustomFetch
+    customHeaders?: Record<string, string>
 }
 
 // An invalid Date would otherwise be sent as `null`, which the API reads as "no expiry".
@@ -123,7 +124,7 @@ function preprocessSyncCommands(commands: SyncCommand[]): SyncCommand[] {
 /**
  * Makes a request to the Sync API and handles error checking.
  *
- * @param ctx - HTTP identity (auth token, sync API base URI, optional custom fetch).
+ * @param ctx - HTTP identity (auth token, sync API base URI, optional custom fetch and headers).
  * @param syncRequest - The sync request payload.
  * @param options - Optional request identifier and commands flag.
  * @returns The sync response data.
@@ -147,6 +148,7 @@ export async function performSyncRequest(
         relativePath: ENDPOINT_SYNC,
         apiToken: ctx.authToken,
         customFetch: ctx.customFetch,
+        customHeaders: ctx.customHeaders,
         payload: processedRequest,
         requestId: requestId,
         hasSyncCommands: hasSyncCommands,

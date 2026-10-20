@@ -30,6 +30,7 @@ export class CommentClient extends BaseClient {
             relativePath: ENDPOINT_REST_COMMENTS,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
         })
 
@@ -47,6 +48,7 @@ export class CommentClient extends BaseClient {
             relativePath: generatePath(ENDPOINT_REST_COMMENTS, id),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
         })
 
         return validateComment(response.data)
@@ -60,6 +62,7 @@ export class CommentClient extends BaseClient {
             relativePath: ENDPOINT_REST_COMMENTS,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: {
                 ...rest,
                 // The API expects a list; a comma-joined string is rejected
@@ -80,6 +83,7 @@ export class CommentClient extends BaseClient {
             relativePath: generatePath(ENDPOINT_REST_COMMENTS, id),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
             requestId: requestId,
         })
@@ -94,6 +98,7 @@ export class CommentClient extends BaseClient {
             relativePath: generatePath(ENDPOINT_REST_COMMENTS, id),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             requestId: requestId,
         })
         return isSuccess(response)

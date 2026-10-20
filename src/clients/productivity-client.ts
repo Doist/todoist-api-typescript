@@ -19,6 +19,7 @@ export class ProductivityClient extends BaseClient {
             relativePath: ENDPOINT_REST_PRODUCTIVITY,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
         })
         return validateProductivityStats(response.data)
     }

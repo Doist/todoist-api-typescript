@@ -4,6 +4,7 @@ import { TodoistRequestError } from '../types/errors'
 import type { CustomFetch, HttpMethod, HttpResponse } from '../types/http'
 import { isHttpError, isNetworkError } from '../types/http'
 import { camelCaseKeys, snakeCaseKeys } from '../utils/case-conversion'
+import { mergeHeaders } from '../utils/headers'
 import { fetchWithRetry } from './fetch-with-retry'
 
 type GetTodoistRequestErrorArgs = {
@@ -104,7 +105,8 @@ function getRequestConfiguration(args: GetRequestConfigurationArgs) {
     const { baseURL, apiToken, requestId, customHeaders } = args
     const authHeader = apiToken ? { Authorization: getAuthHeader(apiToken) } : undefined
     const requestIdHeader = requestId ? { 'X-Request-Id': requestId } : undefined
-    const headers = { ...defaultHeaders, ...authHeader, ...requestIdHeader, ...customHeaders }
+    // Custom headers sit below auth and request id so they can never replace them.
+    const headers = mergeHeaders(defaultHeaders, customHeaders, authHeader, requestIdHeader)
 
     return { baseURL, headers }
 }

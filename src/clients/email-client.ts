@@ -25,6 +25,7 @@ export class EmailClient extends BaseClient {
             relativePath: ENDPOINT_REST_EMAILS,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
             requestId: requestId,
         })
@@ -42,6 +43,7 @@ export class EmailClient extends BaseClient {
             relativePath: `${ENDPOINT_REST_EMAILS}?${queryParams.toString()}`,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             requestId: requestId,
         })
         return isSuccess(response)

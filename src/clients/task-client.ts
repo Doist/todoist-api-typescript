@@ -53,6 +53,7 @@ export class TaskClient extends BaseClient {
             relativePath: generatePath(ENDPOINT_REST_TASKS, id),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
         })
 
         return validateTask(response.data)
@@ -67,6 +68,7 @@ export class TaskClient extends BaseClient {
             relativePath: ENDPOINT_REST_TASKS,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: {
                 ...args,
                 ...spreadIfDefined(args.ids, (ids) => ({ ids: ids.join(',') })),
@@ -88,6 +90,7 @@ export class TaskClient extends BaseClient {
             relativePath: ENDPOINT_REST_TASKS_FILTER,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
         })
 
@@ -108,6 +111,7 @@ export class TaskClient extends BaseClient {
             relativePath: ENDPOINT_REST_TASKS_COMPLETED_BY_COMPLETION_DATE,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
         })
 
@@ -128,6 +132,7 @@ export class TaskClient extends BaseClient {
             relativePath: ENDPOINT_REST_TASKS_COMPLETED_BY_DUE_DATE,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
         })
 
@@ -146,6 +151,7 @@ export class TaskClient extends BaseClient {
             relativePath: ENDPOINT_REST_TASKS_COMPLETED_SEARCH,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
         })
 
@@ -165,6 +171,7 @@ export class TaskClient extends BaseClient {
             relativePath: ENDPOINT_REST_TASKS_COMPLETED,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: {
                 ...rest,
                 ...(since ? { since: since.toISOString() } : {}),
@@ -191,6 +198,7 @@ export class TaskClient extends BaseClient {
             relativePath: ENDPOINT_REST_TASKS,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: processedArgs,
             requestId: requestId,
         })
@@ -211,6 +219,7 @@ export class TaskClient extends BaseClient {
             relativePath: ENDPOINT_SYNC_QUICK_ADD,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: processedArgs,
         })
 
@@ -246,6 +255,7 @@ export class TaskClient extends BaseClient {
             relativePath: generatePath(ENDPOINT_REST_TASKS, id),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: remappedArgs,
             requestId: requestId,
         })
@@ -298,6 +308,7 @@ export class TaskClient extends BaseClient {
             relativePath: generatePath(ENDPOINT_REST_TASKS, id, ENDPOINT_REST_TASK_MOVE),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: {
                 ...spreadIfDefined(args.projectId, (v) => ({ project_id: v })),
                 ...spreadIfDefined(args.sectionId, (v) => ({ section_id: v })),
@@ -317,6 +328,7 @@ export class TaskClient extends BaseClient {
             relativePath: generatePath(ENDPOINT_REST_TASKS, id, ENDPOINT_REST_TASK_CLOSE),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             requestId: requestId,
         })
         return isSuccess(response)
@@ -330,6 +342,7 @@ export class TaskClient extends BaseClient {
             relativePath: generatePath(ENDPOINT_REST_TASKS, id, ENDPOINT_REST_TASK_REOPEN),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             requestId: requestId,
         })
         return isSuccess(response)
@@ -343,6 +356,7 @@ export class TaskClient extends BaseClient {
             relativePath: generatePath(ENDPOINT_REST_TASKS, id),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             requestId: requestId,
         })
         return isSuccess(response)

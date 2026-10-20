@@ -111,6 +111,7 @@ export class UploadClient extends BaseClient {
             additionalFields: additionalFields,
             requestId: requestId,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
         })
 
         return validateAttachment(data)
@@ -123,6 +124,7 @@ export class UploadClient extends BaseClient {
             relativePath: ENDPOINT_REST_UPLOADS,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args,
             requestId: requestId,
         })

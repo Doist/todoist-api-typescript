@@ -59,6 +59,7 @@ export class ActivityClient extends BaseClient {
             relativePath: ENDPOINT_REST_ACTIVITIES,
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: processedArgs as Record<string, unknown>,
         })
 

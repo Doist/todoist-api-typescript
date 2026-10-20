@@ -24,6 +24,7 @@ export class IdMappingClient extends BaseClient {
             ),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
         })
         return validateIdMappingArray(response.data)
     }
@@ -35,6 +36,7 @@ export class IdMappingClient extends BaseClient {
             relativePath: generatePath(ENDPOINT_REST_MOVED_IDS, args.objName),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             payload: args.oldIds ? { oldIds: args.oldIds.join(',') } : undefined,
         })
         return validateMovedIdArray(response.data)
