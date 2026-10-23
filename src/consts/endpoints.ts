@@ -88,6 +88,7 @@ export const ENDPOINT_REVOKE = 'revoke'
 export const ENDPOINT_REGISTER = 'register'
 
 export const ENDPOINT_REST_FOLDERS = 'folders'
+export const ENDPOINT_REST_FILTERS = 'filters'
 
 // Workspace endpoints
 export const ENDPOINT_REST_WORKSPACES = 'workspaces'
