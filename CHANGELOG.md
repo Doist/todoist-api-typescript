@@ -1,3 +1,9 @@
+## [15.8.0](https://github.com/Doist/todoist-sdk-typescript/compare/v15.7.0...v15.8.0) (2026-10-23)
+
+### Features
+
+* add deleteFilter to delete a personal filter ([#722](https://github.com/Doist/todoist-sdk-typescript/issues/722)) ([53b1266](https://github.com/Doist/todoist-sdk-typescript/commit/53b1266226c9da6ec0decbc914c6c30e5d3d0fed))
+
 ## [15.7.0](https://github.com/Doist/todoist-sdk-typescript/compare/v15.6.0...v15.7.0) (2026-10-20)
 
 ### Features
