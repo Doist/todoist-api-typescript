@@ -4,6 +4,7 @@ import { BackupClient } from './clients/backup-client'
 import { BillingClient } from './clients/billing-client'
 import { CommentClient } from './clients/comment-client'
 import { EmailClient } from './clients/email-client'
+import { FilterClient } from './clients/filter-client'
 import { FolderClient } from './clients/folder-client'
 import { IdMappingClient } from './clients/id-mapping-client'
 import { InsightsClient } from './clients/insights-client'
@@ -270,6 +271,7 @@ export class TodoistApi {
     private readonly reminderClient: ReminderClient
     private readonly insightsClient: InsightsClient
     private readonly folderClient: FolderClient
+    private readonly filterClient: FilterClient
     private readonly templateClient: TemplateClient
     private readonly uploadClient: UploadClient
     private readonly backupClient: BackupClient
@@ -318,6 +320,7 @@ export class TodoistApi {
         this.reminderClient = new ReminderClient(clientDeps)
         this.insightsClient = new InsightsClient(clientDeps)
         this.folderClient = new FolderClient(clientDeps)
+        this.filterClient = new FilterClient(clientDeps)
         this.templateClient = new TemplateClient(clientDeps)
         this.uploadClient = new UploadClient(clientDeps)
         this.backupClient = new BackupClient(clientDeps)
@@ -1390,6 +1393,19 @@ export class TodoistApi {
      */
     async deleteFolder(id: string, requestId?: string): Promise<boolean> {
         return this.folderClient.deleteFolder(id, requestId)
+    }
+
+    // ── Filters ──
+
+    /**
+     * Deletes a personal filter by its ID.
+     *
+     * @param id - The unique identifier of the filter to delete.
+     * @param requestId - Optional custom identifier for the request.
+     * @returns A promise that resolves to `true` if successful.
+     */
+    async deleteFilter(id: string, requestId?: string): Promise<boolean> {
+        return this.filterClient.deleteFilter(id, requestId)
     }
 
     // ── Billing ──
