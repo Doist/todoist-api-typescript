@@ -19,6 +19,7 @@ export class FilterClient extends BaseClient {
             relativePath: generatePath(ENDPOINT_REST_FILTERS, id),
             apiToken: this.authToken,
             customFetch: this.customFetch,
+            customHeaders: this.customHeaders,
             requestId: requestId,
         })
         return isSuccess(response)
